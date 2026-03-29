@@ -2,12 +2,16 @@
 
 A public framework for agentic design and development.
 
----
+This project began with explorations conducted by Clarisse Sieckenius de Souza (PUC-Rio), Gabriel DJ Barbosa (PUC-Rio and Datamint), and Simone DJ Barbosa (PUC-Rio) on redesigning and redeveloping the academic discussion forum Dialogos.
+
+Our goal is to design a human-centered computing methodology based on semiotic engineering for agentic software design and development in a way that supports Schön's concepts of reflection-in-action, reflection-on-action, and reflection-on-practice.
 
 ## Start here
 
-- [Codex onboarding guide](seja-codex-onboarding-guide.md) -- the main end-to-end guide for a product designer new to AI-assisted development
-- [Quickstart kits](quickstart-kits/) -- downloadable framework exports, including `seja-codex-quickstart-kit.zip`
+- Onboarding guides -- end-to-end walkthroughs for a product designer new to AI-assisted development:
+  - [Claude onboarding guide](seja-claude-onboarding-guide.md) (Anthropic Claude)
+  - [Codex onboarding guide](seja-codex-onboarding-guide.md) (OpenAI Codex)
+- [Quickstart kits](quickstart-kits/) -- downloadable framework exports for both agents
 - [Journeys](journeys/) -- scenario-based starting points for solo work, teams, agencies, and regulated environments
 - [Recipes](recipes/) -- short task-focused how-to guides
 
@@ -18,7 +22,7 @@ A public framework for agentic design and development.
 | Term | Meaning |
 |------|---------|
 | **Foundational SEJA framework** | The reusable source of truth for skills, scripts, templates, agents, and guidance files. |
-| ***ProjectName* workspace** | A standalone git repository that holds the framework files (`.codex/`, `.agent-resources/`), project guidance, and generated artifacts under `_output/`. |
+| ***ProjectName* workspace** | A standalone git repository that holds the framework files (`.claude/` or `.codex/`, plus `.agent-resources/`), project guidance, and generated artifacts under `_output/`. |
 | ***ProjectName* codebase** | The product source code itself. In the workspace pattern, the framework points at this codebase without copying framework files into it. |
 
 The workspace pattern is best when you want to keep framework artifacts and design history separate from product source code. The collocated pattern is best for solo or greenfield work when you want everything in one repository.
@@ -27,22 +31,22 @@ The workspace pattern is best when you want to keep framework artifacts and desi
 
 ## Which toolkit?
 
-This repository still contains **two parallel toolkits**:
+This repository contains **two parallel toolkits**:
 
-- `.codex/`: the Codex-native toolkit, driven by `AGENTS.md`
-- `.claude/`: the original Claude-oriented source toolkit, retained as the upstream source of truth for shared framework behavior
+- `.claude/`: the Claude toolkit, configured via `CLAUDE.md` and `/slash` commands
+- `.codex/`: the Codex toolkit, configured via `AGENTS.md` and `$skill` commands
 
-If you are choosing where to start, use the Codex toolkit unless you specifically need the Claude-oriented flow. The public docs and quickstart packaging here are maintained around the Codex path.
+Both toolkits are fully supported. Choose based on your preferred AI agent.
 
 ---
 
 ## Shared recommendations
 
-1. Run `$quickstart` early so the project guidance exists before implementation work starts.
+1. Run the quickstart skill (`/quickstart` in Claude, `$quickstart` in Codex) early so the project guidance exists before implementation work starts.
 2. Treat the conceptual design and project conventions as first-class artifacts, not setup boilerplate.
-3. Always review the plan before running `$execute-plan` until the codebase and workflow feel familiar.
-4. Use `$check validate`, `$check review`, and `$check preflight` as routine safety rails.
-5. Keep `AGENTS.md` and the `project-*.md` files current as the product evolves.
+3. Always review the plan before running `/execute-plan` / `$execute-plan` until the codebase and workflow feel familiar.
+4. Use `/check` / `$check` (validate, review, preflight) as routine safety rails.
+5. Keep agent configuration (`CLAUDE.md` for Claude, `AGENTS.md` for Codex) and the `project-*.md` files current as the product evolves.
 6. Break larger work into small, reviewable steps.
 7. Never defer SEC or A11Y findings without an explicit decision.
 8. Use metacommunication framing when the main challenge is what the interface should communicate.
