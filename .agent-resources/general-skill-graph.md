@@ -48,5 +48,5 @@ After a skill completes, `/post-skill` reads this file and looks up the complete
 | `/communication` | `/onboarding` | Need to onboard someone to the project too? |
 | `/onboarding` | `/communication` | Want to generate stakeholder material as well? |
 | `/help` | `/help --browse` | Browse all available skills? |
-| `/quickstart` | `/help` | New to the framework? See what skills are available. |
+| `/quickstart` | `/make-plan --roadmap` | Project configured — generate a development roadmap? |
 | `/qa-log` | `/advise` | Have more questions to explore? |

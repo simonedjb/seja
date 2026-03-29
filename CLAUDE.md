@@ -8,7 +8,7 @@ For detailed component inventory, see `.claude/rules/framework-structure.md`.
 
 ## Key workflows
 
-- **New project**: extract the foundational SEJA framework (clone or download the public repo), then run `/quickstart .` to generate project-specific files.
+- **New project**: extract the foundational SEJA framework (clone or download the public repo), then run `/quickstart .` to generate project-specific files. After setup, review the generated specs and optionally generate a development roadmap.
 - **Upgrade**: run `/quickstart --upgrade` to upgrade a workspace or codebase's framework files to the latest version while preserving project data.
 - **Workspace setup**: run `/quickstart --workspace` to create a project workspace from the foundational SEJA framework for working alongside an existing codebase. The workspace is its own git repo with version-controlled design history.
 - **Communication**: run `/communication <audience>` to generate tailored stakeholder material.

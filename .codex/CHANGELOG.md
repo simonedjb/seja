@@ -5,6 +5,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## 2026-03-30
 
+- Added Step 14 (Review & next steps) to `$quickstart`: after summary, offers spec review, roadmap generation, or exit. Roadmap auto-derives themes and work items from conceptual design and metacommunication.
+- Updated skill graph: `$quickstart` now suggests `$make-plan --roadmap` instead of `$help`.
 - Removed `$quickstart --package` (zip packaging). The public repo is now the foundational framework itself. Use GitHub's "Download ZIP" for offline distribution.
 - Restructured seja-public/ as a complete foundational framework with docs/ folder.
 

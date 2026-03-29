@@ -49,7 +49,7 @@ The original interactive flow. Walk the user through the questionnaire to gather
 
 ### Steps
 
-1. **Verify target directory**: Check that the target exists and is a git repository (or offer to `git init`). If a `.claude/` directory already exists, warn the user and ask whether to overwrite or merge.
+1. **Verify target directory**: Check that the target exists and is a git repository (or offer to `git init`). If a `.claude/` directory already exists, warn the user and ask whether to overwrite or merge. **Important**: If workspace/codebase separation will be chosen later (step 5), the child directories get their own `git init` — a git-initialized target would make them nested repos, which causes confusion. This is handled in step 5's guard (see below).
 
 2. **Create directory structure**: Create the following in the target directory:
    ```
@@ -75,7 +75,7 @@ The original interactive flow. Walk the user through the questionnaire to gather
    - **Workspace routing** — After question 0.3, regardless of greenfield or brownfield, offer workspace/codebase separation:
      - **Greenfield framing**: *"For greenfield projects, the SEJA framework recommends separating the workspace (framework files, design artifacts) from the codebase (source code). This keeps the codebase clean and the design history version-controlled independently. Would you like to create separate workspace and codebase folders?"*
      - **Brownfield framing**: *"The SEJA framework can either install directly into your existing codebase, or create a separate workspace alongside it. A separate workspace keeps your codebase clean — no `.claude/` or `.agent-resources/` folders in your repo. Would you like to create a separate workspace?"*
-     - If **yes (greenfield)**: Ask for the workspace directory name (default: `<project-name>-workspace`) and codebase directory name (default: `<project-name>`). Both will be created as subdirectories of the target directory. Then:
+     - If **yes (greenfield)**: **Guard — nested-repo check**: If `<target>/` is already a git repository, warn the user: *"The target directory is already a git repository. Creating workspace and codebase subdirectories here would result in nested git repos, which causes confusion. Please use a plain (non-git) directory as the target, or choose not to separate workspace and codebase."* Do **not** proceed with separation — re-ask the separation question or let the user provide a different target. If `<target>/` is **not** a git repo, proceed: ask for the workspace directory name (default: `<project-name>-workspace`) and codebase directory name (default: `<project-name>`). Both will be created as subdirectories of the target directory. Then:
         - Create `<target>/<workspace-dir>/` and `git init` it
         - Create `<target>/<codebase-dir>/` and `git init` it
         - Redirect all framework file creation (steps 2-4, 6-11) to `<target>/<workspace-dir>/`
@@ -254,6 +254,64 @@ The original interactive flow. Walk the user through the questionnaire to gather
     - Replacing placeholder secrets in `.env` files
     - (If workspace pattern) Start Claude Code from the workspace: `claude --add-dir <codebase-dir>`
 
+14. **Review & next steps**: After the summary, present the generated project specification files and offer the user a chance to review them before moving on. This is the last opportunity to correct design decisions before they propagate into plans and code.
+
+    **Present the review checklist:**
+    > *"I've generated the following project specification files from your answers. I recommend reviewing them before generating a roadmap — these are the foundation for all planning and code generation."*
+
+    List the `project-*` files with a one-line description of what each controls:
+
+    | File | Controls | Key things to verify |
+    |------|----------|---------------------|
+    | `project-conventions.md` | Directory paths, variable definitions | Paths are correct, especially for workspace pattern |
+    | `project-conceptual-design-as-is.md` | Entity hierarchy, permissions, domain concepts | Entities and their relationships match your mental model |
+    | `project-conceptual-design-to-be.md` | Target design (same as as-is for greenfield) | Greenfield: should be identical to as-is |
+    | `project-metacomm-as-is.md` | Current metacommunication record | Designer intent per feature is accurate |
+    | `project-metacomm-to-be.md` | Target metacommunication with full EMT | Global vision and per-feature intentions are complete |
+    | `project-backend-standards.md` | Backend architecture conventions | Framework, ORM, auth patterns match your stack |
+    | `project-frontend-standards.md` | Frontend architecture conventions | Components, routing, state management patterns |
+    | `project-ux-design-standards.md` | Interaction patterns, accessibility, responsive | Navigation, forms, keyboard shortcuts, WCAG level |
+    | `project-graphic-ui-design-standards.md` | Visual identity, colors, typography, motion | Brand colors, font, spacing, icon set |
+    | `project-testing-standards.md` | Test frameworks and conventions | Test patterns match your stack |
+    | `project-i18n-standards.md` | Internationalization conventions | Locales, translation approach |
+    | `project-security-checklists.md` | Security checklists, validation constants | Field limits, auth constants |
+
+    **Then offer next steps:**
+    > *"What would you like to do next?"*
+
+    Present as a numbered list:
+    1. **Review specs now** — *"I'll walk you through each file so you can verify and adjust. Changes are easiest to make now, before any code is generated."*
+    2. **Generate roadmap** — *"I'll generate a development roadmap from your specs and offer to turn it into executable plans via `/make-plan --roadmap`."*
+    3. **Done for now** — *"You can review the files at your own pace and run `/make-plan --roadmap` when ready."*
+
+    **If the user chooses "Review specs now" (option 1):**
+    - Walk through each `project-*` file, presenting a brief summary of the key decisions captured.
+    - For each file, ask: *"Does this look right, or would you like to change anything?"*
+    - If the user requests changes, edit the file in place.
+    - After the review, return to the next-steps menu (offer options 2 and 3).
+
+    **If the user chooses "Generate roadmap" (option 2):**
+    1. Read `template-roadmap-spec.md` for the spec format.
+    2. Derive themes and work items from the conceptual design (entities, permissions, domain concepts, import/export, i18n) and the metacommunication message (features the designer committed to).
+    3. Structure the roadmap as follows:
+       - **Theme: Foundation** (P0) — data models, database setup, app factory, auth endpoints. One work item per entity (User + auth, then each domain entity). These are `technical` type, `backend` scope.
+       - **Theme: Core UI** (P0) — frontend shell (routing, layout, auth pages), then one work item per entity's CRUD UI. These are `design` type, `fullstack` scope.
+       - **Theme: Domain Features** (P1) — one work item per domain-specific concept from Section 2.5 / the metacomm (e.g., priorities, alerts, postpone, recurring tasks, keyboard shortcuts). Classify as `design` if user-facing, `technical` if internal.
+       - **Theme: Collaboration & Sharing** (P1) — sharing, permissions, mentions, notifications. These are `design` type, `fullstack` scope.
+       - **Theme: Data & Integration** (P2) — import/export, localization polish, backup/restore. These are `technical` type.
+    4. Set dependency chains: auth before CRUD, backend before frontend for each entity, foundation before domain features.
+    5. Fill in the Parallel Execution Strategy section with waves derived from the dependency graph.
+    6. Set the Product Vision from the questionnaire's description + metacomm summary.
+    7. Set the Roadmap Horizon to a reasonable default based on project scope (e.g., "Initial MVP — 4-6 weeks" for a small project, "Phase 1 — Q2 2026" for larger ones).
+    8. Add a Constraints section reflecting the project's stack and design decisions (e.g., "WCAG AAA compliance on all UI", "All strings must be i18n-ready").
+    9. Save to `<output_dir>/roadmaps/roadmap-spec-YYYY-MM-DD HH.MM UTC.md`.
+    10. Present the roadmap to the user for review.
+    11. Offer: *"Would you like to run `/make-plan --roadmap` to generate executable plans from this roadmap?"*
+    12. If the user declines, note: *"You can run `/make-plan --roadmap --from-spec <path>` later to generate plans."*
+
+    **If the user chooses "Done for now" (option 3):**
+    - Remind: *"You can review the spec files in `.agent-resources/` at any time. When ready, run `/make-plan --roadmap` to generate a development roadmap and executable plans."*
+
 ---
 
 ## Mode 2: From Spec File
@@ -326,6 +384,8 @@ For experienced users who pre-fill a spec file with their stack choices. The age
 17. **Preserve spec**: Copy the original spec file to `<target>/specs/quickstart-spec-YYYY-MM-DD HH.MM UTC.md` (creating `specs/` if it does not exist). If the spec was already in `specs/`, leave it in place (do not duplicate).
 
 18. **Summary**: Same as Mode 1, step 13. Additionally, note the preserved spec file location.
+
+19. **Review & next steps**: Same as Mode 1, step 14. Use the combined spec + Q&A answers for the review and roadmap generation.
 
 ---
 

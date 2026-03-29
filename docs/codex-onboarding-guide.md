@@ -49,8 +49,8 @@ For a first-time designer, this is good news: there are fewer names to memorize.
 3. Start Codex from that root folder.
 4. Run `$quickstart .`.
 5. Answer the questions in product language, not implementation jargon.
-6. Review the generated `AGENTS.md` and `project-*.md` files the way you would review a design brief.
-7. Use `$make-plan` for your first feature before asking Codex to implement anything.
+6. When quickstart finishes, choose "Review specs now" to walk through each generated file -- treat them like a design brief.
+7. Then choose "Generate roadmap" to create a development roadmap from your specs, or use `$make-plan` for your first feature.
 
 That sequence gives Codex enough project context while keeping you focused on product intent.
 

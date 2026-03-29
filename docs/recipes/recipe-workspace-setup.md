@@ -76,7 +76,12 @@ python .claude/skills/scripts/create_workspace.py \
 
    Alternatively, start the agent in the workspace and add `D:/git/my-project` as an additional directory if your host supports that pattern.
 
-2. **Verify and commit**
+2. **Review specs and generate roadmap**
+   Quickstart ends by offering to walk through the generated `project-*` files
+   for review. Take advantage of this -- changes are cheapest at the spec level.
+   Then optionally generate a development roadmap from your specs.
+
+3. **Verify and commit**
    ```
    /check validate   # Claude
    $check validate   # Codex

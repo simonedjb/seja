@@ -349,7 +349,13 @@ You can answer these questions in product language. If you are unsure about a te
 
 #### Step 5: Review the Generated Files
 
-After quickstart completes, you'll have:
+After quickstart completes, it will present you with three options:
+
+1. **Review specs now** -- walk through each generated file so you can verify and adjust. This is the recommended path, especially for first-time users. Changes are easiest to make now, before any code is generated.
+2. **Generate roadmap** -- auto-generate a development roadmap from your specs and optionally turn it into executable plans via `/make-plan --roadmap`.
+3. **Done for now** -- review the files at your own pace and generate a roadmap later.
+
+If you choose to review, here's what to check in each file:
 
 | Generated File | What to Review |
 |----------------|---------------|
@@ -361,6 +367,8 @@ After quickstart completes, you'll have:
 | `project-metacomm-to-be.md` | Does it capture your intended metacommunication vision? |
 | `project-backend-standards.md` | Do the architecture rules match your team's practices? |
 | `project-frontend-standards.md` | Are the component patterns what you want? |
+| `project-ux-design-standards.md` | Are the UX patterns and accessibility level correct? |
+| `project-graphic-ui-design-standards.md` | Are the brand colors, typography, and visual style right? |
 | `project-testing-standards.md` | Are the test frameworks correct? |
 | `project-i18n-standards.md` | Are the locales right? |
 | `project-security-checklists.md` | Are the validation constants correct? |
