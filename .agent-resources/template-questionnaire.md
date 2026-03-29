@@ -38,13 +38,13 @@
 |---|----------|-------|-------------|
 | 0.1 | What is your project's display name? | `{{PROJECT_NAME}}` | |
 | 0.2 | What does your application do? (1–2 sentences) | Conceptual design intro | |
-| 0.3 | What is your backend language/framework? | Backend standards scope | |
-| 0.4 | What is your frontend language/framework? | Frontend standards scope | |
-| 0.5 | What database will you use? | Backend DB sections | |
-| 0.6 | What are your primary and secondary UI languages? (e.g., en-US, pt-BR) | `{{PRIMARY_LOCALE}}`, `{{SECONDARY_LOCALE}}` | |
-| 0.7 | Name your generated-artifacts output folder (e.g., `_output`, `_generated`) | `{{OUTPUT_DIR}}` | |
-| 0.8 | Name your backend and frontend source directories (e.g., `backend`, `frontend`) | `{{BACKEND_DIR}}`, `{{FRONTEND_DIR}}` | |
-| 0.9 | Is this a new project (greenfield) or an existing project with code already written (brownfield)? | Project mode | |
+| 0.3 | Is this a new project (greenfield) or an existing project with code already written (brownfield)? | Project mode, directory structure | |
+| 0.4 | What is your backend language/framework? | Backend standards scope | |
+| 0.5 | What is your frontend language/framework? | Frontend standards scope | |
+| 0.6 | What database will you use? | Backend DB sections | |
+| 0.7 | What are your primary and secondary UI languages? (e.g., en-US, pt-BR) | `{{PRIMARY_LOCALE}}`, `{{SECONDARY_LOCALE}}` | |
+| 0.8 | Name your generated-artifacts output folder (e.g., `_output`, `_generated`) | `{{OUTPUT_DIR}}` | |
+| 0.9 | Name your backend and frontend source directories (e.g., `backend`, `frontend`) | `{{BACKEND_DIR}}`, `{{FRONTEND_DIR}}` | |
 | 0.10 | Who is available on your team? (check all that apply: just me / + architect / + engineer(s) / + UX designer / + graphic/UI designer / + data engineer / + tester(s)) | Team composition | |
 
 ---
@@ -156,7 +156,7 @@ Answer:
 
 ### Brownfield-Only Questions
 
-> *Skip this subsection if you answered "greenfield" to question 0.9.*
+> *Skip this subsection if you answered "greenfield" to question 0.3.*
 
 **2.13** What is the existing tech stack? (languages, frameworks, database, hosting)
 
@@ -787,4 +787,4 @@ After completing all sections:
 | Version | Date       | Changes                                                                                                                      |
 |---------|------------|------------------------------------------------------------------------------------------------------------------------------|
 | 1       | 2026-03-25 | Initial versioned release. Sections 0-7 with all fields. Companion spec file format (template-quickstart-spec.md) introduced |
-| 2       | 2026-03-29 | Added Knowledge Tiers preamble (T1/T2/T3). Added questions 0.9 (project mode) and 0.10 (team composition) to Section 0. Added brownfield-only questions 2.13-2.17 to Section 2. Added Section 8 (UX Design Standards, 9 questions). Added Section 9 (Graphic/UI Design Standards, 9 questions). Updated post-questionnaire checklist. Total project files generated: 7 to 9. |
+| 2       | 2026-03-29 | Added Knowledge Tiers preamble (T1/T2/T3). Added questions 0.3 (project mode, moved early for directory-structure routing) and 0.10 (team composition) to Section 0. Renumbered 0.3-0.8 to 0.4-0.9. Added brownfield-only questions 2.13-2.17 to Section 2. Added Section 8 (UX Design Standards, 9 questions). Added Section 9 (Graphic/UI Design Standards, 9 questions). Updated post-questionnaire checklist. Total project files generated: 7 to 9. |

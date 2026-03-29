@@ -7,7 +7,7 @@ metadata:
   version: 1.0.0
   category: utility
   context_budget: standard
-  questionnaire_version: 1
+  questionnaire_version: 2
 ---
 
 ## Quick Guide
@@ -72,7 +72,47 @@ The original interactive flow. Walk the user through the questionnaire to gather
    - Start with **Section 0 (Quick Start)** — 8 minimum questions for a skeleton
    - For each question, present the options with their pros/cons and a recommendation
    - Record all answers
-   - After Section 0, ask if the user wants to continue with detailed sections (1-7) or use defaults
+   - **Workspace routing** — After question 0.3, regardless of greenfield or brownfield, offer workspace/codebase separation:
+     - **Greenfield framing**: *"For greenfield projects, the SEJA framework recommends separating the workspace (framework files, design artifacts) from the codebase (source code). This keeps the codebase clean and the design history version-controlled independently. Would you like to create separate workspace and codebase folders?"*
+     - **Brownfield framing**: *"The SEJA framework can either install directly into your existing codebase, or create a separate workspace alongside it. A separate workspace keeps your codebase clean — no `.claude/` or `.agent-resources/` folders in your repo. Would you like to create a separate workspace?"*
+     - If **yes (greenfield)**: Ask for the workspace directory name (default: `<project-name>-workspace`) and codebase directory name (default: `<project-name>`). Both will be created as subdirectories of the target directory. Then:
+        - Create `<target>/<workspace-dir>/` and `git init` it
+        - Create `<target>/<codebase-dir>/` and `git init` it
+        - Redirect all framework file creation (steps 2-4, 6-11) to `<target>/<workspace-dir>/`
+        - Set `BACKEND_DIR` and `FRONTEND_DIR` in `project-conventions.md` to **absolute paths** pointing into `<target>/<codebase-dir>/`
+        - Set `OUTPUT_DIR` to `<target>/<workspace-dir>/_output`
+        - Generate launcher scripts (`launch.sh` / `launch.bat`) in `<target>/<workspace-dir>/` that invoke `claude --add-dir <codebase-dir>`
+        - Redirect scaffolding tasks (step 12, tasks A-K) to `<target>/<codebase-dir>/`
+     - If **yes (brownfield)**: Ask for the workspace directory path (default: `<target>-workspace` as a sibling directory). Then:
+        - **Detect embedded framework** — Check whether the codebase already contains SEJA framework files (`.claude/`, `.codex/`, `.agent-resources/`, `_output/` or custom output dir). If any are found:
+          1. **Inventory before touching anything.** The codebase's `.claude/` (or `.codex/`) and `.agent-resources/` may contain a mix of SEJA framework files and custom (non-SEJA) additions. Classify each item into three categories:
+             - **SEJA framework** → move to workspace: files whose names match known SEJA skill names (from the foundational framework's skill list), known rule filenames (`backend.md`, `frontend.md`, `i18n.md`, `migrations.md`, `tests.md`, `e2e.md`, `framework-structure.md`), known agent filenames, `CHANGELOG.md`, `CHEATSHEET.md`, `VERSION`, and the `scripts/` directory. In `.agent-resources/`: `general-*` and `template-*` files.
+             - **SEJA project data** (`project-*` files in `.agent-resources/`) → move to workspace: these are SEJA-generated references (conventions, conceptual design, metacomm, standards) that belong with the framework, not in the codebase.
+             - **Custom (non-SEJA)** → stay in codebase: any skill, rule, agent, or config file that does NOT match a known SEJA name. Also `settings.json` and `settings.local.json` (may contain project-specific hooks and permissions).
+          2. Report the classification: *"I found SEJA framework files, SEJA project data, and custom (non-SEJA) files in your codebase. SEJA files (N items) and project data (P items) will be migrated to the workspace. Custom files (M items) will stay in the codebase. Here's the breakdown: ..."*
+          3. If **yes (migrate)**: Move SEJA framework files and `project-*` data to `<workspace-dir>/`. **Leave custom (non-SEJA) skills, rules, agents, and config in the codebase.** Update path references in migrated `project-conventions.md` to use absolute paths. If a `CLAUDE.md` exists at the codebase root referencing framework files, update its paths or note it as a manual step.
+          4. If **no (fresh start)**: Ignore the embedded files and proceed with a clean workspace. Warn: *"The old framework files will remain in your codebase. You may want to remove them manually after verifying the workspace setup."*
+        - **Reconcile `project-*` files** — After migration (or when setting up a brownfield project that never had SEJA), compare any existing `project-*` files against the current `template-*` files to identify missing or outdated references. For each `template-*` file:
+          - If the corresponding `project-*` file **does not exist** → flag it for creation during template instantiation (step 6). The agent will use the mandatory conceptual design answers (Section 2) plus codebase inspection to populate it.
+          - If the corresponding `project-*` file **exists but is from an older template version** (missing sections, deprecated fields, or structural differences vs. the current template) → show the user what changed and offer to regenerate it. Preserve any user-authored content by reading the existing file first and carrying forward relevant values into the new template structure. Present a before/after summary so the user can confirm.
+          - If the corresponding `project-*` file **exists and is current** → keep as-is, no action needed.
+        - Create `<workspace-dir>/` and `git init` it
+        - Redirect all framework file creation (steps 2-4, 6-11) to `<workspace-dir>/`
+        - Set `BACKEND_DIR` and `FRONTEND_DIR` in `project-conventions.md` to **absolute paths** pointing into the existing codebase at `<target>/`
+        - Set `OUTPUT_DIR` to `<workspace-dir>/_output`
+        - Generate launcher scripts (`launch.sh` / `launch.bat`) in `<workspace-dir>/` that invoke `claude --add-dir <target>`
+        - Skip scaffolding tasks that create source directories (task A) — the codebase already exists
+     - If **no**: Proceed with the standard in-place setup (all files in the target directory). For brownfield projects, still run the **Reconcile `project-*` files** step against any existing `.agent-resources/` in the codebase.
+   - After Section 0, ask if the user wants to continue with detailed sections (1-9) or use defaults
+   - **Mandatory conceptual design** — Section 2 core questions are **required** for all projects, not optional. The agent must not allow the user to skip these by accepting defaults. Without a conceptual model, the framework cannot produce meaningful plans or design references. At minimum, the user must provide:
+     - Entity hierarchy (2.3) — what the system manages
+     - Permission levels (2.6) — who can do what
+     - Greenfield/evolving status (2.9) — determines whether as-is and to-be are populated identically or differently
+     - Metacommunication message (2.10) — what the product communicates to users
+     If the user tries to skip Section 2, remind them: *"The conceptual model is the foundation for all planning and code generation. Without it, the framework cannot produce meaningful plans or design references. Please describe at least your entities, permissions, and what the product communicates to users."*
+     For **brownfield** projects, additionally require:
+     - Existing tech stack (2.13) — what is already in place
+     - Migration constraints (2.14) — what cannot change
 
 6. **Instantiate templates**: Using the questionnaire answers, create project-specific files in `.agent-resources/`:
    - Copy `template-conventions.md` to `project-conventions.md`, substituting answers
@@ -207,11 +247,12 @@ The original interactive flow. Walk the user through the questionnaire to gather
 
 12b. **Secrets check**: Run `python .claude/skills/scripts/check_secrets.py <target>` to verify no `.env` files or files containing secrets are staged for commit. If the check flags any files, warn the user and list the flagged files. This is a safety net — step 12H already creates `.gitignore` entries, but this catches any files that slipped through.
 
-13. **Summary**: Output a checklist of everything created, including both the `.claude/` framework files (steps 2–11) and any scaffolding tasks performed (step 12). List remaining manual steps only for tasks the user declined or that failed. Typical remaining manual steps:
+13. **Summary**: Output a checklist of everything created, including both the `.claude/` framework files (steps 2–11) and any scaffolding tasks performed (step 12). If workspace/codebase separation was chosen (greenfield routing in step 5), clearly show the two-directory layout and how to launch Claude Code from the workspace. List remaining manual steps only for tasks the user declined or that failed. Typical remaining manual steps:
     - Creating/configuring the database itself (e.g., `createdb <name>`)
     - Running initial migrations (if the migration tool was initialized but the DB does not exist yet)
     - Configuring external services (OAuth providers, email, etc.)
     - Replacing placeholder secrets in `.env` files
+    - (If workspace pattern) Start Claude Code from the workspace: `claude --add-dir <codebase-dir>`
 
 ---
 
@@ -246,7 +287,7 @@ For experienced users who pre-fill a spec file with their stack choices. The age
    - **Ambiguous or conflicting values** — e.g., chose Django ORM with Flask framework, or Prisma with Python backend
    - Present the full report to the user before asking any questions
 
-6. **Targeted Q&A**: For each missing required field or conflict identified in step 5, ask the user. Group related questions when possible (e.g., ask about backend framework and ORM together). Present options with pros/cons from the questionnaire.
+6. **Targeted Q&A**: For each missing required field or conflict identified in step 5, ask the user. Group related questions when possible (e.g., ask about backend framework and ORM together). Present options with pros/cons from the questionnaire. Apply the **Workspace routing** logic from Mode 1, step 5 — offer workspace/codebase separation before proceeding to directory creation. Enforce the **Mandatory conceptual design** fields regardless of project mode (greenfield or brownfield).
 
 7. **Offer detailed sections**: After resolving core fields, present:
    > "Your spec covers the core stack decisions. The following detailed sections can refine the generated files. Which would you like to explore?"
@@ -344,6 +385,18 @@ Used during Mode 2 validation (step 5) to determine which fields are required, d
 | `e2e` | `Playwright` | Static default |
 | `wcag` | `AA` | Static default |
 
+### Required conceptual design (agent must ask if missing, regardless of project mode)
+
+- Entity hierarchy (questionnaire 2.3) — what the system manages
+- Permission levels (questionnaire 2.6) — who can do what
+- Greenfield/evolving status (questionnaire 2.9) — determines as-is/to-be population
+- Metacommunication message (questionnaire 2.10) — what the product communicates to users
+
+### Additionally required for brownfield projects
+
+- Existing tech stack (questionnaire 2.13)
+- Migration constraints (questionnaire 2.14)
+
 ### Optional (omit silently if not provided)
 
 - `rich_text_editor`, `dark_mode`, `primary_color`, `secondary_color`
@@ -351,7 +404,7 @@ Used during Mode 2 validation (step 5) to determine which fields are required, d
 - `secondary_locale`, `backend_default_locale`, `localized_emails`, `translatable_entities`
 - `access_token_expiry`, `refresh_token_expiry`, `rate_limit`
 - `file_uploads`, `import_export`, `integration_suite`, `e2e_base_url`
-- Conceptual design details (free-form)
+- Conceptual design details beyond 2.3/2.6/2.10 (free-form)
 - Security validation constants (free-form)
 
 ---

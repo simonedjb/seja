@@ -98,9 +98,6 @@ def generate_index(verbose: bool = False) -> int:
         print("No entries found in briefs.md")
         return 0
 
-    # Reverse for descending chronological order (newest first)
-    entries.reverse()
-
     lines = [
         "# Briefs Index",
         "",

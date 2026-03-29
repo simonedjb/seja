@@ -435,7 +435,7 @@ def main() -> None:
         description="Upgrade a SEJA-Claude framework project to a newer version.",
         epilog=(
             "Example:\n"
-            "  python upgrade_framework.py --from ../seja-repo/\n"
+            "  python upgrade_framework.py --from ../seja-public/\n"
             "  python upgrade_framework.py --from ./kit/ --target ./my-project --dry-run"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,

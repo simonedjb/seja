@@ -20,7 +20,7 @@ If "$ARGUMENTS" is empty, ask for the skill name and brief.
    c. If no Quick Guide section exists, display the `description` field from the YAML frontmatter.
    d. **Stop here** — do not proceed with the remaining pre-skill steps or the calling skill's instructions.
 
-1. Without asking for authorization, append to `${BRIEFS_FILE}` (see project-conventions.md) a line at the end of the file in this format:
+1. Without asking for authorization, insert into `${BRIEFS_FILE}` (see project-conventions.md) a new entry as the first entry after the `# Briefs Log` header and its following blank line (i.e., newest entries appear first). Format:
 - Format: `STARTED | <start-datetime UTC> | <skill-name> | <brief>`
 - Example: `STARTED | 2026-03-19 21:00:00 UTC | make-plan | Add user profile page`
 - The datetime must be in format `YYYY-MM-DD HH:mm:ss UTC`
@@ -43,7 +43,7 @@ If "$ARGUMENTS" is empty, ask for the skill name and brief.
 
    **`standard`** (default) — Load the briefs index (`${BRIEFS_INDEX_FILE}`) instead of the full `${BRIEFS_FILE}`. If the index does not exist, generate it by running `python .claude/skills/scripts/generate_briefs_index.py`. Then load reference files (see below).
 
-   **`heavy`** — Load `${BRIEFS_FILE}` with **recency windowing**: read only the last 50 entries from the file. Prepend a summary line for older entries: "N earlier entries from DATE to DATE, not loaded." Also load the plan index (`${PLANS_DIR}/INDEX.md`). Then load reference files (see below).
+   **`heavy`** — Load `${BRIEFS_FILE}` with **recency windowing**: read only the first 50 entries from the file (newest first). Append a summary line for older entries: "N earlier entries from DATE to DATE, not loaded." Also load the plan index (`${PLANS_DIR}/INDEX.md`). Then load reference files (see below).
 
    **Reference file loading (standard and heavy tiers):**
 

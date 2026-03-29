@@ -15,7 +15,7 @@ After a skill completes, `/post-skill` reads this file and looks up the complete
 | After | Suggest | Reason |
 | --- | --- | --- |
 | `/make-plan` | `/execute-plan` | Ready to execute this plan? |
-| `/execute-plan` | `/check preflight` | Run a preflight check before committing? |
+| `/execute-plan` | `/check preflight` | Auto-triggered unless --skip-preflight was used. |
 | `/make-plan --roadmap` | `/execute-plan` | Ready to execute items from the roadmap? |
 | `/explain spec-drift` | `/make-plan` | Specs analyzed — ready to plan next steps? |
 
