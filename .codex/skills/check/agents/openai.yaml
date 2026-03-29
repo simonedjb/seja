@@ -1,0 +1,4 @@
+interface:
+  display_name: "Check"
+  short_description: "Run quality checks: validation, code review, smoke tests, pre..."
+  default_prompt: "Use $check to run quality checks: validation, code review, smoke tests, preflight, or framework health."

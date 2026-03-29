@@ -9,11 +9,11 @@ Our goal is to design a human-centered computing methodology based on semiotic e
 ## Start here
 
 - Onboarding guides -- end-to-end walkthroughs for a product designer new to AI-assisted development:
-  - [Claude onboarding guide](seja-claude-onboarding-guide.md) (Anthropic Claude)
-  - [Codex onboarding guide](seja-codex-onboarding-guide.md) (OpenAI Codex)
-- [Quickstart kits](quickstart-kits/) -- downloadable framework exports for both agents
-- [Journeys](journeys/) -- scenario-based starting points for solo work, teams, agencies, and regulated environments
-- [Recipes](recipes/) -- short task-focused how-to guides
+  - [Claude onboarding guide](docs/claude-onboarding-guide.md) (Anthropic Claude)
+  - [Codex onboarding guide](docs/codex-onboarding-guide.md) (OpenAI Codex)
+- Clone this repository or download it as ZIP from GitHub to get started
+- [Journeys](docs/journeys/) -- scenario-based starting points for solo work, teams, agencies, and regulated environments
+- [Recipes](docs/recipes/) -- short task-focused how-to guides
 
 ---
 
@@ -59,33 +59,33 @@ Both toolkits are fully supported. Choose based on your preferred AI agent.
 
 ### Solo
 
-- [Product designer, new product](journeys/journey-solo-designer-greenfield.md)
-- [Product designer, existing product](journeys/journey-solo-designer-brownfield.md)
-- [Developer, side project](journeys/journey-solo-developer.md)
+- [Product designer, new product](docs/journeys/journey-solo-designer-greenfield.md)
+- [Product designer, existing product](docs/journeys/journey-solo-designer-brownfield.md)
+- [Developer, side project](docs/journeys/journey-solo-developer.md)
 
 ### Team
 
-- [Small team kickoff](journeys/journey-small-team-kickoff.md)
-- [Growing team, existing product](journeys/journey-growing-team.md)
+- [Small team kickoff](docs/journeys/journey-small-team-kickoff.md)
+- [Growing team, existing product](docs/journeys/journey-growing-team.md)
 
 ### Multi-project / special contexts
 
-- [Agency or consultancy](journeys/journey-agency-multi-project.md)
-- [Enterprise / regulated system](journeys/journey-enterprise-evolution.md)
-- [Teaching or research](journeys/journey-teaching-research.md)
+- [Agency or consultancy](docs/journeys/journey-agency-multi-project.md)
+- [Enterprise / regulated system](docs/journeys/journey-enterprise-evolution.md)
+- [Teaching or research](docs/journeys/journey-teaching-research.md)
 
 ---
 
 ## Core recipes
 
-- [Bootstrap a greenfield project](recipes/recipe-bootstrap-greenfield.md)
-- [Map an existing codebase](recipes/recipe-map-existing-codebase.md)
-- [Plan and execute a feature](recipes/recipe-plan-and-execute.md)
-- [Set up a project workspace](recipes/recipe-workspace-setup.md)
-- [Onboard a team member](recipes/recipe-onboard-team-member.md)
-- [Run quality gates](recipes/recipe-quality-gates.md)
-- [Generate stakeholder material](recipes/recipe-stakeholder-material.md)
-- [Upgrade the foundational framework](recipes/recipe-upgrade-framework.md)
+- [Bootstrap a greenfield project](docs/recipes/recipe-bootstrap-greenfield.md)
+- [Map an existing codebase](docs/recipes/recipe-map-existing-codebase.md)
+- [Plan and execute a feature](docs/recipes/recipe-plan-and-execute.md)
+- [Set up a project workspace](docs/recipes/recipe-workspace-setup.md)
+- [Onboard a team member](docs/recipes/recipe-onboard-team-member.md)
+- [Run quality gates](docs/recipes/recipe-quality-gates.md)
+- [Generate stakeholder material](docs/recipes/recipe-stakeholder-material.md)
+- [Upgrade the foundational framework](docs/recipes/recipe-upgrade-framework.md)
 
 ---
 

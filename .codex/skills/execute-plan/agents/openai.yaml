@@ -1,0 +1,4 @@
+interface:
+  display_name: "Execute Plan"
+  short_description: "Execute a previously generated plan to add a feature, fix a b..."
+  default_prompt: "Use $execute-plan to execute a previously generated plan to add a feature, fix a bug, or refactor code."

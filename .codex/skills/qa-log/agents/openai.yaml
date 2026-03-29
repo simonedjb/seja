@@ -1,0 +1,4 @@
+interface:
+  display_name: "QA LOG"
+  short_description: "Log the entire current Q&A session into a file for future ref..."
+  default_prompt: "Use $qa-log to log the entire current q&a session into a file for future reference."

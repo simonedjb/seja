@@ -1,0 +1,4 @@
+interface:
+  display_name: "Advise"
+  short_description: "Answer questions about the codebase, architecture, or design..."
+  default_prompt: "Use $advise to answer questions about the codebase, architecture, or design decisions, logging q&a pairs."

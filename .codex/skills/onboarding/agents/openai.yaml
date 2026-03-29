@@ -1,0 +1,4 @@
+interface:
+  display_name: "Onboarding"
+  short_description: "Generate a tailored onboarding plan for a new team member bas..."
+  default_prompt: "Use $onboarding to generate a tailored onboarding plan for a new team member based on their role and expertise level."

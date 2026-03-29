@@ -1,0 +1,4 @@
+interface:
+  display_name: "Update Tests"
+  short_description: "Write or update unit tests (frontend vitest or backend pytest..."
+  default_prompt: "Use $update-tests to write or update unit tests (frontend vitest or backend pytest) following project conventions."

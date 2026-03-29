@@ -1,0 +1,4 @@
+interface:
+  display_name: "PRE Skill"
+  short_description: "[Internal] Lifecycle hook invoked by other skills to load ref..."
+  default_prompt: "Use $pre-skill to [internal] lifecycle hook invoked by other skills to load references and log briefs."
