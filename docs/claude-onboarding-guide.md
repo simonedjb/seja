@@ -477,7 +477,7 @@ Each type produces different output:
 
 ### 4.4 The "I Need to Design with Metacommunication" Workflow
 
-This is particularly relevant for designers. The `/make-plan --framing metacomm` command translates a **metacommunication message** (what the designer wants to tell the user through the interface) into a technical plan.
+This is particularly relevant for designers. The `/make-plan --framing metacomm` command translates a **metacommunication message** (what the designer wants to tell the user through the interface) into a technical plan. Your message is recorded **verbatim** -- the framework preserves your exact wording because precise phrasing carries design intent that paraphrasing would distort.
 
 ```
 You: /make-plan --framing metacomm When you open a project, I want you to see
@@ -837,6 +837,6 @@ Browsing available tasks:
 5. **Keep reference files updated** as your project evolves -- stale references produce stale plans
 6. **Break large features into small plans** -- each should be independently testable and committable
 7. **Never defer SEC or A11Y findings** -- these perspectives have priority by design
-8. **Use `/make-plan --framing metacomm` for design-driven development** -- translate designer intent into technical plans, keeping the metacommunication message at the center of design decisions
+8. **Use `/make-plan --framing metacomm` for design-driven development** -- translate designer intent into technical plans, keeping the metacommunication message at the center of design decisions. Your metacommunication messages are always recorded verbatim.
 9. **Review every plan and every diff** before committing -- Claude is a powerful assistant, but you are the responsible designer
 10. **Use `/help --browse` when unsure** -- it surfaces routine maintenance tasks you might otherwise forget

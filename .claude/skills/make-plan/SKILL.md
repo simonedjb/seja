@@ -57,7 +57,7 @@ Reserve the next global ID by running `python .claude/skills/scripts/reserve_id.
 This skill supports two framings:
 
 - **Default** — the brief is a technical description (feature, bug, refactor)
-- **Metacomm** — the brief is a designer's metacommunication message. Interpret it as the designer telling the user what they can do, how, when (in which context, under which constraints), with what purpose, or why, and ensure the generated plan will make it happen as stated.
+- **Metacomm** — the brief is a designer's metacommunication message, phrased as "I" (designer) speaking to "you" (user). Record the brief **verbatim** in the plan (see `general-shared-definitions.md` § Verbatim rule and § Phrasing rule). Interpret it as the designer telling the user what they can do, how, when (in which context, under which constraints), with what purpose, or why, and ensure the generated plan will make it happen as stated. All metacomm text the agent generates (summaries, intention notes, per-feature intents) must also use I/you phrasing — never third-person or passive voice.
 
 When invoked with `--framing metacomm`, use the metacomm framing. Otherwise, use the default framing.
 
@@ -282,7 +282,7 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
 
 8. **Generate plans**: For each approved work item:
    - If classified as **technical**: invoke the standard make-plan workflow with the item's description
-   - If classified as **design**: invoke make-plan with `--framing metacomm` and the item's description phrased as a metacommunication message (e.g., "When the user enters the home page, I want them to see...")
+   - If classified as **design**: invoke make-plan with `--framing metacomm` and the item's description phrased as a metacommunication message using I/you (e.g., "When you open the home page, I want you to see...")
    - Record the generated plan ID next to each work item
 
 9. **Save roadmap summary**: Save to `${ROADMAP_DIR}/roadmap-<id>-<slug>.md` with:
@@ -376,7 +376,7 @@ The Alembic migration chain is linear -- each migration depends on the previous 
 | What the system does internally | Technical | `/make-plan` | Models, migrations, services, API endpoints, validation |
 | What the user sees and experiences | Design | `/make-plan --framing metacomm` | Page UX, onboarding, empty states, navigation flow, error feedback |
 
-Design items are phrased as metacommunication messages: "When the user [context], I want them to [experience/action], because [rationale]."
+Design items are phrased as metacommunication messages using I/you: "When you [context], I want you to [experience/action], because I know you [rationale]."
 
 ---
 

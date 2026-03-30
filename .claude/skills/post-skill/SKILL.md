@@ -44,11 +44,13 @@ metadata:
 
    a. Read the plan file to identify what changed: entities added/modified/removed, permissions changed, UX patterns added, metacommunication intents implemented.
 
-   b. If `project-conceptual-design-as-is.md` exists in `.agent-resources/`:
-      - For entities/permissions/patterns **added** by the plan: add the corresponding section to the as-is file.
-      - For entities/permissions/patterns **modified** by the plan: update the relevant section.
-      - For entities/permissions/patterns **removed** by the plan: remove the section.
-      - Append a changelog entry to §11:
+   b. For `project-conceptual-design-as-is.md` in `.agent-resources/`:
+      - If the file **does not exist** (greenfield project, first plan execution): instantiate it from `template-conceptual-design-as-is.md`, populating only the sections relevant to what the plan implemented. Leave other sections as template placeholders.
+      - If the file **exists**: update it incrementally:
+        - For entities/permissions/patterns **added** by the plan: add the corresponding section to the as-is file.
+        - For entities/permissions/patterns **modified** by the plan: update the relevant section.
+        - For entities/permissions/patterns **removed** by the plan: remove the section.
+      - In both cases, append a changelog entry to §11:
         ```
         ### vN — YYYY-MM-DD
         - **Added/Changed/Removed**: {{description}}
@@ -56,10 +58,13 @@ metadata:
         - **Plan**: {{plan-id}}
         ```
 
-   c. If `project-metacomm-as-is.md` exists in `.agent-resources/`:
-      - If the plan had metacomm framing: update the per-feature metacomm log (§2) with the implemented intent, setting Implementation Status to "Implemented".
-      - For features whose metacomm was modified by the plan: update the Designer Intent and Last Updated columns.
-      - Append a changelog entry to §3.
+   c. For `project-metacomm-as-is.md` in `.agent-resources/`:
+      - If the file **does not exist** (greenfield project, first plan execution): instantiate it from `template-metacomm-as-is.md`, populating only the sections relevant to what the plan implemented.
+      - If the file **exists**: update it incrementally:
+        - If the plan had metacomm framing: update the per-feature metacomm log (§2) with the implemented intent, setting Implementation Status to "Implemented".
+        - For features whose metacomm was modified by the plan: update the Designer Intent and Last Updated columns.
+      - **Phrasing rule**: All metacomm text (global summary, EMT answers, per-feature intents) must use "I" as the designer and "you" as the user — never third-person or passive voice. See `general-shared-definitions.md` § Phrasing rule.
+      - In both cases, append a changelog entry to §3.
       - Tag all changes with `source: agent (post-skill)`.
 
    d. Include the updated as-is files in the commit scope (step 8).

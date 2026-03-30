@@ -26,7 +26,10 @@ from pathlib import Path
 
 from project_config import REPO_ROOT, get_path
 
-OUTPUT_DIR = get_path("OUTPUT_DIR") or REPO_ROOT / "_output"
+_DEFAULT_OUTPUT_DIR = get_path("OUTPUT_DIR") or REPO_ROOT / "_output"
+
+# Module-level defaults; overridden by --output-dir when called from CLI.
+OUTPUT_DIR = _DEFAULT_OUTPUT_DIR
 INDEX_FILE = OUTPUT_DIR / "INDEX.md"
 
 # Matches the ID column in table rows: captures numeric IDs (possibly zero-padded)
@@ -134,10 +137,20 @@ def main() -> None:
         "--dry-run", action="store_true",
         help="Print the next ID without writing to INDEX.md",
     )
+    parser.add_argument(
+        "--output-dir",
+        help="Override OUTPUT_DIR (read/write INDEX.md in this directory instead of the default)",
+    )
     args = parser.parse_args()
 
     if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+
+    # Apply --output-dir override before reserving
+    global OUTPUT_DIR, INDEX_FILE
+    if args.output_dir:
+        OUTPUT_DIR = Path(args.output_dir).resolve()
+        INDEX_FILE = OUTPUT_DIR / "INDEX.md"
 
     reserved_id = reserve(args.artifact_type, args.title, dry_run=args.dry_run)
     print(reserved_id)

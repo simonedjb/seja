@@ -228,7 +228,7 @@ When the brief is primarily about what the interface should communicate, use met
 $make-plan --framing metacomm When a user opens the dashboard, I want the most important next step to feel obvious and reassuring.
 ```
 
-This is especially useful for product designers because it starts from communicative intent instead of implementation detail.
+This is especially useful for product designers because it starts from communicative intent instead of implementation detail. Your metacommunication message is recorded **verbatim** -- the framework preserves your exact wording because precise phrasing carries design intent that paraphrasing would distort.
 
 ### 5.3 Ask For Explanations Without Pretending To Know The Code
 

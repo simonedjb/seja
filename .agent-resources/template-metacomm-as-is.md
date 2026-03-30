@@ -10,7 +10,7 @@
 
 ## 1. Global Metacommunication Summary
 
-> Summarize the current designer-to-user message as actually implemented in the system. Use the semiotic engineering frame: "Here is my understanding of who you are, what I've learned you want or need to do, in which preferred ways, and why. This is the system that I have therefore designed for you, and this is the way you can or should use it in order to fulfill a range of purposes that fall within this vision."
+> Summarize the current designer-to-user message as actually implemented in the system. **Phrasing: use "I" as the designer and "you" as the user — never third-person or passive voice (see `general-shared-definitions.md` § Phrasing rule).** Use the semiotic engineering frame: "Here is my understanding of who you are, what I've learned you want or need to do, in which preferred ways, and why. This is the system that I have therefore designed for you, and this is the way you can or should use it in order to fulfill a range of purposes that fall within this vision."
 
 {{GLOBAL_METACOMM_SUMMARY}}
 
@@ -63,7 +63,7 @@
 
 ## 3. Per-Feature Metacommunication Log
 
-> For each feature or interaction flow, document the designer's intent as currently implemented.
+> For each feature or interaction flow, document the designer's intent as currently implemented. **Each intent must be phrased as "I ... for you / because you ..." — see `general-shared-definitions.md` § Phrasing rule.**
 
 | Feature / Flow | Designer Intent | Implementation Status | Source | Last Updated |
 |---|---|---|---|---|

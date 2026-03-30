@@ -284,6 +284,7 @@ Every entry created or modified by this workflow must carry:
 For each entity, feature, or UX pattern in `${CONCEPTUAL_DESIGN_TO_BE}` that lacks a corresponding entry in `${METACOMM_TO_BE}`:
 - Draft a metacommunication intention describing what the designer communicates to the user through this feature
 - Present the draft to the user for confirmation or revision
+- If the user revises the draft, record their revision **verbatim** (see `general-shared-definitions.md` § Verbatim rule)
 - On confirmation, add the entry to `${METACOMM_TO_BE}` with `source: agent (explain)`
 
 **Direction 2 — metacomm -> conceptual-design**:

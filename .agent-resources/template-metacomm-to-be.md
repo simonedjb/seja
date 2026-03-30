@@ -11,7 +11,7 @@
 
 ## 1. Global Metacommunication Vision
 
-> Write the full designer-to-user message as you intend it. Use the semiotic engineering frame: "Here is my understanding of who you are, what I've learned you want or need to do, in which preferred ways, and why. This is the system that I have therefore designed for you, and this is the way you can or should use it in order to fulfill a range of purposes that fall within this vision."
+> Write the full designer-to-user message as you intend it. **Phrasing: use "I" as the designer and "you" as the user — never third-person or passive voice (see `general-shared-definitions.md` § Phrasing rule).** Use the semiotic engineering frame: "Here is my understanding of who you are, what I've learned you want or need to do, in which preferred ways, and why. This is the system that I have therefore designed for you, and this is the way you can or should use it in order to fulfill a range of purposes that fall within this vision."
 
 {{GLOBAL_METACOMM_VISION}}
 
@@ -66,7 +66,7 @@
 
 ## 2. Per-Feature Metacommunication Intentions
 
-> For each feature or interaction flow, document what the designer intends the system to communicate to the user.
+> For each feature or interaction flow, document what the designer intends the system to communicate to the user. **Each intent must be phrased as "I ... for you / because you ..." — see `general-shared-definitions.md` § Phrasing rule.**
 
 | Feature / Flow | Designer Intent | Priority | Source | Last Synced |
 |---|---|---|---|---|

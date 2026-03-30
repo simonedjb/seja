@@ -107,8 +107,8 @@ The original interactive flow. Walk the user through the questionnaire to gather
    - **Mandatory conceptual design** — Section 2 core questions are **required** for all projects, not optional. The agent must not allow the user to skip these by accepting defaults. Without a conceptual model, the framework cannot produce meaningful plans or design references. At minimum, the user must provide:
      - Entity hierarchy (2.3) — what the system manages
      - Permission levels (2.6) — who can do what
-     - Greenfield/evolving status (2.9) — determines whether as-is and to-be are populated identically or differently
-     - Metacommunication message (2.10) — what the product communicates to users
+     - Greenfield/evolving status (2.9) — determines whether as-is files are instantiated (brownfield) or deferred to post-skill (greenfield)
+     - Metacommunication message (2.10) — what the product communicates to users. Record the user's answer **verbatim** (see `general-shared-definitions.md` § Verbatim rule).
      If the user tries to skip Section 2, remind them: *"The conceptual model is the foundation for all planning and code generation. Without it, the framework cannot produce meaningful plans or design references. Please describe at least your entities, permissions, and what the product communicates to users."*
      For **brownfield** projects, additionally require:
      - Existing tech stack (2.13) — what is already in place
@@ -116,11 +116,10 @@ The original interactive flow. Walk the user through the questionnaire to gather
 
 6. **Instantiate templates**: Using the questionnaire answers, create project-specific files in `.agent-resources/`:
    - Copy `template-conventions.md` to `project-conventions.md`, substituting answers
-   - Copy `template-conceptual-design-as-is.md` to `project-conceptual-design-as-is.md`, filling in current-state conceptual design
    - Copy `template-conceptual-design-to-be.md` to `project-conceptual-design-to-be.md`, filling in target-state conceptual design
-   - Copy `template-metacomm-as-is.md` to `project-metacomm-as-is.md`, filling in current-state metacommunication
-   - Copy `template-metacomm-to-be.md` to `project-metacomm-to-be.md`, filling in target-state metacommunication
-   - **Note**: For greenfield projects, populate as-is and to-be identically. For evolving products, populate to-be with the target state and as-is with the current implementation.
+   - Copy `template-metacomm-to-be.md` to `project-metacomm-to-be.md`, filling in target-state metacommunication. **All metacomm text must use "I" (designer) and "you" (user) phrasing — never third-person or passive voice. See `general-shared-definitions.md` § Phrasing rule.**
+   - **For evolving (brownfield) projects only**: also copy `template-conceptual-design-as-is.md` to `project-conceptual-design-as-is.md` (filling in current-state conceptual design) and `template-metacomm-as-is.md` to `project-metacomm-as-is.md` (filling in current-state metacommunication). The same I/you phrasing rule applies to as-is metacomm files.
+   - **For greenfield projects**: do **not** instantiate as-is files — there is no existing state to document. The as-is files will be created by the post-skill lifecycle hook as plans are executed and code is built.
    - Copy `template-backend-standards.md` to `project-backend-standards.md`, selecting relevant sections
    - Copy `template-frontend-standards.md` to `project-frontend-standards.md`, selecting relevant sections
    - Copy `template-i18n-standards.md` to `project-i18n-standards.md`, if i18n is needed

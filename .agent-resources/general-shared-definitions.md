@@ -2,7 +2,11 @@
 
 ## Semiotic Engineering concepts
 
-The **metacommunication message** is a designer-to-user message that is conveyed by the designer (I) to the user (you) throughout the system and the user interface. For the full definition and its application to the project, see `project-conceptual-design-to-be.md` §1. Semiotic engineering posits that the message can be summarized as: "Here is my understanding of who you are, what I've learned you want or need to do, in which preferred ways, and why. This is the system that I have therefore designed for you, and this is the way you can or should use it in order to fulfill a range of purposes that fall within this vision."
+The **metacommunication message** is a designer-to-user message that is conveyed by the designer (I) to the user (you) throughout the system and the user interface. For the full definition and its application to the project. Semiotic engineering posits that the message can be summarized as: "Here is my understanding of who you are, what I've learned you want or need to do, in which preferred ways, and why. This is the system that I have therefore designed for you, and this is the way you can or should use it in order to fulfill a range of purposes that fall within this vision."
+
+**Phrasing rule (non-negotiable)**: All metacommunication messages — in templates, project files, plans, briefs, per-feature logs, and EMT answers — **must** use first-person "I" for the designer and second-person "you" for the user. Never use "the designer", "the system", "the user" (third-person), passive voice, or imperative mood. This applies to all sections of `project-metacomm-*.md` files: the global summary/vision, every EMT answer, and every per-feature intent. Example: write "I designed a postpone shortcut for you because I know you tend to over-schedule" — not "The designer provides a postpone shortcut" or "Enforce privacy with minimal friction."
+
+**Verbatim rule**: When a user provides a metacommunication message as input — during quickstart, in a spec, in `project-metacomm-to-be.md`, or as a `--framing metacomm` brief — the agent must record it **exactly as written**, without summarization, editing, or any textual manipulation. The designer's precise wording carries intentional nuance; paraphrasing risks distorting the design intent.
 
 ---
 

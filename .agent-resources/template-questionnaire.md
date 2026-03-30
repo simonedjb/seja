@@ -81,7 +81,7 @@ Answer:
 
 ## Section 2 — Conceptual Design (`template-conceptual-design.md`)
 
-> Fills: `project-conceptual-design-as-is.md` and `project-conceptual-design-to-be.md` — describes WHAT your system is (current and target state), not HOW it's built.
+> Fills: `project-conceptual-design-to-be.md` (always) and `project-conceptual-design-as-is.md` (brownfield only) — describes WHAT your system is (target state, and current state for evolving products), not HOW it's built.
 
 **2.1** What does your platform do? Who is it for? What problem does it solve? (2–3 paragraphs)
 
@@ -133,13 +133,13 @@ Answer:
 
 Answer:
 
-**2.9** Is this a greenfield project (as-is = to-be) or an evolving product with a gap between current and target design?
-> *Determines whether quickstart populates `project-conceptual-design-as-is.md` and `project-conceptual-design-to-be.md` identically or differently.*
+**2.9** Is this a greenfield project (no existing implementation) or an evolving product with a gap between current and target design?
+> *Determines whether quickstart defers as-is files to post-plan execution (greenfield) or instantiates them immediately with current state (brownfield).*
 
 Answer: (greenfield / evolving)
 
-**2.10** What is the initial metacommunication message? Summarize what the designer intends to communicate to the user about who they are, what they can do, and why.
-> *Feeds `project-metacomm-to-be.md`.*
+**2.10** What is the initial metacommunication message? Write it as the designer speaking directly to the user, using "I" (designer) and "you" (user). Describe who you think they are, what you have designed for them, and why. Example: "I know you are a busy person who needs... Therefore, I have designed... for you."
+> *Feeds `project-metacomm-to-be.md`. Must follow the phrasing rule in `general-shared-definitions.md` — always "I" (designer) and "you" (user), never third-person.*
 
 Answer:
 
