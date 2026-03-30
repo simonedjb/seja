@@ -3,7 +3,7 @@
 md_to_html.py — Convert a markdown file to styled standalone HTML.
 
 Reads a markdown file and an optional style configuration file
-(project-communication-style.md) to produce a self-contained HTML
+(project/communication-style.md) to produce a self-contained HTML
 document with all CSS inlined.
 
 Engines
@@ -19,8 +19,8 @@ Usage
 -----
     python .codex/skills/scripts/md_to_html.py <input.md> [options]
 
-    --style <path>     Path to project-communication-style.md
-                       (default: .agent-resources/project-communication-style.md)
+    --style <path>     Path to project/communication-style.md
+                       (default: _references/project/communication-style.md)
     --output <path>    Output HTML path (default: input stem + .html)
     --engine <name>    Override engine: python-markdown | pandoc
                        (default: from style file or python-markdown)
@@ -53,7 +53,7 @@ def _default_lang() -> str:
         langs = _cfg_get("I18N_LANGUAGES", "en-US")
         return langs.split(",")[0].strip()
     return "en-US"
-DEFAULT_STYLE_PATH = REPO_ROOT / '.agent-resources' / 'project-communication-style.md'
+DEFAULT_STYLE_PATH = REPO_ROOT / '_references' / 'project/communication-style.md'
 
 # ---------------------------------------------------------------------------
 # Default values when no style file is available
@@ -365,8 +365,8 @@ def main() -> None:
     )
     parser.add_argument(
         "--style", type=Path, default=DEFAULT_STYLE_PATH,
-        help="Path to project-communication-style.md "
-             "(default: .agent-resources/project-communication-style.md)",
+        help="Path to project/communication-style.md "
+             "(default: _references/project/communication-style.md)",
     )
     parser.add_argument(
         "--output", type=Path, default=None,

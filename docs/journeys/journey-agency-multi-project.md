@@ -29,7 +29,7 @@ For each client codebase, use `/quickstart --workspace` / `$quickstart --workspa
 ```
 d:\workspaces\client-a\      <-- ClientA workspace (its own git repo)
   .claude/ or .codex\        <-- copied from foundational framework
-  .agent-resources\           <-- copied + project-specific files generated
+  _references\           <-- copied + project-specific files generated
   _output\                    <-- plans, advisories, briefs (version-controlled here)
 d:\git\client-a-project\     <-- ClientA codebase (added via --add-dir)
 ```
@@ -38,9 +38,9 @@ See the [workspace setup recipe](../recipes/recipe-workspace-setup.md) for detai
 
 ### Step 3: Bootstrap each client workspace
 
-In each *ClientName* workspace, run `/quickstart .` / `$quickstart .` and walk through the questionnaire for that specific client's codebase. Set absolute paths in `project-conventions.md`: `OUTPUT_DIR` should point inside the workspace (e.g., `D:/workspaces/client-a/_output`) so output artifacts are version-controlled alongside the framework configuration. `BACKEND_DIR` and `FRONTEND_DIR` point at the *ClientName* codebase. Start the agent from the workspace with the generated launcher script or your host's equivalent additional-directory workflow.
+In each *ClientName* workspace, run `/quickstart .` / `$quickstart .` and walk through the questionnaire for that specific client's codebase. Set absolute paths in `project/conventions.md`: `OUTPUT_DIR` should point inside the workspace (e.g., `D:/workspaces/client-a/_output`) so output artifacts are version-controlled alongside the framework configuration. `BACKEND_DIR` and `FRONTEND_DIR` point at the *ClientName* codebase. Start the agent from the workspace with the generated launcher script or your host's equivalent additional-directory workflow.
 
-Expected output: all `project-*.md` files generated for the client project.
+Expected output: all `project/*.md` files generated for the client project.
 
 ### Step 4: Generate client-facing material
 

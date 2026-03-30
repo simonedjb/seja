@@ -50,7 +50,7 @@ Set up `/check preflight` / `$check preflight` as a pre-commit habit. Use `/chec
 
 ### Step 6: Keep conventions alive
 
-As the project evolves, update `project-*.md` files to reflect new decisions. Use `/advise` / `$advise` to document architecture decisions, and `/explain spec-drift` / `$explain spec-drift` to detect when implementation diverges from design intent.
+As the project evolves, update `project/*.md` files to reflect new decisions. Use `/advise` / `$advise` to document architecture decisions, and `/explain spec-drift` / `$explain spec-drift` to detect when implementation diverges from design intent.
 
 ## What to do next
 

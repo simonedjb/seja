@@ -62,7 +62,7 @@ When invoked with `--details` (`/help advise --details`):
 2. Additionally show:
    - **Arguments**: The full argument syntax from the `argument-hint` field in frontmatter.
    - **Category**: The skill's `metadata.category` value.
-   - **Related skills**: Look up the skill in `.agent-resources/general-skill-graph.md` and show which skills are suggested after this one, and which skills suggest this one as a follow-up.
+   - **Related skills**: Look up the skill in `_references/general/skill-graph.md` and show which skills are suggested after this one, and which skills suggest this one as a follow-up.
 3. After displaying, ask: "Ready to use this skill? Just type the command."
 
 ### Layer 4: With --browse flag — Interactive Browse

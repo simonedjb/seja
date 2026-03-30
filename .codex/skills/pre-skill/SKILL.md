@@ -20,7 +20,7 @@ If "$ARGUMENTS" is empty, ask for the skill name and brief.
    c. If no Quick Guide section exists, display the `description` field from the YAML frontmatter.
    d. **Stop here** - do not proceed with the remaining pre-skill steps or the calling skill's instructions.
 
-1. Without asking for authorization, append to `${BRIEFS_FILE}` (see project-conventions.md) a line at the end of the file in this format:
+1. Without asking for authorization, append to `${BRIEFS_FILE}` (see project/conventions.md) a line at the end of the file in this format:
 - Format: `STARTED | <start-datetime UTC> | <skill-name> | <brief>`
 - Example: `STARTED | 2026-03-19 21:00:00 UTC | make-plan | Add user profile page`
 - The datetime must be in format `YYYY-MM-DD HH:mm:ss UTC`
@@ -30,7 +30,7 @@ If "$ARGUMENTS" is empty, ask for the skill name and brief.
 
 2. Without asking for authorization, save `${BRIEFS_FILE}` before continuing, so the user can see a log of the requests if the system crashes after this.
 
-3. **Orphaned-brief detection**: Read `${BRIEFS_INDEX_FILE}` (see project-conventions.md). If it does not exist, generate it by running `python .codex/skills/scripts/generate_briefs_index.py`. Scan the index for entries with status `STARTED` (no matching `DONE`). If any orphaned entries are found (excluding the entry just appended in step 1), emit a warning: "Warning: N orphaned STARTED entries found in briefs index (no matching DONE). These may be from crashed sessions. Consider reviewing them."
+3. **Orphaned-brief detection**: Read `${BRIEFS_INDEX_FILE}` (see project/conventions.md). If it does not exist, generate it by running `python .codex/skills/scripts/generate_briefs_index.py`. Scan the index for entries with status `STARTED` (no matching `DONE`). If any orphaned entries are found (excluding the entry just appended in step 1), emit a warning: "Warning: N orphaned STARTED entries found in briefs index (no matching DONE). These may be from crashed sessions. Consider reviewing them."
 
 4. Read the calling skill's SKILL.md file at `.codex/skills/$ARGUMENTS[0]/SKILL.md` and parse its YAML frontmatter. Determine the **context budget** from `metadata.context_budget` (default: `standard` if not specified).
 
@@ -45,18 +45,16 @@ If "$ARGUMENTS" is empty, ask for the skill name and brief.
    **Reference file loading (standard and heavy tiers):**
 
    Always include:
-   - Read and inject `.agent-resources/project-conventions.md`. If it does not exist, read and inject `.agent-resources/template-conventions.md` instead.
-   - Read and inject `.agent-resources/general-permissions.md`
-   - Read and inject `.agent-resources/general-constraints.md`
+   - Read and inject `_references/project/conventions.md`. If it does not exist, read and inject `_references/template/conventions.md` instead.
+   - Read and inject `_references/general/permissions.md`
+   - Read and inject `_references/general/constraints.md`
 
    **Dynamic reference loading:**
-   If the frontmatter contains a `metadata.references` list, read and inject each listed file. Resolve each filename using the following lookup order:
-   1. If the filename starts with `general-`, read from `.agent-resources/`
-   2. Otherwise, read from `.agent-resources`
+   If the frontmatter contains a `metadata.references` list, read and inject each listed file from `_references/` (each entry already includes its subfolder, e.g. `general/permissions.md`, `project/conventions.md`).
    This is the primary mechanism for loading skill-specific references. An empty list (`references: []`) is valid - it means the skill intentionally loads no additional references (e.g., orchestration or utility skills).
 
    If the calling skill's SKILL.md **does not** contain a `metadata.references` field at all, log a warning: "Skill <name> has no metadata.references - cannot load skill-specific references." All skills are expected to declare their references in frontmatter.
 
 ### Util scripts
 
-- When planning, check `${SCRIPTS_DIR}` (see project-conventions.md) for useful scripts.
+- When planning, check `${SCRIPTS_DIR}` (see project/conventions.md) for useful scripts.

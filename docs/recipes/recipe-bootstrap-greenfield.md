@@ -22,10 +22,10 @@ the [workspace setup recipe](recipe-workspace-setup.md) instead.
    ```
 
 2. **Copy the foundational SEJA framework into the codebase root**
-   Copy `.claude/` (or `.codex/`) and `.agent-resources/` from the SEJA repository into the codebase root.
+   Copy `.claude/` (or `.codex/`) and `_references/` from the SEJA repository into the codebase root.
 
 3. **Verify the structure**
-   Confirm that `.claude/` or `.codex/` and `.agent-resources/` directories exist at the
+   Confirm that `.claude/` or `.codex/` and `_references/` directories exist at the
    codebase root. These are the two pillars of the toolkit.
 
 4. **Run `/quickstart .` / `$quickstart .` and choose your mode**
@@ -40,15 +40,15 @@ the [workspace setup recipe](recipe-workspace-setup.md) instead.
 
 6. **Review the generated specs**
    After the summary, quickstart offers three options:
-   - **Review specs now** -- walk through each `project-*` file to verify and adjust.
+   - **Review specs now** -- walk through each `project/*` file to verify and adjust.
    - **Generate roadmap** -- auto-derive a development roadmap from your specs.
    - **Done for now** -- review offline, generate roadmap later.
 
    Key outputs to inspect:
    - `CLAUDE.md` / `AGENTS.md` -- project-level instructions for the agent.
-   - `project-conventions.md` -- paths, naming, tech stack settings.
-   - `project-conceptual-design-as-is.md` and `project-conceptual-design-to-be.md`.
-   - `project-ux-design-standards.md` and `project-graphic-ui-design-standards.md`.
+   - `project/conventions.md` -- paths, naming, tech stack settings.
+   - `project/conceptual-design-as-is.md` and `project/conceptual-design-to-be.md`.
+   - `project/ux-design-standards.md` and `project/graphic-ui-design-standards.md`.
 
 7. **Generate a roadmap** (optional but recommended)
    If you chose "Generate roadmap" in step 6, quickstart creates a roadmap spec

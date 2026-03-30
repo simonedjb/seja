@@ -32,7 +32,7 @@ Expected output: inventory reports in `_output/inventories/`.
 
 Run `/quickstart .` / `$quickstart .` and walk through the questionnaire. The critical difference from greenfield: fill in the **as-is** conceptual design with what the system currently does, and the **to-be** conceptual design with what you want it to become. This gap between as-is and to-be drives all future planning.
 
-Expected output: `project-*.md` files with the as-is/to-be distinction.
+Expected output: `project/*.md` files with the as-is/to-be distinction.
 
 ### Step 4: Get migration advice
 

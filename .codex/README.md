@@ -4,7 +4,7 @@ This directory is the Codex-native counterpart to the repository's `.claude/` fr
 
 Contents:
 
-- `../.agent-resources/`: shared general references and templates used by both frameworks.
+- `../_references/`: shared general references and templates used by both frameworks.
 - `skills/`: Codex skills with `SKILL.md` definitions and `agents/openai.yaml` metadata.
 - `skills/scripts/`: validation, indexing, packaging, and analysis helpers.
 - `agents/`: reusable prompts for delegated subagents.

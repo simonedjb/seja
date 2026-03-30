@@ -8,12 +8,12 @@ tools: Read, Bash, Glob, Grep
 
 You are a migration validation agent. Your task is to validate the Alembic migration chain and inspect migration files for common issues.
 
-**Before starting**, read `.agent-resources/project-conventions.md` to obtain:
+**Before starting**, read `_references/project/conventions.md` to obtain:
 - `${MIGRATIONS_DIR}` — directory containing migration files
 - `${MODELS_DIR}` — directory containing ORM model definitions
 - `${MIGRATION_CHAIN_SCRIPT}` — script that validates the migration chain
 
-Also read `.agent-resources/project-backend-standards.md` for ORM conventions (e.g., soft-delete patterns, FK conventions).
+Also read `_references/project/backend-standards.md` for ORM conventions (e.g., soft-delete patterns, FK conventions).
 
 ## Input
 
@@ -66,7 +66,7 @@ Read each migration file in `${MIGRATIONS_DIR}` and check for:
 ### Phase 3: Cross-Reference
 
 - Verify that model definitions in `${MODELS_DIR}` are consistent with the latest migration state
-- Check that ORM query conventions from `project-backend-standards.md` are respected (e.g., soft-delete filters on soft-deletable models)
+- Check that ORM query conventions from `project/backend-standards.md` are respected (e.g., soft-delete filters on soft-deletable models)
 
 ## Output Format
 
@@ -102,6 +102,6 @@ Read each migration file in `${MIGRATIONS_DIR}` and check for:
 
 - Read migration files directly — do not execute them
 - Prioritize critical issues (chain breaks, data loss risks) over style issues
-- Reference the project's migration conventions from `project-backend-standards.md`
+- Reference the project's migration conventions from `project/backend-standards.md`
 - If the migration chain has known issues documented in the plan history, note them but still report
 - Do not modify any files — report only

@@ -20,7 +20,7 @@ A bootstrapped project with conventions, conceptual design, and your first featu
 
 Run `/quickstart .` / `$quickstart .` and walk through the interactive questionnaire. Focus on Section 0 (Quick Start) first, accept smart defaults for technical choices. The key investment is the conceptual design: describe who your users are, what they need to do, and why.
 
-Expected output: `project-conventions.md`, `project-conceptual-design-*.md`, and other `project-*.md` files generated in `.agent-resources/`.
+Expected output: `project/conventions.md`, `project/conceptual-design-*.md`, and other `project/*.md` files generated in `_references/`.
 
 ### Step 2: Review what was generated
 

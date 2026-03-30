@@ -11,7 +11,7 @@ Usage
 
 Run from the repository root.
 Optional flags:
-    --output PATH   Override the output file path (default: .agent-resources/general-review-perspectives-essential-summary.md)
+    --output PATH   Override the output file path (default: _references/general/review-perspectives-essential-summary.md)
 """
 from __future__ import annotations
 
@@ -21,8 +21,8 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-PERSPECTIVES_DIR = REPO_ROOT / ".agent-resources" / "general-review-perspectives"
-DEFAULT_OUTPUT = REPO_ROOT / ".agent-resources" / "general-review-perspectives-essential-summary.md"
+PERSPECTIVES_DIR = REPO_ROOT / "_references" / "general/review-perspectives"
+DEFAULT_OUTPUT = REPO_ROOT / "_references" / "general/review-perspectives-essential-summary.md"
 
 # Extract content between ## Essential and ## Deep-dive (or end of file)
 ESSENTIAL_RE = re.compile(

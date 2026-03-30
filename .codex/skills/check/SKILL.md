@@ -8,13 +8,13 @@ metadata:
   category: analysis
   context_budget: heavy
   references:
-    - general-report-conventions.md
-    - project-frontend-standards.md
-    - project-backend-standards.md
-    - project-i18n-standards.md
-    - project-security-checklists.md
-    - general-review-perspectives.md
-    - general-review-log-template.md
+    - general/report-conventions.md
+    - project/frontend-standards.md
+    - project/backend-standards.md
+    - project/i18n-standards.md
+    - project/security-checklists.md
+    - general/review-perspectives.md
+    - general/review-log-template.md
 ---
 
 ## Quick Guide
@@ -59,7 +59,7 @@ If there are no arguments, use the ask the user directly tool to ask which mode 
 
 ## Definitions
 
-Output folder: `${CHECK_LOGS_DIR}` (see project-conventions.md)
+Output folder: `${CHECK_LOGS_DIR}` (see project/conventions.md)
 Filename pattern: `check-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 
 Reserve the next global ID by running `python .codex/skills/scripts/reserve_id.py --type check --title '<title>'`. Use the returned 6-digit ID.
@@ -111,7 +111,7 @@ Scope options: `staged` (default) | file path | directory path
 
 2. Launch the `code-reviewer` agent with the scope as input. The agent will:
    - Read the code to review
-   - Evaluate against all 16 perspectives from `general-review-perspectives.md`
+   - Evaluate against all 16 perspectives from `general/review-perspectives.md`
    - Return a structured report with findings
 
 3. Save the agent's report to the output file, including:
@@ -213,7 +213,7 @@ Flags: `[--verbose]`
    Read `${OUTPUT_DIR}/INDEX.md`. Identify plans with status `OPEN` whose creation date is more than 7 days ago. Report the count and list each stale plan.
 
    #### Check 4: Reference File Completeness
-   Scan all `.codex/skills/*/SKILL.md` files for `metadata.references` entries. For each referenced file, verify it exists in `.agent-resources/`. Report any missing references. Distinguish between `general-*` references (should always exist) and `project-*` references (may not exist in framework-only repos).
+   Scan all `.codex/skills/*/SKILL.md` files for `metadata.references` entries. For each referenced file, verify it exists in `_references/`. Report any missing references. Distinguish between `general/` references (should always exist) and `project/` references (may not exist in framework-only repos).
 
    #### Check 5: .codex/.codex Sync Status
    Compare the skill list in `.codex/skills/` with `.codex/skills/`. Report any skills that exist in one but not the other.
@@ -250,12 +250,12 @@ Flags: `[--verbose]`
 
 Scope: a brief describing what to test. If no brief is provided, ask the user.
 
-Output folder: `${USER_TESTS_DIR}` (see project-conventions.md)
+Output folder: `${USER_TESTS_DIR}` (see project/conventions.md)
 Filename pattern: `usertest-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 
 Reserve the next global ID by running `python .codex/skills/scripts/reserve_id.py --type usertest --title '<title>'`. Use the returned 6-digit ID.
 
-As input to apply this mode, use only these folders (see project-conventions.md for paths):
+As input to apply this mode, use only these folders (see project/conventions.md for paths):
 - `${PLANS_DIR}`: these contain the generated plans (use `${OUTPUT_DIR}/INDEX.md` to identify relevant plans instead of scanning the directory)
 - `${USER_TESTS_DIR}`: these contain the generated user test plans
 
@@ -267,7 +267,7 @@ As input to apply this mode, use only these folders (see project-conventions.md 
 
 4. Save the information to a new output file, adopting a format similar to the existing entries, including:
    - *header*: `# User test <id> | <prefix><scope> | <current datetime> | <short title>`
-   - *user brief*, *agent interpretation*, *files* -- per .agent-resources/general-report-conventions.md
+   - *user brief*, *agent interpretation*, *files* -- per _references/general/report-conventions.md
    - *to do*: A brief enumeration of the plan steps
 
 5. Run $post-skill <id>.

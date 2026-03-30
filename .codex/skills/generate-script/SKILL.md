@@ -8,8 +8,8 @@ metadata:
   category: code
   context_budget: standard
   references:
-    - general-report-conventions.md
-    - general-coding-standards.md
+    - general/report-conventions.md
+    - general/coding-standards.md
 ---
 
 ## Quick Guide
@@ -28,7 +28,7 @@ If there are no arguments, ask for a user brief.
 
 ## Definitions
 
-Output folder: `${SCRIPTS_DIR}` (see project-conventions.md)
+Output folder: `${SCRIPTS_DIR}` (see project/conventions.md)
 Filename pattern: `<descriptive-slug>.py` (scripts use descriptive names, not sequential IDs)
 
 The sequential ID is globally unique across all artifact types (6-digit, zero-padded). Reserve it by running `python .codex/skills/scripts/reserve_id.py --type script --title '<descriptive-slug>'` before writing any content. The ID is used in the script's header comment and in the global artifact index, not in the filename.
@@ -41,6 +41,6 @@ The sequential ID is globally unique across all artifact types (6-digit, zero-pa
 
 3. Write a deterministic script according to the brief. If it cannot be deterministic (i.e., depends on agents), inform why and stop.
 
-4. Document the script with *id*, *current datetime*, *user brief*, *agent interpretation* -- per .agent-resources/general-report-conventions.md.
+4. Document the script with *id*, *current datetime*, *user brief*, *agent interpretation* -- per _references/general/report-conventions.md.
 
 5. Run $post-skill <id>.

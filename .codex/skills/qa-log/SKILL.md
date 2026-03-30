@@ -21,13 +21,13 @@ metadata:
 
 # Log QA
 
-Logs the entire current Q&A session (all user prompts and agent responses) into `${QA_LOGS_DIR}` (see project-conventions.md).
+Logs the entire current Q&A session (all user prompts and agent responses) into `${QA_LOGS_DIR}` (see project/conventions.md).
 
 If an argument is provided, use it as the short title for the log file. If no argument is provided, derive a short title from the conversation topic.
 
 ## Definitions
 
-Output folder: `${QA_LOGS_DIR}` (see project-conventions.md)
+Output folder: `${QA_LOGS_DIR}` (see project/conventions.md)
 Filename pattern: `qa-<id>-<truncated short title slug>.md`
 
 The sequential ID is globally unique across all artifact types (6-digit, zero-padded). In standalone mode, reserve it by running `python .codex/skills/scripts/reserve_id.py --type qa --title '<slug>'` before writing any content.

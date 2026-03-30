@@ -10,7 +10,7 @@ paths:
 - **Stable i18n mock** (critical): `useTranslation` mock must return a referentially stable object — new references cause hanging tests.
 - **Backend integration tests**: require PostgreSQL and `@pytest.mark.integration` marker — unit tests use in-memory SQLite.
 
-See `project-testing-standards.md` for full conventions.
+See `project/testing-standards.md` for full conventions.
 
 ## Perspective Alignment
 

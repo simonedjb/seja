@@ -9,16 +9,16 @@ metadata:
   category: planning
   context_budget: heavy
   references:
-    - project-conceptual-design-as-is.md
-    - project-conceptual-design-to-be.md
-    - general-report-conventions.md
-    - general-coding-standards.md
-    - project-frontend-standards.md
-    - project-backend-standards.md
-    - project-testing-standards.md
-    - project-i18n-standards.md
-    - project-security-checklists.md
-    - general-review-perspectives.md
+    - project/conceptual-design-as-is.md
+    - project/conceptual-design-to-be.md
+    - general/report-conventions.md
+    - general/coding-standards.md
+    - project/frontend-standards.md
+    - project/backend-standards.md
+    - project/testing-standards.md
+    - project/i18n-standards.md
+    - project/security-checklists.md
+    - general/review-perspectives.md
 ---
 
 ## Quick Guide
@@ -88,7 +88,7 @@ If `--manual` is passed, use manual mode. Otherwise, use auto mode.
 
 9. Append a summary of all changes made to the plan file.
 
-10. If the plan is part of a roadmap, mark the corresponding roadmap item as completed, following the conventions in `project-conventions.md` for roadmap management. Then check whether all roadmap items are now completed. If this was the **last item** in the roadmap, run the roadmap-conclusion quality gate before proceeding:
+10. If the plan is part of a roadmap, mark the corresponding roadmap item as completed, following the conventions in `project/conventions.md` for roadmap management. Then check whether all roadmap items are now completed. If this was the **last item** in the roadmap, run the roadmap-conclusion quality gate before proceeding:
     - Run `$check validate` to run all project validation scripts.
     - Run `$check review` to review all changes since the roadmap's rollback branch (`pre-plan-<first-plan-id>`).
     - Launch the `test-runner` agent with scope "all" for a full test pass.
@@ -137,12 +137,12 @@ For each step in the execution queue, up to `--max-iterations` (default 20):
    - The step's **Files** list — which files to read, create, modify, or delete
    - The step's **Verify** condition — how the subagent knows it succeeded
    - The content of the progress file (cross-iteration learnings from prior steps)
-   - Project conventions: instruct the subagent to read `.agent-resources/project-conventions.md` and `.agent-resources/general-coding-standards.md`
-   - The step's **References**: instruct the subagent to read only these specific `.agent-resources/` files (e.g., `project-backend-standards.md`). Do not load all 9 references.
+   - Project conventions: instruct the subagent to read `_references/project/conventions.md` and `_references/general/coding-standards.md`
+   - The step's **References**: instruct the subagent to read only these specific `_references/` files (e.g., `project/backend-standards.md`). Do not load all 9 references.
    - Explicit instructions:
      - Implement the step as described
      - Write or update tests for any code changed
-     - Run the test commands from project-conventions.md to verify the **Verify** condition is met
+     - Run the test commands from project/conventions.md to verify the **Verify** condition is met
      - If tests fail, fix the issues (up to 3 retries) before moving on, returning PARTIAL if you can't fully resolve them but made some progress
      - Commit changes with a descriptive message: `plan-<id> step <N>: <step title>`
      - Append learnings to the progress file: what was discovered, gotchas, patterns, useful context for future steps
@@ -176,7 +176,7 @@ For each step in the execution queue, up to `--max-iterations` (default 20):
     - Any steps that were partial or failed
     - Key learnings from the progress file
 
-15. If the plan is part of a roadmap, mark the corresponding roadmap item as completed, following the conventions in `project-conventions.md` for roadmap management. Then check whether all roadmap items are now completed. If this was the **last item** in the roadmap, run the roadmap-conclusion quality gate before proceeding:
+15. If the plan is part of a roadmap, mark the corresponding roadmap item as completed, following the conventions in `project/conventions.md` for roadmap management. Then check whether all roadmap items are now completed. If this was the **last item** in the roadmap, run the roadmap-conclusion quality gate before proceeding:
     - Run `$check validate` to run all project validation scripts.
     - Run `$check review` to review all changes since the roadmap's rollback branch (`pre-plan-<first-plan-id>`).
     - Launch the `test-runner` agent with scope "all" for a full test pass.

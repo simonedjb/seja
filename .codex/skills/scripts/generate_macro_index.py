@@ -10,7 +10,7 @@ RESERVED rows (created by reserve_id.py) are preserved across regeneration:
 the script reads any existing RESERVED rows from INDEX.md before scanning,
 and merges them back into the output at their chronological position.
 
-The output directory is read from project-conventions.md (the OUTPUT_DIR
+The output directory is read from project/conventions.md (the OUTPUT_DIR
 variable), making this script portable across any SEJA-bootstrapped project.
 
 Usage

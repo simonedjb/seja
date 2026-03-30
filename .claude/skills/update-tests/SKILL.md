@@ -8,9 +8,9 @@ metadata:
   category: code
   context_budget: standard
   references:
-    - project-frontend-standards.md
-    - project-backend-standards.md
-    - project-testing-standards.md
+    - project/frontend-standards.md
+    - project/backend-standards.md
+    - project/testing-standards.md
 ---
 
 ## Quick Guide
@@ -37,7 +37,7 @@ Determine the test scope from the argument:
 
 ## Execution Tracker
 
-The file `${TESTS_TRACKER_FILE}` (see project-conventions.md) records the last git commit hash and scope for each execution of this skill. This enables faster planning on subsequent runs by diffing only what changed since the last tracked commit.
+The file `${TESTS_TRACKER_FILE}` (see project/conventions.md) records the last git commit hash and scope for each execution of this skill. This enables faster planning on subsequent runs by diffing only what changed since the last tracked commit.
 
 ### Reading the tracker (planning phase)
 
@@ -81,7 +81,7 @@ The file `${TESTS_TRACKER_FILE}` (see project-conventions.md) records the last g
 ## Test Conventions
 
 Read the project's testing standards for all test conventions (runner, file placement, imports, mocking patterns, assertion style, what NOT to do):
-- **Frontend**: read `project-testing-standards.md` (loaded via metadata.references). If it does not exist, read `template-testing-standards.md` from `.agent-resources/` as fallback.
-- **Backend**: read `project-testing-standards.md` (loaded via metadata.references). If it does not exist, read `template-testing-standards.md` from `.agent-resources/` as fallback.
+- **Frontend**: read `project/testing-standards.md` (loaded via metadata.references). If it does not exist, read `template/testing-standards.md` from `_references/` as fallback.
+- **Backend**: read `project/testing-standards.md` (loaded via metadata.references). If it does not exist, read `template/testing-standards.md` from `_references/` as fallback.
 
 Do NOT hardcode test conventions in this skill — always defer to the standards file so that conventions stay in sync across all skills that write tests.

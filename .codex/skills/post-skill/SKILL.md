@@ -44,7 +44,7 @@ metadata:
 
    a. Read the plan file to identify what changed: entities added/modified/removed, permissions changed, UX patterns added, metacommunication intents implemented.
 
-   b. If `project-conceptual-design-as-is.md` exists in `.agent-resources/`:
+   b. If `project/conceptual-design-as-is.md` exists in `_references/`:
       - For entities/permissions/patterns **added** by the plan: add the corresponding section to the as-is file.
       - For entities/permissions/patterns **modified** by the plan: update the relevant section.
       - For entities/permissions/patterns **removed** by the plan: remove the section.
@@ -56,7 +56,7 @@ metadata:
         - **Plan**: {{plan-id}}
         ```
 
-   c. If `project-metacomm-as-is.md` exists in `.agent-resources/`:
+   c. If `project/metacomm-as-is.md` exists in `_references/`:
       - If the plan had metacomm framing: update the per-feature metacomm log (§2) with the implemented intent, setting Implementation Status to "Implemented".
       - For features whose metacomm was modified by the plan: update the Designer Intent and Last Updated columns.
       - Append a changelog entry to §3.
@@ -82,8 +82,8 @@ metadata:
 6. **Commit scope verification** before staging:
    - Run `git diff --cached --name-only` to list any pre-staged files.
    - Determine the skill's expected output paths using these methods, in order of priority:
-     a. If the invocation produced a plan file (detectable from the plan ID argument), read the plan file's "Files" section (Modified + Created lists) to get the expected paths. Also include `project-conceptual-design-as-is.md` and `project-metacomm-as-is.md` from `.agent-resources/` when a plan was executed.
-     b. Otherwise, use the calling skill's output directory convention from project-conventions.md (e.g., `$advise` outputs to `${ADVISORY_DIR}`, `$explain` outputs to the appropriate `${EXPLAINED_*_DIR}`).
+     a. If the invocation produced a plan file (detectable from the plan ID argument), read the plan file's "Files" section (Modified + Created lists) to get the expected paths. Also include `project/conceptual-design-as-is.md` and `project/metacomm-as-is.md` from `_references/` when a plan was executed.
+     b. Otherwise, use the calling skill's output directory convention from project/conventions.md (e.g., `$advise` outputs to `${ADVISORY_DIR}`, `$explain` outputs to the appropriate `${EXPLAINED_*_DIR}`).
      c. Always include `${BRIEFS_FILE}`, `${BRIEFS_INDEX_FILE}`, `${ARTIFACT_INDEX_FILE}`, the QA log file, and `${OUTPUT_DIR}/telemetry.jsonl` as expected outputs (post-skill itself produces these; note that `telemetry.jsonl` is written in step 8b after commit).
    - Compare pre-staged files against expected paths. Files under `_loom/` and `.codex/` matching the skill's output convention are always allowed.
    - If there are pre-staged files that are NOT part of the skill's expected output, warn the user, list the unexpected files, and output the commit message for manual use.
@@ -119,13 +119,13 @@ metadata:
 
 9. If there are any manual actions to be taken (db upgrade, environment update or config, restart backend or frontend), append the plan file with the action instructions, separating dev and production environments, and inform the user.
 
-10. Output a link to the generated file within `${OUTPUT_DIR}` (see project-conventions.md).
+10. Output a link to the generated file within `${OUTPUT_DIR}` (see project/conventions.md).
 
-11. **Contextual next-step suggestions**: Read `.agent-resources/general-skill-graph.md`. Look up the completed skill in the "After" column. If found, display the suggested skill(s) and reason as a tip:
+11. **Contextual next-step suggestions**: Read `_references/general/skill-graph.md`. Look up the completed skill in the "After" column. If found, display the suggested skill(s) and reason as a tip:
 
     ```
     Tip: You might want to try next:
     - /suggested-skill — reason from the graph
     ```
 
-    Only show nudges when the completed skill has entries in the graph. If `general-skill-graph.md` does not exist, skip this step silently.
+    Only show nudges when the completed skill has entries in the graph. If `general/skill-graph.md` does not exist, skip this step silently.

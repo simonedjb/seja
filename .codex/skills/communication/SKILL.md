@@ -8,10 +8,10 @@ metadata:
   category: utility
   context_budget: standard
   references:
-    - general-communication.md
-    - project-conceptual-design-as-is.md
-    - general-shared-definitions.md
-    - general-report-conventions.md
+    - general/communication.md
+    - project/conceptual-design-as-is.md
+    - general/shared-definitions.md
+    - general/report-conventions.md
 ---
 
 ## Quick Guide
@@ -121,17 +121,17 @@ When `--all` is provided, generate material for all 4 active audience segments i
 4. **Load communication content:**
 
    Based on the resolved audience:
-   a. Load the audience file from `general-communication/<audience>.md`
-   b. Load the Diataxis mapping from `general-communication/diataxis-mapping.md` for content type guidance
+   a. Load the audience file from `general/communication/<audience>.md`
+   b. Load the Diataxis mapping from `general/communication/diataxis-mapping.md` for content type guidance
    c. If `--source` is provided, read the source file to be reformatted
 
 5. **Read project state:**
 
    To make the communication material concrete and project-specific, **default to the codebase** (i.e., `${BACKEND_DIR}` / `${FRONTEND_DIR}` from conventions) as the scan target — not the workspace root. In workspace deployments these point to the actual source code via absolute paths.
 
-   a. Read `project-conceptual-design-as-is.md` for current system overview, mission, value proposition.
-   b. Read `project-conventions.md` for project identity and key variables.
-   c. If available, read `project-communication-style.md` for tone/depth overrides and branding. If it does not exist, use defaults from `template-communication-style.md`.
+   a. Read `project/conceptual-design-as-is.md` for current system overview, mission, value proposition.
+   b. Read `project/conventions.md` for project identity and key variables.
+   c. If available, read `project/communication-style.md` for tone/depth overrides and branding. If it does not exist, use defaults from `template/communication-style.md`.
 
 6. **Generate the communication material:**
 
@@ -174,7 +174,7 @@ When `--all` is provided, generate material for all 4 active audience segments i
 
    a. Write the markdown file(s) to the output path determined in step 3. If using a subfolder, create `communication-<id>-<audience-slug>/` with `index.md` and individual topic files. Ensure all cross-references between files use relative markdown links.
    b. Generate HTML based on `--format` (default `both`):
-      - `both` or `html`: Run `python .codex/skills/scripts/md_to_html.py <markdown-file>` for every `.md` file. If `project-communication-style.md` exists, pass it via `--style`. For subfolder output, ensure HTML cross-references use relative links with `.html` extensions.
+      - `both` or `html`: Run `python .codex/skills/scripts/md_to_html.py <markdown-file>` for every `.md` file. If `project/communication-style.md` exists, pass it via `--style`. For subfolder output, ensure HTML cross-references use relative links with `.html` extensions.
       - `md`: Skip HTML generation.
       - `html`: Generate HTML as above, then remove the intermediate `.md` files — deliver only `.html`.
 

@@ -10,7 +10,7 @@ tools: Read, Bash, Glob, Grep
 
 You are a validation agent. Your task is to run all project validation scripts and produce a unified compliance report.
 
-**Before starting**, read `.agent-resources/project-conventions.md` to obtain the project name and the **Validation Scripts** table listing all available checks (check name, script path, purpose).
+**Before starting**, read `_references/project/conventions.md` to obtain the project name and the **Validation Scripts** table listing all available checks (check name, script path, purpose).
 
 ## Input
 

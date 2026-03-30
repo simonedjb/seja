@@ -25,8 +25,8 @@ from project_config import diff_conventions
 # Old-layout path for references (v1)
 _OLD_REFS_REL = Path(".codex", "skills", "references")
 
-# New-layout path for agent resources (v2)
-_AGENT_RESOURCES_REL = Path(".agent-resources")
+# New-layout path for references (v2)
+_REFERENCES_REL = Path("_references")
 
 
 # ---------------------------------------------------------------------------
@@ -61,9 +61,9 @@ def detect_layout(target: Path) -> str:
 
     Returns: 'new', 'old', or 'fresh'
     """
-    if (target / _AGENT_RESOURCES_REL).is_dir():
+    if (target / _REFERENCES_REL).is_dir():
         # Check it actually has files
-        ar_dir = target / _AGENT_RESOURCES_REL
+        ar_dir = target / _REFERENCES_REL
         if any(ar_dir.iterdir()):
             return "new"
     old_refs = target / _OLD_REFS_REL
@@ -76,7 +76,7 @@ def collect_source_files(source: Path) -> list[Path]:
     """Collect all framework files from source directory."""
     files: list[Path] = []
     claude_dir = source / ".codex"
-    ar_dir = source / ".agent-resources"
+    ar_dir = source / "_references"
 
     # Skills
     skills_dir = claude_dir / "skills"
@@ -108,18 +108,13 @@ def collect_source_files(source: Path) -> list[Path]:
             if f.is_file() and f.suffix == ".md":
                 files.append(f)
 
-    # Agent resources — general-* and template-* (not project-*)
+    # References — general/ and template/ subdirs (not project/)
     if ar_dir.is_dir():
-        for entry in sorted(ar_dir.iterdir()):
-            if entry.is_file():
-                name = entry.name
-                if name.startswith("project-"):
-                    continue
-                if name.endswith(".md") or name.endswith(".json"):
-                    files.append(entry)
-            elif entry.is_dir() and entry.name.startswith("general-"):
-                for sub in sorted(entry.iterdir()):
-                    if sub.is_file() and sub.suffix == ".md":
+        for subdir_name in ("general", "template"):
+            subdir = ar_dir / subdir_name
+            if subdir.is_dir():
+                for sub in sorted(subdir.rglob("*")):
+                    if sub.is_file() and sub.suffix in (".md", ".json"):
                         files.append(sub)
 
     # Metadata
@@ -136,8 +131,8 @@ def is_preserved(rel_path: str) -> bool:
     parts = Path(rel_path).parts
     filename = parts[-1] if parts else ""
 
-    # project-*.md in .agent-resources/
-    if filename.startswith("project-") and filename.endswith(".md"):
+    # project/ subdirectory in _references/
+    if len(parts) >= 2 and parts[0] == "_references" and parts[1] == "project":
         return True
     # settings files
     if filename in ("settings.json", "settings.local.json"):
@@ -153,7 +148,7 @@ def is_preserved(rel_path: str) -> bool:
 
 
 def scan_old_path_references(target: Path) -> list[tuple[str, int, str]]:
-    """Scan project-*.md and AGENTS.md for old layout path references.
+    """Scan project/*.md and AGENTS.md for old layout path references.
 
     Returns list of (file_rel_path, line_number, line_text) tuples.
     """
@@ -161,11 +156,11 @@ def scan_old_path_references(target: Path) -> list[tuple[str, int, str]]:
     hits: list[tuple[str, int, str]] = []
     files_to_scan: list[Path] = []
 
-    # project-*.md in .agent-resources/
-    ar_dir = target / _AGENT_RESOURCES_REL
-    if ar_dir.is_dir():
-        for f in sorted(ar_dir.iterdir()):
-            if f.is_file() and f.name.startswith("project-") and f.name.endswith(".md"):
+    # project/*.md in _references/project/
+    project_dir = target / _REFERENCES_REL / "project"
+    if project_dir.is_dir():
+        for f in sorted(project_dir.iterdir()):
+            if f.is_file() and f.name.endswith(".md"):
                 files_to_scan.append(f)
 
     # AGENTS.md at root
@@ -235,26 +230,26 @@ def run_upgrade(
         print(f"INFO: {prefix}{report_backup[-1]}")
 
     if layout == "new":
-        ar_backup = target / f".agent-resources-backup-{timestamp}"
+        ar_backup = target / f"_references-backup-{timestamp}"
         if not dry_run:
-            shutil.copytree(target / _AGENT_RESOURCES_REL, ar_backup)
-            report_backup.append(f"Backed up .agent-resources/ → {ar_backup.name}/")
+            shutil.copytree(target / _REFERENCES_REL, ar_backup)
+            report_backup.append(f"Backed up _references/ → {ar_backup.name}/")
             print(f"OK: {report_backup[-1]}")
         else:
             report_backup.append(
-                f"Would back up .agent-resources/ → .agent-resources-backup-{timestamp}/"
+                f"Would back up _references/ → _references-backup-{timestamp}/"
             )
             print(f"INFO: {prefix}{report_backup[-1]}")
 
     # --- Old layout migration ---
     if layout == "old":
         old_refs_dir = target / _OLD_REFS_REL
-        ar_dir = target / _AGENT_RESOURCES_REL
+        ar_dir = target / _REFERENCES_REL
 
         if not dry_run:
             ar_dir.mkdir(parents=True, exist_ok=True)
 
-        # Move files from old refs to .agent-resources/
+        # Move files from old refs to _references/
         if old_refs_dir.is_dir():
             for entry in sorted(old_refs_dir.iterdir()):
                 if entry.is_file() and (entry.suffix == ".md" or entry.suffix == ".json"):
@@ -263,11 +258,11 @@ def run_upgrade(
                         shutil.move(str(entry), str(dest))
                     report_migration.append(
                         f"Moved {_OLD_REFS_REL.as_posix()}/{entry.name} → "
-                        f"{_AGENT_RESOURCES_REL.as_posix()}/{entry.name}"
+                        f"{_REFERENCES_REL.as_posix()}/{entry.name}"
                     )
                     print(f"OK: {prefix}{report_migration[-1]}")
                 elif entry.is_dir():
-                    # Subdirectories (e.g., general-review-perspectives/)
+                    # Subdirectories (e.g., general/review-perspectives/)
                     dest_dir = ar_dir / entry.name
                     if not dry_run:
                         if dest_dir.exists():
@@ -275,7 +270,7 @@ def run_upgrade(
                         shutil.move(str(entry), str(dest_dir))
                     report_migration.append(
                         f"Moved {_OLD_REFS_REL.as_posix()}/{entry.name}/ → "
-                        f"{_AGENT_RESOURCES_REL.as_posix()}/{entry.name}/"
+                        f"{_REFERENCES_REL.as_posix()}/{entry.name}/"
                     )
                     print(f"OK: {prefix}{report_migration[-1]}")
 
@@ -299,11 +294,11 @@ def run_upgrade(
                 print(f"INFO: {prefix}{report_migration[-1]}")
 
     elif layout == "fresh":
-        # Ensure .agent-resources/ exists for fresh projects
-        ar_dir = target / _AGENT_RESOURCES_REL
+        # Ensure _references/ exists for fresh projects
+        ar_dir = target / _REFERENCES_REL
         if not dry_run:
             ar_dir.mkdir(parents=True, exist_ok=True)
-        report_migration.append("Fresh project — created .agent-resources/")
+        report_migration.append("Fresh project — created _references/")
         print(f"INFO: {prefix}{report_migration[-1]}")
 
     # --- Overwrite framework files from source ---
@@ -340,41 +335,40 @@ def run_upgrade(
         if "_output/" not in report_preserved:
             report_preserved.append("_output/ (entire directory)")
 
-    # project-*.md files in .agent-resources/
-    ar_dir = target / _AGENT_RESOURCES_REL
-    if ar_dir.is_dir():
-        for f in sorted(ar_dir.iterdir()):
-            if f.is_file() and f.name.startswith("project-") and f.name.endswith(".md"):
-                rel = f.relative_to(target).as_posix()
-                if rel not in report_preserved:
-                    report_preserved.append(rel)
+    # project/*.md files in _references/project/
+    project_dir = target / _REFERENCES_REL / "project"
+    if project_dir.is_dir():
+        for f in sorted(project_dir.rglob("*.md")):
+            rel = f.relative_to(target).as_posix()
+            if rel not in report_preserved:
+                report_preserved.append(rel)
 
     # --- Convention schema diff ---
-    project_conv = target / _AGENT_RESOURCES_REL / "project-conventions.md"
-    template_conv = target / _AGENT_RESOURCES_REL / "template-conventions.md"
+    project_conv = target / _REFERENCES_REL / "project/conventions.md"
+    template_conv = target / _REFERENCES_REL / "template/conventions.md"
 
     if project_conv.is_file() and template_conv.is_file():
         diff = diff_conventions(project_conv, template_conv)
 
         if diff["missing_in_project"]:
             report_convention_gaps.append(
-                f"Variables in template missing from project-conventions.md: "
+                f"Variables in template missing from project/conventions.md: "
                 f"{', '.join(diff['missing_in_project'])}"
             )
         if diff["extra_in_project"]:
             report_convention_gaps.append(
-                f"Variables in project-conventions.md not in template: "
+                f"Variables in project/conventions.md not in template: "
                 f"{', '.join(diff['extra_in_project'])}"
             )
         if not diff["missing_in_project"] and not diff["extra_in_project"]:
             report_convention_gaps.append("Convention variables are in sync.")
     elif project_conv.is_file():
         report_convention_gaps.append(
-            "WARN: template-conventions.md not found — cannot compare."
+            "WARN: template/conventions.md not found — cannot compare."
         )
     else:
         report_convention_gaps.append(
-            "INFO: No project-conventions.md found — diff skipped."
+            "INFO: No project/conventions.md found — diff skipped."
         )
 
     # --- Path reference scan (old layout migration only) ---
@@ -382,7 +376,7 @@ def run_upgrade(
         old_refs = scan_old_path_references(target)
         if old_refs:
             report_manual.append(
-                "Old path references found (need manual update to .agent-resources/):"
+                "Old path references found (need manual update to _references/):"
             )
             for fpath, lineno, line_text in old_refs:
                 report_manual.append(f"  {fpath}:{lineno}: {line_text}")

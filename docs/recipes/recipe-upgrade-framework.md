@@ -34,11 +34,11 @@ to a newer version without losing project-specific data.
    - New convention variables that are now available.
 
 4. **Add new convention variables**
-   If new variables were reported, add them to your `project-conventions.md`
+   If new variables were reported, add them to your `project/conventions.md`
    with appropriate values for your project.
 
 5. **Accept path migrations if offered**
-   If path references changed (for example, from the old `skills/references/` layout to the current `.agent-resources/` layout), accept the offered migration to update all references.
+   If path references changed (for example, from the old `skills/references/` layout to the current `_references/` layout), accept the offered migration to update all references.
 
 6. **Regenerate `CLAUDE.md` / `AGENTS.md` (optional)**
    If the framework structure changed significantly, regenerate the agent
@@ -53,7 +53,7 @@ to a newer version without losing project-specific data.
 
 ## Tips
 
-- The upgrade preserves all `project-*.md` files and `_output/`. Only foundational framework files (skills, scripts,
+- The upgrade preserves all `project/*.md` files and `_output/`. Only foundational framework files (skills, scripts,
   general references, templates) are updated.
 - Always check the CHANGELOG for breaking changes before upgrading.
 - For the workspace pattern, run the upgrade in each project workspace

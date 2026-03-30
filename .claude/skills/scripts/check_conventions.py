@@ -2,8 +2,8 @@
 """
 check_conventions.py — Validate conventions variables against skill and reference files.
 
-Checks that every ${VARIABLE_NAME} reference used in SKILL.md and .agent-resources/*.md
-files is defined in project-conventions.md (or template-conventions.md as fallback).
+Checks that every ${VARIABLE_NAME} reference used in SKILL.md and _references/*.md
+files is defined in project/conventions.md (or template/conventions.md as fallback).
 
 Exit codes: 0 = pass (all referenced variables are defined), 1 = errors found.
 
@@ -29,10 +29,10 @@ from project_config import REPO_ROOT
 
 CLAUDE_DIR = REPO_ROOT / ".claude"
 SKILLS_DIR = CLAUDE_DIR / "skills"
-AGENT_RESOURCES_DIR = REPO_ROOT / ".agent-resources"
+REFERENCES_DIR = REPO_ROOT / "_references"
 
-_CONVENTIONS_REL = AGENT_RESOURCES_DIR / "project-conventions.md"
-_TEMPLATE_REL = AGENT_RESOURCES_DIR / "template-conventions.md"
+_CONVENTIONS_REL = REFERENCES_DIR / "project/conventions.md"
+_TEMPLATE_REL = REFERENCES_DIR / "template/conventions.md"
 
 # Regex to extract variable definitions from markdown table rows:
 #   | `VAR_NAME` | `value` | description |
@@ -48,12 +48,12 @@ _REF_RE = re.compile(r"\$\{([A-Z][A-Z0-9_]*)\}")
 
 
 def find_conventions_file() -> Path | None:
-    """Locate the conventions file, preferring project- over template-."""
+    """Locate the conventions file, preferring project/ over template/."""
     if _CONVENTIONS_REL.is_file():
         return _CONVENTIONS_REL
     if _TEMPLATE_REL.is_file():
         print(
-            "INFO: project-conventions.md not found; using template-conventions.md as fallback",
+            "INFO: project/conventions.md not found; using template/conventions.md as fallback",
             file=sys.stderr,
         )
         return _TEMPLATE_REL
@@ -89,9 +89,9 @@ def collect_scan_files() -> list[Path]:
                 if skill_file.is_file():
                     files.append(skill_file)
 
-    # .agent-resources/*.md files
-    if AGENT_RESOURCES_DIR.is_dir():
-        for md_file in sorted(AGENT_RESOURCES_DIR.glob("*.md")):
+    # _references/*.md files
+    if REFERENCES_DIR.is_dir():
+        for md_file in sorted(REFERENCES_DIR.glob("*.md")):
             files.append(md_file)
 
     return files
@@ -120,7 +120,7 @@ def main() -> None:
     # Locate conventions file
     conventions_path = find_conventions_file()
     if conventions_path is None:
-        print("ERROR: neither project-conventions.md nor template-conventions.md found")
+        print("ERROR: neither project/conventions.md nor template/conventions.md found")
         sys.exit(1)
 
     conventions_name = conventions_path.name

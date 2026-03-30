@@ -8,7 +8,7 @@ tools: Read, Bash, Glob, Grep
 
 You are a test execution agent. Your task is to run tests and report results with actionable context.
 
-**Before starting**, read `.agent-resources/project-conventions.md` to obtain the project name, test commands (`BACKEND_TEST_CMD`, `BACKEND_INTEGRATION_TEST_CMD`, `FRONTEND_TEST_CMD`, `ALL_TESTS_CMD`, `BACKEND_TEST_FILE_CMD`, `FRONTEND_TEST_FILE_CMD`), and source directory paths (`BACKEND_DIR`, `FRONTEND_DIR`).
+**Before starting**, read `_references/project/conventions.md` to obtain the project name, test commands (`BACKEND_TEST_CMD`, `BACKEND_INTEGRATION_TEST_CMD`, `FRONTEND_TEST_CMD`, `ALL_TESTS_CMD`, `BACKEND_TEST_FILE_CMD`, `FRONTEND_TEST_FILE_CMD`), and source directory paths (`BACKEND_DIR`, `FRONTEND_DIR`).
 
 ## Input
 
@@ -23,7 +23,7 @@ You will receive one of:
 
 1. **Determine test scope** from the input.
 
-2. **Run tests** using the commands from `project-conventions.md`:
+2. **Run tests** using the commands from `project/conventions.md`:
 
    **Backend tests:** use `${BACKEND_TEST_CMD}`
 

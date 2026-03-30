@@ -8,10 +8,10 @@ metadata:
   category: utility
   context_budget: standard
   references:
-    - general-onboarding.md
-    - project-conceptual-design-as-is.md
-    - general-shared-definitions.md
-    - general-report-conventions.md
+    - general/onboarding.md
+    - project/conceptual-design-as-is.md
+    - general/shared-definitions.md
+    - general/report-conventions.md
 ---
 
 ## Quick Guide
@@ -126,16 +126,16 @@ If a batch spec is incomplete (e.g., missing level), do NOT launch agents yet. I
 4. **Load onboarding content:**
 
    Based on the resolved role and level:
-   a. Load the role family file(s) from `general-onboarding/<role>.md`
-   b. Load the expertise level file from `general-onboarding/<level>.md`
+   a. Load the role family file(s) from `general/onboarding/<role>.md`
+   b. Load the expertise level file from `general/onboarding/<level>.md`
    c. If `--area` is provided, scan the codebase for the relevant area to provide concrete file references and examples.
 
 5. **Read project state:**
 
    To make the onboarding plan concrete and project-specific, **default to the codebase** (i.e., `${BACKEND_DIR}` / `${FRONTEND_DIR}` from conventions) as the scan target — not the workspace root. In workspace deployments these point to the actual source code via absolute paths.
 
-   a. Read `project-conceptual-design-as-is.md` for current system overview.
-   b. Read `project-conventions.md` for directory structure and key variables.
+   a. Read `project/conceptual-design-as-is.md` for current system overview.
+   b. Read `project/conventions.md` for directory structure and key variables.
    c. If Builder role: scan codebase source directories (`${BACKEND_DIR}`, `${FRONTEND_DIR}`), read relevant coding standards and rules.
    d. If Shaper role: read metacommunication files and conceptual design files.
    e. If Guardian role: read review perspectives and validation scripts inventory.
@@ -159,7 +159,7 @@ If a batch spec is incomplete (e.g., missing level), do NOT launch agents yet. I
    - Project mission and current phase (from conceptual design)
    - Team structure and communication norms (ask user to fill in if not available)
    - Environment setup instructions (concrete steps, not abstract)
-   - Project glossary (from `general-shared-definitions.md` + project-specific terms)
+   - Project glossary (from `general/shared-definitions.md` + project-specific terms)
    - AI tooling policy and sanctioned tools
 
    ### Layer 1 — Role-Specific Context (Week 1)

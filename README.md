@@ -22,7 +22,7 @@ Our goal is to design a human-centered computing methodology based on semiotic e
 | Term | Meaning |
 |------|---------|
 | **Foundational SEJA framework** | The reusable source of truth for skills, scripts, templates, agents, and guidance files. |
-| ***ProjectName* workspace** | A standalone git repository that holds the framework files (`.claude/` or `.codex/`, plus `.agent-resources/`), project guidance, and generated artifacts under `_output/`. |
+| ***ProjectName* workspace** | A standalone git repository that holds the framework files (`.claude/` or `.codex/`, plus `_references/`), project guidance, and generated artifacts under `_output/`. |
 | ***ProjectName* codebase** | The product source code itself. In the workspace pattern, the framework points at this codebase without copying framework files into it. |
 
 The workspace pattern is best when you want to keep framework artifacts and design history separate from product source code. The collocated pattern is best for solo or greenfield work when you want everything in one repository.
@@ -46,7 +46,7 @@ Both toolkits are fully supported. Choose based on your preferred AI agent.
 2. Treat the conceptual design and project conventions as first-class artifacts, not setup boilerplate.
 3. Always review the plan before running `/execute-plan` / `$execute-plan` until the codebase and workflow feel familiar.
 4. Use `/check` / `$check` (validate, review, preflight) as routine safety rails.
-5. Keep agent configuration (`CLAUDE.md` for Claude, `AGENTS.md` for Codex) and the `project-*.md` files current as the product evolves.
+5. Keep agent configuration (`CLAUDE.md` for Claude, `AGENTS.md` for Codex) and the `project/*.md` files current as the product evolves.
 6. Break larger work into small, reviewable steps.
 7. Never defer SEC or A11Y findings without an explicit decision.
 8. Use metacommunication framing when the main challenge is what the interface should communicate.

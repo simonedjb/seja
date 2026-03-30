@@ -25,14 +25,14 @@ def fake_briefs(tmp_path):
 def fake_repo_with_briefs(tmp_path, fake_briefs):
     """Create a minimal repo structure for generate_briefs_index.py."""
     (tmp_path / ".codex").mkdir()
-    (tmp_path / ".agent-resources").mkdir()
+    (tmp_path / "_references").mkdir()
     output_dir = tmp_path / "_output"
     output_dir.mkdir()
     # Move briefs into position
     target = output_dir / "briefs.md"
     target.write_text(fake_briefs.read_text(encoding="utf-8"), encoding="utf-8")
-    # Create template-conventions.md so project_config can find it
-    conv = tmp_path / ".agent-resources" / "template-conventions.md"
+    # Create template/conventions.md so project_config can find it
+    conv = tmp_path / "_references" / "template/conventions.md"
     conv.write_text(
         "| Variable | Value | Description |\n"
         "|----------|-------|-------------|\n"

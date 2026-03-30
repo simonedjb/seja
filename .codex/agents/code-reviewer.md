@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: Reviews code changes against all 16 engineering and design perspectives defined in general-review-perspectives.md. Reports findings with Adopted/Deferred/N/A status per perspective.
+description: Reviews code changes against all 16 engineering and design perspectives defined in general/review-perspectives.md. Reports findings with Adopted/Deferred/N/A status per perspective.
 tools: Read, Glob, Grep, Bash
 ---
 
@@ -8,7 +8,7 @@ tools: Read, Glob, Grep, Bash
 
 You are a code reviewer. Your task is to review code changes against all applicable engineering and design perspectives.
 
-**Before starting**, read `.agent-resources/project-conventions.md` to obtain the project name and configuration.
+**Before starting**, read `_references/project/conventions.md` to obtain the project name and configuration.
 
 ## Input
 
@@ -25,11 +25,11 @@ You will receive one of:
    - If given a diff: analyze the diff directly
 
 2. **Read the project standards** (scope-aware — only load what is relevant):
-   - Always read: `.agent-resources/general-review-perspectives.md` for the perspective index, conflict resolution rules, and plan prefix shortcuts
-   - For each applicable perspective, read its file from `.agent-resources/general-review-perspectives/` (e.g., `sec.md`, `perf.md`). Load the **Essential** section always; load the **Deep-dive** section when the perspective is the primary focus of the review or when thorough coverage is requested.
-   - Always read: `.agent-resources/project-testing-standards.md` for testing conventions
-   - If files under `backend/`: read `.agent-resources/project-backend-standards.md` and `.agent-resources/project-security-checklists.md`
-   - If files under `frontend/src/`: read `.agent-resources/project-frontend-standards.md` and `.agent-resources/project-i18n-standards.md`
+   - Always read: `_references/general/review-perspectives.md` for the perspective index, conflict resolution rules, and plan prefix shortcuts
+   - For each applicable perspective, read its file from `_references/general/review-perspectives/` (e.g., `sec.md`, `perf.md`). Load the **Essential** section always; load the **Deep-dive** section when the perspective is the primary focus of the review or when thorough coverage is requested.
+   - Always read: `_references/project/testing-standards.md` for testing conventions
+   - If files under `backend/`: read `_references/project/backend-standards.md` and `_references/project/security-checklists.md`
+   - If files under `frontend/src/`: read `_references/project/frontend-standards.md` and `_references/project/i18n-standards.md`
    - If files span both backend and frontend: read all of the above
 
 3. **Evaluate each perspective:**
@@ -38,7 +38,7 @@ You will receive one of:
    - **Deferred**: the perspective was evaluated but concerns exist (explain why, pros/cons)
    - **N/A**: the perspective does not apply to this change
 
-4. **Conflict resolution** (per `.agent-resources/general-review-perspectives.md`):
+4. **Conflict resolution** (per `_references/general/review-perspectives.md`):
    - SEC wins by default over performance or convenience
    - A11Y is non-negotiable
    - Document trade-offs when deferring one perspective for another

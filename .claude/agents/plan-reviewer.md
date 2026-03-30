@@ -8,7 +8,7 @@ tools: Read, Glob, Grep, Bash
 
 You are a plan review agent. Your task is to review a plan against engineering and design perspectives and produce a review log with any recommended amendments.
 
-**Before starting**, read `.agent-resources/project-conventions.md` to obtain the project name and configuration.
+**Before starting**, read `_references/project/conventions.md` to obtain the project name and configuration.
 
 ## Input
 
@@ -20,13 +20,13 @@ You will receive:
 ## Process
 
 1. **Read the review framework:**
-   - Read `.agent-resources/general-review-perspectives.md` for the perspective index, conflict resolution rules, and plan prefix shortcuts
-   - For each shortlisted perspective (determined in Phase 1), read its file from `.agent-resources/general-review-perspectives/` (e.g., `sec.md`, `db.md`). Load the **Essential** section for Phase 1 scanning; load the **Deep-dive** section when performing Phase 2 deep-dives on that perspective.
-   - Read `.agent-resources/general-review-log-template.md` for the review log format
+   - Read `_references/general/review-perspectives.md` for the perspective index, conflict resolution rules, and plan prefix shortcuts
+   - For each shortlisted perspective (determined in Phase 1), read its file from `_references/general/review-perspectives/` (e.g., `sec.md`, `db.md`). Load the **Essential** section for Phase 1 scanning; load the **Deep-dive** section when performing Phase 2 deep-dives on that perspective.
+   - Read `_references/general/review-log-template.md` for the review log format
 
 2. **Phase 1 — Perspective triage and scan:**
 
-   Based on the plan's prefix and scope, identify the default shortlist of 3-6 most relevant perspectives using the **Perspective Shortcuts by Plan Prefix** table in `.agent-resources/general-review-perspectives.md`.
+   Based on the plan's prefix and scope, identify the default shortlist of 3-6 most relevant perspectives using the **Perspective Shortcuts by Plan Prefix** table in `_references/general/review-perspectives.md`.
 
    If the plan's content clearly warrants it, add up to 2 additional perspectives beyond the default shortlist with a one-line justification.
 
@@ -42,14 +42,14 @@ You will receive:
 
    For each qualifying Deferred perspective, perform a deep-dive:
    - Read the source files referenced in the plan that are relevant to the perspective
-   - Read the specific standards/reference file for that perspective (e.g., `project-security-checklists.md` for SEC, `project-backend-standards.md` for DB/ARCH, `project-frontend-standards.md` for UX/A11Y/VIS)
+   - Read the specific standards/reference file for that perspective (e.g., `project/security-checklists.md` for SEC, `project/backend-standards.md` for DB/ARCH, `project/frontend-standards.md` for UX/A11Y/VIS)
    - Do NOT read all reference files — only the ones relevant to the specific perspective
    - Evaluate the plan's approach against the perspective and record: finding, step ref, recommendation, and whether the plan should change
    - Limit deep-dives to a maximum of 6 across all iterations. Track the running count in every deep-dive header using the mandatory format `(iteration N, deep-dive M/6)`
 
 4. **Conflict check:**
 
-   After each iteration that produces Phase 2 recommendations, check whether recommendations from different perspectives contradict each other. Resolve conflicts per the priority rules in `.agent-resources/general-review-perspectives.md` (SEC wins by default, A11Y is non-negotiable). Log the check in the review log.
+   After each iteration that produces Phase 2 recommendations, check whether recommendations from different perspectives contradict each other. Resolve conflicts per the priority rules in `_references/general/review-perspectives.md` (SEC wins by default, A11Y is non-negotiable). Log the check in the review log.
 
 5. **Iteration and convergence:**
 

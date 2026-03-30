@@ -9,7 +9,7 @@ paths:
 - **DOMPurify**: sanitize HTML before `dangerouslySetInnerHTML` — never render user input as raw HTML.
 - **Stable useTranslation mock** (critical): return a referentially stable object — new references per call cause hanging tests.
 
-See `project-frontend-standards.md` and `project-testing-standards.md` for full conventions.
+See `project/frontend-standards.md` and `project/testing-standards.md` for full conventions.
 
 ## Perspective Alignment
 

@@ -23,7 +23,7 @@ The SEJA repository contains **145 project-independent framework files**:
 | Review perspective files | 16 | Individual engineering and design review lenses |
 | Onboarding profile files | 8 | Role-family and level profiles used by `$onboarding` |
 | Communication profile files | 5 | Audience-specific communication references |
-| Templates | 31 | Reusable `template-*.md` and `template-*.json` files used during `$quickstart` |
+| Templates | 31 | Reusable `template/*.md` and `template/*.json` files used during `$quickstart` |
 | Agent definitions | 5 | Specialized delegated agents such as `code-reviewer` and `test-runner` |
 | Rule definitions | 7 | Path-scoped coding guidance used automatically by Codex |
 | Scripts | 29 | Validation, indexing, packaging, migration, and support scripts |
@@ -45,7 +45,7 @@ For a first-time designer, this is good news: there are fewer names to memorize.
 ### 0.3 Your First 15 Minutes
 
 1. Create a new repository and initialize git.
-2. Copy the framework files (`.codex/` and `.agent-resources/`) from the SEJA repository into the repository root.
+2. Copy the framework files (`.codex/` and `_references/`) from the SEJA repository into the repository root.
 3. Start Codex from that root folder.
 4. Run `$quickstart .`.
 5. Answer the questions in product language, not implementation jargon.
@@ -82,12 +82,10 @@ After unzipping the kit and running `$quickstart`, the project normally looks li
 ```text
 your-project/
 |-- AGENTS.md
-|-- .agent-resources/
-|   |-- general-*.md
-|   |-- general-review-perspectives/
-|   |-- general-onboarding/
-|   |-- general-communication/
-|   `-- project-*.md
+|-- _references/
+|   |-- general/            (universal conventions, perspectives, onboarding)
+|   |-- template/           (templates instantiated by $quickstart)
+|   `-- project/            (project-specific standards, generated per-project)
 |-- .codex/
 |   |-- README.md
 |   |-- CHEATSHEET.md
@@ -103,13 +101,13 @@ Here is the practical meaning of each layer:
 | Layer | Why you should care |
 |-------|---------------------|
 | `AGENTS.md` | The top-level operating guide Codex reads first |
-| `.agent-resources/project-*.md` | The project-specific knowledge base created by quickstart |
+| `_references/project/*.md` | The project-specific knowledge base created by quickstart |
 | `.codex/skills/` | Reusable workflows you can invoke with `$...` |
 | `.codex/rules/` | Automatic guidance applied when Codex edits matching files |
 | `.codex/agents/` | Specialized delegated agents used by some workflows |
 | `_output/` | Plans, advisory logs, onboarding docs, Q&A logs, and related generated artifacts |
 
-The important beginner insight is this: after setup, you will spend much more time using `AGENTS.md`, `project-*.md`, and a handful of skills than browsing the raw framework internals.
+The important beginner insight is this: after setup, you will spend much more time using `AGENTS.md`, `project/*.md`, and a handful of skills than browsing the raw framework internals.
 
 ---
 
@@ -117,7 +115,7 @@ The important beginner insight is this: after setup, you will spend much more ti
 
 ### 3.1 Copy the Framework Files
 
-From a new repository root, copy `.codex/` and `.agent-resources/` from the SEJA repository so they land directly in the project root.
+From a new repository root, copy `.codex/` and `_references/` from the SEJA repository so they land directly in the project root.
 
 ### 3.2 Start Codex From the Project Root
 
@@ -138,7 +136,7 @@ If this is your first AI-assisted project, choose the **interactive** path. It i
 Quickstart turns the portable kit into a project-specific workspace. It will typically:
 
 - generate `AGENTS.md`
-- create `.agent-resources/project-*.md` files from templates
+- create `_references/project/*.md` files from templates
 - tailor rules and agents to your stack
 - prepare smoke-test scaffolding when your stack needs it
 - create an output area for plans, advisory notes, and logs
@@ -372,7 +370,7 @@ If an older note says `$validate` or `$metacomm`, translate it to the current co
 
 ### Pitfall 4: Skipping Project Guidance Updates
 
-If the product changes, keep `AGENTS.md` and the `project-*.md` files current. Codex can only follow the guidance that exists.
+If the product changes, keep `AGENTS.md` and the `project/*.md` files current. Codex can only follow the guidance that exists.
 
 ### Pitfall 5: Thinking You Need To Sound Technical
 

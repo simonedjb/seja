@@ -18,7 +18,7 @@ artifacts, and source code physically separated.
 If you have the foundational SEJA framework locally, run `/quickstart --workspace` / `$quickstart --workspace`
 and follow the prompts. This automates everything below: creates the workspace
 directory, runs `git init`, copies framework files from the foundational
-framework, creates `_output/`, generates `project-conventions.md` with absolute
+framework, creates `_output/`, generates `project/conventions.md` with absolute
 paths to the codebase, and creates launcher scripts. Then skip to step 5 below.
 
 Alternatively, from the command line:
@@ -44,14 +44,14 @@ python .claude/skills/scripts/create_workspace.py \
    independent of the *MyProject* codebase.
 
 2. **Copy the foundational SEJA framework into the workspace**
-   Copy `.claude/` (or `.codex/`) and `.agent-resources/` from the SEJA repository into the workspace root.
-   This creates `.claude/` or `.codex/` and `.agent-resources/` inside the workspace.
+   Copy `.claude/` (or `.codex/`) and `_references/` from the SEJA repository into the workspace root.
+   This creates `.claude/` or `.codex/` and `_references/` inside the workspace.
 
 3. **Run `/quickstart .` / `$quickstart .` and walk through the questionnaire**
    Answer the prompts to generate project-specific files. Point the conceptual
    design at the existing system in the codebase.
 
-4. **Edit `project-conventions.md` to set absolute paths**
+4. **Edit `project/conventions.md` to set absolute paths**
    Set `OUTPUT_DIR` to a path inside the workspace (so output artifacts are
    committed alongside framework configuration), and point source directories
    at the *MyProject* codebase:
@@ -77,7 +77,7 @@ python .claude/skills/scripts/create_workspace.py \
    Alternatively, start the agent in the workspace and add `D:/git/my-project` as an additional directory if your host supports that pattern.
 
 2. **Review specs and generate roadmap**
-   Quickstart ends by offering to walk through the generated `project-*` files
+   Quickstart ends by offering to walk through the generated `project/*` files
    for review. Take advantage of this -- changes are cheapest at the spec level.
    Then optionally generate a development roadmap from your specs.
 
@@ -104,7 +104,7 @@ foundational SEJA framework        the single source of truth
 MyProject workspace                its own git repo
   d:/workspaces/my-project/
     .claude/ or .codex/            copied from foundational framework
-    .agent-resources/              copied + project-specific files generated
+    _references/              copied + project-specific files generated
     _output/                       plans, advisories, briefs (version-controlled)
     launch.sh / launch.bat         starts the agent with the codebase attached
           |

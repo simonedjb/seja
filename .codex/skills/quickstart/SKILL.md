@@ -49,11 +49,11 @@ The original interactive flow. Walk the user through the questionnaire to gather
 
 ### Steps
 
-1. **Verify target directory**: Check that the target exists and is a git repository (or offer to `git init`). If a `.codex/` directory already exists, warn the user and ask whether to overwrite or merge.
+1. **Verify target directory**: Check that the target exists. If a `.codex/` directory already exists, warn the user and ask whether to overwrite or merge. **Do NOT `git init` or create any git repository at this point** — the workspace/codebase separation question in step 5 determines which directories get `git init`. Initializing the target now would create nested repos if the user later chooses separation. Git initialization happens in step 5 (after the separation decision) or, if the user chooses no separation, after step 5 completes.
 
 2. **Create directory structure**: Create the following in the target directory:
    ```
-   .agent-resources/
+   _references/
    .codex/
    .codex/skills/
    .codex/skills/scripts/
@@ -61,47 +61,47 @@ The original interactive flow. Walk the user through the questionnaire to gather
    .codex/agents/
    ```
 
-3. **Copy general (reusable) files** from this project's `.agent-resources/` to the target's `.agent-resources/`:
-   - All `general-*.md` reference files (as-is, no modification needed)
-   - All `template-*.md` reference files (these will be instantiated in step 6)
+3. **Copy general (reusable) files** from this project's `_references/` to the target's `_references/`:
+   - All files under `general/` (as-is, no modification needed)
+   - All files under `template/` (these will be instantiated in step 6)
 
 4. **Copy skill definitions**: Copy all skill `SKILL.md` files to the target. These are project-independent and work with any project that follows the conventions.
 
-5. **Run the questionnaire**: Read `template-questionnaire.md` and interactively walk the user through it:
+5. **Run the questionnaire**: Read `template/questionnaire.md` and interactively walk the user through it:
    - Start with **Section 0 (Quick Start)** — 8 minimum questions for a skeleton
    - For each question, present the options with their pros/cons and a recommendation
    - Record all answers
    - **Workspace routing** — After question 0.3, regardless of greenfield or brownfield, offer workspace/codebase separation:
      - **Greenfield framing**: *"For greenfield projects, the SEJA framework recommends separating the workspace (framework files, design artifacts) from the codebase (source code). This keeps the codebase clean and the design history version-controlled independently. Would you like to create separate workspace and codebase folders?"*
-     - **Brownfield framing**: *"The SEJA framework can either install directly into your existing codebase, or create a separate workspace alongside it. A separate workspace keeps your codebase clean — no `.codex/` or `.agent-resources/` folders in your repo. Would you like to create a separate workspace?"*
+     - **Brownfield framing**: *"The SEJA framework can either install directly into your existing codebase, or create a separate workspace alongside it. A separate workspace keeps your codebase clean — no `.codex/` or `_references/` folders in your repo. Would you like to create a separate workspace?"*
      - If **yes (greenfield)**: Ask for the workspace directory name (default: `<project-name>-workspace`) and codebase directory name (default: `<project-name>`). Both will be created as subdirectories of the target directory. Then:
         - Create `<target>/<workspace-dir>/` and `git init` it
         - Create `<target>/<codebase-dir>/` and `git init` it
         - Redirect all framework file creation (steps 2-4, 6-11) to `<target>/<workspace-dir>/`
-        - Set `BACKEND_DIR` and `FRONTEND_DIR` in `project-conventions.md` to **absolute paths** pointing into `<target>/<codebase-dir>/`
+        - Set `BACKEND_DIR` and `FRONTEND_DIR` in `project/conventions.md` to **absolute paths** pointing into `<target>/<codebase-dir>/`
         - Set `OUTPUT_DIR` to `<target>/<workspace-dir>/_output`
         - Generate launcher scripts (`launch.sh` / `launch.bat`) in `<target>/<workspace-dir>/` that invoke `codex --add-dir <codebase-dir>`
         - Redirect scaffolding tasks (step 12, tasks A-K) to `<target>/<codebase-dir>/`
      - If **yes (brownfield)**: Ask for the workspace directory path (default: `<target>-workspace` as a sibling directory). Then:
-        - **Detect embedded framework** — Check whether the codebase already contains SEJA framework files (`.claude/`, `.codex/`, `.agent-resources/`, `_output/` or custom output dir). If any are found:
-          1. **Inventory before touching anything.** The codebase's `.claude/` (or `.codex/`) and `.agent-resources/` may contain a mix of SEJA framework files and custom (non-SEJA) additions. Classify each item into three categories:
-             - **SEJA framework** → move to workspace: files whose names match known SEJA skill names (from the foundational framework's skill list), known rule filenames (`backend.md`, `frontend.md`, `i18n.md`, `migrations.md`, `tests.md`, `e2e.md`, `framework-structure.md`), known agent filenames, `CHANGELOG.md`, `CHEATSHEET.md`, `VERSION`, and the `scripts/` directory. In `.agent-resources/`: `general-*` and `template-*` files.
-             - **SEJA project data** (`project-*` files in `.agent-resources/`) → move to workspace: these are SEJA-generated references (conventions, conceptual design, metacomm, standards) that belong with the framework, not in the codebase.
+        - **Detect embedded framework** — Check whether the codebase already contains SEJA framework files (`.claude/`, `.codex/`, `_references/`, `_output/` or custom output dir). If any are found:
+          1. **Inventory before touching anything.** The codebase's `.claude/` (or `.codex/`) and `_references/` may contain a mix of SEJA framework files and custom (non-SEJA) additions. Classify each item into three categories:
+             - **SEJA framework** → move to workspace: files whose names match known SEJA skill names (from the foundational framework's skill list), known rule filenames (`backend.md`, `frontend.md`, `i18n.md`, `migrations.md`, `tests.md`, `e2e.md`, `framework-structure.md`), known agent filenames, `CHANGELOG.md`, `CHEATSHEET.md`, `VERSION`, and the `scripts/` directory. In `_references/`: the `general/` and `template/` subdirectories.
+             - **SEJA project data** (files in `_references/project/`) → move to workspace: these are SEJA-generated references (conventions, conceptual design, metacomm, standards) that belong with the framework, not in the codebase.
              - **Custom (non-SEJA)** → stay in codebase: any skill, rule, agent, or config file that does NOT match a known SEJA name. Also `settings.json` and `settings.local.json` (may contain project-specific hooks and permissions).
           2. Report the classification: *"I found SEJA framework files, SEJA project data, and custom (non-SEJA) files in your codebase. SEJA files (N items) and project data (P items) will be migrated to the workspace. Custom files (M items) will stay in the codebase. Here's the breakdown: ..."*
-          3. If **yes (migrate)**: Move SEJA framework files and `project-*` data to `<workspace-dir>/`. **Leave custom (non-SEJA) skills, rules, agents, and config in the codebase.** Update path references in migrated `project-conventions.md` to use absolute paths. If an `AGENTS.md` exists at the codebase root referencing framework files, update its paths or note it as a manual step.
+          3. If **yes (migrate)**: Move SEJA framework files and `project/` data to `<workspace-dir>/`. **Leave custom (non-SEJA) skills, rules, agents, and config in the codebase.** Update path references in migrated `project/conventions.md` to use absolute paths. If an `AGENTS.md` exists at the codebase root referencing framework files, update its paths or note it as a manual step.
           4. If **no (fresh start)**: Ignore the embedded files and proceed with a clean workspace. Warn: *"The old framework files will remain in your codebase. You may want to remove them manually after verifying the workspace setup."*
-        - **Reconcile `project-*` files** — After migration (or when setting up a brownfield project that never had SEJA), compare any existing `project-*` files against the current `template-*` files to identify missing or outdated references. For each `template-*` file:
-          - If the corresponding `project-*` file **does not exist** → flag it for creation during template instantiation (step 6). The agent will use the mandatory conceptual design answers (Section 2) plus codebase inspection to populate it.
-          - If the corresponding `project-*` file **exists but is from an older template version** (missing sections, deprecated fields, or structural differences vs. the current template) → show the user what changed and offer to regenerate it. Preserve any user-authored content by reading the existing file first and carrying forward relevant values into the new template structure. Present a before/after summary so the user can confirm.
-          - If the corresponding `project-*` file **exists and is current** → keep as-is, no action needed.
+        - **Reconcile `project/` files** — After migration (or when setting up a brownfield project that never had SEJA), compare any existing `project/` files against the current `template/` files to identify missing or outdated references. For each `template/` file:
+          - If the corresponding `project/` file **does not exist** → flag it for creation during template instantiation (step 6). The agent will use the mandatory conceptual design answers (Section 2) plus codebase inspection to populate it.
+          - If the corresponding `project/` file **exists but is from an older template version** (missing sections, deprecated fields, or structural differences vs. the current template) → show the user what changed and offer to regenerate it. Preserve any user-authored content by reading the existing file first and carrying forward relevant values into the new template structure. Present a before/after summary so the user can confirm.
+          - If the corresponding `project/` file **exists and is current** → keep as-is, no action needed.
         - Create `<workspace-dir>/` and `git init` it
         - Redirect all framework file creation (steps 2-4, 6-11) to `<workspace-dir>/`
-        - Set `BACKEND_DIR` and `FRONTEND_DIR` in `project-conventions.md` to **absolute paths** pointing into the existing codebase at `<target>/`
+        - Set `BACKEND_DIR` and `FRONTEND_DIR` in `project/conventions.md` to **absolute paths** pointing into the existing codebase at `<target>/`
         - Set `OUTPUT_DIR` to `<workspace-dir>/_output`
         - Generate launcher scripts (`launch.sh` / `launch.bat`) in `<workspace-dir>/` that invoke `codex --add-dir <target>`
         - Skip scaffolding tasks that create source directories (task A) — the codebase already exists
-     - If **no**: Proceed with the standard in-place setup (all files in the target directory). For brownfield projects, still run the **Reconcile `project-*` files** step against any existing `.agent-resources/` in the codebase.
+     - If **no**: Initialize the target as a git repository (`git init`) if it is not already one. Proceed with the standard in-place setup (all files in the target directory). For brownfield projects, still run the **Reconcile `project/` files** step against any existing `_references/` in the codebase.
    - After Section 0, ask if the user wants to continue with detailed sections (1-9) or use defaults
    - **Mandatory conceptual design** — Section 2 core questions are **required** for all projects, not optional. The agent must not allow the user to skip these by accepting defaults. Without a conceptual model, the framework cannot produce meaningful plans or design references. At minimum, the user must provide:
      - Entity hierarchy (2.3) — what the system manages
@@ -113,21 +113,21 @@ The original interactive flow. Walk the user through the questionnaire to gather
      - Existing tech stack (2.13) — what is already in place
      - Migration constraints (2.14) — what cannot change
 
-6. **Instantiate templates**: Using the questionnaire answers, create project-specific files in `.agent-resources/`:
-   - Copy `template-conventions.md` to `project-conventions.md`, substituting answers
-   - Copy `template-conceptual-design-as-is.md` to `project-conceptual-design-as-is.md`, filling in current-state conceptual design
-   - Copy `template-conceptual-design-to-be.md` to `project-conceptual-design-to-be.md`, filling in target-state conceptual design
-   - Copy `template-metacomm-as-is.md` to `project-metacomm-as-is.md`, filling in current-state metacommunication
-   - Copy `template-metacomm-to-be.md` to `project-metacomm-to-be.md`, filling in target-state metacommunication
+6. **Instantiate templates**: Using the questionnaire answers, create project-specific files in `_references/`:
+   - Copy `template/conventions.md` to `project/conventions.md`, substituting answers
+   - Copy `template/conceptual-design-as-is.md` to `project/conceptual-design-as-is.md`, filling in current-state conceptual design
+   - Copy `template/conceptual-design-to-be.md` to `project/conceptual-design-to-be.md`, filling in target-state conceptual design
+   - Copy `template/metacomm-as-is.md` to `project/metacomm-as-is.md`, filling in current-state metacommunication
+   - Copy `template/metacomm-to-be.md` to `project/metacomm-to-be.md`, filling in target-state metacommunication
    - **Note**: For greenfield projects, populate as-is and to-be identically. For evolving products, populate to-be with the target state and as-is with the current implementation.
-   - Copy `template-backend-standards.md` to `project-backend-standards.md`, selecting relevant sections
-   - Copy `template-frontend-standards.md` to `project-frontend-standards.md`, selecting relevant sections
-   - Copy `template-i18n-standards.md` to `project-i18n-standards.md`, if i18n is needed
-   - Copy `template-security-checklists.md` to `project-security-checklists.md`
-   - Copy `template-testing-standards.md` to `project-testing-standards.md`
-   - Copy `template-ux-design-standards.md` to `project-ux-design-standards.md`, filling in UX design choices
-   - Copy `template-graphic-ui-design-standards.md` to `project-graphic-ui-design-standards.md`, filling in visual/UI design choices
-   - Copy `template-agents-md.md` to `AGENTS.md` and substitute the stack-specific placeholders
+   - Copy `template/backend-standards.md` to `project/backend-standards.md`, selecting relevant sections
+   - Copy `template/frontend-standards.md` to `project/frontend-standards.md`, selecting relevant sections
+   - Copy `template/i18n-standards.md` to `project/i18n-standards.md`, if i18n is needed
+   - Copy `template/security-checklists.md` to `project/security-checklists.md`
+   - Copy `template/testing-standards.md` to `project/testing-standards.md`
+   - Copy `template/ux-design-standards.md` to `project/ux-design-standards.md`, filling in UX design choices
+   - Copy `template/graphic-ui-design-standards.md` to `project/graphic-ui-design-standards.md`, filling in visual/UI design choices
+   - Copy `template/agents-md.md` to `AGENTS.md` and substitute the stack-specific placeholders
 
 7. **Generate AGENTS.md**: Create an `AGENTS.md` in the codebase root with:
    - Project name, stack summary, build/run commands
@@ -144,7 +144,7 @@ The original interactive flow. Walk the user through the questionnaire to gather
 
 10. **Generate smoke test infrastructure** (if backend framework is not "none"):
     1. `smoke_test_core.py` is already copied with the other scripts (step 3/4). No additional action needed — it is framework-agnostic.
-    2. Generate `smoke_test_registry.json` from `template-smoke-test-registry.json`:
+    2. Generate `smoke_test_registry.json` from `template/smoke-test-registry.json`:
        - Set `framework` from `backend.framework` (lowercase: "flask", "django", "fastapi", "express")
        - Set `auth.method` from `backend.auth`
        - Set `test_config` based on framework: Flask→"unit_testing", Django→"test", FastAPI→"testing"
@@ -258,22 +258,22 @@ The original interactive flow. Walk the user through the questionnaire to gather
     **Present the review checklist:**
     > *"I've generated the following project specification files from your answers. I recommend reviewing them before generating a roadmap — these are the foundation for all planning and code generation."*
 
-    List the `project-*` files with a one-line description of what each controls:
+    List the `project/` files with a one-line description of what each controls:
 
     | File | Controls | Key things to verify |
     |------|----------|---------------------|
-    | `project-conventions.md` | Directory paths, variable definitions | Paths are correct, especially for workspace pattern |
-    | `project-conceptual-design-as-is.md` | Entity hierarchy, permissions, domain concepts | Entities and their relationships match your mental model |
-    | `project-conceptual-design-to-be.md` | Target design (same as as-is for greenfield) | Greenfield: should be identical to as-is |
-    | `project-metacomm-as-is.md` | Current metacommunication record | Designer intent per feature is accurate |
-    | `project-metacomm-to-be.md` | Target metacommunication with full EMT | Global vision and per-feature intentions are complete |
-    | `project-backend-standards.md` | Backend architecture conventions | Framework, ORM, auth patterns match your stack |
-    | `project-frontend-standards.md` | Frontend architecture conventions | Components, routing, state management patterns |
-    | `project-ux-design-standards.md` | Interaction patterns, accessibility, responsive | Navigation, forms, keyboard shortcuts, WCAG level |
-    | `project-graphic-ui-design-standards.md` | Visual identity, colors, typography, motion | Brand colors, font, spacing, icon set |
-    | `project-testing-standards.md` | Test frameworks and conventions | Test patterns match your stack |
-    | `project-i18n-standards.md` | Internationalization conventions | Locales, translation approach |
-    | `project-security-checklists.md` | Security checklists, validation constants | Field limits, auth constants |
+    | `project/conventions.md` | Directory paths, variable definitions | Paths are correct, especially for workspace pattern |
+    | `project/conceptual-design-as-is.md` | Entity hierarchy, permissions, domain concepts | Entities and their relationships match your mental model |
+    | `project/conceptual-design-to-be.md` | Target design (same as as-is for greenfield) | Greenfield: should be identical to as-is |
+    | `project/metacomm-as-is.md` | Current metacommunication record | Designer intent per feature is accurate |
+    | `project/metacomm-to-be.md` | Target metacommunication with full EMT | Global vision and per-feature intentions are complete |
+    | `project/backend-standards.md` | Backend architecture conventions | Framework, ORM, auth patterns match your stack |
+    | `project/frontend-standards.md` | Frontend architecture conventions | Components, routing, state management patterns |
+    | `project/ux-design-standards.md` | Interaction patterns, accessibility, responsive | Navigation, forms, keyboard shortcuts, WCAG level |
+    | `project/graphic-ui-design-standards.md` | Visual identity, colors, typography, motion | Brand colors, font, spacing, icon set |
+    | `project/testing-standards.md` | Test frameworks and conventions | Test patterns match your stack |
+    | `project/i18n-standards.md` | Internationalization conventions | Locales, translation approach |
+    | `project/security-checklists.md` | Security checklists, validation constants | Field limits, auth constants |
 
     **Then offer next steps:**
     > *"What would you like to do next?"*
@@ -284,13 +284,13 @@ The original interactive flow. Walk the user through the questionnaire to gather
     3. **Done for now** — *"You can review the files at your own pace and run `$make-plan --roadmap` when ready."*
 
     **If the user chooses "Review specs now" (option 1):**
-    - Walk through each `project-*` file, presenting a brief summary of the key decisions captured.
+    - Walk through each `project/` file, presenting a brief summary of the key decisions captured.
     - For each file, ask: *"Does this look right, or would you like to change anything?"*
     - If the user requests changes, edit the file in place.
     - After the review, return to the next-steps menu (offer options 2 and 3).
 
     **If the user chooses "Generate roadmap" (option 2):**
-    1. Read `template-roadmap-spec.md` for the spec format.
+    1. Read `template/roadmap-spec.md` for the spec format.
     2. Derive themes and work items from the conceptual design (entities, permissions, domain concepts, import/export, i18n) and the metacommunication message (features the designer committed to).
     3. Structure the roadmap as follows:
        - **Theme: Foundation** (P0) — data models, database setup, app factory, auth endpoints. One work item per entity (User + auth, then each domain entity). These are `technical` type, `backend` scope.
@@ -309,7 +309,7 @@ The original interactive flow. Walk the user through the questionnaire to gather
     12. If the user declines, note: *"You can run `$make-plan --roadmap --from-spec <path>` later to generate plans."*
 
     **If the user chooses "Done for now" (option 3):**
-    - Remind: *"You can review the spec files in `.agent-resources/` at any time. When ready, run `$make-plan --roadmap` to generate a development roadmap and executable plans."*
+    - Remind: *"You can review the spec files in `_references/` at any time. When ready, run `$make-plan --roadmap` to generate a development roadmap and executable plans."*
 
 ---
 
@@ -331,8 +331,8 @@ For experienced users who pre-fill a spec file with their stack choices. The age
    - Empty values mean "not provided" (use default or ask)
    - Free-form sections (Domain, Security) capture all non-comment, non-key-value text as prose
 
-4. **Version check**: Compare the spec's `version` field against the current `questionnaire_version` (defined in this skill's frontmatter and in `template-questionnaire.md`). If there is a mismatch:
-   - Consult the Version History table in `template-questionnaire.md` to identify new, changed, or removed fields between versions
+4. **Version check**: Compare the spec's `version` field against the current `questionnaire_version` (defined in this skill's frontmatter and in `template/questionnaire.md`). If there is a mismatch:
+   - Consult the Version History table in `template/questionnaire.md` to identify new, changed, or removed fields between versions
    - Show the user what changed
    - Offer to migrate: apply defaults for new fields, warn about removed fields
    - If the user declines migration, proceed with best-effort parsing
@@ -398,7 +398,7 @@ Creates a blank spec skeleton for the user to fill out offline.
 
 2. **Create specs/ subfolder**: Create `<target>/specs/` if it does not exist.
 
-3. **Generate the spec file**: Copy `template-quickstart-spec.md` (from this project's `.agent-resources/`) to `<target>/specs/quickstart-spec-YYYY-MM-DD HH.MM UTC.md`. Substitute the `{datetime}` placeholder in the header comment with the current UTC datetime.
+3. **Generate the spec file**: Copy `template/quickstart-spec.md` (from this project's `_references/`) to `<target>/specs/quickstart-spec-YYYY-MM-DD HH.MM UTC.md`. Substitute the `{datetime}` placeholder in the header comment with the current UTC datetime.
 
 4. **Output next steps**:
    > Spec file created at `<path>`.
@@ -470,12 +470,12 @@ Used during Mode 2 validation (step 5) to determine which fields are required, d
 
 ## Versioning
 
-- The current questionnaire version is declared in this skill's frontmatter (`questionnaire_version`) and in `template-questionnaire.md`.
+- The current questionnaire version is declared in this skill's frontmatter (`questionnaire_version`) and in `template/questionnaire.md`.
 - Spec files declare their version via the `version:` field on the first non-comment line.
-- When versions differ, consult the Version History table in `template-questionnaire.md` to identify changes and offer migration.
+- When versions differ, consult the Version History table in `template/questionnaire.md` to identify changes and offer migration.
 - When adding new questions to the questionnaire:
-  1. Increment `questionnaire_version` in both this skill's frontmatter and `template-questionnaire.md`
-  2. Add the new fields to `template-quickstart-spec.md`
+  1. Increment `questionnaire_version` in both this skill's frontmatter and `template/questionnaire.md`
+  2. Add the new fields to `template/quickstart-spec.md`
   3. Add an entry to the Version History table describing the changes
   4. Add default values for the new fields to the Field Classification table above
 
@@ -497,7 +497,7 @@ When releasing a new framework version, follow this procedure:
 
 1. `.codex/skills/VERSION` — update the `version:` line
 2. `.codex/CHANGELOG.md` — add a new version entry at the top with Added/Changed/Removed sections
-3. `questionnaire_version` in `$quickstart` frontmatter and `template-questionnaire.md` — increment only if the questionnaire changed (new questions, removed questions, changed defaults)
+3. `questionnaire_version` in `$quickstart` frontmatter and `template/questionnaire.md` — increment only if the questionnaire changed (new questions, removed questions, changed defaults)
 
 ### How to verify
 
@@ -526,8 +526,8 @@ If the argument includes `--upgrade`, skip the menu and go directly to Mode 4.
    - Any manual steps needed (path reference updates, AGENTS.md refresh)
 
 4. **Offer follow-up actions**:
-   - If new convention variables were found: "Would you like to add these variables to your `project-conventions.md`? I can walk you through the values."
-   - If old path references were found in project files: "Would you like me to update the references from `.codex/skills/references/` to `.agent-resources/`?"
+   - If new convention variables were found: "Would you like to add these variables to your `project/conventions.md`? I can walk you through the values."
+   - If old path references were found in project files: "Would you like me to update the references from `.codex/skills/references/` to `_references/`?"
    - If AGENTS.md needs refresh: "Would you like to regenerate your AGENTS.md with the updated framework structure?"
 
 5. **Summary**: Report the upgrade result and list any remaining manual steps.
@@ -559,7 +559,7 @@ If the argument includes `--workspace`, skip the menu and go directly to Mode 5.
 4. **Offer to continue setup**: Ask the user:
    > "Would you like to run the project questionnaire to customize conventions and design references? This will tailor the framework to your specific project."
    - If yes: instruct the user to `cd` to the workspace and run `$quickstart .` to enter Mode 1 (interactive) or Mode 2 (from-spec)
-   - If no: remind the user to edit `.agent-resources/project-conventions.md` manually and run `$quickstart .` in the workspace later
+   - If no: remind the user to edit `_references/project/conventions.md` manually and run `$quickstart .` in the workspace later
 
 5. **Summary**: Report the workspace setup result and list next steps:
    - Start Codex from the workspace: `codex --add-dir <target>`

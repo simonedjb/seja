@@ -8,11 +8,11 @@ metadata:
   category: analysis
   context_budget: standard
   references:
-    - project-conceptual-design-as-is.md
-    - project-conceptual-design-to-be.md
-    - general-shared-definitions.md
-    - general-report-conventions.md
-    - general-review-perspectives.md
+    - project/conceptual-design-as-is.md
+    - project/conceptual-design-to-be.md
+    - general/shared-definitions.md
+    - general/report-conventions.md
+    - general/review-perspectives.md
 ---
 
 ## Quick Guide
@@ -40,7 +40,7 @@ If the arguments begin with `--inventory`, run the **Inventory workflow** below 
 
 ## Inventory Workflow
 
-Output folder: `${INVENTORIES_DIR}` (see project-conventions.md)
+Output folder: `${INVENTORIES_DIR}` (see project/conventions.md)
 Filename pattern: `inventory-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 
 If there is no brief after `--inventory`, ask for the brief.
@@ -53,7 +53,7 @@ If there is no brief after `--inventory`, ask for the brief.
 
 3. Save the information to the output file, adopting a format similar to the existing entries, including:
 - *header*: `# Inventory <id> | <prefix><scope> | <current datetime> | <short title>`
-- *user brief*, *agent interpretation*, *files* — per .agent-resources/general-report-conventions.md
+- *user brief*, *agent interpretation*, *files* — per _references/general/report-conventions.md
 - *inventory*: no predefined structure here
 
 4. Output the inventory id.
@@ -66,7 +66,7 @@ If there is no brief after `--inventory`, ask for the brief.
 
 ### Definitions
 
-Output folder: `${ADVISORY_DIR}` (see project-conventions.md)
+Output folder: `${ADVISORY_DIR}` (see project/conventions.md)
 Filename pattern: `advisory-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 
 ### Skill-specific Instructions
@@ -77,15 +77,15 @@ Filename pattern: `advisory-<id>-<truncated short title slug>.md` (6-digit zero-
 
 3. Research as needed to understand the user's question thoroughly. You may read the entire codebase, architecture docs, design docs, and any other relevant files to gather information. You may use these tools (without asking for authorization) to collect data and insights: Read, Search, and WebSearch.
 
-4. To complement your research, evaluate the question from multiple perspectives using the `general-review-perspectives.md` framework and simulating a heterogeneous council of experts in the relevant perspectives (3 experts per perspective). This will help ensure that your advice is comprehensive and considers various aspects of software engineering and design. For each relevant perspective, provide a balanced analysis with pros and cons to help the user make informed decisions.
+4. To complement your research, evaluate the question from multiple perspectives using the `general/review-perspectives.md` framework and simulating a heterogeneous council of experts in the relevant perspectives (3 experts per perspective). This will help ensure that your advice is comprehensive and considers various aspects of software engineering and design. For each relevant perspective, provide a balanced analysis with pros and cons to help the user make informed decisions.
 
-5. When analyzing how to respond, evaluate the question against all applicable engineering and design perspectives from `general-review-perspectives.md`, ensuring comprehensive domain coverage. For each relevant perspective, justify recommendations with pros and cons. Search the web for established and emerging best practices related to the user's question, and incorporate those into your analysis.
+5. When analyzing how to respond, evaluate the question against all applicable engineering and design perspectives from `general/review-perspectives.md`, ensuring comprehensive domain coverage. For each relevant perspective, justify recommendations with pros and cons. Search the web for established and emerging best practices related to the user's question, and incorporate those into your analysis.
 
 6. Answer the user's question with clear, actionable recommendations.
 
 7. Save a report to the output file, including:
    - *header*: `# Advisory <id> | <prefix><scope> | <current datetime> | <short title>`
-   - *user brief*, *agent interpretation*, *files* — per .agent-resources/general-report-conventions.md
+   - *user brief*, *agent interpretation*, *files* — per _references/general/report-conventions.md
    - *Q&A log*: the initial question and answer, numbered sequentially (follow-ups will be appended later)
    - *recommendations summary*: a concise list of all actionable recommendations made so far
 

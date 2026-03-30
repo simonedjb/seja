@@ -2,8 +2,8 @@
 """
 project_config — Central configuration for SEJA helper scripts.
 
-Parses project-conventions.md and exposes all variables via get/get_path/get_list.
-Falls back to template-conventions.md when project-conventions.md is absent.
+Parses project/conventions.md and exposes all variables via get/get_path/get_list.
+Falls back to template/conventions.md when project/conventions.md is absent.
 
 Usage from sibling scripts:
     from project_config import REPO_ROOT, get, get_path, get_list
@@ -21,8 +21,8 @@ from pathlib import Path
 # Repo root discovery
 # ---------------------------------------------------------------------------
 
-_CONVENTIONS_REL = Path(".agent-resources", "project-conventions.md")
-_TEMPLATE_REL = Path(".agent-resources", "template-conventions.md")
+_CONVENTIONS_REL = Path("_references", "project/conventions.md")
+_TEMPLATE_REL = Path("_references", "template/conventions.md")
 _ROW_RE = re.compile(
     r"^\|\s*`([^`]+)`\s*\|\s*`([^`]+)`\s*\|", re.MULTILINE
 )
@@ -51,7 +51,7 @@ _warned_missing = False
 
 
 def _parse_config() -> dict[str, str]:
-    """Read project-conventions.md, extract variable rows, resolve refs."""
+    """Read project/conventions.md, extract variable rows, resolve refs."""
     global _warned_missing
 
     conventions = REPO_ROOT / _CONVENTIONS_REL
@@ -60,7 +60,7 @@ def _parse_config() -> dict[str, str]:
         if template.is_file():
             if not _warned_missing:
                 print(
-                    f"INFO: project-conventions.md not found; using template-conventions.md as fallback",
+                    f"INFO: project/conventions.md not found; using template/conventions.md as fallback",
                     file=sys.stderr,
                 )
                 _warned_missing = True
@@ -68,7 +68,7 @@ def _parse_config() -> dict[str, str]:
         else:
             if not _warned_missing:
                 print(
-                    f"WARNING: neither project-conventions.md nor template-conventions.md found",
+                    f"WARNING: neither project/conventions.md nor template/conventions.md found",
                     file=sys.stderr,
                 )
                 _warned_missing = True
@@ -131,7 +131,7 @@ def get_list(key: str, default: list[str] | None = None) -> list[str]:
 
 
 def diff_conventions(project_path: str | Path, template_path: str | Path) -> dict:
-    """Compare a project-conventions file against a template-conventions file.
+    """Compare a project/conventions file against a template/conventions file.
 
     Parses both files using _ROW_RE and returns a dict with:
       - missing_in_project: variable names in template but not in project
@@ -179,7 +179,7 @@ def _main() -> None:
     """Print all resolved config variables."""
     config = _ensure_config()
     if not config:
-        print("No configuration loaded (project-conventions.md missing or empty).")
+        print("No configuration loaded (project/conventions.md missing or empty).")
         return
 
     print(f"REPO_ROOT: {REPO_ROOT}\n")

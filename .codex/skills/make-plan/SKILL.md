@@ -9,21 +9,21 @@ metadata:
   category: planning
   context_budget: heavy
   references:
-    - project-conceptual-design-as-is.md
-    - project-conceptual-design-to-be.md
-    - project-metacomm-to-be.md
-    - project-conventions.md
-    - general-report-conventions.md
-    - general-coding-standards.md
-    - project-frontend-standards.md
-    - project-backend-standards.md
-    - project-testing-standards.md
-    - project-i18n-standards.md
-    - project-security-checklists.md
-    - project-ux-design-standards.md
-    - project-graphic-ui-design-standards.md
-    - general-review-perspectives.md
-    - general-review-log-template.md
+    - project/conceptual-design-as-is.md
+    - project/conceptual-design-to-be.md
+    - project/metacomm-to-be.md
+    - project/conventions.md
+    - general/report-conventions.md
+    - general/coding-standards.md
+    - project/frontend-standards.md
+    - project/backend-standards.md
+    - project/testing-standards.md
+    - project/i18n-standards.md
+    - project/security-checklists.md
+    - project/ux-design-standards.md
+    - project/graphic-ui-design-standards.md
+    - general/review-perspectives.md
+    - general/review-log-template.md
 ---
 
 ## Quick Guide
@@ -47,7 +47,7 @@ If there are no arguments, ask for the brief.
 
 ## Definitions
 
-Output folder: `${PLANS_DIR}` (see project-conventions.md)
+Output folder: `${PLANS_DIR}` (see project/conventions.md)
 Filename pattern: `plan-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 
 Reserve the next global ID by running `python .codex/skills/scripts/reserve_id.py --type plan --title '<short title>'`. Use the returned 6-digit ID.
@@ -65,9 +65,9 @@ When invoked with `--framing metacomm`, use the metacomm framing. Otherwise, use
 
 When using the metacomm framing:
 
-1. **Read existing metacomm intentions**: If `.agent-resources/project-metacomm-to-be.md` exists, read it before generating the plan. This file contains per-feature metacommunication intentions that describe how the designer intends the system to communicate with users.
+1. **Read existing metacomm intentions**: If `_references/project/metacomm-to-be.md` exists, read it before generating the plan. This file contains per-feature metacommunication intentions that describe how the designer intends the system to communicate with users.
 
-2. **Contradiction detection**: Compare the new brief against the existing intentions in `project-metacomm-to-be.md`. If the new brief contradicts an existing intention (e.g., the brief says "remove the tagging flow" but an existing intention describes tagging behavior), emit a **⚠ Metacomm contradiction** warning in the plan output, listing:
+2. **Contradiction detection**: Compare the new brief against the existing intentions in `project/metacomm-to-be.md`. If the new brief contradicts an existing intention (e.g., the brief says "remove the tagging flow" but an existing intention describes tagging behavior), emit a **⚠ Metacomm contradiction** warning in the plan output, listing:
    - The new brief's directive
    - The conflicting existing intention (quote the relevant line)
    - A recommendation: update the existing intention, or confirm the new brief supersedes it
@@ -78,7 +78,7 @@ When using the metacomm framing:
    - **Summary**: <one-sentence summary of the metacommunication message this plan implements>
    - **Source**: agent (metacomm)
    ```
-   This note is consumed downstream by `$explain spec-drift` or `$post-skill` to keep `project-metacomm-to-be.md` in sync.
+   This note is consumed downstream by `$explain spec-drift` or `$post-skill` to keep `project/metacomm-to-be.md` in sync.
 
 ## Skill-specific Instructions
 
@@ -86,8 +86,8 @@ When using the metacomm framing:
 
 2. Following best practices, create a structured, self-contained plan that can be executed independently by an agent, including:
 - *header*: `# Plan <id> | <prefix><scope> | <current datetime> | <short title> | Review: <depth>` followed by a metadata line `plan_format_version: 1` on the next line — prefix based on the brief; `<depth>` is Light, Standard, or Deep (set in step 4). If metacomm framing, add `METACOMM |` after the prefix-scope. If invoked from an advisory Q&A flow with a source advisory ID, include `source: advisory-<id>` on the metadata line after `plan_format_version: 1`.
-- If default framing: *user brief*, *agent interpretation*, *files* — per .agent-resources/general-report-conventions.md
-- If metacomm framing: *designer's metacommunication message* (the brief), *agent interpretation*, *files* — per .agent-resources/general-report-conventions.md
+- If default framing: *user brief*, *agent interpretation*, *files* — per _references/general/report-conventions.md
+- If metacomm framing: *designer's metacommunication message* (the brief), *agent interpretation*, *files* — per _references/general/report-conventions.md
 - If the prefix is FIX (the brief describes an error or bug), also include:
   - *error log* (optional): if an extensive error log is provided, summarize it and prepend with "summarized error log:". In this case, replace the error log in the user brief with "<error log> (see summary below)"
   - *root cause*: diagnostics of the problem
@@ -118,14 +118,14 @@ When using the metacomm framing:
    - Each step should be completable in one subagent context window (rule of thumb: touches ≤5 files)
    - If a step would touch >5 files, split it into smaller steps
    - **Files**: list all files the step reads, creates, modifies, or deletes. For new files, the path is a planned location. For existing files, verify they exist during planning.
-   - **References**: list only the `.agent-resources/` reference files relevant to this step (e.g., `project-backend-standards` for a Python step, `project-frontend-standards` for a React step). Omit irrelevant ones.
+   - **References**: list only the `_references/` reference files relevant to this step (e.g., `project/backend-standards` for a Python step, `project/frontend-standards` for a React step). Omit irrelevant ones.
    - **Depends on**: list step numbers whose output this step requires. Use `none` if the step is independent. The orchestrator uses this to avoid executing steps before their dependencies complete.
    - **Verify**: a concrete, testable condition. Prefer automated checks ("tests pass", "linter clean") over subjective ones ("looks right").
    - Steps should be ordered so that dependencies flow forward (Step 2 depends on Step 1, not the reverse).
 
 3. Save the plan to the plan file. If not overwriting a file, proceed without asking for authorization.
 
-4. **Review the plan** using a complexity-gated, two-phase process. Use `general-review-log-template.md` for the review log format.
+4. **Review the plan** using a complexity-gated, two-phase process. Use `general/review-log-template.md` for the review log format.
 
    **Step metadata validation (before perspective review):**
    Before starting the perspective review, validate each step's metadata:
@@ -144,7 +144,7 @@ When using the metacomm framing:
    Update the plan header's `Review: <depth>` field to match.
 
    **Phase 1 — Perspective triage and scan (inline, no subagents):**
-   Based on the plan's prefix and scope, identify the default shortlist of 3–6 most relevant perspectives using the **Perspective Shortcuts by Plan Prefix** table in `general-review-perspectives.md`.
+   Based on the plan's prefix and scope, identify the default shortlist of 3–6 most relevant perspectives using the **Perspective Shortcuts by Plan Prefix** table in `general/review-perspectives.md`.
    If the plan's content clearly warrants it, add up to 2 additional perspectives beyond the default shortlist with a one-line justification (e.g., "Added PERF: Step 3 introduces a bulk query not typical for CHORE-O scope").
    For perspectives not in the final shortlist, mark as N/A in the review log.
    Scan the plan against each shortlisted perspective and record Adopted/Deferred status with a one-line concern for each.
@@ -159,13 +159,13 @@ When using the metacomm framing:
 
    For Standard reviews, perform deep-dives inline for each qualifying Deferred perspective:
    - Read the source files referenced in the plan that are relevant to the perspective
-   - Read the specific standards/reference file for that perspective (e.g., `project-security-checklists.md` for SEC, `project-backend-standards.md` for DB/ARCH, `project-frontend-standards.md` for UX/A11Y/VIS)
+   - Read the specific standards/reference file for that perspective (e.g., `project/security-checklists.md` for SEC, `project/backend-standards.md` for DB/ARCH, `project/frontend-standards.md` for UX/A11Y/VIS)
    - Do NOT read all reference files — only the ones relevant to the specific perspective
    - Evaluate the plan's approach against the perspective and record: finding, step ref (which plan step is affected), recommendation, and whether the plan should change
    - Limit deep-dives to a maximum of 6 across all iterations (not per iteration). Track the running count in every deep-dive header using the mandatory format `(iteration N, deep-dive M/6)`
 
    **Conflict check:**
-   After each iteration that produces Phase 2 recommendations, check whether recommendations from different perspectives contradict each other. Resolve conflicts per the priority rules in `general-review-perspectives.md` §Resolving Perspective Conflicts. Log the check in the review log (see template).
+   After each iteration that produces Phase 2 recommendations, check whether recommendations from different perspectives contradict each other. Resolve conflicts per the priority rules in `general/review-perspectives.md` §Resolving Perspective Conflicts. Log the check in the review log (see template).
 
    **Iteration and convergence:**
    If Phase 2 produces recommendations that change the plan:
@@ -176,7 +176,7 @@ When using the metacomm framing:
    5. Otherwise, repeat until all perspectives are either Adopted or Deferred with a clear rationale that no change is needed, or until 3 iterations are reached, or until the deep-dive budget (6) is exhausted — whichever comes first.
 
    **Execution metrics (mandatory):**
-   At the end of the review log, append the Execution Metrics table (see `general-review-log-template.md`). This data is used to tune review thresholds over time.
+   At the end of the review log, append the Execution Metrics table (see `general/review-log-template.md`). This data is used to tune review thresholds over time.
 
    Append all review results to the plan file. Do not rewrite the file from scratch — only add the review log and any amendment sections.
 
@@ -198,7 +198,7 @@ This mode generates a product roadmap by decomposing a project's conceptual desi
 
 ## Definitions
 
-Output folder: `${ROADMAP_DIR}` (see project-conventions.md)
+Output folder: `${ROADMAP_DIR}` (see project/conventions.md)
 Filename pattern: `roadmap-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 
 Reserve the next global ID by running `python .codex/skills/scripts/reserve_id.py --type roadmap --title '<short title>'`. Use the returned 6-digit ID.
@@ -221,14 +221,14 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
 
 1. **Run $pre-skill "make-plan"** to load general instructions.
 
-2. **Read project references**: Verify the following files exist in the current project's `.agent-resources`. If `project-conceptual-design-to-be.md` is missing, abort with a message suggesting the user run `$quickstart` first. `project-conceptual-design-as-is.md` is required for brownfield projects but optional for greenfield. Other files are optional (warn but continue). Read:
-   - `project-conceptual-design-as-is.md` (current-state entities, hierarchy, permissions, UX patterns -- empty or absent for greenfield)
-   - `project-conceptual-design-to-be.md` (target-state entities, hierarchy, permissions, UX patterns)
-   - `project-conventions.md` (directory structure, source paths)
-   - `project-backend-standards.md` (API patterns, service layer)
-   - `project-frontend-standards.md` (pages, components, routing)
-   - `project-i18n-standards.md` (locales, translation scope)
-   - `project-security-checklists.md` (validation, auth requirements)
+2. **Read project references**: Verify the following files exist in the current project's `_references`. If `project/conceptual-design-to-be.md` is missing, abort with a message suggesting the user run `$quickstart` first. `project/conceptual-design-as-is.md` is required for brownfield projects but optional for greenfield. Other files are optional (warn but continue). Read:
+   - `project/conceptual-design-as-is.md` (current-state entities, hierarchy, permissions, UX patterns -- empty or absent for greenfield)
+   - `project/conceptual-design-to-be.md` (target-state entities, hierarchy, permissions, UX patterns)
+   - `project/conventions.md` (directory structure, source paths)
+   - `project/backend-standards.md` (API patterns, service layer)
+   - `project/frontend-standards.md` (pages, components, routing)
+   - `project/i18n-standards.md` (locales, translation scope)
+   - `project/security-checklists.md` (validation, auth requirements)
 
 3. **Decompose into work items**: Compare the as-is and to-be conceptual designs to identify work items from the **delta** between them. Use this decomposition strategy:
 
@@ -339,7 +339,7 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
 
 2. **Create specs/ subfolder**: Create `<target>/specs/` if it does not exist.
 
-3. **Generate the spec file**: Copy `template-roadmap-spec.md` (from this project's `.agent-resources`) to `<target>/specs/roadmap-spec-YYYY-MM-DD HH.MM UTC.md`. Substitute the `{datetime}` placeholder in the header comment with the current UTC datetime.
+3. **Generate the spec file**: Copy `template/roadmap-spec.md` (from this project's `_references`) to `<target>/specs/roadmap-spec-YYYY-MM-DD HH.MM UTC.md`. Substitute the `{datetime}` placeholder in the header comment with the current UTC datetime.
 
 4. **Output next steps**:
    > Spec file created at `<path>`.
@@ -386,9 +386,9 @@ Design items are phrased as metacommunication messages: "When the user [context]
 # Roadmap <id> | <datetime> | <title>
 
 ## Source
-- project-conceptual-design-as-is.md (read)
-- project-conceptual-design-to-be.md (read)
-- project-conventions.md (read)
+- project/conceptual-design-as-is.md (read)
+- project/conceptual-design-to-be.md (read)
+- project/conventions.md (read)
 - ... (list all files read)
 
 ## Wave Summary

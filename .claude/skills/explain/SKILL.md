@@ -8,12 +8,12 @@ metadata:
   category: analysis
   context_budget: standard
   references:
-    - project-conceptual-design-as-is.md
-    - project-conceptual-design-to-be.md
-    - project-metacomm-as-is.md
-    - project-metacomm-to-be.md
-    - general-shared-definitions.md
-    - general-report-conventions.md
+    - project/conceptual-design-as-is.md
+    - project/conceptual-design-to-be.md
+    - project/metacomm-as-is.md
+    - project/metacomm-to-be.md
+    - general/shared-definitions.md
+    - general/report-conventions.md
 ---
 
 ## Quick Guide
@@ -44,28 +44,28 @@ If the explanation type (architecture, behavior, behavior-evolution, code, data-
 ## Definitions per type
 
 ### behavior
-- Output folder: `${EXPLAINED_BEHAVIORS_DIR}` (see project-conventions.md)
+- Output folder: `${EXPLAINED_BEHAVIORS_DIR}` (see project/conventions.md)
 - Filename pattern: `behavior-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 - Reserve ID: `python .claude/skills/scripts/reserve_id.py --type behavior --title '<short title>'`
 - Header pattern: `# Behavior <id> | <prefix><scope> | <current datetime> | <short title>`
 - General instructions: Keep explanations conversational and centered on the user (including user roles), user goals and activities, user interface, and user-system interactions. For complex concepts, use multiple analogies.
 
 ### behavior-evolution
-- Output folder: `${BEHAVIOR_EVOLUTION_DIR}` (see project-conventions.md)
+- Output folder: `${BEHAVIOR_EVOLUTION_DIR}` (see project/conventions.md)
 - Filename pattern: `evolution-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 - Reserve ID: `python .claude/skills/scripts/reserve_id.py --type evolution --title '<short title>'`
 - Header pattern: `# Behavior Evolution <id> | <prefix><scope> | <current datetime> | <short title>`
 - General instructions: Keep explanations conversational and centered on the user (including user roles), user goals and activities, user interface, and user-system interactions. The goal is to tell the **story** of how a feature or behavior area reached its current state — not just what it does today, but *why* it is the way it is, through the lens of design decisions captured in plans.
 
 ### code
-- Output folder: `${EXPLAINED_CODE_DIR}` (see project-conventions.md)
+- Output folder: `${EXPLAINED_CODE_DIR}` (see project/conventions.md)
 - Filename pattern: `dev-onboarding-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 - Reserve ID: `python .claude/skills/scripts/reserve_id.py --type dev-onboarding --title '<short title>'`
 - Header pattern: `# Dev-Onboarding <id> | <prefix><scope> | <current datetime> | <short title>`
 - General instructions: Keep explanations conversational and consider junior developers who are just learning the dev stack. For complex concepts, use multiple analogies.
 
 ### data-model
-- Output folder: `${EXPLAINED_DATA_MODEL_DIR}` (see project-conventions.md)
+- Output folder: `${EXPLAINED_DATA_MODEL_DIR}` (see project/conventions.md)
 - Filename pattern: `data-model-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 - Reserve ID: `python .claude/skills/scripts/reserve_id.py --type data-model --title '<short title>'`
 - Header pattern: `# Data Model <id> | <prefix><scope> | <current datetime> | <short title>`
@@ -73,7 +73,7 @@ If the explanation type (architecture, behavior, behavior-evolution, code, data-
 - If no scope is provided, consider the entire database. Otherwise, consider the scope and its dependencies.
 
 ### architecture
-- Output folder: `${EXPLAINED_ARCHITECTURE_DIR}` (see project-conventions.md)
+- Output folder: `${EXPLAINED_ARCHITECTURE_DIR}` (see project/conventions.md)
 - Filename pattern: `architecture-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 - Reserve ID: `python .claude/skills/scripts/reserve_id.py --type architecture --title '<short title>'`
 - Header pattern: `# Architecture <id> | <prefix><scope> | <current datetime> | <short title>`
@@ -81,7 +81,7 @@ If the explanation type (architecture, behavior, behavior-evolution, code, data-
 - If no scope is provided, consider the entire system. Otherwise, consider the scoped area and its interactions with the rest of the system.
 
 ### spec-drift
-- Output folder: `${ADVISORY_DIR}` (see project-conventions.md)
+- Output folder: `${ADVISORY_DIR}` (see project/conventions.md)
 - Filename pattern: `advisory-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 - Reserve ID: `python .claude/skills/scripts/reserve_id.py --type advisory --title '<short title>'`
 - Header pattern: `# Advisory <id> | <prefix><scope> | <current datetime> | <short title>`
@@ -158,7 +158,7 @@ The report must contain these sections in order:
 #### Step A — Survey the system
 
 1. Read `AGENTS.md` (or `README.md`) for the high-level project description and stack.
-2. Read `project-conventions.md` for directory structure and key variables.
+2. Read `project/conventions.md` for directory structure and key variables.
 3. Scan the top-level directory layout and primary source directories to identify major components (backend, frontend, shared libraries, infrastructure, etc.).
 4. If a scope is provided, focus on that area and its direct dependencies. Otherwise, cover the full system.
 
@@ -284,7 +284,7 @@ Every entry created or modified by this workflow must carry:
 For each entity, feature, or UX pattern in `${CONCEPTUAL_DESIGN_TO_BE}` that lacks a corresponding entry in `${METACOMM_TO_BE}`:
 - Draft a metacommunication intention describing what the designer communicates to the user through this feature
 - Present the draft to the user for confirmation or revision
-- If the user revises the draft, record their revision **verbatim** (see `general-shared-definitions.md` § Verbatim rule)
+- If the user revises the draft, record their revision **verbatim** (see `general/shared-definitions.md` § Verbatim rule)
 - On confirmation, add the entry to `${METACOMM_TO_BE}` with `source: agent (explain)`
 
 **Direction 2 — metacomm -> conceptual-design**:
@@ -324,7 +324,7 @@ When the two files disagree (e.g., `${CONCEPTUAL_DESIGN_TO_BE}` removes an entit
 
 3. Save a report to the output file, including:
 - *header*: per the header pattern for the selected type
-- *user brief* (and scope, if any), *agent interpretation*, *files* — per .agent-resources/general-report-conventions.md
+- *user brief* (and scope, if any), *agent interpretation*, *files* — per _references/general/report-conventions.md
   - For data-model, split files into *creation files* (relevant to creation) and *client files* (relevant to use)
   - For behavior-evolution, split files into *current implementation files* and *plan files* (the plans that document the evolution)
   - For architecture, split files into *structural files* (entry points, configs, module boundaries) and *implementation files* (key source files that exemplify the architecture)

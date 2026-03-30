@@ -7,7 +7,7 @@ Exit codes: 0 = pass, 1 = failures found, 2 = script error.
 Checks performed
 ================
   1. SKILL.md frontmatter: required fields (name, description), valid YAML
-  2. metadata.references: all referenced files exist in .agent-resources/
+  2. metadata.references: all referenced files exist in _references/
   3. metadata.depends: all declared dependencies are valid skill names
   4. category field: present and matches allowed enum values
   5. Agent definitions: valid frontmatter with name, description, tools
@@ -33,7 +33,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CLAUDE_DIR = REPO_ROOT / ".claude"
 SKILLS_DIR = CLAUDE_DIR / "skills"
-AGENT_RESOURCES_DIR = REPO_ROOT / ".agent-resources"
+REFERENCES_DIR = REPO_ROOT / "_references"
 AGENTS_DIR = CLAUDE_DIR / "agents"
 
 ALLOWED_CATEGORIES = {"planning", "analysis", "code", "utility", "internal"}
@@ -191,11 +191,11 @@ def check_skills(verbose: bool = False) -> tuple[list[str], list[str]]:
         metadata = fm.get("metadata", {})
 
         # Check metadata.references — empty list [] is valid
-        # general-*, template-*, and project-* files live in .agent-resources/
+        # general/, template/, and project/ subdirs live in _references/
         refs = metadata.get("references", [])
         if isinstance(refs, list):
             for ref in refs:
-                ref_path = AGENT_RESOURCES_DIR / ref
+                ref_path = REFERENCES_DIR / ref
                 if not ref_path.exists():
                     errors.append(
                         f"  - {name}/SKILL.md: references non-existent file '{ref}'"
@@ -307,27 +307,29 @@ def check_agents(verbose: bool = False) -> tuple[list[str], list[str]]:
 
 
 def check_references(verbose: bool = False) -> tuple[list[str], list[str]]:
-    """Check reference file naming conventions in .agent-resources/. Returns (errors, warnings)."""
+    """Check reference file naming conventions in _references/. Returns (errors, warnings)."""
     errors = []
     warnings = []
 
-    if not AGENT_RESOURCES_DIR.is_dir():
-        errors.append("  - .agent-resources/ directory not found")
+    if not REFERENCES_DIR.is_dir():
+        errors.append("  - _references/ directory not found")
         return errors, warnings
 
-    ref_files = sorted(AGENT_RESOURCES_DIR.glob("*.md"))
-    print(f"## References ({len(ref_files)} found in .agent-resources/)\n")
+    valid_subdirs = {"general", "template", "project"}
+    ref_files = sorted(REFERENCES_DIR.rglob("*.md"))
+    print(f"## References ({len(ref_files)} found in _references/)\n")
 
     for ref_file in ref_files:
-        name = ref_file.name
-        # Check naming convention: general-*, project-*, or template-*
-        if not (name.startswith("general-") or name.startswith("project-") or name.startswith("template-")):
+        rel = ref_file.relative_to(REFERENCES_DIR)
+        # Check naming convention: files must be in general/, template/, or project/ subdirs
+        parent = rel.parts[0] if len(rel.parts) > 1 else None
+        if parent not in valid_subdirs:
             warnings.append(
-                f"  - {name}: does not follow naming convention "
-                f"(expected general-*, project-*, or template-*)"
+                f"  - {rel.as_posix()}: not in expected subdirectory "
+                f"(expected general/, template/, or project/)"
             )
         if verbose:
-            print(f"  OK: {name}")
+            print(f"  OK: {rel.as_posix()}")
 
     return errors, warnings
 

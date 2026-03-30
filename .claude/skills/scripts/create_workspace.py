@@ -28,7 +28,7 @@ if str(_SCRIPT_DIR) not in sys.path:
 
 from upgrade_framework import collect_source_files  # noqa: E402
 
-# Standard _output subdirectories — keep in sync with template-conventions.md
+# Standard _output subdirectories — keep in sync with template/conventions.md
 # Directory Structure section (PLANS_DIR, ADVISORY_DIR, etc.)
 _OUTPUT_SUBDIRS = [
     "plans",
@@ -122,12 +122,12 @@ def resolve_source(source_path: Path) -> tuple[Path, str | None]:
 
 
 def validate_source(source_root: Path) -> None:
-    """Validate that source contains .claude/ and .agent-resources/."""
+    """Validate that source contains .claude/ and _references/."""
     if not (source_root / ".claude").is_dir():
         print(f"ERROR: Source does not contain a .claude/ directory: {source_root}")
         sys.exit(1)
-    if not (source_root / ".agent-resources").is_dir():
-        print(f"ERROR: Source does not contain an .agent-resources/ directory: {source_root}")
+    if not (source_root / "_references").is_dir():
+        print(f"ERROR: Source does not contain an _references/ directory: {source_root}")
         sys.exit(1)
 
 
@@ -147,7 +147,7 @@ def generate_conventions(
     workspace: Path,
     target: Path,
 ) -> tuple[str, Path, Path]:
-    """Read template-conventions.md and substitute path variables.
+    """Read template/conventions.md and substitute path variables.
 
     Returns (generated content, backend_dir, frontend_dir).
     """
@@ -259,9 +259,9 @@ def run_create(
 
     print(f"OK: {prefix}Created _output/ with {len(_OUTPUT_SUBDIRS)} subdirectories, briefs.md, and INDEX.md")
 
-    # --- 5. Generate project-conventions.md ---
-    template_path = source_root / ".agent-resources" / "template-conventions.md"
-    conventions_dest = workspace / ".agent-resources" / "project-conventions.md"
+    # --- 5. Generate project/conventions.md ---
+    template_path = source_root / "_references" / "template/conventions.md"
+    conventions_dest = workspace / "_references" / "project/conventions.md"
 
     if template_path.is_file():
         conventions_content, backend_dir, frontend_dir = generate_conventions(template_path, workspace, target)
@@ -272,9 +272,9 @@ def run_create(
         report_conventions.append(f"  OUTPUT_DIR  = {(workspace / '_output').resolve().as_posix()}")
         report_conventions.append(f"  BACKEND_DIR = {backend_dir.resolve().as_posix()}")
         report_conventions.append(f"  FRONTEND_DIR = {frontend_dir.resolve().as_posix()}")
-        print(f"OK: {prefix}Generated project-conventions.md")
+        print(f"OK: {prefix}Generated project/conventions.md")
     else:
-        report_conventions.append("WARN: template-conventions.md not found in source — skipped")
+        report_conventions.append("WARN: template/conventions.md not found in source — skipped")
         print(f"WARN: {report_conventions[-1]}")
 
     # --- 6. Create .gitignore ---
@@ -319,12 +319,12 @@ def run_create(
         "Start a session: ./launch.sh (Unix/Git Bash) or launch.bat (Windows)."
     )
     report_manual.append(
-        "Review .agent-resources/project-conventions.md and fill in remaining "
+        "Review _references/project/conventions.md and fill in remaining "
         "{{PLACEHOLDER}} values."
     )
     report_manual.append(
-        "Create project-specific reference files (project-conceptual-design-*.md, "
-        "project-metacomm-*.md) as needed."
+        "Create project-specific reference files (project/conceptual-design-*.md, "
+        "project/metacomm-*.md) as needed."
     )
 
     # --- Summary report ---

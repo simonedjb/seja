@@ -7,10 +7,10 @@ import pytest
 
 @pytest.fixture
 def fake_repo(tmp_path):
-    """Create a minimal repo structure with .codex/ and template-conventions.md."""
+    """Create a minimal repo structure with .codex/ and template/conventions.md."""
     (tmp_path / ".codex").mkdir()
-    (tmp_path / ".agent-resources").mkdir()
-    conventions = tmp_path / ".agent-resources" / "template-conventions.md"
+    (tmp_path / "_references").mkdir()
+    conventions = tmp_path / "_references" / "template/conventions.md"
     conventions.write_text(
         "# TEMPLATE - PROJECT CONVENTIONS\n\n"
         "| Variable | Value | Description |\n"

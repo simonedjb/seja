@@ -21,7 +21,7 @@ A well-structured project with conventions, architecture decisions documented, t
 
 If you already know your stack, generate a blank spec with `/quickstart --generate-spec` / `$quickstart --generate-spec`, fill it in offline, then run `/quickstart .` / `$quickstart .` and select "From spec file". This is faster than the interactive questionnaire.
 
-Expected output: all `project-*.md` files generated.
+Expected output: all `project/*.md` files generated.
 
 ### Step 2: Get architecture advice with `/advise` / `$advise`
 
