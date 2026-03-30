@@ -23,21 +23,16 @@ Generate communication material tailored for a specific audience.
    $communication EVL   # Codex
    ```
    Replace `EVL` with the segment code that matches your audience.
+   By default, both a Markdown artifact and a styled HTML version are
+   generated -- ready for internal review and external sharing.
 
-3. **Generate HTML output (optional)**
-   ```
-   /communication EVL --format html   # Claude
-   $communication EVL --format html   # Codex
-   ```
-   Produces a styled HTML version suitable for sharing outside the team.
-
-4. **Generate material for all segments at once**
+3. **Generate material for all segments at once**
    ```
    /communication --all   # Claude
    $communication --all   # Codex
    ```
 
-5. **Review and customize**
+4. **Review and customize**
    Generated material lands in `_output/communication/`. Edit as needed
    before sharing.
 

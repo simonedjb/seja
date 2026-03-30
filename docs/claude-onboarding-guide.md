@@ -802,10 +802,10 @@ After `/quickstart`, verify you have:
 
 ```
 Starting a new feature:
-  /make-plan <brief>  ->  review plan  ->  /execute-plan <id>  ->  /check validate  ->  commit
+  /make-plan <brief>  ->  review plan  ->  /execute-plan <id>  ->  commit
 
 Quick fix:
-  /make-plan <brief>  ->  /execute-plan <id>  ->  /check validate  ->  commit
+  /make-plan <brief>  ->  /execute-plan <id>  ->  commit
 
 Before merging:
   /check review staged  ->  address findings  ->  /check validate  ->  /check smoke  ->  merge

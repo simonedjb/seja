@@ -39,7 +39,7 @@ Use `/advise` / `$advise` to evaluate changes from a compliance perspective befo
 
 ### Step 5: Execute with quality gates
 
-Run `/execute-plan <id>` / `$execute-plan <id>` for each plan. After execution, run `/check preflight` / `$check preflight` (which includes validation and code review). The advisory reports and plan review logs serve as compliance evidence.
+Run `/execute-plan <id>` / `$execute-plan <id>` for each plan. All quality checks (validation, review, tests) run automatically at the end of execution. Critical issues are fixed before the plan closes. The advisory reports and plan review logs serve as compliance evidence.
 
 ### Step 6: Maintain the audit trail
 

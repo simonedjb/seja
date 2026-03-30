@@ -36,17 +36,10 @@ Plan a feature, bug fix, or refactor, then execute it with quality checks.
    $execute-plan <plan-id>   # Codex
    ```
    The plan ID is shown in the plan file name (e.g., `plan-0042`).
-
-5. **Run quality checks**
-   ```
-   /check preflight   # Claude
-   $check preflight   # Codex
-   ```
-   This runs validation and review in one pass.
-
-6. **Fix and re-check**
-   If preflight surfaces issues, fix them and run `/check preflight` / `$check preflight` again
-   until the output is clean.
+   Execution automatically runs all quality checks at the end (validate,
+   review, tests). Critical issues are fixed before the plan closes;
+   non-critical ones are listed as deferred. Use `--skip-checks` to opt out
+   for documentation-only or low-risk plans.
 
 ## Tips
 

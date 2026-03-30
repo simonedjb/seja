@@ -50,9 +50,9 @@ Expected output: test files with good coverage.
 
 ### Step 5: Run quality gates
 
-Use `/check preflight` / `$check preflight` before every commit. For deeper review, use `/check review` / `$check review` which evaluates against all 16 engineering and design perspectives.
+Quality checks (validation, review, tests) run automatically at the end of `/execute-plan` / `$execute-plan`. For standalone checks before a commit, use `/check preflight` / `$check preflight`. For deeper review, use `/check review` / `$check review` which evaluates against all 16 engineering and design perspectives.
 
-Expected output: clean preflight report.
+Expected output: clean quality report.
 
 ## What to do next
 

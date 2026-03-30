@@ -9,7 +9,6 @@ to a newer version without losing project-specific data.
 
 - The foundational SEJA framework already installed in the codebase or workspace
 - Clean git state (or a backup)
-- The latest foundational SEJA framework repository available (cloned or downloaded from GitHub)
 
 ## Steps
 
@@ -24,8 +23,9 @@ to a newer version without losing project-specific data.
    /quickstart --upgrade   # Claude
    $quickstart --upgrade   # Codex
    ```
-   The skill locates the foundational framework directory and runs the upgrade
-   script automatically.
+   The skill fetches the latest foundational framework from GitHub and runs
+   the upgrade script automatically. No local copy of the framework repo is
+   needed.
 
 3. **Review the output**
    The upgrade reports:

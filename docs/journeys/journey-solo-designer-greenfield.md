@@ -45,9 +45,9 @@ Run `/execute-plan <plan-id>` / `$execute-plan <plan-id>` to implement the plan 
 
 Expected output: working code committed to your project.
 
-### Step 5: Run quality checks with `/check preflight` / `$check preflight`
+### Step 5: Review and share
 
-Before sharing or deploying, run `/check preflight` / `$check preflight` to validate code quality, run tests, and review against engineering perspectives. Fix any issues found.
+Quality checks (validation, review, tests) run automatically at the end of `/execute-plan` / `$execute-plan`. Before sharing or deploying, review the quality report in the plan summary. For additional manual checks, use `/check preflight` / `$check preflight`.
 
 ## What to do next
 

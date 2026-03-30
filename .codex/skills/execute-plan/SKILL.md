@@ -1,7 +1,7 @@
 ---
 name: execute-plan
 description: Execute a previously generated plan to add a feature, fix a bug, or refactor code. Use when user mentions "execute plan".
-argument-hint: <planned-item-id> [--manual] [--max-iterations N] [--dry-run]
+argument-hint: <planned-item-id> [--manual] [--max-iterations N] [--dry-run] [--skip-checks]
 metadata:
   last-updated: 2026-03-27 12:00:00
   version: 1.0.0
@@ -26,10 +26,10 @@ metadata:
 **What it does**: Runs a previously approved plan step by step. Nothing changes in your project until you have reviewed and approved the plan first.
 
 **Example**:
-> You: $execute-plan 0042
+> You: /execute-plan 0042
 > Agent: Executes each step of Plan 0042 in order — creates files, modifies code, runs verifications. Reports progress and flags any issues encountered.
 
-**When to use**: You have reviewed a plan (created by `$make-plan`) and are ready to have the agent carry it out.
+**When to use**: You have reviewed a plan (created by $make-plan) and are ready to have the agent carry it out.
 
 # Execute a plan
 
@@ -59,6 +59,8 @@ If `--manual` is passed, use manual mode. Otherwise, use auto mode.
 
 `--dry-run` previews the planned changes for each step without applying them. For each step, the agent describes what files would be created/modified and what changes would be made, but does not write any files or run any commands. Useful for reviewing the plan's concrete impact before committing to execution.
 
+`--skip-checks` skips the automatic quality checks (validate, review, tests) at the end of execution. Use for documentation-only or low-risk plans where speed matters more than a full quality review.
+
 ---
 
 ## Manual Mode — Skill-specific Instructions
@@ -75,13 +77,22 @@ If `--manual` is passed, use manual mode. Otherwise, use auto mode.
 
 6. If the codebase was modified, create, adapt, and revise automated backend and frontend tests if and as needed to achieve broad coverage. If a bug is found, make and record a new plan to fix it, don't execute it yet, and alert the user when concluding the execution of this skill. Revise or eliminate obsolete tests. Use the $update-tests skill.
 
-7. **Post-execution quality gate**: Launch the `test-runner` agent with scope "all" to verify that existing tests still pass after the changes. If tests fail, fix them before proceeding. Optionally, launch the `standards-checker` agent to verify compliance (especially for plans that touch i18n, auth, or migrations). If the plan's `smoke` field is `true`, run `$check smoke api` to verify that API endpoints and pages still respond correctly after the changes.
+7. **Post-execution quality gate** (skipped if `--skip-checks` was passed):
+    - Run `$check validate` to run all project validation scripts.
+    - Run `$check review` to review all changes made by this plan.
+    - Launch the `test-runner` agent with scope "all" to verify that existing tests still pass.
+    - If the plan's `smoke` field is `true`, run `$check smoke api` to verify that API endpoints and pages still respond correctly.
+    - If any check surfaces **critical** issues (failing tests, security findings, blocking validation errors), fix them before proceeding. For non-critical issues, list them in the plan file summary as deferred items.
 
 8. Mark the resolved issue in the plan file preceding the issue id with `# DONE | <datetime> |`, where <datetime> is the date and time the execution finished in the format YYYY-MM-DD hh:mm:ss in the UTC timezone. Update the to do list in the plan file when this step is done and save it to make it persistent in case the plan is interrupted. Rename the plan file to reflect the completion of the planned item, changing the prefix from `plan-<id>-` to `plan-<id>-done-` and keeping the rest of the filename unchanged.
 
 9. Append a summary of all changes made to the plan file.
 
-10. If the plan is part of a roadmap, mark the corresponding roadmap item as completed, following the conventions in `project-conventions.md` for roadmap management.
+10. If the plan is part of a roadmap, mark the corresponding roadmap item as completed, following the conventions in `project-conventions.md` for roadmap management. Then check whether all roadmap items are now completed. If this was the **last item** in the roadmap, run the roadmap-conclusion quality gate before proceeding:
+    - Run `$check validate` to run all project validation scripts.
+    - Run `$check review` to review all changes since the roadmap's rollback branch (`pre-plan-<first-plan-id>`).
+    - Launch the `test-runner` agent with scope "all" for a full test pass.
+    - If any check surfaces **critical** issues (failing tests, security findings, blocking validation errors), fix them before proceeding. For non-critical issues, list them in the plan file summary as deferred items.
 
 11. Run $post-skill <planned-item-id>.
 
@@ -150,7 +161,12 @@ For each step in the execution queue, up to `--max-iterations` (default 20):
 
 ### Phase 2: Wrap-up
 
-12. **Quality gate**: Launch the `test-runner` agent with scope "all" for a final cross-step verification. If tests fail, attempt to fix them (in the current context, since this is a small targeted fix). Optionally launch the `standards-checker` agent for compliance. If the plan's `smoke` field is `true`, run `$check smoke api`.
+12. **Quality gate** (skipped if `--skip-checks` was passed):
+    - Run `$check validate` to run all project validation scripts.
+    - Run `$check review` to review all changes made by this plan.
+    - Launch the `test-runner` agent with scope "all" for a final cross-step verification. If tests fail, attempt to fix them (in the current context, since this is a small targeted fix).
+    - If the plan's `smoke` field is `true`, run `$check smoke api`.
+    - If any check surfaces **critical** issues (failing tests, security findings, blocking validation errors), fix them before proceeding. For non-critical issues, list them in the plan file summary as deferred items.
 
 13. Mark the resolved issue in the plan file preceding the issue id with `# DONE | <datetime> |`. Update the to-do list. Rename the plan file from `plan-<id>-` to `plan-<id>-done-`.
 
@@ -160,4 +176,10 @@ For each step in the execution queue, up to `--max-iterations` (default 20):
     - Any steps that were partial or failed
     - Key learnings from the progress file
 
-15. Run $post-skill <planned-item-id>.
+15. If the plan is part of a roadmap, mark the corresponding roadmap item as completed, following the conventions in `project-conventions.md` for roadmap management. Then check whether all roadmap items are now completed. If this was the **last item** in the roadmap, run the roadmap-conclusion quality gate before proceeding:
+    - Run `$check validate` to run all project validation scripts.
+    - Run `$check review` to review all changes since the roadmap's rollback branch (`pre-plan-<first-plan-id>`).
+    - Launch the `test-runner` agent with scope "all" for a full test pass.
+    - If any check surfaces **critical** issues (failing tests, security findings, blocking validation errors), fix them before proceeding. For non-critical issues, list them in the plan file summary as deferred items.
+
+16. Run $post-skill <planned-item-id>.
