@@ -1,10 +1,10 @@
 ---
 name: communication
 description: "Generate tailored communication material for a specific audience segment."
-argument-hint: <audience> [--format md|html] [--all] [--source <advisory-file>]
+argument-hint: <audience> [--format md|html|both] [--all] [--source <advisory-file>]
 metadata:
-  last-updated: 2026-03-28 19:30:00
-  version: 1.0.0
+  last-updated: 2026-03-30 00:00:00
+  version: 1.1.0
   category: utility
   context_budget: standard
   references:
@@ -20,7 +20,7 @@ metadata:
 
 **Example**:
 > You: $communication clients
-> Agent: Reads your project's design vision and produces client-oriented material highlighting value proposition, ROI, and project outcomes. Available in Markdown or HTML.
+> Agent: Reads your project's design vision and produces client-oriented material highlighting value proposition, ROI, and project outcomes. Generates both Markdown and HTML.
 
 **When to use**: You need to present the project to a specific audience and want material that speaks their language — whether it is a technical evaluator or a product client.
 
@@ -31,7 +31,7 @@ Generate tailored communication material for a specific stakeholder audience seg
 ## Arguments
 
 - `<audience>`: One of `evaluator(s)`, `client(s)`, `end-user(s)`, `academic(s)`, or tags `EVL`, `CLT`, `USR`, `ACD`. Required unless `--all` is used.
-- `[--format md|html]`: Output format (default: `md`). When `html`, generates a styled standalone HTML file alongside the markdown using `md_to_html.py`.
+- `[--format md|html|both]`: Output format (default: `both`). `md` generates only Markdown, `html` generates only HTML, `both` generates both side by side.
 - `[--all]`: Generate material for all active audience segments (EVL, CLT, USR, ACD) in parallel via batch mode.
 - `[--source <file>]`: Path to an existing advisory report or markdown file to reformat for the target audience.
 - `[--deep]`: Include Deep-dive content sections in addition to Essential sections.
@@ -51,12 +51,23 @@ ${COMMUNICATION_DIR}/
 ├── 2026-03-28/
 │   ├── communication-000012-evaluators.md
 │   ├── communication-000012-evaluators.html
-│   ├── communication-000013-clients.md
-│   └── communication-000014-end-users.md
+│   ├── communication-000013-clients/
+│   │   ├── index.md
+│   │   ├── index.html
+│   │   ├── product-vision.md
+│   │   ├── product-vision.html
+│   │   ├── status-reporting.md
+│   │   └── status-reporting.html
+│   ├── communication-000014-end-users.md
+│   └── communication-000014-end-users.html
 ├── 2026-04-15/
 │   ├── communication-000021-academics.md
-│   └── communication-000022-evaluators.md
+│   ├── communication-000021-academics.html
+│   ├── communication-000022-evaluators.md
+│   └── communication-000022-evaluators.html
 ```
+
+When the content for a single audience naturally splits into distinct topics (e.g., a product vision and a status reporting template for clients), create a subfolder named `communication-<id>-<audience-slug>/` containing an `index.md` that links to the individual topic files. All files within the subfolder get both `.md` and `.html` versions. Use a single file when the content forms a cohesive narrative.
 
 The sequential ID is globally unique across all artifact types (6-digit, zero-padded). Reserve it by running `python .codex/skills/scripts/reserve_id.py --type communication --title '<audience-slug>'` before writing any content.
 
@@ -75,7 +86,7 @@ When `--all` is provided, generate material for all 4 active audience segments i
    - The pre-loaded shared project context (conceptual design, style config, etc.)
    - The assigned ID and output file path
    - The full skill instructions for steps 3-7 of single mode
-6. After all agents complete, collect results and verify all files were written.
+6. After all agents complete, collect results and verify all files (both `.md` and `.html`) were written.
 7. Run $post-skill once for the entire batch, staging all generated files in a single commit.
 
 ## Skill-specific Instructions
@@ -144,14 +155,23 @@ When `--all` is provided, generate material for all 4 active audience segments i
    - Preserve all substantive information while adjusting framing, depth, and vocabulary
    - Add a "Source" attribution line referencing the original file
 
-   ### Diataxis Classification
-   At the end of the document, classify the generated content:
-   - Which Diataxis content type(s) this material covers (Tutorial, How-to, Explanation, Reference)
-   - Suggested next pieces to generate for this audience (from the Diataxis mapping)
+   ### Self-Review and Refinement
+   Before writing the final output, perform an internal review:
+   - Consult the Diataxis mapping to identify which content types this material covers and whether any gaps exist for this audience
+   - If the review suggests additional sections, missing perspectives, or structural improvements, **incorporate them directly into the content** rather than listing them as next steps
+   - The final output must be fully stakeholder-facing — no meta-commentary, internal notes, next steps, or recommendations for the author
+
+   ### Multi-File Decision
+   After refinement, assess whether the content should be a single file or multiple files:
+   - **Single file**: when the content forms a cohesive narrative under ~2500 words
+   - **Multiple files in a subfolder**: when the content covers distinct topics that a stakeholder would want to navigate independently (e.g., a product vision document and a separate status reporting template). Create a subfolder with an `index.md` linking to each topic file.
 
 7. **Output:**
 
-   a. Write the markdown file to the output path determined in step 3.
-   b. If `--format html`: Run `python .codex/skills/scripts/md_to_html.py <markdown-file>` to generate a styled HTML file alongside it. If `project-communication-style.md` exists, pass it via `--style`.
+   a. Write the markdown file(s) to the output path determined in step 3. If using a subfolder, create `communication-<id>-<audience-slug>/` with `index.md` and individual topic files. Ensure all cross-references between files use relative markdown links.
+   b. Generate HTML based on `--format` (default `both`):
+      - `both` or `html`: Run `python .codex/skills/scripts/md_to_html.py <markdown-file>` for every `.md` file. If `project-communication-style.md` exists, pass it via `--style`. For subfolder output, ensure HTML cross-references use relative links with `.html` extensions.
+      - `md`: Skip HTML generation.
+      - `html`: Generate HTML as above, then remove the intermediate `.md` files — deliver only `.html`.
 
 8. Run $post-skill <id>.
