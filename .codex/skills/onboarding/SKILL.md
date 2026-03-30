@@ -132,10 +132,11 @@ If a batch spec is incomplete (e.g., missing level), do NOT launch agents yet. I
 
 5. **Read project state:**
 
-   To make the onboarding plan concrete and project-specific:
+   To make the onboarding plan concrete and project-specific, **default to the codebase** (i.e., `${BACKEND_DIR}` / `${FRONTEND_DIR}` from conventions) as the scan target — not the workspace root. In workspace deployments these point to the actual source code via absolute paths.
+
    a. Read `project-conceptual-design-as-is.md` for current system overview.
    b. Read `project-conventions.md` for directory structure and key variables.
-   c. If Builder role: scan source directories, read relevant coding standards and rules.
+   c. If Builder role: scan codebase source directories (`${BACKEND_DIR}`, `${FRONTEND_DIR}`), read relevant coding standards and rules.
    d. If Shaper role: read metacommunication files and conceptual design files.
    e. If Guardian role: read review perspectives and validation scripts inventory.
    f. Check for existing architecture explanations (`${EXPLAINED_ARCHITECTURE_DIR}`), data model explanations (`${EXPLAINED_DATA_MODEL_DIR}`), and behavior explanations (`${EXPLAINED_BEHAVIORS_DIR}`) that can be referenced.

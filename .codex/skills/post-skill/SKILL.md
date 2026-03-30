@@ -67,7 +67,7 @@ metadata:
 3. Run the $qa-log skill with the following caller overrides:
    - **no_commit**: true (post-skill handles the commit in step 8).
    - **filename**: `<prefix>${ARGUMENTS[0]}-qa-<truncated short title slug>.md` where `<prefix>` is the corresponding kind of file (plan-, advisory-, check-, etc) and `<truncated short title slug>` is the truncated short title slug of the previously generated file. If there is no corresponding file, derive the slug from the conversation topic.
-   - **output_dir**: the same directory as the previously generated file. If there is no corresponding file, use `${QA_LOGS_DIR}`.
+   - **output_dir**: `${QA_LOGS_DIR}`. All QA logs are centralized, not co-located with the artifact they document.
    The file should include the brief and the full Q&A log.
 
    Write checkpoint: `3 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.

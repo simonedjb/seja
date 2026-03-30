@@ -112,7 +112,8 @@ When `--all` is provided, generate material for all 4 active audience segments i
 
 5. **Read project state:**
 
-   To make the communication material concrete and project-specific:
+   To make the communication material concrete and project-specific, **default to the codebase** (i.e., `${BACKEND_DIR}` / `${FRONTEND_DIR}` from conventions) as the scan target — not the workspace root. In workspace deployments these point to the actual source code via absolute paths.
+
    a. Read `project-conceptual-design-as-is.md` for current system overview, mission, value proposition.
    b. Read `project-conventions.md` for project identity and key variables.
    c. If available, read `project-communication-style.md` for tone/depth overrides and branding. If it does not exist, use defaults from `template-communication-style.md`.

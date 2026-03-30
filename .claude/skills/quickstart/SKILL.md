@@ -515,9 +515,9 @@ If the argument includes `--upgrade`, skip the menu and go directly to Mode 4.
 
 ### Steps
 
-1. **Locate source framework**: Look for the foundational SEJA framework in `seja-public/`. If not found, ask the user for the path to the source directory.
+1. **Fetch latest framework**: Clone the public SEJA framework from `https://github.com/simonedjb/seja` into a temporary directory using `git clone --depth 1 https://github.com/simonedjb/seja <temp-dir>`. If git clone fails (e.g., network issues), fall back to asking the user for a local path to the source directory.
 
-2. **Run the upgrade script**: Execute `python .claude/skills/scripts/upgrade_framework.py --from <source> --target <target>`. If the user wants a preview first, add `--dry-run`.
+2. **Run the upgrade script**: Execute `python .claude/skills/scripts/upgrade_framework.py --from <temp-dir> --target <target>`. If the user wants a preview first, add `--dry-run`. After the script completes (whether dry-run or actual), clean up the temporary directory.
 
 3. **Review the summary**: Present the script's output to the user. Highlight:
    - Version change (e.g., "1.0.0 → 2.0.0")
