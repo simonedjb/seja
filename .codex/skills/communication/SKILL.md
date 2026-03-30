@@ -49,6 +49,8 @@ Example directory structure:
 ```
 ${COMMUNICATION_DIR}/
 ├── 2026-03-28/
+│   ├── index.md
+│   ├── index.html
 │   ├── communication-000012-evaluators.md
 │   ├── communication-000012-evaluators.html
 │   ├── communication-000013-clients/
@@ -61,6 +63,8 @@ ${COMMUNICATION_DIR}/
 │   ├── communication-000014-end-users.md
 │   └── communication-000014-end-users.html
 ├── 2026-04-15/
+│   ├── index.md
+│   ├── index.html
 │   ├── communication-000021-academics.md
 │   ├── communication-000021-academics.html
 │   ├── communication-000022-evaluators.md
@@ -174,4 +178,10 @@ When `--all` is provided, generate material for all 4 active audience segments i
       - `md`: Skip HTML generation.
       - `html`: Generate HTML as above, then remove the intermediate `.md` files — deliver only `.html`.
 
-8. Run $post-skill <id>.
+8. **Date-folder index:**
+
+   After writing the output, check whether the date folder (`${COMMUNICATION_DIR}/<YYYY-MM-DD>`) contains more than one communication artifact (files or subfolders). If it does, create or update an `index.md` at the root of the date folder that lists all artifacts with relative links. The index should include a title (`# Communications — <YYYY-MM-DD>`) and a bullet list with each artifact's ID, audience, and link. Generate the HTML version of the index according to the `--format` flag (same rules as step 7b).
+
+   If the date folder contains only one artifact, skip the index — it adds no navigational value.
+
+9. Run $post-skill <id>.
