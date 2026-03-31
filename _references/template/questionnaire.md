@@ -12,7 +12,7 @@
 > 4. Write `N/A` or `Skip` for sections that don't apply to your stack.
 > 5. When done, give this file to an agent with the instruction: *"Instantiate all template/\** files into project/\** files using the answers in this questionnaire."*
 >
-> **Alternative:** For a faster workflow, use `/quickstart --generate-spec` to create a pre-fillable spec file (see `template/quickstart-spec.md`).
+> **Alternative:** For a faster workflow, use `/design --generate-spec` to create a pre-fillable spec file (see `template/quickstart-spec.md`).
 
 ---
 

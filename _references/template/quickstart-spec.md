@@ -1,6 +1,6 @@
 <!-- Quickstart Spec v2 -- Generated {datetime} -->
 <!-- Fill in your choices below. Leave blank to use defaults. -->
-<!-- After filling, run /quickstart <target-dir> and select "From spec file". -->
+<!-- After filling, run /design <spec-file-path> to apply it. -->
 <!-- For the full questionnaire with detailed descriptions, see template/questionnaire.md -->
 <!-- Knowledge Tiers: T1 (Product & Design) = you fill; T2 (Architecture) = accept defaults or customize; T3 (Engineering) = auto-generated -->
 version: 2

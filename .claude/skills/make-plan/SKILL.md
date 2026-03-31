@@ -41,6 +41,15 @@ metadata:
 
 # Make a plan
 
+> **`/design`** defines WHAT to build and WHY. **`/make-plan`** defines HOW to build it and WHY those "hows." Design produces project definitions (`_references/project/`); plans consume them to produce actionable implementation steps.
+
+## Design Guard
+
+Before planning, verify that minimum project design exists:
+- Check if `project/conventions.md` exists in `_references/`
+- If **missing**: stop and tell the user: "No project design found. Run `/design` first to define your project's stack, conventions, and domain model."
+- If **present**: proceed with planning
+
 If there are no arguments, ask for the brief.
 
 **If the argument includes `--roadmap`**, skip the standard planning workflow below and follow the [Roadmap Workflow](#roadmap-workflow) section at the end of this file instead.
