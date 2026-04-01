@@ -46,8 +46,6 @@ SKILL_CATEGORIES: dict[str, str] = {
     "/explain": "analysis",
     "/advise": "analysis",
     "/check": "analysis",
-    "/generate-script": "code",
-    "/update-tests": "code",
     "/communication": "utility",
     "/onboarding": "utility",
     "/help": "utility",

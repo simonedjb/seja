@@ -670,3 +670,22 @@ Auto-generated OpenAPI spec via `apispec` with schema plugin.
 - New endpoints automatically included.
 - Schemas must be importable to appear in the spec.
 - Docstrings on route handlers used as operation descriptions.
+
+---
+
+## 25. Module-Level README Convention
+
+Every backend sub-package directory should contain a `README.md` with a module index table and update instructions.
+
+**Required in:** `app/api/`, `app/models/`, `app/services/`, `app/schemas/`, `app/utils/`, `app/middleware/`
+
+**Template:**
+
+| File | Responsibility |
+|------|---------------|
+| `{{filename}}.py` | {{one-line description}} |
+
+**Rules:**
+- Update the README when adding, removing, or renaming files in the directory.
+- Keep descriptions to one line per file.
+- Include a "Design Conventions" subsection if the module follows specific patterns (e.g., "all services accept and return dicts, not model instances").

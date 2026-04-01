@@ -6,10 +6,6 @@ Before editing files that match a rule scope, read the corresponding file in `.c
 When a task benefits from delegation, use the prompt files in `.claude/agents/` as the source of truth for subagent behavior.
 For detailed component inventory, see `.claude/rules/framework-structure.md`.
 
-## Global rules
-
-- **Private repositories only**: When creating GitHub repositories (via `gh repo create` or any other method), always use `--private`. Never create public repositories.
-
 ## Key workflows
 
 - **New project**: run `/seed <target>` to copy the foundational SEJA framework into a new project, then run `/design` to configure project-specific files. After setup, review the generated specs and optionally generate a development roadmap.
@@ -19,4 +15,5 @@ For detailed component inventory, see `.claude/rules/framework-structure.md`.
 - **Onboarding**: run `/onboarding <role> <level>` to generate a tailored onboarding plan for a new team member.
 - **Skill help**: run `/help` for an overview, or `/help <skill>` for details. Run `/help --browse` to browse interactively.
 - **Quality checks**: run `/check <mode>` for validation, code review, smoke tests, preflight, or framework health.
+- **Documentation**: run `/document` after implementation to generate or update user and developer documentation based on plan Docs: fields or auto-detected changes.
 - **Spec drift**: run `/explain spec-drift` to compare and align design specs.

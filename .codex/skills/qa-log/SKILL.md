@@ -7,6 +7,7 @@ metadata:
   version: 1.0.0
   category: utility
   context_budget: light
+  references: []
 ---
 
 ## Quick Guide
@@ -14,10 +15,16 @@ metadata:
 **What it does**: Saves the current conversation (questions and answers) to a file for future reference. Useful for documenting decisions and rationale.
 
 **Example**:
-> You: $qa-log Design decisions for the notification system
+> You: /qa-log Design decisions for the notification system
 > Agent: Captures the full Q&A exchange from this session and saves it as a timestamped file you can reference later.
 
 **When to use**: You have had a productive conversation with useful decisions or insights and want to preserve it as project documentation.
+
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `[brief]` | No | Short title for the QA log file. Derived from conversation topic if omitted |
 
 # Log QA
 
@@ -30,7 +37,7 @@ If an argument is provided, use it as the short title for the log file. If no ar
 Output folder: `${QA_LOGS_DIR}` (see project/conventions.md)
 Filename pattern: `qa-<id>-<truncated short title slug>.md`
 
-The sequential ID is globally unique across all artifact types (6-digit, zero-padded). In standalone mode, reserve it by running `python .codex/skills/scripts/reserve_id.py --type qa --title '<slug>'` before writing any content.
+The sequential ID is globally unique across all artifact types (6-digit, zero-padded). In standalone mode, reserve it by running `python .claude/skills/scripts/reserve_id.py --type qa --title '<slug>'` before writing any content.
 
 ## Caller overrides
 
@@ -46,7 +53,7 @@ When no overrides are provided, all defaults apply (standalone behavior).
 
 ## Skill-specific Instructions
 
-1. Reserve the next global ID by running `python .codex/skills/scripts/reserve_id.py --type qa --title '<slug>'`. Use the returned 6-digit zero-padded ID. *Skip if `filename` override is provided.*
+1. Reserve the next global ID by running `python .claude/skills/scripts/reserve_id.py --type qa --title '<slug>'`. Use the returned 6-digit zero-padded ID. *Skip if `filename` override is provided.*
 
 2. Generate a short title slug from the argument or, if no argument was provided, from the main topic of the conversation. *Skip if `filename` override is provided.*
 

@@ -9,8 +9,16 @@ Exit codes: 0 = pass (all referenced variables are defined), 1 = errors found.
 
 Usage
 -----
-    python .codex/skills/scripts/check_conventions.py
-    python .codex/skills/scripts/check_conventions.py --verbose
+    python .claude/skills/scripts/check_conventions.py
+    python .claude/skills/scripts/check_conventions.py --verbose
+
+CHECK_PLUGIN_MANIFEST:
+  name: Conventions
+  stack:
+    backend: [any]
+    frontend: [any]
+  scope: conventions
+  critical: false
 """
 from __future__ import annotations
 
@@ -27,12 +35,12 @@ from project_config import REPO_ROOT
 # Paths
 # ---------------------------------------------------------------------------
 
-CLAUDE_DIR = REPO_ROOT / ".codex"
+CLAUDE_DIR = REPO_ROOT / ".claude"
 SKILLS_DIR = CLAUDE_DIR / "skills"
 REFERENCES_DIR = REPO_ROOT / "_references"
 
-_CONVENTIONS_REL = REFERENCES_DIR / "project/conventions.md"
-_TEMPLATE_REL = REFERENCES_DIR / "template/conventions.md"
+_CONVENTIONS_REL = REFERENCES_DIR / "project" / "conventions.md"
+_TEMPLATE_REL = REFERENCES_DIR / "template" / "conventions.md"
 
 # Regex to extract variable definitions from markdown table rows:
 #   | `VAR_NAME` | `value` | description |
@@ -89,9 +97,9 @@ def collect_scan_files() -> list[Path]:
                 if skill_file.is_file():
                     files.append(skill_file)
 
-    # _references/*.md files
+    # _references/**/*.md files
     if REFERENCES_DIR.is_dir():
-        for md_file in sorted(REFERENCES_DIR.glob("*.md")):
+        for md_file in sorted(REFERENCES_DIR.glob("**/*.md")):
             files.append(md_file)
 
     return files

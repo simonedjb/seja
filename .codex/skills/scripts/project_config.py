@@ -21,20 +21,22 @@ from pathlib import Path
 # Repo root discovery
 # ---------------------------------------------------------------------------
 
-_CONVENTIONS_REL = Path("_references", "project/conventions.md")
-_TEMPLATE_REL = Path("_references", "template/conventions.md")
+_CONVENTIONS_REL = Path("_references", "project", "conventions.md")
+_TEMPLATE_REL = Path("_references", "template", "conventions.md")
 _ROW_RE = re.compile(
     r"^\|\s*`([^`]+)`\s*\|\s*`([^`]+)`\s*\|", re.MULTILINE
 )
 _VAR_REF_RE = re.compile(r"\$\{([^}]+)\}")
 _MAX_RESOLVE_PASSES = 10
+_SHELL_INJECTION_RE = re.compile(r"`|\$\(|\$\(\(")
+_UNRESOLVED_VAR_RE = re.compile(r"\$\{[^}]+\}")
 
 
 def _find_repo_root() -> Path:
-    """Walk up from the script's location until we find a .codex/ directory."""
+    """Walk up from the script's location until we find a .claude/ directory."""
     candidate = Path(__file__).resolve().parent
     while candidate != candidate.parent:
-        if (candidate / ".codex").is_dir():
+        if (candidate / ".claude").is_dir():
             return candidate
         candidate = candidate.parent
     return Path.cwd()
@@ -79,6 +81,16 @@ def _parse_config() -> dict[str, str]:
     for m in _ROW_RE.finditer(text):
         raw[m.group(1)] = m.group(2)
 
+    # Reject values containing shell injection patterns
+    tainted = [k for k, v in raw.items() if _SHELL_INJECTION_RE.search(v)]
+    for key in tainted:
+        print(
+            f"WARNING: conventions variable {key} contains shell metacharacters "
+            f"and was dropped: {raw[key]!r}",
+            file=sys.stderr,
+        )
+        del raw[key]
+
     # Resolve ${VAR} references iteratively
     resolved = dict(raw)
     for _ in range(_MAX_RESOLVE_PASSES):
@@ -92,6 +104,15 @@ def _parse_config() -> dict[str, str]:
                 changed = True
         if not changed:
             break
+
+    # Warn about unresolved variable references (circular or missing)
+    for key, value in resolved.items():
+        if _UNRESOLVED_VAR_RE.search(value):
+            print(
+                f"WARNING: conventions variable {key} has unresolved reference "
+                f"after {_MAX_RESOLVE_PASSES} passes: {value!r}",
+                file=sys.stderr,
+            )
 
     return resolved
 
@@ -115,11 +136,24 @@ def get(key: str, default: str | None = None) -> str | None:
 
 
 def get_path(key: str, default: str | None = None) -> Path | None:
-    """Get a resolved value as a Path relative to REPO_ROOT."""
+    """Get a resolved value as a Path relative to REPO_ROOT.
+
+    Returns None (with a warning) if the resolved path escapes REPO_ROOT.
+    """
     value = get(key, default)
     if value is None:
         return None
-    return REPO_ROOT / value
+    candidate = (REPO_ROOT / value).resolve()
+    try:
+        candidate.relative_to(REPO_ROOT.resolve())
+    except ValueError:
+        print(
+            f"WARNING: path for {key} resolves outside REPO_ROOT and was "
+            f"rejected: {value!r}",
+            file=sys.stderr,
+        )
+        return None
+    return candidate
 
 
 def get_list(key: str, default: list[str] | None = None) -> list[str]:

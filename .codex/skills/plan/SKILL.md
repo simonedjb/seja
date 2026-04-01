@@ -8,6 +8,12 @@ metadata:
   plan_format_version: 1
   category: planning
   context_budget: heavy
+  eager_references:
+    - project/conceptual-design-as-is.md
+    - project/conceptual-design-to-be.md
+    - general/report-conventions.md
+    - general/coding-standards.md
+    - general/review-perspectives-index.md
   references:
     - project/conceptual-design-as-is.md
     - project/conceptual-design-to-be.md
@@ -23,6 +29,7 @@ metadata:
     - project/ux-design-standards.md
     - project/graphic-ui-design-standards.md
     - general/review-perspectives.md
+    - general/review-perspectives-index.md
     - general/review-log-template.md
 ---
 
@@ -38,6 +45,19 @@ metadata:
 > Agent: Reads project design specs, decomposes into work items, groups into 5 waves (foundation, services/API, frontend, cross-cutting, testing), and generates individual plans for each item.
 
 **When to use**: You have a clear idea of what you want to build or fix and want to see a structured plan before any code changes happen. Use `--framing metacomm` when describing the change from the user's perspective. Use `--roadmap` when you need a high-level view of what to build next, want to organize features into delivery phases, or need to communicate the plan to stakeholders. Use `--plan` to force a single plan when the agent would otherwise suggest a roadmap. If you omit both `--plan` and `--roadmap`, the agent auto-detects the best mode from your brief and asks for confirmation before proceeding.
+
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `<brief>` | Yes | Description of the task to plan (feature, bug fix, refactor) |
+| `--light` | No | Generate a lightweight proposal instead of a full plan |
+| `--plan` | No | Force single-plan mode (skip auto-detection) |
+| `--roadmap` | No | Generate a full product roadmap with dependency-aware execution waves |
+| `--from-spec <path>` | No | Parse roadmap from a pre-filled spec file. Use with `--roadmap` |
+| `--auto` | No | Auto-generate roadmap from project reference files. Use with `--roadmap` |
+| `--framing metacomm` | No | Frame the brief as a designer's metacommunication message (I/you phrasing) |
+| `--review <level>` | No | Override complexity-gated review depth. Valid: `light`, `standard`, `deep` |
 
 # Make a plan
 
@@ -93,6 +113,8 @@ This skill supports two framings:
 
 When invoked with `--framing metacomm`, use the metacomm framing. Otherwise, use the default framing.
 
+See [Metacomm framing -- additional context](#metacomm-framing--additional-context) below for details on the `--framing metacomm` option.
+
 ## Review Depth Override
 
 This skill supports a `--review <light|standard|deep>` flag to override the complexity-gated review depth for a single invocation. When provided, the effective depth is resolved as `max(auto, floor, flag)` where:
@@ -100,7 +122,7 @@ This skill supports a `--review <light|standard|deep>` flag to override the comp
 - `floor` = `MINIMUM_REVIEW_DEPTH` from project/conventions.md (default: `light`)
 - `flag` = the `--review` value (if provided)
 
-The strictest (deepest) source always wins. Depth ordering: light < standard < deep.
+The maximum (deepest) depth from all three sources always wins, using the ordering light < standard < deep.
 
 ### Metacomm framing — additional context
 
@@ -125,8 +147,20 @@ When using the metacomm framing:
 
 1. Run the /pre-skill "plan" $ARGUMENTS[0] to add general instructions to the context window.
 
-2. Following best practices, create a structured, self-contained plan that can be executed independently by an agent, including:
-- *header*: `# Plan <id> | <prefix><scope> | <current datetime> | <short title> | Review: <depth>` followed by a metadata line `plan_format_version: 1` on the next line — prefix based on the brief; `<depth>` is Light, Standard, or Deep (set in step 4). If metacomm framing, add `METACOMM |` after the prefix-scope. If invoked from an advisory Q&A flow with a source advisory ID, include `source: advisory-<id>` on the metadata line after `plan_format_version: 1`.
+2. **Load references on demand**: Load lazy references from the "Available references" list as needed during planning:
+   - Load `project/metacomm-to-be.md` when using `--framing metacomm`
+   - Load `project/frontend-standards.md` when plan steps touch frontend files
+   - Load `project/backend-standards.md` when plan steps touch backend files
+   - Load `project/testing-standards.md` when defining test strategy
+   - Load `project/i18n-standards.md` when plan involves i18n changes
+   - Load `project/security-checklists.md` when plan involves auth, validation, or sensitive data
+   - Load `project/ux-design-standards.md` when plan involves UX flows or page layouts
+   - Load `project/graphic-ui-design-standards.md` when plan involves visual/UI design
+   - Load `general/review-perspectives.md` before the review phase (Phase 1)
+   - Load `general/review-log-template.md` before writing the review log
+
+3. Following best practices, create a structured, self-contained plan that can be executed independently by an agent, including:
+- *header*: `# Plan <id> | <prefix><scope> | <current datetime> | <short title> | Review: <depth>` followed by a metadata line `plan_format_version: 1` on the next line — prefix based on the brief; `<depth>` is Light, Standard, or Deep (set in step 5). If metacomm framing, add `METACOMM |` after the prefix-scope. If invoked from an advisory Q&A flow with a source advisory ID, include `source: advisory-<id>` on the metadata line after `plan_format_version: 1`.
 - If default framing: *user brief*, *agent interpretation*, *files* — per _references/general/report-conventions.md
 - If metacomm framing: *designer's metacommunication message* (the brief), *agent interpretation*, *files* — per _references/general/report-conventions.md
 - If the prefix is FIX (the brief describes an error or bug), also include:
@@ -153,6 +187,7 @@ When using the metacomm framing:
    - **Depends on**: none | Step N, Step M
    - **Verify**: <how to know this step succeeded — e.g., "tests pass", "migration runs forward and backward", "endpoint returns 200">
    - **Tests**: <what tests to create or update — e.g., "Add unit tests for new service method", "Update existing API tests for changed response format"> | N/A (no testable code changes)
+   - **Docs**: <what documentation to create or update — e.g., "Update API reference for new endpoint", "Add contextual help page for new screen"> | N/A (no documentation impact)
    - [ ] Done
    ```
 
@@ -164,15 +199,16 @@ When using the metacomm framing:
    - **Depends on**: list step numbers whose output this step requires. Use `none` if the step is independent. The orchestrator uses this to avoid executing steps before their dependencies complete.
    - **Verify**: a concrete, testable condition. Prefer automated checks ("tests pass", "linter clean") over subjective ones ("looks right").
    - **Tests**: required for steps with prefix FEATURE, FIX, or REFACTOR that create or modify source code files. Set to `N/A` for steps that only modify documentation, configuration, framework files, or other non-testable artifacts. Steps with prefix CHORE, DOCUMENT, or TEST may use N/A. Each step that modifies source code should declare what tests are needed. If the step is too small to warrant its own tests, indicate which step's tests will cover it.
+   - **Docs**: required for steps with prefix FEATURE or REDESIGN that create or modify user-facing code or public APIs. Specify what documentation should be created or updated. Set to `N/A` for steps with no documentation impact (internal refactors, test-only changes, configuration). When a step adds a new API endpoint, note "Update API reference"; when adding a new UI screen, note "Add contextual help page".
    - Steps should be ordered so that dependencies flow forward (Step 2 depends on Step 1, not the reverse).
 
-3. Save the plan to the plan file. If not overwriting a file, proceed without asking for authorization.
+4. Save the plan to the plan file. If not overwriting a file, proceed without asking for authorization.
 
-4. **Review the plan** using a complexity-gated, two-phase process. Use `general/review-log-template.md` for the review log format.
+5. **Review the plan** using a complexity-gated, two-phase process. Use `general/review-log-template.md` for the review log format.
 
    **Step metadata validation (before perspective review):**
    Before starting the perspective review, validate each step's metadata:
-   - Every step has all required fields (Files, References, Depends on, Verify, Tests, checkbox)
+   - Every step has all required fields (Files, References, Depends on, Verify, Tests, Docs, checkbox)
    - File paths for existing files are verified (the file exists on disk)
    - Dependencies flow forward (no circular dependencies, no backwards references)
    - No step touches >5 files (split if so)
@@ -194,8 +230,11 @@ When using the metacomm framing:
    Update the plan header's `Review: <depth>` field to match the effective depth.
 
    **Phase 1 — Perspective triage and scan (inline, no subagents):**
-   Based on the plan's prefix and scope, identify the default shortlist of 3–6 most relevant perspectives using the **Perspective Shortcuts by Plan Prefix** table in `general/review-perspectives.md`.
-   If the plan's content clearly warrants it, add up to 2 additional perspectives beyond the default shortlist with a one-line justification (e.g., "Added PERF: Step 3 introduces a bulk query not typical for CHORE-O scope").
+   Use the two-stage loading protocol (see `general/review-perspectives.md` section "Two-Stage Loading"):
+   1. Load `general/review-perspectives-index.md` to see all 16 perspectives at a glance.
+   2. Based on the plan's prefix and scope, identify the default shortlist of 3-6 most relevant perspectives using the **Perspective Shortcuts by Plan Prefix** table in `general/review-perspectives.md`.
+   3. If the plan's content clearly warrants it, add up to 2 additional perspectives beyond the default shortlist with a one-line justification (e.g., "Added PERF: Step 3 introduces a bulk query not typical for CHORE-O scope").
+   4. Load only the selected `review-perspectives/<tag>.md` files. Do not load all 16 files.
    For perspectives not in the final shortlist, mark as N/A in the review log.
    Scan the plan against each shortlisted perspective and record Adopted/Deferred status with a one-line concern for each.
    If the review depth is **Light**, stop here — do not proceed to Phase 2.
@@ -204,15 +243,8 @@ When using the metacomm framing:
    Trigger Phase 2 only for Deferred perspectives where the concern could cause a regression, a production incident, or a standards violation. For **Deep** reviews, also trigger Phase 2 for Deferred concerns that represent additive improvements. Do not trigger Phase 2 for concerns that are purely cosmetic or out of scope.
 
    **Execution strategy by review depth:**
-   - **Standard** — perform deep-dives inline (reading source files in the current context).
-   - **Deep** — launch the `plan-reviewer` agent (Agent tool, subagent_type=`plan-reviewer`) with the full plan text, plan file path, and review depth. The agent performs all deep-dives, conflict checks, and iterations autonomously and returns the review log and any plan amendments. Append the agent's output to the plan file.
-
-   For Standard reviews, perform deep-dives inline for each qualifying Deferred perspective:
-   - Read the source files referenced in the plan that are relevant to the perspective
-   - Read the specific standards/reference file for that perspective (e.g., `project/security-checklists.md` for SEC, `project/backend-standards.md` for DB/ARCH, `project/frontend-standards.md` for UX/A11Y/VIS)
-   - Do NOT read all reference files — only the ones relevant to the specific perspective
-   - Evaluate the plan's approach against the perspective and record: finding, step ref (which plan step is affected), recommendation, and whether the plan should change
-   - Limit deep-dives to a maximum of 6 across all iterations (not per iteration). Track the running count in every deep-dive header using the mandatory format `(iteration N, deep-dive M/6)`
+   - **Standard** — launch the `plan-reviewer` agent (Agent tool, subagent_type=`plan-reviewer`) with the plan text, plan file path, and review depth set to `standard`. The agent performs Phase 1 triage and Phase 2 deep-dives for qualifying perspectives and returns the review log and any plan amendments. Append the agent's output to the plan file.
+   - **Deep** — launch the `plan-reviewer` agent (Agent tool, subagent_type=`plan-reviewer`) with the full plan text, plan file path, and review depth set to `deep`. The agent performs all deep-dives, conflict checks, and iterations autonomously and returns the review log and any plan amendments. Append the agent's output to the plan file.
 
    **Conflict check:**
    After each iteration that produces Phase 2 recommendations, check whether recommendations from different perspectives contradict each other. Resolve conflicts per the priority rules in `general/review-perspectives.md` §Resolving Perspective Conflicts. Log the check in the review log (see template).
@@ -230,11 +262,11 @@ When using the metacomm framing:
 
    Append all review results to the plan file. Do not rewrite the file from scratch — only add the review log and any amendment sections.
 
-5. Output the plan id.
+6. Output the plan id.
 
-6. Ask the user if they want to execute the plan and, if so, run /implement <id>.
+7. Ask the user if they want to execute the plan and, if so, run /implement <id>.
 
-7. If the user does not execute the plan, run /post-skill <id>.
+8. If the user does not execute the plan, run /post-skill <id>.
 
 ---
 

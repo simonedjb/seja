@@ -20,6 +20,14 @@ Usage
     python .claude/skills/scripts/check_i18n_keys.py
 
 Run from the repository root.
+
+CHECK_PLUGIN_MANIFEST:
+  name: i18n Keys
+  stack:
+    backend: [flask]
+    frontend: [react]
+  scope: i18n
+  critical: false
 """
 
 import json

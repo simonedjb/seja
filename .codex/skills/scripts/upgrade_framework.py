@@ -21,6 +21,7 @@ from datetime import datetime
 from pathlib import Path
 
 from project_config import diff_conventions
+from run_migrations import run_migrations as _run_pending_migrations
 
 # Old-layout path for references (v1)
 _OLD_REFS_REL = Path(".claude", "skills", "references")
@@ -335,6 +336,17 @@ def run_upgrade(
                     f"Removed retired skill {framework_dir}/skills/{skill_name}/"
                 )
                 print(f"OK: {prefix}Removed retired skill {framework_dir}/skills/{skill_name}/")
+
+    # --- Run pending migrations ---
+    print()
+    print(f"INFO: {prefix}Running pending migrations...")
+    try:
+        _run_pending_migrations(target, dry_run=dry_run)
+        report_migration.append("Ran pending migrations successfully")
+    except SystemExit:
+        report_migration.append("WARN: Migration runner exited with an error")
+    except Exception as exc:
+        report_migration.append(f"WARN: Migration runner error: {exc}")
 
     # --- Preserved files summary ---
     # Check for settings files and CLAUDE.md

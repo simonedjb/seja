@@ -17,7 +17,7 @@ Engines
 
 Usage
 -----
-    python .codex/skills/scripts/md_to_html.py <input.md> [options]
+    python .claude/skills/scripts/md_to_html.py <input.md> [options]
 
     --style <path>     Path to project/communication-style.md
                        (default: _references/project/communication-style.md)

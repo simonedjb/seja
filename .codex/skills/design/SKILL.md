@@ -1,7 +1,7 @@
 ---
 name: design
 description: "Define or update project design — stack, conventions, domain model, conceptual design, and standards. Use when user mentions 'design', 'design project', 'configure project', 'update design', or 'project setup'."
-argument-hint: "[--generate-spec] [spec-file-path]"
+argument-hint: "[--generate-spec] [--add-docs] [spec-file-path]"
 metadata:
   last-updated: 2026-03-31 16:30:00
   version: 1.0.0
@@ -27,6 +27,14 @@ metadata:
 
 **When to use**: After `/seed` to configure a new project. Or anytime you want to update your project's design foundations (stack, domain model, standards, metacommunication).
 
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `[spec-file-path]` | No | Path to a pre-filled spec file for automated configuration |
+| `--generate-spec` | No | Generate a blank spec skeleton to fill out offline |
+| `--add-docs` | No | Jump directly to the Add Documentation Templates mode |
+
 # Design
 
 > **`/design`** defines WHAT to build and WHY. **`/plan`** defines HOW to build it and WHY those "hows." Design produces project definitions (`_references/project/`); plans consume them to produce actionable implementation steps.
@@ -39,6 +47,7 @@ This skill manages the project's design foundations — the `project/` files in 
 
 On invocation, check whether `project/conventions.md` exists in `_references/`:
 
+- If `--add-docs` is passed, go directly to Mode 3 (Add Documentation Templates)
 - **Not found** → Initial design: run the full questionnaire or parse a spec file
 - **Found** → Design update: show what's defined, offer to review or update specific sections
 
@@ -54,7 +63,7 @@ If no argument is provided, present a usage menu:
 2. **From spec file** — provide a pre-filled spec file (best for experienced users)
 3. **Generate blank spec** — create a skeleton to fill out offline
 
-If the argument includes `--generate-spec`, skip the menu and go directly to Mode 3.
+If the argument includes `--generate-spec`, skip the menu and go directly to Mode 4.
 If a spec file path is provided, go directly to Mode 2.
 
 ### Mode 1: Interactive Questionnaire
@@ -105,6 +114,7 @@ If a spec file path is provided, go directly to Mode 2.
    - Copy `template/ux-design-standards.md` to `project/ux-design-standards.md`
    - Copy `template/graphic-ui-design-standards.md` to `project/graphic-ui-design-standards.md`
    - Copy agent YAML templates (`template/agent/constraints.yaml`, `entities.yaml`, `permissions.yaml`, `spec-checks.yaml`) to `project/agent/`
+   - Based on Section 10 answers: copy selected `template/docs/*.md` files to `project/docs/` in `_references/`. If the user chose "defaults", copy only the 3 recommended templates (readme.md, contextual-help.md, adr.md). If "skip", copy none.
    - Customize `template/settings.json` to `.claude/settings.json` with actual paths
 
 8. **Generate CLAUDE.md**: Create a `CLAUDE.md` in the codebase root with:
@@ -141,6 +151,7 @@ If a spec file path is provided, go directly to Mode 2.
     | `project/testing-standards.md` | Test frameworks and conventions |
     | `project/i18n-standards.md` | Internationalization conventions |
     | `project/security-checklists.md` | Security checklists, validation constants |
+    | `project/docs/*.md` | Documentation structure templates |
 
     Then offer: 1) Review specs now, 2) Generate roadmap (`/plan --roadmap`), 3) Done for now.
 
@@ -168,7 +179,25 @@ If a spec file path is provided, go directly to Mode 2.
 
 11. **Summary + Review**: Same as Mode 1, steps 13-14.
 
-### Mode 3: Generate Blank Spec
+### Mode 3: Add Documentation Templates
+
+Triggered when `--add-docs` is passed.
+
+1. **Verify project exists**: Check that `project/conventions.md` exists in `_references/`. If not, abort: "No project design found. Run `/design` first."
+
+2. **Check existing docs**: Check if `project/docs/` already exists in `_references/`. If it does, list the templates already instantiated and ask: "Some documentation templates are already set up. Add more, or replace all?"
+
+3. **Present template checklist**: Read all `template/docs/*.md` files. For each, extract the `recommended` and `depends_on` fields from the YAML frontmatter. Present the list to the user:
+   - Mark recommended templates with "(Recommended)"
+   - For templates with `depends_on` that matches the project's app type (from `project/ux-design-standards.md` if it exists), add "(Suggested for your app type)"
+   - Let the user select which templates to instantiate
+
+4. **Instantiate selected templates**: Copy selected `template/docs/*.md` files to `project/docs/` in `_references/`.
+
+5. **Summary**: List the instantiated documentation templates and suggest next steps:
+   > "Documentation templates added. To populate them, work through the placeholders in each file. For contextual help, create one help page per UI screen."
+
+### Mode 4: Generate Blank Spec
 
 1. **Create specs/ subfolder** if it does not exist.
 

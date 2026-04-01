@@ -41,7 +41,6 @@ SKIP_BASENAMES = {
     "INDEX.md",
     "briefs.md",
     "briefs-index.md",
-    "update-tests-tracker.md",
     ".post-skill-checkpoint",
 }
 
@@ -112,7 +111,7 @@ _QA_LOG_CHECK_RE = re.compile(
 
 # QA Log (plan, pipe): # QA Log | Plan NNNN | title
 _QA_LOG_PLAN_PIPE_RE = re.compile(
-    r"^#\s+QA\s+Log\s*\|\s*(?:execute-plan\s+)?(?:Plan\s+)?(\d[\d\-,\s]*)(?:\s*\|\s*(.+))?\s*$",
+    r"^#\s+QA\s+Log\s*\|\s*(?:implement\s+)?(?:Plan\s+)?(\d[\d\-,\s]*)(?:\s*\|\s*(.+))?\s*$",
     re.IGNORECASE,
 )
 
@@ -594,7 +593,7 @@ def update_telemetry(mapping: dict[tuple[str, str], str], dry_run: bool, verbose
     """Update _output/telemetry.jsonl: replace old IDs in 'id' and 'plan_id' fields.
 
     Uses the 'skill' field to infer artifact type for disambiguation:
-      make-plan / execute-plan -> plan
+      plan / implement -> plan
       advise -> advisory
       check -> advisory (old checks used advisory IDs) or check (6-digit IDs)
     """
@@ -607,8 +606,8 @@ def update_telemetry(mapping: dict[tuple[str, str], str], dry_run: bool, verbose
     changed = False
 
     skill_to_type = {
-        "make-plan": "plan",
-        "execute-plan": "plan",
+        "plan": "plan",
+        "implement": "plan",
         "advise": "advisory",
         "check": "advisory",
     }

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-check_skill_system.py — Validate .codex skill system integrity.
+check_skill_system.py — Validate .claude skill system integrity.
 
 Exit codes: 0 = pass, 1 = failures found, 2 = script error.
 
@@ -8,30 +8,40 @@ Checks performed
 ================
   1. SKILL.md frontmatter: required fields (name, description), valid YAML
   2. metadata.references: all referenced files exist in _references/
-  3. metadata.depends: all declared dependencies are valid skill names
-  4. category field: present and matches allowed enum values
-  5. Agent definitions: valid frontmatter with name, description, tools
-  6. Dependency cycle detection: no circular depends chains
-  7. Schema validation: context_budget enum validation
+  3. metadata.eager_references: valid list, paths exist, subset of references, no duplicates, warn if >6
+  4. metadata.depends: all declared dependencies are valid skill names
+  5. category field: present and matches allowed enum values
+  6. Agent definitions: valid frontmatter with name, description, tools
+  7. Dependency cycle detection: no circular depends chains
+  8. Schema validation: context_budget enum validation
 
 Usage
 -----
-    python .codex/skills/scripts/check_skill_system.py
+    python .claude/skills/scripts/check_skill_system.py
 
 Run from the repository root.
 Optional flags:
     --verbose    Show details for passing checks too
     --self-test  Run built-in dependency cycle detection tests
+
+CHECK_PLUGIN_MANIFEST:
+  name: Skill System
+  stack:
+    backend: [any]
+    frontend: [any]
+  scope: framework
+  critical: false
 """
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import re
 import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-CLAUDE_DIR = REPO_ROOT / ".codex"
+CLAUDE_DIR = REPO_ROOT / ".claude"
 SKILLS_DIR = CLAUDE_DIR / "skills"
 REFERENCES_DIR = REPO_ROOT / "_references"
 AGENTS_DIR = CLAUDE_DIR / "agents"
@@ -39,6 +49,10 @@ AGENTS_DIR = CLAUDE_DIR / "agents"
 ALLOWED_CATEGORIES = {"planning", "analysis", "code", "utility", "internal"}
 ALLOWED_BOOLEAN_FIELDS = {"disable-model-invocation"}
 ALLOWED_CONTEXT_BUDGETS = {"light", "standard", "heavy"}
+
+# Framework-only detection: no project configured if conventions.md is absent
+_PROJECT_CONVENTIONS = REFERENCES_DIR / "project" / "conventions.md"
+IS_FRAMEWORK_ONLY = not _PROJECT_CONVENTIONS.exists()
 VERSION_RE = re.compile(r"^\d+\.\d+\.\d+$")
 
 # Simple YAML frontmatter parser (between --- delimiters)
@@ -158,10 +172,11 @@ def detect_cycles(dep_graph: dict[str, list[str]]) -> list[list[str]]:
     return cycles
 
 
-def check_skills(verbose: bool = False) -> tuple[list[str], list[str]]:
-    """Check all SKILL.md files. Returns (errors, warnings)."""
+def check_skills(verbose: bool = False) -> tuple[list[str], list[str], list[str]]:
+    """Check all SKILL.md files. Returns (errors, warnings, infos)."""
     errors = []
     warnings = []
+    all_infos: list[str] = []
     skill_names = set()
     dep_graph: dict[str, list[str]] = {}
 
@@ -191,21 +206,75 @@ def check_skills(verbose: bool = False) -> tuple[list[str], list[str]]:
         metadata = fm.get("metadata", {})
 
         # Check metadata.references — empty list [] is valid
-        # general/, template/, and project/ subdirs live in _references/
+        # Files live in _references/general/, _references/template/, _references/project/
         refs = metadata.get("references", [])
+        infos = []
         if isinstance(refs, list):
             for ref in refs:
                 ref_path = REFERENCES_DIR / ref
                 if not ref_path.exists():
-                    message = f"  - {name}/SKILL.md: references non-existent file '{ref}'"
-                    if ref.startswith("project/"):
-                        warnings.append(message)
+                    if IS_FRAMEWORK_ONLY and ref.startswith("project/"):
+                        infos.append(
+                            f"  - {name}/SKILL.md: project/* reference not found "
+                            f"(expected -- no project configured): '{ref}'"
+                        )
                     else:
-                        errors.append(message)
+                        errors.append(
+                            f"  - {name}/SKILL.md: references non-existent file '{ref}'"
+                        )
         elif refs:
             warnings.append(
                 f"  - {name}/SKILL.md: 'references' should be a list, got: {type(refs).__name__}"
             )
+
+        # Check metadata.eager_references — optional demand-pull field
+        eager_refs = metadata.get("eager_references")
+        if eager_refs is not None:
+            if not isinstance(eager_refs, list):
+                errors.append(
+                    f"  - {name}/SKILL.md: 'eager_references' should be a list, "
+                    f"got: {type(eager_refs).__name__}"
+                )
+            else:
+                # Paths must exist in _references/
+                for eref in eager_refs:
+                    eref_path = REFERENCES_DIR / eref
+                    if not eref_path.exists():
+                        if IS_FRAMEWORK_ONLY and eref.startswith("project/"):
+                            infos.append(
+                                f"  - {name}/SKILL.md: project/* eager_reference not found "
+                                f"(expected -- no project configured): '{eref}'"
+                            )
+                        else:
+                            errors.append(
+                                f"  - {name}/SKILL.md: eager_references non-existent file '{eref}'"
+                            )
+                # No duplicates within eager_references
+                seen = set()
+                for eref in eager_refs:
+                    if eref in seen:
+                        errors.append(
+                            f"  - {name}/SKILL.md: duplicate in eager_references: '{eref}'"
+                        )
+                    seen.add(eref)
+                # Every eager ref must also be in references
+                if isinstance(refs, list):
+                    refs_set = set(refs)
+                    for eref in eager_refs:
+                        if eref not in refs_set:
+                            errors.append(
+                                f"  - {name}/SKILL.md: eager_references entry '{eref}' "
+                                f"not found in references list"
+                            )
+                # Warn if too many eager refs
+                if len(eager_refs) > 6:
+                    warnings.append(
+                        f"  - {name}/SKILL.md: eager_references has {len(eager_refs)} entries "
+                        f"(recommended: <=6 to keep context budget lean)"
+                    )
+
+        # Collect info messages from this skill
+        all_infos.extend(infos)
 
         # Check category field
         category = metadata.get("category")
@@ -273,29 +342,7 @@ def check_skills(verbose: bool = False) -> tuple[list[str], list[str]]:
             cycle_str = " -> ".join(cycle)
             errors.append(f"  - Dependency cycle detected: {cycle_str}")
 
-    return errors, warnings
-
-
-def check_openai_yaml(verbose: bool = False) -> tuple[list[str], list[str]]:
-    """Check that each skill has agents/openai.yaml. Returns (errors, warnings)."""
-    errors = []
-    warnings = []
-
-    skill_dirs = sorted(
-        d for d in SKILLS_DIR.iterdir()
-        if d.is_dir() and (d / "SKILL.md").exists()
-    )
-
-    print(f"## Skill UI Metadata ({len(skill_dirs)} skills)\n")
-
-    for skill_dir in skill_dirs:
-        metadata_file = skill_dir / "agents" / "openai.yaml"
-        if not metadata_file.is_file():
-            warnings.append(f"  - {skill_dir.name}: missing agents/openai.yaml")
-        elif verbose:
-            print(f"  OK: {skill_dir.name}")
-
-    return errors, warnings
+    return errors, warnings, all_infos
 
 
 def check_agents(verbose: bool = False) -> tuple[list[str], list[str]]:
@@ -331,7 +378,7 @@ def check_agents(verbose: bool = False) -> tuple[list[str], list[str]]:
 
 
 def check_references(verbose: bool = False) -> tuple[list[str], list[str]]:
-    """Check reference file naming conventions in _references/. Returns (errors, warnings)."""
+    """Check reference file structure in _references/. Returns (errors, warnings)."""
     errors = []
     warnings = []
 
@@ -339,21 +386,21 @@ def check_references(verbose: bool = False) -> tuple[list[str], list[str]]:
         errors.append("  - _references/ directory not found")
         return errors, warnings
 
+    # References live in general/, template/, project/ subdirectories
     valid_subdirs = {"general", "template", "project"}
-    ref_files = sorted(REFERENCES_DIR.rglob("*.md"))
+    ref_files = sorted(REFERENCES_DIR.glob("**/*.md"))
     print(f"## References ({len(ref_files)} found in _references/)\n")
 
     for ref_file in ref_files:
         rel = ref_file.relative_to(REFERENCES_DIR)
-        # Check naming convention: files must be in general/, template/, or project/ subdirs
-        parent = rel.parts[0] if len(rel.parts) > 1 else None
-        if parent not in valid_subdirs:
+        # Top-level part should be one of the valid subdirectories
+        if rel.parts[0] not in valid_subdirs:
             warnings.append(
-                f"  - {rel.as_posix()}: not in expected subdirectory "
+                f"  - {rel}: not in expected subdirectory "
                 f"(expected general/, template/, or project/)"
             )
         if verbose:
-            print(f"  OK: {rel.as_posix()}")
+            print(f"  OK: {rel}")
 
     return errors, warnings
 
@@ -417,9 +464,87 @@ def run_self_test() -> bool:
     return passed
 
 
+def check_script_imports(verbose: bool = False) -> tuple[list[str], list[str], list[str]]:
+    """Try to import every .py script in the scripts/ directory.
+
+    Returns (errors, warnings, infos).
+    Only SyntaxError counts as an error. ImportError for missing external
+    packages counts as a warning. All other exceptions (FileNotFoundError,
+    SystemExit, RuntimeError, etc.) count as info -- these are expected in
+    framework-only repos where project_config cannot find conventions.md.
+    """
+    errors: list[str] = []
+    warnings: list[str] = []
+    infos: list[str] = []
+
+    scripts_dir = Path(__file__).resolve().parent
+    # Discover all .py files, excluding helpers/test directories
+    py_files = sorted(
+        f for f in scripts_dir.iterdir()
+        if f.suffix == ".py"
+        and f.name != "__init__.py"
+        and "__pycache__" not in f.parts
+        and "tests" not in f.parts
+    )
+
+    total = len(py_files)
+    successful = 0
+    warn_count = 0
+    error_count = 0
+
+    print(f"## Script Imports ({total} scripts found)\n")
+
+    for py_file in py_files:
+        mod_name = f"_check_import_{py_file.stem}"
+        try:
+            spec = importlib.util.spec_from_file_location(mod_name, py_file)
+            if spec is None or spec.loader is None:
+                infos.append(f"  - {py_file.name}: could not create import spec")
+                continue
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            successful += 1
+            if verbose:
+                print(f"  OK: {py_file.name}")
+        except SyntaxError as exc:
+            error_count += 1
+            errors.append(
+                f"  - {py_file.name}: SyntaxError: {exc.msg} (line {exc.lineno})"
+            )
+        except ImportError as exc:
+            # Check if the missing module is a local script (sibling .py file)
+            missing = exc.name or ""
+            local_candidate = scripts_dir / f"{missing}.py"
+            if local_candidate.exists():
+                # Local cross-import issue — treat as info, not warning
+                infos.append(
+                    f"  - {py_file.name}: ImportError (local): {exc}"
+                )
+            else:
+                warn_count += 1
+                warnings.append(
+                    f"  - {py_file.name}: ImportError (missing package): {exc}"
+                )
+        except Exception as exc:  # noqa: BLE001
+            infos.append(
+                f"  - {py_file.name}: {type(exc).__name__}: {exc}"
+            )
+
+    info_count = len(infos)
+    print(
+        f"  Script imports: {total} total, {successful} successful, "
+        f"{warn_count} warnings, {error_count} errors"
+    )
+    if info_count:
+        print(f"  ({info_count} info-level exceptions — expected in framework-only repos)")
+    print()
+
+    return errors, warnings, infos
+
+
 def main():
     parser = argparse.ArgumentParser(
-        description="Validate .codex skill system integrity"
+        description="Validate .claude skill system integrity"
     )
     parser.add_argument(
         "--verbose", "-v", action="store_true",
@@ -441,24 +566,21 @@ def main():
     print("# Skill System Integrity Check\n")
 
     if not CLAUDE_DIR.is_dir():
-        print("ERROR: .codex directory not found")
+        print("ERROR: .claude directory not found")
         sys.exit(2)
 
     all_errors = []
     all_warnings = []
+    all_infos: list[str] = []
 
     # Check skills (includes cycle detection)
-    errs, warns = check_skills(verbose=args.verbose)
+    errs, warns, infos = check_skills(verbose=args.verbose)
     all_errors.extend(errs)
     all_warnings.extend(warns)
+    all_infos.extend(infos)
 
     # Check agents
     errs, warns = check_agents(verbose=args.verbose)
-    all_errors.extend(errs)
-    all_warnings.extend(warns)
-
-    # Check skill UI metadata
-    errs, warns = check_openai_yaml(verbose=args.verbose)
     all_errors.extend(errs)
     all_warnings.extend(warns)
 
@@ -466,6 +588,12 @@ def main():
     errs, warns = check_references(verbose=args.verbose)
     all_errors.extend(errs)
     all_warnings.extend(warns)
+
+    # Check script imports
+    errs, warns, infos = check_script_imports(verbose=args.verbose)
+    all_errors.extend(errs)
+    all_warnings.extend(warns)
+    all_infos.extend(infos)
 
     # Report
     print()
@@ -478,6 +606,12 @@ def main():
     if all_warnings:
         print(f"## Warnings ({len(all_warnings)})\n")
         for msg in all_warnings:
+            print(msg)
+        print()
+
+    if all_infos:
+        print(f"## Info ({len(all_infos)})\n")
+        for msg in all_infos:
             print(msg)
         print()
 

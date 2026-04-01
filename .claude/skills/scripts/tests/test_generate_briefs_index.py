@@ -13,9 +13,9 @@ def fake_briefs(tmp_path):
     briefs.write_text(
         "DONE | 2026-03-28 10:00:00 UTC | STARTED | 2026-03-28 09:00:00 UTC | advise | First question\n"
         "\n"
-        "DONE | 2026-03-28 12:00:00 UTC | STARTED | 2026-03-28 11:00:00 UTC | make-plan | Second task | PLAN | 0001\n"
+        "DONE | 2026-03-28 12:00:00 UTC | STARTED | 2026-03-28 11:00:00 UTC | plan | Second task | PLAN | 0001\n"
         "\n"
-        "STARTED | 2026-03-28 13:00:00 UTC | make-plan | Third task (orphaned)\n",
+        "STARTED | 2026-03-28 13:00:00 UTC | plan | Third task (orphaned)\n",
         encoding="utf-8",
     )
     return briefs

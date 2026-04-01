@@ -13,9 +13,9 @@ def fake_briefs(tmp_path):
     briefs.write_text(
         "DONE | 2026-03-28 10:00:00 UTC | STARTED | 2026-03-28 09:00:00 UTC | advise | First question\n"
         "\n"
-        "DONE | 2026-03-28 12:00:00 UTC | STARTED | 2026-03-28 11:00:00 UTC | make-plan | Second task | PLAN | 0001\n"
+        "DONE | 2026-03-28 12:00:00 UTC | STARTED | 2026-03-28 11:00:00 UTC | plan | Second task | PLAN | 0001\n"
         "\n"
-        "STARTED | 2026-03-28 13:00:00 UTC | execute-plan | Third task (orphaned)\n",
+        "STARTED | 2026-03-28 13:00:00 UTC | plan | Third task (orphaned)\n",
         encoding="utf-8",
     )
     return briefs
@@ -24,7 +24,7 @@ def fake_briefs(tmp_path):
 @pytest.fixture
 def fake_repo_with_briefs(tmp_path, fake_briefs):
     """Create a minimal repo structure for generate_briefs_index.py."""
-    (tmp_path / ".codex").mkdir()
+    (tmp_path / ".claude").mkdir()
     (tmp_path / "_references").mkdir()
     output_dir = tmp_path / "_output"
     output_dir.mkdir()

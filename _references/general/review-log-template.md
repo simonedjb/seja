@@ -51,7 +51,7 @@
 
 ## Field Definitions
 
-- **Review depth:** Set by the complexity gate (Light, Standard, Deep).
+- **Review depth:** Set by the complexity gate (Light, Standard, Deep). If `MINIMUM_REVIEW_DEPTH` (from project/conventions.md) or a `--review`/`--depth` flag forces the depth higher than the complexity gate recommends, note this as: `**Review depth:** Standard (overridden; auto=Light, floor=Standard)`. The effective depth is always `max(auto, floor, flag)`.
 - **Deep-dive budget:** Running counter. Updated after each deep-dive. Header shows `N/6 used` to make the remaining budget visible at a glance.
 - **Phase 2 header format:** `### Phase 2 — Deep-dive: <TAG> (iteration <N>, deep-dive <M>/6)` — the `M/6` counter is mandatory and tracks budget consumption.
 - **Conflict Check:** Mandatory after each iteration that produces Phase 2 recommendations. Evaluates whether recommendations from different perspectives contradict each other.

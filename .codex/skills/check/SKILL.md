@@ -1,7 +1,7 @@
 ---
 name: check
 description: "Run quality checks: validation, code review, smoke tests, preflight, or framework health."
-argument-hint: "<validate | review | smoke | preflight | health | test-plan> [--depth <light|standard|deep>] [scope]"
+argument-hint: "<validate | review | smoke | preflight | health | test-plan | telemetry> [--depth <light|standard|deep>] [scope]"
 metadata:
   last-updated: 2026-03-29 00:15:00
   version: 1.0.0
@@ -14,6 +14,7 @@ metadata:
     - project/i18n-standards.md
     - project/security-checklists.md
     - general/review-perspectives.md
+    - general/review-perspectives-index.md
     - general/review-log-template.md
 ---
 
@@ -36,6 +37,22 @@ metadata:
 
 **When to use**: Before committing, after making changes, or when you want to verify code quality, project health, framework integrity, or generate a manual test plan for recent changes.
 
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `validate [scope]` | -- | Run project validation scripts. Scope: `all`, `i18n`, `auth`, `migrations`, `constants`, `po`, `coverage`, `tests`, `spec` |
+| `review [scope]` | -- | Structured code review against quality perspectives. Scope: `staged`, file path, or directory path |
+| `smoke [scope]` | -- | Runtime smoke tests. Scope: `all`, `api`, `ui` |
+| `preflight [scope]` | -- | Combined validate + review in one pass. Scope: `staged`, `all`, or directory path |
+| `health` | -- | Framework self-diagnosis and integrity check. Supports `--verbose` |
+| `test-plan [brief]` | -- | Generate a structured manual test plan for the given brief |
+| `docs [--plugins LIST]` | -- | Documentation consistency check. Supports `--plugins`, `--verbose`, `--filter` |
+| `telemetry` | -- | Usage analytics and skill invocation statistics |
+| `--depth <level>` | No | Override review depth. Valid: `light`, `standard`, `deep` |
+
+> One mode is required. Modes are mutually exclusive.
+
 ## Stack Filtering
 
 Validate and preflight modes use stack-based filtering to run only the check scripts relevant to the project's technology stack.
@@ -49,7 +66,7 @@ Validate and preflight modes use stack-based filtering to run only the check scr
    - Its `stack.frontend` list is empty (matches any frontend) OR contains the project's `FRONTEND_FRAMEWORK` value.
 4. Run only the matching scripts. Skip non-matching scripts silently.
 
-**Fallback (legacy projects):** If `conventions.md` has no `BACKEND_FRAMEWORK` or `FRONTEND_FRAMEWORK` variables, run all scripts and log this warning:
+**Fallback (legacy projects):** If `conventions.md` has no `BACKEND_FRAMEWORK` or `FRONTEND_FRAMEWORK` variables, run all scripts and log this warning if the BACKEND_FRAMEWORK or FRONTEND_FRAMEWORK variables cannot be inferred from the codebase:
 
 > Warning: No stack framework variables found in conventions.md. Running all check scripts. Add BACKEND_FRAMEWORK and FRONTEND_FRAMEWORK to conventions.md to enable stack filtering.
 
@@ -80,12 +97,14 @@ To add a new check plugin to the system, follow these three steps:
 # Check
 
 If there are no arguments, use the AskUserQuestion tool to ask which mode to run (if AskUserQuestion is not available, present as a numbered text list), with these options:
-- "1. validate -- run project validation scripts"
-- "2. review -- structured code review against perspectives"
-- "3. smoke -- runtime smoke tests (API/UI)"
-- "4. preflight -- validate + review in one pass (pre-commit)"
-- "5. health -- framework self-diagnosis"
-- "6. test-plan -- generate manual test plan from recent plans"
+- "1. validate -- run project validation scripts (scope: all, i18n, auth, migrations, constants, po, coverage, tests, spec)"
+- "2. review -- structured code review against quality perspectives (scope: staged, file, or directory)"
+- "3. smoke -- runtime smoke tests against API endpoints or UI pages (scope: all, api, ui)"
+- "4. preflight -- validate + review in one pass as a pre-merge checkpoint (scope: staged, all, or directory)"
+- "5. health -- framework self-diagnosis and integrity check (7 built-in checks)"
+- "6. test-plan -- generate a structured manual test plan from a brief or recent plans"
+- "7. docs -- documentation consistency check via plugin-based scanners (paths, env vars, terminology)"
+- "8. telemetry -- usage analytics and skill invocation statistics from telemetry.jsonl"
 
 ## Modes
 
@@ -97,6 +116,8 @@ If there are no arguments, use the AskUserQuestion tool to ask which mode to run
 | `preflight [scope]` | Validate + review in one pass (pre-commit) | `/preflight` |
 | `health [flags]` | Framework self-diagnosis | `/health` |
 | `test-plan [brief]` | Generate manual test plan from recent plans | `/plan-user-test` |
+| `docs [--plugins LIST]` | Documentation consistency check | -- |
+| `telemetry` | Usage analytics from telemetry.jsonl | -- |
 
 ## Definitions
 
@@ -156,10 +177,12 @@ Scope options: `staged` (default) | file path | directory path
    **Review depth:**
    If `--depth <light|standard|deep>` is provided, resolve the effective depth as `max(floor, flag)` where `floor` = `MINIMUM_REVIEW_DEPTH` from project/conventions.md (default: `light`). Pass the effective depth to the code-reviewer agent. If no `--depth` flag is provided, the code-reviewer evaluates all 16 perspectives (current behavior, equivalent to `deep`).
 
-2. Launch the `code-reviewer` agent with the scope and review depth as input. The agent will:
-   - Read the code to review
-   - Evaluate perspectives according to the review depth (all 16 if deep or unspecified; shortlisted if standard; status-only if light)
-   - Return a structured report with findings
+2. Launch the `code-reviewer` agent with the scope and review depth as input. The agent should use the two-stage loading protocol (see `general/review-perspectives.md` section "Two-Stage Loading"):
+   - Load `general/review-perspectives-index.md` to see all 16 perspectives at a glance
+   - Select 4-6 relevant perspectives based on the change content and scope
+   - Load only the selected `review-perspectives/<tag>.md` files (not all 16)
+   - For **deep** depth or when explicitly requested, load all perspective files instead
+   - Evaluate selected perspectives and return a structured report with findings
 
 3. Save the agent's report to the output file, including:
    - *header*: `# Check <id> | REVIEW<scope> | <current datetime> | Code Review: <short description>`
@@ -286,8 +309,9 @@ Flags: `[--verbose]`
    | Reference Completeness | PASS/WARN/FAIL | N missing references |
    | .claude/.codex Sync | PASS/WARN | N out-of-sync skills |
    | Conventions Completeness | PASS/WARN/FAIL | N errors, M warnings |
+   | Constitution Presence | PASS/WARN | Present or missing |
 
-   Overall: X/6 checks passed
+   Overall: X/7 checks passed
    ```
 
 3. Save the report to the output file per report conventions.
@@ -323,3 +347,50 @@ As input to apply this mode, use only these folders (see project/conventions.md 
    - *to do*: A brief enumeration of the plan steps
 
 5. Run /post-skill <id>.
+
+---
+
+### Mode: docs
+
+Flags: `[--plugins LIST] [--verbose] [--filter SEVERITY]`
+
+Documentation consistency checker powered by `check_docs.py` with plugin-based scanners.
+
+1. Run `python .claude/skills/scripts/check_docs.py` with any flags passed through:
+   - `--plugins LIST`: Comma-separated plugin names to run (default: all)
+   - `--verbose`: Show passing checks and extra detail
+   - `--filter SEVERITY`: Minimum severity to report: `error`, `warning`, `info` (default: `info`)
+
+   **Available plugins:**
+
+   | Plugin | Description | Stack |
+   |--------|-------------|-------|
+   | `framework-integrity` | Validate CLAUDE.md skill/agent references exist on disk, Quick Guide presence | all |
+   | `path-liveness` | Verify relative paths in .md files resolve to existing files | all |
+   | `env-vars` | Cross-check documented vs referenced environment variables | django, node, next |
+   | `command-refs` | Cross-check documented CLI commands against build targets | django, node, next |
+   | `terminology` | Check for variant spellings against shared-definitions.md | all |
+
+2. Parse the script output. Exit code 0 means no issues; exit code 1 means issues found; exit code 2 means script error.
+
+3. Save the report to the output file, including:
+   - *header*: `# Check <id> | CHORE-docs | <current datetime> | Documentation Consistency Report`
+   - *summary*: error/warning/info counts
+   - *per-plugin findings*: grouped by plugin name with severity, location, and message
+   - *overall status*: PASS / ISSUES FOUND
+
+4. Present the summary to the user, highlighting any errors or warnings.
+
+5. Run /post-skill <id>.
+
+---
+
+### Mode: telemetry
+
+Informational usage analytics. No check-log file is written.
+
+1. Run `python .claude/skills/scripts/generate_telemetry_report.py` via Bash. Capture stdout.
+
+2. Display the markdown output directly to the user.
+
+3. Do **not** reserve an ID, write a check-log file, or run /post-skill. This mode is read-only and informational.

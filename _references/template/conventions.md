@@ -11,6 +11,7 @@
 | Variable | Value | Description |
 |----------|-------|-------------|
 | `PROJECT_NAME` | {{PROJECT_NAME}} | Project display name |
+| `PROJECT_DESCRIPTION` | {{PROJECT_DESCRIPTION}} | One-line project description |
 
 ---
 
@@ -50,7 +51,6 @@
 | `BRIEFS_FILE` | `${OUTPUT_DIR}/briefs.md` | Execution log of all skill invocations |
 | `BRIEFS_INDEX_FILE` | `${OUTPUT_DIR}/briefs-index.md` | Lightweight briefs index (one-line summaries) |
 | `ARTIFACT_INDEX_FILE` | `${OUTPUT_DIR}/INDEX.md` | Single global artifact index (no per-folder INDEX.md files) |
-| `TESTS_TRACKER_FILE` | `${OUTPUT_DIR}/update-tests-tracker.md` | Test execution tracker for update-tests skill |
 | `CONSTITUTION_FILE` | `project/constitution.md` | Project constitution -- immutable principles (in `_references/`) |
 | `CONCEPTUAL_DESIGN_AS_IS` | `project/conceptual-design-as-is.md` | As-built conceptual design (in `_references/`) |
 | `CD_AS_IS_CHANGELOG` | `project/cd-as-is-changelog.md` | As-built conceptual design changelog (in `_references/`) |
@@ -80,6 +80,32 @@
 | `FRONTEND_DIR` | `{{FRONTEND_DIR}}` | Frontend source root |
 | `BACKEND_FRAMEWORK` | `{{BACKEND_FRAMEWORK}}` | Backend framework identifier (e.g., `flask`, `fastapi`, `django`, `express`, `none`) |
 | `FRONTEND_FRAMEWORK` | `{{FRONTEND_FRAMEWORK}}` | Frontend framework identifier (e.g., `react`, `vue`, `angular`, `none`) |
+
+---
+
+## Stack Description
+
+| Variable | Value | Description |
+|----------|-------|-------------|
+| `BACKEND_STACK` | {{BACKEND_STACK}} | Backend technology summary (e.g., "Flask + SQLAlchemy + PostgreSQL") |
+| `FRONTEND_STACK` | {{FRONTEND_STACK}} | Frontend technology summary (e.g., "React + TypeScript + Vite") |
+| `TESTING_STACK` | {{TESTING_STACK}} | Testing technology summary (e.g., "pytest + Vitest + Playwright") |
+| `DEPLOYMENT_STACK` | {{DEPLOYMENT_STACK}} | Deployment technology summary (e.g., "Docker + Caddy") |
+
+---
+
+## Architecture Description
+
+| Variable | Value | Description |
+|----------|-------|-------------|
+| `ARCHITECTURE_DESCRIPTION` | {{ARCHITECTURE_DESCRIPTION}} | High-level architecture description |
+| `ARCHITECTURE_PATTERN` | {{ARCHITECTURE_PATTERN}} | Architecture pattern (e.g., "3-layer: API / Service / Model") |
+| `BACKEND_ARCHITECTURE_SUMMARY` | {{BACKEND_ARCHITECTURE_SUMMARY}} | Backend architecture summary for CLAUDE.md |
+| `FRONTEND_ARCHITECTURE_SUMMARY` | {{FRONTEND_ARCHITECTURE_SUMMARY}} | Frontend architecture summary for CLAUDE.md |
+| `MODELS_DIR` | `${BACKEND_DIR}/app/models` | Database models directory |
+| `CONVENTION_1` | {{CONVENTION_1}} | Key project convention #1 for CLAUDE.md |
+| `CONVENTION_2` | {{CONVENTION_2}} | Key project convention #2 for CLAUDE.md |
+| `CONVENTION_3` | {{CONVENTION_3}} | Key project convention #3 for CLAUDE.md |
 
 ---
 
@@ -125,6 +151,21 @@
 | `BACKEND_SUBPACKAGES` | `{{BACKEND_SUBPACKAGES}}` | Comma-separated backend subpackage names for coverage grouping |
 | `FRONTEND_SUBPACKAGES` | `{{FRONTEND_SUBPACKAGES}}` | Comma-separated frontend subpackage names for coverage grouping |
 | `FRONTEND_ENTRY_POINTS` | `{{FRONTEND_ENTRY_POINTS}}` | Comma-separated entry point filenames to exclude from unused-file checks |
+
+---
+
+## Build & Test Commands
+
+| Variable | Value | Description |
+|----------|-------|-------------|
+| `ALL_TESTS_CMD` | {{ALL_TESTS_CMD}} | Command to run all tests |
+| `BACKEND_TEST_CMD` | {{BACKEND_TEST_CMD}} | Command to run backend tests |
+| `BACKEND_INTEGRATION_TEST_CMD` | {{BACKEND_INTEGRATION_TEST_CMD}} | Command to run backend integration tests |
+| `BACKEND_TEST_FILE_CMD` | {{BACKEND_TEST_FILE_CMD}} | Command to run a single backend test file |
+| `FRONTEND_TEST_CMD` | {{FRONTEND_TEST_CMD}} | Command to run frontend tests |
+| `FRONTEND_TEST_FILE_CMD` | {{FRONTEND_TEST_FILE_CMD}} | Command to run a single frontend test file |
+| `E2E_TEST_CMD` | {{E2E_TEST_CMD}} | Command to run E2E tests |
+| `MIGRATION_CHAIN_SCRIPT` | {{MIGRATION_CHAIN_SCRIPT}} | Script to check migration chain integrity |
 
 ---
 

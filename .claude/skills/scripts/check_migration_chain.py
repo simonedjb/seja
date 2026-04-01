@@ -19,6 +19,14 @@ Run from the repository root (dialogos/).
 Optional flags:
     --verbose           Show the full revision chain
     --check-idempotency Warn about create_table/add_column without guards
+
+CHECK_PLUGIN_MANIFEST:
+  name: Migration Chain
+  stack:
+    backend: [flask]
+    frontend: []
+  scope: database
+  critical: true
 """
 from __future__ import annotations
 

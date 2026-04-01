@@ -18,6 +18,14 @@ Optional flags:
     --all        Scan all tracked files instead of staged only
     --verbose    Show each file being scanned
     --self-test  Run built-in test fixtures to validate detection patterns
+
+CHECK_PLUGIN_MANIFEST:
+  name: Secrets Scanner
+  stack:
+    backend: [any]
+    frontend: [any]
+  scope: security
+  critical: true
 """
 from __future__ import annotations
 

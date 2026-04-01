@@ -1,7 +1,7 @@
 ---
 name: explain
 description: "Explains behavior, code, data model, architecture, or spec drift with visual diagrams and analogies."
-argument-hint: <architecture|behavior|behavior-evolution|code|data-model|spec-drift> [brief]
+argument-hint: "<architecture|behavior|behavior-evolution|code|data-model|spec-drift> [brief]"
 metadata:
   last-updated: 2026-03-28 12:40:00
   version: 1.1.0
@@ -29,17 +29,32 @@ metadata:
 
 **When to use**: You want to understand how a part of the system works, need to onboard yourself on unfamiliar code, want a visual overview of the architecture, or want to see and resolve the gap between as-is and to-be design specs.
 
+**See also**: `/document` -- generate project documentation artifacts (READMEs, changelogs, API references, ADRs).
+
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `architecture [brief]` | -- | Explain system architecture, component relationships, and design choices |
+| `behavior [brief]` | -- | Explain emergent behavior from a user's perspective |
+| `behavior-evolution [brief]` | -- | Explain current behavior AND how it evolved over time |
+| `code [brief]` | -- | Explain how code works, aimed at junior developers |
+| `data-model [brief]` | -- | Explain data model, pitfalls, and refactoring opportunities |
+| `spec-drift [scope]` | -- | Compare as-is and to-be design specs, with optional sync. Scope: `all`, `conceptual-design`, `metacomm` |
+
+> One type is required. Types are mutually exclusive.
+
 # Explain
 
 If there are no arguments, ask for a user brief.
 
 If the explanation type (architecture, behavior, behavior-evolution, code, data-model, or spec-drift) is not specified or cannot be inferred from the brief, use the AskUserQuestion tool to ask which kind of explanation they want (if AskUserQuestion is not available, present as a numbered text list), with these options:
-- "Architecture -- system architecture, component relationships, and design choices"
-- "Behavior -- emergent behavior and pitfalls from a user's perspective"
-- "Behavior evolution -- current behavior AND how it evolved over time"
-- "Code -- how code works, aimed at junior developers being onboarded"
-- "Data model -- data model, pitfalls, and refactoring opportunities"
-- "Spec drift -- drift between as-is and to-be design specs, then optionally sync"
+- "1. Architecture -- system architecture, component relationships, and design choices"
+- "2. Behavior -- emergent behavior and pitfalls from a user's perspective"
+- "3. Behavior evolution -- current behavior AND how it evolved over time"
+- "4. Code -- how code works, aimed at junior developers being onboarded"
+- "5. Data model -- data model, pitfalls, and refactoring opportunities"
+- "6. Spec drift -- drift between as-is and to-be design specs, then optionally sync"
 
 ## Definitions per type
 
@@ -261,10 +276,10 @@ The spec-drift type combines drift analysis (read-only comparison) with an optio
 #### Step B — Sync Prompt
 
 After presenting the drift report, use the AskUserQuestion tool to ask the user whether to sync (if AskUserQuestion is not available, present as a numbered text list), with these options:
-- "Conceptual-design to metacomm -- align metacomm with the conceptual design"
-- "Metacomm to conceptual-design -- align conceptual design with the metacomm"
-- "Bidirectional -- reconcile both (with user confirmation for conflicts)"
-- "No -- skip sync"
+- "1. Conceptual-design to metacomm -- align metacomm with the conceptual design"
+- "2. Metacomm to conceptual-design -- align conceptual design with the metacomm"
+- "3. Bidirectional -- reconcile both (with user confirmation for conflicts)"
+- "4. No -- skip sync"
 
 If the user chooses **No**, run /post-skill <id> and stop.
 

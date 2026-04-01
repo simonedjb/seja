@@ -24,7 +24,7 @@ def fake_conventions(tmp_path):
 @pytest.fixture
 def fake_skill(tmp_path):
     """Create a SKILL.md that references some variables."""
-    skill_dir = tmp_path / ".codex" / "skills" / "test-skill"
+    skill_dir = tmp_path / ".claude" / "skills" / "test-skill"
     skill_dir.mkdir(parents=True)
     skill_md = skill_dir / "SKILL.md"
     skill_md.write_text(

@@ -84,6 +84,7 @@ Both toolkits are fully supported. Choose based on your preferred AI agent.
 - [Set up a project workspace](docs/recipes/recipe-workspace-setup.md)
 - [Onboard a team member](docs/recipes/recipe-onboard-team-member.md)
 - [Run quality gates](docs/recipes/recipe-quality-gates.md)
+- [Generate project documentation](docs/recipes/recipe-generate-documentation.md)
 - [Generate stakeholder material](docs/recipes/recipe-stakeholder-material.md)
 - [Upgrade the foundational framework](docs/recipes/recipe-upgrade-framework.md)
 

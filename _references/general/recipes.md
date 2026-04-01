@@ -32,7 +32,7 @@
 3. `/implement` -- apply the fix
 4. `/check validate` -- verify the fix and ensure no regressions
 
-**Tip**: If the bug is in test-covered code, add `/update-tests` after `/implement` to cover the edge case.
+**Tip**: If the bug is in test-covered code, `/implement` will automatically generate tests when the plan step has a non-N/A Tests field.
 
 ---
 
@@ -116,8 +116,9 @@
 **When to use**: You want to add or update tests for a module and confirm they pass.
 
 **Steps**:
-1. `/update-tests` -- generate or update unit tests following project conventions
-2. `/check validate` -- run all checks to make sure the new tests pass
+1. `/plan` -- create a plan with Tests fields specifying what to test
+2. `/implement` -- execute the plan; test generation happens automatically per step
+3. `/check validate` -- run all checks to make sure the new tests pass
 
 **Tip**: Use `/check review` first to identify which areas most need test coverage.
 

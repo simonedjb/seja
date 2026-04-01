@@ -13,9 +13,9 @@ in the header are skipped.
 
 Usage
 -----
-    python .codex/skills/scripts/backfill_qa_dates.py
-    python .codex/skills/scripts/backfill_qa_dates.py --dry-run
-    python .codex/skills/scripts/backfill_qa_dates.py --verbose
+    python .claude/skills/scripts/backfill_qa_dates.py
+    python .claude/skills/scripts/backfill_qa_dates.py --dry-run
+    python .claude/skills/scripts/backfill_qa_dates.py --verbose
 
 Run from the repository root.
 """

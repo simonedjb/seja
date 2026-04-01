@@ -9,15 +9,23 @@ patterns: API keys, passwords, tokens, connection strings, and AWS credentials.
 
 Usage
 -----
-    python .codex/skills/scripts/check_secrets.py           # scan staged files
-    python .codex/skills/scripts/check_secrets.py --all      # scan all tracked files
-    python .codex/skills/scripts/check_secrets.py --self-test # run built-in validation
+    python .claude/skills/scripts/check_secrets.py           # scan staged files
+    python .claude/skills/scripts/check_secrets.py --all      # scan all tracked files
+    python .claude/skills/scripts/check_secrets.py --self-test # run built-in validation
 
 Run from the repository root.
 Optional flags:
     --all        Scan all tracked files instead of staged only
     --verbose    Show each file being scanned
     --self-test  Run built-in test fixtures to validate detection patterns
+
+CHECK_PLUGIN_MANIFEST:
+  name: Secrets Scanner
+  stack:
+    backend: [any]
+    frontend: [any]
+  scope: security
+  critical: true
 """
 from __future__ import annotations
 

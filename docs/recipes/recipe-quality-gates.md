@@ -64,7 +64,7 @@ compliance.
 - Review perspectives are priority-classified (P0 critical through P4
   informational) -- focus on P0-P1 when time is short.
 - SEC and A11Y findings should never be deferred.
-- Use `/check review --perspective SEC` / `$check review --perspective SEC` to run a focused security review.
+- For a focused security review, ask Claude/Codex to review with a security focus (e.g., "review this change with emphasis on SEC perspective").
 
 ## Related journeys
 

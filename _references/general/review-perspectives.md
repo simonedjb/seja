@@ -25,6 +25,16 @@ Each perspective lives in its own file under `general/review-perspectives/`. Eac
 
 All questions are **priority-classified** (`[P0]` critical/blocking through `[P4]` informational) and **sorted by priority** within each tier. When time or context is constrained, focus on P0-P1 questions first.
 
+### Two-Stage Loading
+
+To minimize context usage, use the two-stage select-then-load protocol instead of loading all 16 perspective files:
+
+1. **Load the index**: Read `general/review-perspectives-index.md` (compact table, under 600 tokens).
+2. **Select perspectives**: Based on the change type, plan prefix, or review scope, select 4-6 relevant perspectives from the index. Use the **Perspective Shortcuts by Plan Prefix** table below for default shortlists, or select manually based on the change content.
+3. **Load selected files only**: Read only the selected `review-perspectives/<tag>.md` files. Skip all others.
+
+This protocol replaces bulk-loading all perspective files. Skills that consume perspectives (e.g., `/plan`, `/check review`) should follow this protocol unless the review depth is **Deep** and the reviewer needs all perspectives.
+
 ### Resolving Perspective Conflicts
 
 When two perspectives recommend conflicting approaches (e.g., PERF suggests caching but SEC advises against storing sensitive data), remark the conflict and resolve it as follows:

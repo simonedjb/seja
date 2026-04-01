@@ -19,7 +19,7 @@ Lightweight threat model for the SEJA agent framework. Uses STRIDE-lite categori
 | V1 -- Shell metacharacters in conventions values | Tampering | High | Low | `_SHELL_INJECTION_RE` rejects backticks, `$(`, `$((` | Enforced |
 | V2 -- Circular/missing `${VAR}` references | Denial of Service | Low | Medium | `_MAX_RESOLVE_PASSES=10` cap; post-resolve warning | Enforced |
 | V3 -- Path traversal via `get_path()` | Information Disclosure | Medium | Low | `resolve()` + `relative_to(REPO_ROOT)` containment check | Enforced |
-| V4 -- Unreviewed generated scripts | Elevation of Privilege | High | Medium | `/generate-script` mandatory user confirmation before write | Enforced |
+| V4 -- Unreviewed generated scripts | Elevation of Privilege | High | Medium | General guideline: display full script contents and request user confirmation before writing any generated script to disk | Enforced |
 | V5 -- Prompt injection via user arguments | Spoofing | Medium | Medium | Skills receive arguments through structured frontmatter; no direct shell pass-through | Partial |
 | V6 -- Malicious conventions.md in cloned repo | Tampering | Medium | Low | Shell-injection and path-traversal guards in `project_config.py` | Enforced |
 
@@ -39,9 +39,9 @@ A conventions variable is set to `../../../etc/passwd`. A script using `get_path
 
 ### S3 -- Unreviewed script execution (V4)
 
-`/generate-script` produces a Python file. If the user runs it without review, a hallucinated or malicious code path could damage the project.
+Any agent-generated Python script could contain hallucinated or malicious code. If written to disk without review and then executed, it could damage the project.
 
-**Mitigation**: The skill includes a mandatory confirmation gate -- the full script is displayed to the user, who must approve before the file is written to disk.
+**Mitigation**: General guideline -- when generating executable scripts (via any skill or direct conversation), the agent must display the full script contents to the user and request explicit confirmation before writing the file to disk.
 
 ### S4 -- Variable resolution bomb (V2)
 
@@ -56,7 +56,7 @@ Circular references like `A=${B}`, `B=${A}` cause the resolver to loop. With no 
 | `project_config._parse_config()` | Shell-injection regex filter | plan-000117 |
 | `project_config._parse_config()` | Unresolved-var warning after max passes | plan-000117 |
 | `project_config.get_path()` | Path containment within REPO_ROOT | plan-000117 |
-| `/generate-script` SKILL.md | Mandatory user confirmation before write | plan-000117 |
+| General guideline (all script generation) | Mandatory user confirmation before write | plan-000117, plan-000152 |
 | `_MAX_RESOLVE_PASSES` | Iteration cap (10) for variable resolution | Original |
 
 ## Recommended Future Hardening

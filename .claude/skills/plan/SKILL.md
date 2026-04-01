@@ -46,6 +46,19 @@ metadata:
 
 **When to use**: You have a clear idea of what you want to build or fix and want to see a structured plan before any code changes happen. Use `--framing metacomm` when describing the change from the user's perspective. Use `--roadmap` when you need a high-level view of what to build next, want to organize features into delivery phases, or need to communicate the plan to stakeholders. Use `--plan` to force a single plan when the agent would otherwise suggest a roadmap. If you omit both `--plan` and `--roadmap`, the agent auto-detects the best mode from your brief and asks for confirmation before proceeding.
 
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `<brief>` | Yes | Description of the task to plan (feature, bug fix, refactor) |
+| `--light` | No | Generate a lightweight proposal instead of a full plan |
+| `--plan` | No | Force single-plan mode (skip auto-detection) |
+| `--roadmap` | No | Generate a full product roadmap with dependency-aware execution waves |
+| `--from-spec <path>` | No | Parse roadmap from a pre-filled spec file. Use with `--roadmap` |
+| `--auto` | No | Auto-generate roadmap from project reference files. Use with `--roadmap` |
+| `--framing metacomm` | No | Frame the brief as a designer's metacommunication message (I/you phrasing) |
+| `--review <level>` | No | Override complexity-gated review depth. Valid: `light`, `standard`, `deep` |
+
 # Make a plan
 
 > **`/design`** defines WHAT to build and WHY. **`/plan`** defines HOW to build it and WHY those "hows." Design produces project definitions (`_references/project/`); plans consume them to produce actionable implementation steps.
@@ -174,6 +187,7 @@ When using the metacomm framing:
    - **Depends on**: none | Step N, Step M
    - **Verify**: <how to know this step succeeded — e.g., "tests pass", "migration runs forward and backward", "endpoint returns 200">
    - **Tests**: <what tests to create or update — e.g., "Add unit tests for new service method", "Update existing API tests for changed response format"> | N/A (no testable code changes)
+   - **Docs**: <what documentation to create or update — e.g., "Update API reference for new endpoint", "Add contextual help page for new screen"> | N/A (no documentation impact)
    - [ ] Done
    ```
 
@@ -185,6 +199,7 @@ When using the metacomm framing:
    - **Depends on**: list step numbers whose output this step requires. Use `none` if the step is independent. The orchestrator uses this to avoid executing steps before their dependencies complete.
    - **Verify**: a concrete, testable condition. Prefer automated checks ("tests pass", "linter clean") over subjective ones ("looks right").
    - **Tests**: required for steps with prefix FEATURE, FIX, or REFACTOR that create or modify source code files. Set to `N/A` for steps that only modify documentation, configuration, framework files, or other non-testable artifacts. Steps with prefix CHORE, DOCUMENT, or TEST may use N/A. Each step that modifies source code should declare what tests are needed. If the step is too small to warrant its own tests, indicate which step's tests will cover it.
+   - **Docs**: required for steps with prefix FEATURE or REDESIGN that create or modify user-facing code or public APIs. Specify what documentation should be created or updated. Set to `N/A` for steps with no documentation impact (internal refactors, test-only changes, configuration). When a step adds a new API endpoint, note "Update API reference"; when adding a new UI screen, note "Add contextual help page".
    - Steps should be ordered so that dependencies flow forward (Step 2 depends on Step 1, not the reverse).
 
 4. Save the plan to the plan file. If not overwriting a file, proceed without asking for authorization.
@@ -193,7 +208,7 @@ When using the metacomm framing:
 
    **Step metadata validation (before perspective review):**
    Before starting the perspective review, validate each step's metadata:
-   - Every step has all required fields (Files, References, Depends on, Verify, Tests, checkbox)
+   - Every step has all required fields (Files, References, Depends on, Verify, Tests, Docs, checkbox)
    - File paths for existing files are verified (the file exists on disk)
    - Dependencies flow forward (no circular dependencies, no backwards references)
    - No step touches >5 files (split if so)
@@ -228,15 +243,8 @@ When using the metacomm framing:
    Trigger Phase 2 only for Deferred perspectives where the concern could cause a regression, a production incident, or a standards violation. For **Deep** reviews, also trigger Phase 2 for Deferred concerns that represent additive improvements. Do not trigger Phase 2 for concerns that are purely cosmetic or out of scope.
 
    **Execution strategy by review depth:**
-   - **Standard** — perform deep-dives inline (reading source files in the current context).
-   - **Deep** — launch the `plan-reviewer` agent (Agent tool, subagent_type=`plan-reviewer`) with the full plan text, plan file path, and review depth. The agent performs all deep-dives, conflict checks, and iterations autonomously and returns the review log and any plan amendments. Append the agent's output to the plan file.
-
-   For Standard reviews, perform deep-dives inline for each qualifying Deferred perspective:
-   - Read the source files referenced in the plan that are relevant to the perspective
-   - Read the specific standards/reference file for that perspective (e.g., `project/security-checklists.md` for SEC, `project/backend-standards.md` for DB/ARCH, `project/frontend-standards.md` for UX/A11Y/VIS)
-   - Do NOT read all reference files — only the ones relevant to the specific perspective
-   - Evaluate the plan's approach against the perspective and record: finding, step ref (which plan step is affected), recommendation, and whether the plan should change
-   - Limit deep-dives to a maximum of 6 across all iterations (not per iteration). Track the running count in every deep-dive header using the mandatory format `(iteration N, deep-dive M/6)`
+   - **Standard** — launch the `plan-reviewer` agent (Agent tool, subagent_type=`plan-reviewer`) with the plan text, plan file path, and review depth set to `standard`. The agent performs Phase 1 triage and Phase 2 deep-dives for qualifying perspectives and returns the review log and any plan amendments. Append the agent's output to the plan file.
+   - **Deep** — launch the `plan-reviewer` agent (Agent tool, subagent_type=`plan-reviewer`) with the full plan text, plan file path, and review depth set to `deep`. The agent performs all deep-dives, conflict checks, and iterations autonomously and returns the review log and any plan amendments. Append the agent's output to the plan file.
 
    **Conflict check:**
    After each iteration that produces Phase 2 recommendations, check whether recommendations from different perspectives contradict each other. Resolve conflicts per the priority rules in `general/review-perspectives.md` §Resolving Perspective Conflicts. Log the check in the review log (see template).

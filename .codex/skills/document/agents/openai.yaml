@@ -1,0 +1,4 @@
+interface:
+  display_name: "Document"
+  short_description: "Generate or update project documentation based on plan Docs f..."
+  default_prompt: "Use $document to generate or update project documentation based on plan Docs fields or auto-detected changes."

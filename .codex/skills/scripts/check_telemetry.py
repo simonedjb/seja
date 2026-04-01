@@ -10,8 +10,16 @@ Exit codes: 0 = all valid, 1 = errors found.
 
 Usage
 -----
-    python .codex/skills/scripts/check_telemetry.py
-    python .codex/skills/scripts/check_telemetry.py --verbose
+    python .claude/skills/scripts/check_telemetry.py
+    python .claude/skills/scripts/check_telemetry.py --verbose
+
+CHECK_PLUGIN_MANIFEST:
+  name: Telemetry
+  stack:
+    backend: [any]
+    frontend: [any]
+  scope: telemetry
+  critical: false
 """
 from __future__ import annotations
 

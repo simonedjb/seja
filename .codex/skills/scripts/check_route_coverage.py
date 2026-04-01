@@ -6,14 +6,22 @@ Purpose
 - List frontend API calls that reference endpoints not defined in the backend.
 
 Usage:
-  python .codex/skills/scripts/check_route_coverage.py
-  python .codex/skills/scripts/check_route_coverage.py --verbose
+  python .claude/skills/scripts/check_route_coverage.py
+  python .claude/skills/scripts/check_route_coverage.py --verbose
 
 Customization needed:
 - BACKEND_API_DIR: path to Flask blueprint files
 - FRONTEND_API_DIR: path to frontend API modules
 - ROUTE_PATTERN: regex for backend route decorators
 - FRONTEND_CALL_PATTERN: regex for frontend API call patterns
+
+CHECK_PLUGIN_MANIFEST:
+  name: Route Coverage
+  stack:
+    backend: [flask]
+    frontend: [react]
+  scope: api
+  critical: false
 """
 
 from __future__ import annotations
@@ -40,9 +48,9 @@ ROUTE_PATTERN = re.compile(
 # Matches common frontend HTTP call patterns:
 # axios.get('/api/path'), api.get('/path'), fetch('/api/path')
 FRONTEND_CALL_PATTERN = re.compile(
-    r"""(?:axios|api|client|http)\s*\.\s*(get|post|put|patch|delete)\s*\(\s*"""
-    r"""[`'"](/?api)?(/[^'"`\s$]+)""",
-    re.IGNORECASE | re.MULTILINE,
+    r"""(?:axios|apiClient|api|client|http)\s*\.\s*(get|post|put|patch|delete)"""
+    r"""[^(]*\(\s*[`'"](/?api)?(/[^'"`\s]+)""",
+    re.IGNORECASE | re.DOTALL,
 )
 
 # Also match template literal URLs: `${baseURL}/path`
@@ -119,7 +127,7 @@ def extract_frontend_endpoints() -> set[str]:
             continue
 
         for match in FRONTEND_CALL_PATTERN.finditer(content):
-            path = match.group(2)
+            path = match.group(3)
             if path and len(path) > 1:
                 # Normalize: strip /api prefix if present
                 path = re.sub(r"^/api", "", path)
@@ -139,8 +147,10 @@ def extract_frontend_endpoints() -> set[str]:
 
 def normalize_for_comparison(path: str) -> str:
     """Normalize a route path for fuzzy comparison."""
+    # Strip /api prefix so backend and frontend paths align
+    normalized = re.sub(r"^/api", "", path)
     # Replace specific params with generic placeholder
-    normalized = re.sub(r"<\w+>", "<param>", path)
+    normalized = re.sub(r"<\w+>", "<param>", normalized)
     # Remove trailing slash
     normalized = normalized.rstrip("/")
     return normalized.lower()

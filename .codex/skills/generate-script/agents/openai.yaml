@@ -1,4 +1,0 @@
-interface:
-  display_name: "Generate Script"
-  short_description: "Generate a helper Python script according to the brief"
-  default_prompt: "Use $generate-script to generate a helper python script according to the brief."

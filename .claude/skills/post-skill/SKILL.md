@@ -1,13 +1,14 @@
 ---
 name: post-skill
 description: "[Internal] Lifecycle hook invoked by other skills for briefs update, QA logging, and git commit. Not intended for direct user invocation."
-argument-hint: <id>
+argument-hint: "<id>"
 user-invocable: false
 metadata:
-  last-updated: 2026-03-28 12:40:00
-  version: 1.1.0
+  last-updated: 2026-04-01 12:59:00
+  version: 1.2.0
   category: internal
   context_budget: standard
+  references: []
 ---
 
 # Post skill
@@ -16,7 +17,9 @@ metadata:
 
 0. **Checkpoint recovery**: Check if `${OUTPUT_DIR}/.post-skill-checkpoint` exists. If it does, read it. The format is `<step-number> | <datetime> | <skill-id>`. If the `<skill-id>` matches the current invocation's ID ($ARGUMENTS[0]), resume from the step AFTER the checkpoint step number (skip already-completed steps). If the skill-id does not match, delete the stale checkpoint file and proceed normally.
 
-1. Update the brief related to the execution, prepending it with `DONE | <datetime> | `, where <datetime> is the date and time the execution finished in the format YYYY-MM-DD hh:mm:ss in the UTC timezone (keeping the start time intact). If a plan was generated, append the brief line with `PLAN | <plan id>`.
+1. Obtain the current UTC time by running `date -u +"%Y-%m-%d %H:%M:%S UTC"` and capturing its output. Use this exact output as `<datetime>` below — do not estimate or guess the time.
+
+   Update the brief related to the execution, prepending it with `DONE | <datetime> | `, where <datetime> is the value obtained from the `date` command above, in the format YYYY-MM-DD hh:mm:ss UTC (keeping the start time intact). If a plan was generated, append the brief line with `PLAN | <plan id>`.
 
    Write checkpoint: `1 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
 
@@ -26,7 +29,7 @@ metadata:
     {"timestamp": "YYYY-MM-DDTHH:MM:SSZ", "skill": "<skill-name>", "id": "<invocation-id>", "duration_seconds": <N|null>, "outcome": "<success|partial|failed>", "brief": "<brief-text>", "prefix_scope": "<PREFIX-SCOPE|null>", "plan_id": "<plan-id|null>", "error_type": "<error-type|null>", "output_file": "<relative-path|null>", "context_budget": "<light|standard|heavy>"}
     ```
 
-    - `timestamp`: current UTC datetime in ISO 8601 format.
+    - `timestamp`: the UTC datetime obtained from the `date` command in step 1, converted to ISO 8601 format (e.g., `2026-03-19T21:00:00Z`).
     - `skill`: extract the skill name from the brief entry updated in step 1 (the field after the last `|` separator before the brief text, e.g., `advise`, `plan`).
     - `id`: the invocation ID from $ARGUMENTS[0].
     - `duration_seconds`: compute elapsed seconds between the STARTED timestamp and the current time. If timestamps cannot be parsed, set to `null`.
@@ -50,9 +53,9 @@ metadata:
         - For entities/permissions/patterns **added** by the plan: add the corresponding section to the as-is file.
         - For entities/permissions/patterns **modified** by the plan: update the relevant section.
         - For entities/permissions/patterns **removed** by the plan: remove the section.
-      - In both cases, append a changelog entry to §11:
+      - In both cases, append a changelog entry to `${CD_AS_IS_CHANGELOG}` (see project/conventions.md). If the changelog file does not exist, instantiate it from `template/cd-as-is-changelog.md`. Append the entry after the last existing changelog version:
         ```
-        ### vN — YYYY-MM-DD
+        ### vN -- YYYY-MM-DD
         - **Added/Changed/Removed**: {{description}}
         - **Source**: agent (post-skill)
         - **Plan**: {{plan-id}}
@@ -68,6 +71,24 @@ metadata:
       - Tag all changes with `source: agent (post-skill)`.
 
    d. Include the updated as-is files in the commit scope (step 8).
+
+2b. **Documentation check** — If the completed skill produced or executed a plan (detectable from the plan ID in the argument or from the brief entry):
+
+   a. Read the plan file and check for steps with non-N/A `Docs:` fields. Collect all documentation needs into a list. If the plan predates the `Docs:` field (no steps have it), skip this step silently.
+
+   b. Check the plan's prefix: FEATURE and REDESIGN plans always trigger this check. FIX and CHORE plans only trigger if any step has a non-N/A `Docs:` field.
+
+   c. If documentation needs were identified, prompt the user (text-based, not AskUserQuestion):
+      > "This change may need documentation updates. The plan identified these documentation needs:
+      > - [list each non-N/A Docs: field value]
+      >
+      > Would you like to update documentation now, or skip?"
+
+   d. If the user says yes, run `/document --plan <plan-id>` to generate documentation based on the plan's Docs: fields. The document skill uses the templates in `_references/template/docs/` and the writing guide (`_references/general/documentation-quality.md`) for structured generation. If the user says skip, continue to step 3.
+
+   e. If no plan was executed (e.g., advisory, explain, check), skip this step silently.
+
+   Include any documentation files updated in the commit scope (step 8).
 
 3. Run the /qa-log skill with the following caller overrides:
    - **no_commit**: true (post-skill handles the commit in step 8).
@@ -94,13 +115,25 @@ metadata:
    - If there are pre-staged files that are NOT part of the skill's expected output, warn the user, list the unexpected files, and output the commit message for manual use.
    - If there are no unexpected pre-staged files, proceed to stage and commit normally.
 
+6b. **Fast preflight gate** — Run `python .claude/skills/scripts/run_preflight_fast.py` to verify framework integrity before committing.
+   - If the script exits 0: proceed silently to step 7.
+   - If the script exits non-zero: display the failures and ask the user whether to proceed with the commit anyway or abort. The gate is advisory (not blocking) because post-skill runs after potentially lengthy work and a hard block could lose progress. The pre-commit git hook (`.githooks/pre-commit`) provides the hard block.
+   - If the script is not found (e.g., older framework version): skip silently.
+
 7. **Index regeneration:**
    a. Regenerate the briefs index: run `python .claude/skills/scripts/generate_briefs_index.py` to keep `${BRIEFS_INDEX_FILE}` up to date.
    b. Regenerate the global artifact index: run `python .claude/skills/scripts/generate_macro_index.py` to keep `${ARTIFACT_INDEX_FILE}` (`${OUTPUT_DIR}/INDEX.md`) up to date.
    c. **Cross-reference update**: If the produced artifact has a `source: <type>-<id>` header field, open the source artifact file, read its YAML/Markdown header, and append the new artifact's ID to the source's `spawned:` field (comma-separated if `spawned:` already has values; create the field if absent).
 
    Write checkpoint: `7 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
-8. **Telemetry flush** — Enrich the telemetry record prepared in step 1b with commit metadata and write it to disk:
+
+8. Git stage the affected files (including regenerated index files and any updated as-is files) and commit using the generated message.
+
+   Write checkpoint: `8 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
+
+   Delete `${OUTPUT_DIR}/.post-skill-checkpoint` — post-skill completed successfully.
+
+8b. **Telemetry flush** — Enrich the telemetry record prepared in step 1b with commit metadata and write it to disk:
 
     - Add 3 fields to the record:
       - `git_commit_sha` (string|null): run `git rev-parse HEAD` after the commit in step 8. If the commit was skipped, set to `null`.
@@ -115,22 +148,19 @@ metadata:
 
     - This step is lightweight and must not block subsequent steps. If writing fails (e.g., permission error), log a warning and continue.
 
-9. Git stage the affected files (including regenerated index files and any updated as-is files) and commit using the generated message.
+9. If there are any manual actions to be taken (db upgrade, environment update or config, restart backend or frontend), append the plan file with the action instructions, separating dev and production environments, and inform the user.
 
-   Write checkpoint: `8 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
+10. Output a link to the generated file within `${OUTPUT_DIR}` (see project/conventions.md).
 
-   Delete `${OUTPUT_DIR}/.post-skill-checkpoint` — post-skill completed successfully.
+11. **Contextual next-step suggestions**: Read `_references/general/skill-graph.md`. Look up the completed skill in the "After" column. If found, present the suggestions using AskUserQuestion with numbered options (one per suggested skill), so the user can select one to execute directly. Include an option to dismiss. Example question text:
 
+    > "You might want to try next:"
 
-10. If there are any manual actions to be taken (db upgrade, environment update or config, restart backend or frontend), append the plan file with the action instructions, separating dev and production environments, and inform the user.
+    Options:
+    - `/suggested-skill-1` -- reason from the graph
+    - `/suggested-skill-2` -- reason from the graph
+    - "Skip" -- dismiss suggestions
 
-11. Output a link to the generated file within `${OUTPUT_DIR}` (see project/conventions.md).
-
-12. **Contextual next-step suggestions**: Read `_references/general/skill-graph.md`. Look up the completed skill in the "After" column. If found, display the suggested skill(s) and reason as a tip, using AskUserQuestion with the suggestions formatted as numbered buttons. Example:
-
-    ```
-    Tip: You might want to try next:
-    - /suggested-skill — reason from the graph
-    ```
+    If the user selects a skill, execute it. If they select "Skip", end post-skill.
 
     Only show nudges when the completed skill has entries in the graph. If `general/skill-graph.md` does not exist, skip this step silently.

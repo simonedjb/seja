@@ -18,6 +18,14 @@ Run from the repository root.
 Optional flags:
     --verbose       Show all entries, not just problems
     --check-code    Also scan Python source for missing keys (slower)
+
+CHECK_PLUGIN_MANIFEST:
+  name: PO Parity
+  stack:
+    backend: [flask]
+    frontend: []
+  scope: i18n
+  critical: false
 """
 from __future__ import annotations
 

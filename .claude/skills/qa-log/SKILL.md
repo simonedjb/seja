@@ -7,6 +7,7 @@ metadata:
   version: 1.0.0
   category: utility
   context_budget: light
+  references: []
 ---
 
 ## Quick Guide
@@ -18,6 +19,12 @@ metadata:
 > Agent: Captures the full Q&A exchange from this session and saves it as a timestamped file you can reference later.
 
 **When to use**: You have had a productive conversation with useful decisions or insights and want to preserve it as project documentation.
+
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `[brief]` | No | Short title for the QA log file. Derived from conversation topic if omitted |
 
 # Log QA
 

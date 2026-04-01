@@ -13,6 +13,14 @@ Customization needed:
 - BACKEND_SCHEMAS_DIR: path to Marshmallow schema files
 - FRONTEND_API_DIR: path to frontend API type definitions
 - KNOWN_PAIRS: mapping of schema files to their frontend counterparts
+
+CHECK_PLUGIN_MANIFEST:
+  name: API Contract Sync
+  stack:
+    backend: [flask]
+    frontend: [react]
+  scope: api
+  critical: true
 """
 
 from __future__ import annotations

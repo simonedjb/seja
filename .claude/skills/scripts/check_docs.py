@@ -560,6 +560,89 @@ def plugin_terminology(root: Path, verbose: bool) -> list[Finding]:
 
 
 # ---------------------------------------------------------------------------
+# Plugin 6: Structural completeness
+# ---------------------------------------------------------------------------
+
+@register_plugin("structural-completeness", "Check project docs contain required headings from templates")
+def plugin_structural_completeness(root: Path, verbose: bool) -> list[Finding]:
+    findings: list[Finding] = []
+
+    template_docs_dir = root / "_references" / "template" / "docs"
+    project_docs_dir = root / "_references" / "project" / "docs"
+
+    if not project_docs_dir.is_dir():
+        findings.append(Finding(
+            "", 0, "info",
+            "No project documentation directory found (expected in framework-only repos)",
+            "structural-completeness",
+        ))
+        return findings
+
+    if not template_docs_dir.is_dir():
+        findings.append(Finding(
+            str(template_docs_dir), 0, "info",
+            "No template documentation directory found, skipping structural check",
+            "structural-completeness",
+        ))
+        return findings
+
+    heading_re = re.compile(r"^(#{2,3})\s+(.+)$")
+    placeholder_re_h = re.compile(r"\{\{")
+
+    # Build required headings per template
+    for template_file in sorted(template_docs_dir.glob("*.md")):
+        required_headings: list[str] = []
+        try:
+            text = template_file.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+
+        for line in text.splitlines():
+            m = heading_re.match(line)
+            if m:
+                heading_text = m.group(2).strip()
+                if not placeholder_re_h.search(heading_text):
+                    required_headings.append(heading_text)
+
+        if not required_headings:
+            continue
+
+        # Map template -> project doc
+        project_file = project_docs_dir / template_file.name
+        if not project_file.is_file():
+            if verbose:
+                findings.append(Finding(
+                    str(project_file), 0, "info",
+                    f"Project doc '{template_file.name}' not found (no matching template instance)",
+                    "structural-completeness",
+                ))
+            continue
+
+        # Extract headings from project doc
+        try:
+            project_text = project_file.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+
+        project_headings: set[str] = set()
+        for line in project_text.splitlines():
+            m = heading_re.match(line)
+            if m:
+                project_headings.add(m.group(2).strip())
+
+        # Report missing headings
+        for heading in required_headings:
+            if heading not in project_headings:
+                findings.append(Finding(
+                    str(project_file), 0, "warning",
+                    f"Missing required heading '{heading}' (defined in template/{template_file.name})",
+                    "structural-completeness",
+                ))
+
+    return findings
+
+
+# ---------------------------------------------------------------------------
 # CLI and runner
 # ---------------------------------------------------------------------------
 

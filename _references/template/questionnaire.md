@@ -1,13 +1,13 @@
 # TEMPLATE - PROJECT INSTANTIATION QUESTIONNAIRE
 
-> **Questionnaire version:** 2
-> **Last updated:** 2026-03-29
+> **Questionnaire version:** 3
+> **Last updated:** 2026-04-01
 >
 > **Purpose:** Answer these questions to generate all 9 `project/` reference files from the `template/` templates. An agent can read your completed answers and produce the full set of project-specific references.
 >
 > **How to use:**
 > 1. Start with **Section 0 (Quick Start)** -- these 10 answers are enough to generate a minimal skeleton.
-> 2. Work through **Sections 1-9** at your own pace for full coverage.
+> 2. Work through **Sections 1-10** at your own pace for full coverage.
 > 3. For technical questions, choose from the provided alternatives or write your own.
 > 4. Write `N/A` or `Skip` for sections that don't apply to your stack.
 > 5. When done, give this file to an agent with the instruction: *"Instantiate all template/\* files into project/\* files using the answers in this questionnaire."*
@@ -22,7 +22,7 @@
 
 | Tier | Sections | Who Fills It | Description |
 |------|----------|-------------|-------------|
-| **T1 -- Product & Design** | 0, 2, 8, 9 | Product designer (solo or with team) | What the product is, how it should feel, how it should look |
+| **T1 -- Product & Design** | 0, 2, 8, 9, 10 | Product designer (solo or with team) | What the product is, how it should feel, how it should look |
 | **T2 -- Architecture** | 1, 3, 4 | Product designer with defaults OR software architect | Tech stack selection and architecture decisions |
 | **T3 -- Engineering Standards** | 5, 6, 7 | Auto-generated from T2 OR engineering team | Testing, i18n, and security standards |
 
@@ -760,6 +760,38 @@ Answer:
 
 ---
 
+## Section 10 -- Documentation Templates (`template/docs/`) [T1]
+
+> Fills: `project/docs/` -- documentation structures for your project. These templates define what documentation your project will maintain and how it's organized.
+>
+> **Quick path:** Accept defaults to get the 3 recommended templates (README, contextual help, ADR). Say "skip" to opt out entirely.
+
+**10.1** Which documentation structures do you want?
+> *Recommended templates are pre-selected. Optional templates depend on your app type.*
+
+| Template | What it provides | Recommended |
+|----------|-----------------|-------------|
+| **README** | Project overview, setup, reading order for developers | Yes |
+| **Contextual help** | Per-screen help pages with 3-question pattern (What/How/Verify) | Yes |
+| **ADR** | Architecture Decision Records for tracking design rationale | Yes |
+| **Help center** | User-facing manual (minimal 5-page or full searchable) | No (recommended for content/marketplace/community apps) |
+| **API reference** | Developer API documentation (endpoint index + deep-dives) | No |
+| **Changelog** | User-facing release notes (Keep a Changelog format) | No |
+
+Answer: (list selected templates, or "defaults" for recommended only, or "skip" for none)
+
+**10.2** Does your application have user-facing screens that need contextual help?
+> *If yes, the contextual help template will include i18n-ready structure for per-screen help pages following the proven "What can I do? / How to do it? / How to verify?" pattern.*
+
+Answer: (yes / no)
+
+**10.3** Do you want to track architecture decisions as ADRs?
+> *Architecture Decision Records capture the "why" behind significant decisions (framework choices, design patterns, trade-offs). They prevent future developers from undoing decisions without understanding the context.*
+
+Answer: (yes / no)
+
+---
+
 ## Post-Questionnaire Checklist
 
 After completing all sections:
@@ -774,6 +806,7 @@ After completing all sections:
 - [ ] Section 7 (Security) has validation constants
 - [ ] Section 8 (UX Design) has interaction patterns, accessibility, and responsive choices
 - [ ] Section 9 (Graphic/UI Design) has colors, typography, spacing, icons, and visual style choices
+- [ ] Section 10 (Documentation) has selected templates or explicit "skip"
 
 **Next step:** Give this file to an agent with:
 > *"Read template/questionnaire.md and instantiate all template/\* files in `_references` into corresponding project/\* files using my answers."*
@@ -788,3 +821,4 @@ After completing all sections:
 |---------|------------|------------------------------------------------------------------------------------------------------------------------------|
 | 1       | 2026-03-25 | Initial versioned release. Sections 0-7 with all fields. Companion spec file format (template/design-spec.md) introduced |
 | 2       | 2026-03-29 | Added Knowledge Tiers preamble (T1/T2/T3). Added questions 0.3 (project mode, moved early for directory-structure routing) and 0.10 (team composition) to Section 0. Renumbered 0.3-0.8 to 0.4-0.9. Added brownfield-only questions 2.13-2.17 to Section 2. Added Section 8 (UX Design Standards, 9 questions). Added Section 9 (Graphic/UI Design Standards, 9 questions). Updated post-questionnaire checklist. Total project files generated: 7 to 9. |
+| 3       | 2026-04-01 | Added Section 10 (Documentation Templates, 3 questions) to T1 tier. Documentation templates in `template/docs/` can now be instantiated during project setup. Updated post-questionnaire checklist. |

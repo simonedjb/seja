@@ -1,7 +1,7 @@
 ---
 name: explain
 description: "Explains behavior, code, data model, architecture, or spec drift with visual diagrams and analogies."
-argument-hint: <architecture|behavior|behavior-evolution|code|data-model|spec-drift> [brief]
+argument-hint: "<architecture|behavior|behavior-evolution|code|data-model|spec-drift> [brief]"
 metadata:
   last-updated: 2026-03-28 12:40:00
   version: 1.1.0
@@ -21,53 +21,68 @@ metadata:
 **What it does**: Get a clear explanation of how something works — a feature's behavior, the data model, the overall architecture, or the drift between your design specs. Includes diagrams and analogies to make complex topics accessible. The **spec-drift** type also offers an interactive sync workflow to realign diverged specs.
 
 **Example**:
-> You: $explain architecture How does the authentication flow work?
+> You: /explain architecture How does the authentication flow work?
 > Agent: Produces a visual diagram of the auth flow, explains each step in plain language, and highlights key design decisions. Uses analogies to clarify complex parts.
 
-> You: $explain spec-drift
+> You: /explain spec-drift
 > Agent: "3 entities in to-be not yet in as-is. 1 permission removed. 2 UX patterns modified." Then asks whether you want to sync the specs.
 
 **When to use**: You want to understand how a part of the system works, need to onboard yourself on unfamiliar code, want a visual overview of the architecture, or want to see and resolve the gap between as-is and to-be design specs.
+
+**See also**: `/document` -- generate project documentation artifacts (READMEs, changelogs, API references, ADRs).
+
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `architecture [brief]` | -- | Explain system architecture, component relationships, and design choices |
+| `behavior [brief]` | -- | Explain emergent behavior from a user's perspective |
+| `behavior-evolution [brief]` | -- | Explain current behavior AND how it evolved over time |
+| `code [brief]` | -- | Explain how code works, aimed at junior developers |
+| `data-model [brief]` | -- | Explain data model, pitfalls, and refactoring opportunities |
+| `spec-drift [scope]` | -- | Compare as-is and to-be design specs, with optional sync. Scope: `all`, `conceptual-design`, `metacomm` |
+
+> One type is required. Types are mutually exclusive.
 
 # Explain
 
 If there are no arguments, ask for a user brief.
 
-If the explanation type (architecture, behavior, behavior-evolution, code, data-model, or spec-drift) is not specified or cannot be inferred from the brief, use the ask the user directly tool to ask which kind of explanation they want (if ask the user directly is not available, present as a numbered text list), with these options:
-- "Architecture -- system architecture, component relationships, and design choices"
-- "Behavior -- emergent behavior and pitfalls from a user's perspective"
-- "Behavior evolution -- current behavior AND how it evolved over time"
-- "Code -- how code works, aimed at junior developers being onboarded"
-- "Data model -- data model, pitfalls, and refactoring opportunities"
-- "Spec drift -- drift between as-is and to-be design specs, then optionally sync"
+If the explanation type (architecture, behavior, behavior-evolution, code, data-model, or spec-drift) is not specified or cannot be inferred from the brief, use the AskUserQuestion tool to ask which kind of explanation they want (if AskUserQuestion is not available, present as a numbered text list), with these options:
+- "1. Architecture -- system architecture, component relationships, and design choices"
+- "2. Behavior -- emergent behavior and pitfalls from a user's perspective"
+- "3. Behavior evolution -- current behavior AND how it evolved over time"
+- "4. Code -- how code works, aimed at junior developers being onboarded"
+- "5. Data model -- data model, pitfalls, and refactoring opportunities"
+- "6. Spec drift -- drift between as-is and to-be design specs, then optionally sync"
 
 ## Definitions per type
 
 ### behavior
 - Output folder: `${EXPLAINED_BEHAVIORS_DIR}` (see project/conventions.md)
 - Filename pattern: `behavior-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
-- Reserve ID: `python .codex/skills/scripts/reserve_id.py --type behavior --title '<short title>'`
+- Reserve ID: `python .claude/skills/scripts/reserve_id.py --type behavior --title '<short title>'`
 - Header pattern: `# Behavior <id> | <prefix><scope> | <current datetime> | <short title>`
 - General instructions: Keep explanations conversational and centered on the user (including user roles), user goals and activities, user interface, and user-system interactions. For complex concepts, use multiple analogies.
 
 ### behavior-evolution
 - Output folder: `${BEHAVIOR_EVOLUTION_DIR}` (see project/conventions.md)
 - Filename pattern: `evolution-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
-- Reserve ID: `python .codex/skills/scripts/reserve_id.py --type evolution --title '<short title>'`
+- Reserve ID: `python .claude/skills/scripts/reserve_id.py --type evolution --title '<short title>'`
 - Header pattern: `# Behavior Evolution <id> | <prefix><scope> | <current datetime> | <short title>`
 - General instructions: Keep explanations conversational and centered on the user (including user roles), user goals and activities, user interface, and user-system interactions. The goal is to tell the **story** of how a feature or behavior area reached its current state — not just what it does today, but *why* it is the way it is, through the lens of design decisions captured in plans.
 
 ### code
 - Output folder: `${EXPLAINED_CODE_DIR}` (see project/conventions.md)
 - Filename pattern: `dev-onboarding-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
-- Reserve ID: `python .codex/skills/scripts/reserve_id.py --type dev-onboarding --title '<short title>'`
+- Reserve ID: `python .claude/skills/scripts/reserve_id.py --type dev-onboarding --title '<short title>'`
 - Header pattern: `# Dev-Onboarding <id> | <prefix><scope> | <current datetime> | <short title>`
 - General instructions: Keep explanations conversational and consider junior developers who are just learning the dev stack. For complex concepts, use multiple analogies.
 
 ### data-model
 - Output folder: `${EXPLAINED_DATA_MODEL_DIR}` (see project/conventions.md)
 - Filename pattern: `data-model-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
-- Reserve ID: `python .codex/skills/scripts/reserve_id.py --type data-model --title '<short title>'`
+- Reserve ID: `python .claude/skills/scripts/reserve_id.py --type data-model --title '<short title>'`
 - Header pattern: `# Data Model <id> | <prefix><scope> | <current datetime> | <short title>`
 - General instructions: Keep explanations conversational and centered on the user (including user roles), user goals and activities, user interface, and user-system interactions. For complex concepts, use multiple analogies.
 - If no scope is provided, consider the entire database. Otherwise, consider the scope and its dependencies.
@@ -75,7 +90,7 @@ If the explanation type (architecture, behavior, behavior-evolution, code, data-
 ### architecture
 - Output folder: `${EXPLAINED_ARCHITECTURE_DIR}` (see project/conventions.md)
 - Filename pattern: `architecture-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
-- Reserve ID: `python .codex/skills/scripts/reserve_id.py --type architecture --title '<short title>'`
+- Reserve ID: `python .claude/skills/scripts/reserve_id.py --type architecture --title '<short title>'`
 - Header pattern: `# Architecture <id> | <prefix><scope> | <current datetime> | <short title>`
 - General instructions: Keep explanations conversational and aimed at developers being onboarded. Focus on the *why* behind each architectural decision, not just the *what*. For complex concepts, use multiple analogies. Treat the architecture as a set of trade-offs, not absolute truths.
 - If no scope is provided, consider the entire system. Otherwise, consider the scoped area and its interactions with the rest of the system.
@@ -83,13 +98,13 @@ If the explanation type (architecture, behavior, behavior-evolution, code, data-
 ### spec-drift
 - Output folder: `${ADVISORY_DIR}` (see project/conventions.md)
 - Filename pattern: `advisory-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
-- Reserve ID: `python .codex/skills/scripts/reserve_id.py --type advisory --title '<short title>'`
+- Reserve ID: `python .claude/skills/scripts/reserve_id.py --type advisory --title '<short title>'`
 - Header pattern: `# Advisory <id> | <prefix><scope> | <current datetime> | <short title>`
 - General instructions: This type combines drift analysis and optional sync. It replaces the former `/spec` skill. The scope can be `all` (default), `conceptual-design`, or `metacomm`.
 
 ## Skill-specific Instructions
 
-1. Run $pre-skill "explain" $ARGUMENTS to add general instructions to the context window.
+1. Run /pre-skill "explain" $ARGUMENTS to add general instructions to the context window.
 
 2. Generate the explanation based on the selected type:
 
@@ -105,7 +120,7 @@ If the explanation type (architecture, behavior, behavior-evolution, code, data-
 
 #### Step A — Mine the plan history
 
-1. Read `${OUTPUT_DIR}/INDEX.md` (the global artifact index). If it does not exist, run `python .codex/skills/scripts/generate_macro_index.py` to generate it.
+1. Read `${OUTPUT_DIR}/INDEX.md` (the global artifact index). If it does not exist, run `python .claude/skills/scripts/generate_macro_index.py` to generate it.
 2. Filter relevant plan IDs from the index — a plan is relevant if its title or prefix-scope touches the feature area under analysis. Include plans with any prefix (FEATURE, FIX, REFACTOR, REDESIGN, CHORE) — all of them can change user-facing behavior.
 3. Read only the full plan files for the relevant IDs identified in step 2.
 4. Sort the relevant plans chronologically by their plan date.
@@ -260,13 +275,13 @@ The spec-drift type combines drift analysis (read-only comparison) with an optio
 
 #### Step B — Sync Prompt
 
-After presenting the drift report, use the ask the user directly tool to ask the user whether to sync (if ask the user directly is not available, present as a numbered text list), with these options:
-- "Conceptual-design to metacomm -- align metacomm with the conceptual design"
-- "Metacomm to conceptual-design -- align conceptual design with the metacomm"
-- "Bidirectional -- reconcile both (with user confirmation for conflicts)"
-- "No -- skip sync"
+After presenting the drift report, use the AskUserQuestion tool to ask the user whether to sync (if AskUserQuestion is not available, present as a numbered text list), with these options:
+- "1. Conceptual-design to metacomm -- align metacomm with the conceptual design"
+- "2. Metacomm to conceptual-design -- align conceptual design with the metacomm"
+- "3. Bidirectional -- reconcile both (with user confirmation for conflicts)"
+- "4. No -- skip sync"
 
-If the user chooses **No**, run $post-skill <id> and stop.
+If the user chooses **No**, run /post-skill <id> and stop.
 
 #### Step C — Sync Workflow
 
@@ -284,6 +299,7 @@ Every entry created or modified by this workflow must carry:
 For each entity, feature, or UX pattern in `${CONCEPTUAL_DESIGN_TO_BE}` that lacks a corresponding entry in `${METACOMM_TO_BE}`:
 - Draft a metacommunication intention describing what the designer communicates to the user through this feature
 - Present the draft to the user for confirmation or revision
+- If the user revises the draft, record their revision **verbatim** (see `general/shared-definitions.md` § Verbatim rule)
 - On confirmation, add the entry to `${METACOMM_TO_BE}` with `source: agent (explain)`
 
 **Direction 2 — metacomm -> conceptual-design**:
@@ -306,7 +322,7 @@ When the two files disagree (e.g., `${CONCEPTUAL_DESIGN_TO_BE}` removes an entit
 
 1. After all changes are confirmed, update the `last-synced` field on all modified entries.
 2. Update the "Delta from As-Is" sections in both to-be files if the as-is files exist.
-3. Run $post-skill <id>.
+3. Run /post-skill <id>.
 
 ### If code:
 - **Start with an analogy**: Compare the code to something from everyday life
@@ -329,4 +345,4 @@ When the two files disagree (e.g., `${CONCEPTUAL_DESIGN_TO_BE}` removes an entit
   - For architecture, split files into *structural files* (entry points, configs, module boundaries) and *implementation files* (key source files that exemplify the architecture)
 - *explanation*: the generated explanation, including the sections defined above
 
-4. Run $post-skill <id>.
+4. Run /post-skill <id>.

@@ -1,7 +1,7 @@
 ---
 name: help
 description: "Show contextual help, browse skills by category, or get details on a specific skill."
-argument-hint: "[skill-name | --browse] [--details]"
+argument-hint: "[skill-name | --browse]"
 metadata:
   last-updated: 2026-03-29 00:15:00
   version: 1.0.0
@@ -16,18 +16,25 @@ metadata:
 
 **Example**:
 > You: /help advise
-> Agent: Displays a plain-language summary of what /advise does, with an example interaction and when to use it.
+> Agent: Displays what /advise does (guide, example, when to use), its arguments, category, and related skills.
 
 > You: /help --browse
 > Agent: Shows skill categories (Planning, Analysis, Code, Utilities) with counts. You pick a category, then a skill, and the agent runs it.
 
 **When to use**: You want to know what the framework can do, need details about a specific skill, or want to browse and pick a skill interactively.
 
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `[skill-name]` | No | Show full details for a specific skill (Quick Guide, arguments, category, related skills) |
+| `--browse` | No | Interactive category browser with skill graph. Lets you pick a category, then a skill to run |
+
 # Help
 
 ## Skill-specific Instructions
 
-This skill provides four layers of progressive disclosure depending on the arguments provided.
+This skill provides three layers of progressive disclosure depending on the arguments provided.
 
 ### Layer 1: No argument — Overview
 
@@ -40,32 +47,27 @@ When invoked without arguments (`/help`), display a curated overview of all user
 - **Understand the system** — `/explain`
 - **Quality & review** — `/check`
 - **Communicate** — `/communication`, `/onboarding`
-- **Code & tests** — `/generate-script`, `/update-tests`
 - **Housekeeping** — `/qa-log`
 
-For each category, show the skill names and a one-sentence summary. After displaying the overview, ask: "Want details on a specific skill? Just say its name."
+For each category, show the skill names and a one-sentence summary. After the overview, show available options and then ask the user what they'd like to explore:
 
-### Layer 2: With skill name — Quick Guide
+**Options:**
+- `/help <skill>` — Full details for a specific skill (guide, arguments, related skills)
+- `/help --browse` — Interactive category browser with skill graph
+
+### Layer 2: With skill name — Full details
 
 When invoked with a skill name (`/help advise`):
 
 1. Read the target skill's SKILL.md file at `.claude/skills/<skill-name>/SKILL.md`.
-2. Extract and display the `## Quick Guide` section (What it does, Example, When to use).
-3. If no Quick Guide section exists, fall back to the `description` field from the YAML frontmatter.
-4. After displaying, ask: "Want more details? Say `/help <skill-name> --details`."
-
-### Layer 3: With --details flag — Full details
-
-When invoked with `--details` (`/help advise --details`):
-
-1. Display the Quick Guide (same as Layer 2).
-2. Additionally show:
-   - **Arguments**: The full argument syntax from the `argument-hint` field in frontmatter.
+2. Extract and display the `## Quick Guide` section (What it does, Example, When to use). If no Quick Guide section exists, fall back to the `description` field from the YAML frontmatter.
+3. Additionally show:
+   - **Arguments**: Extract and display the `## Arguments` section from the skill's SKILL.md (everything between `## Arguments` and the next heading). If no `## Arguments` section exists, fall back to displaying the `argument-hint` field from frontmatter.
    - **Category**: The skill's `metadata.category` value.
    - **Related skills**: Look up the skill in `_references/general/skill-graph.md` and show which skills are suggested after this one, and which skills suggest this one as a follow-up.
-3. After displaying, ask: "Ready to use this skill? Just type the command."
+4. After displaying, ask: "Ready to use this skill? Just type the command."
 
-### Layer 4: With --browse flag — Interactive Browse
+### Layer 3: With --browse flag — Interactive Browse
 
 When invoked with `--browse` (`/help --browse`), or when the user says "pick prompt", "pick skill", or "prompt menu":
 
@@ -87,3 +89,15 @@ When invoked with `--browse` (`/help --browse`), or when the user says "pick pro
 4. Otherwise, show ONE question with the category options (with a count of skills in each). Then show the skills in the chosen category with their descriptions.
 
 5. After the user picks a specific skill, ask what arguments to pass (if the skill has an `argument-hint`), then execute the corresponding skill command.
+
+6. **Skill Relationships** -- After showing categories (step 4) and before the user picks a skill, include a "Skill Relationships" section. Display the contents of `_output/skill-map.mmd` inside a Mermaid code block so the user can visualize how skills connect. If the file does not exist, skip this section silently.
+
+   Format:
+
+   **Skill Relationships**
+
+   ```mermaid
+   <contents of _output/skill-map.mmd>
+   ```
+
+   > To regenerate: `python .claude/skills/scripts/generate_skill_map.py`

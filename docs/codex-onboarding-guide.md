@@ -12,21 +12,21 @@ If you have seen older SEJA material before, pause here for one important update
 
 ### 0.1 What Is In the Kit?
 
-The SEJA repository contains **145 project-independent framework files**:
+The SEJA repository contains approximately **270 project-independent framework files**:
 
 | Category | Count | What it means |
 |----------|-------|---------------|
-| Skill definitions | 16 | The actual reusable workflows in `.codex/skills/<name>/SKILL.md` |
-| User-facing skills | 14 | The skills you will normally invoke yourself; `$pre-skill` and `$post-skill` are internal lifecycle hooks |
-| Skill UI metadata | 14 | `agents/openai.yaml` files that help Codex hosts present each skill cleanly |
-| General references | 12 | Shared standards, constraints, report conventions, onboarding indexes, communication references, and framework-wide guidance |
+| Skill definitions | 15 | The actual reusable workflows in `.codex/skills/<name>/SKILL.md` |
+| User-facing skills | 13 | The skills you will normally invoke yourself; `$pre-skill` and `$post-skill` are internal lifecycle hooks |
+| Skill UI metadata | 13 | `agents/openai.yaml` files that help Codex hosts present each skill cleanly |
+| General references | 20 | Shared standards, constraints, report conventions, onboarding indexes, communication references, and framework-wide guidance |
 | Review perspective files | 16 | Individual engineering and design review lenses |
 | Onboarding profile files | 8 | Role-family and level profiles used by `$onboarding` |
 | Communication profile files | 5 | Audience-specific communication references |
-| Templates | 31 | Reusable `template/*.md` and `template/*.json` files used during `$design` |
-| Agent definitions | 5 | Specialized delegated agents such as `code-reviewer` and `test-runner` |
+| Templates | 50 | Reusable `template/*.md`, `template/*.json`, `template/agent/*.yaml`, `template/ci/`, `template/demo/`, and `template/docs/` files used during `$design` |
+| Agent definitions | 10 | Specialized delegated agents: 7 evaluators (code-reviewer, plan-reviewer, advisory-reviewer, council-debate, standards-checker, test-runner, migration-validator) + 3 generators (communication, onboarding, documentation) |
 | Rule definitions | 7 | Path-scoped coding guidance used automatically by Codex |
-| Scripts | 29 | Validation, indexing, packaging, migration, and support scripts |
+| Scripts | 35 | Validation, indexing, packaging, migration, and support scripts |
 | Framework metadata | 4 | `.codex/README.md`, `.codex/CHEATSHEET.md`, `.codex/CHANGELOG.md`, and `.codex/skills/VERSION` |
 
 ### 0.2 What Changed From Older Versions?
@@ -165,7 +165,7 @@ The first answer gives Codex product intent. The second is only a tool choice.
 
 ## Part 4 - The Skills You Will Actually Use
 
-The current Codex toolkit has **14 user-facing skills**, but as a new designer you can start with a much smaller working set.
+The current Codex toolkit has **13 user-facing skills**, but as a new designer you can start with a much smaller working set.
 
 ### 4.1 Best First Skills
 
@@ -184,17 +184,16 @@ The current Codex toolkit has **14 user-facing skills**, but as a new designer y
 - `$advise`
 - `$check`
 - `$communication`
-- `$implement`
+- `$design`
+- `$document`
 - `$explain`
-- `$generate-script`
 - `$help`
-- `$plan`
+- `$implement`
 - `$onboarding`
+- `$plan`
 - `$qa-log`
 - `$seed`
-- `$design`
 - `$upgrade`
-- `$update-tests`
 
 ### 4.3 The Easiest Way To Remember Them
 
@@ -202,8 +201,8 @@ Think in clusters:
 
 - **Understand**: `$help`, `$explain`, `$advise`
 - **Plan and build**: `$plan`, `$implement`
-- **Check quality**: `$check`, `$update-tests`
-- **Support the team**: `$communication`, `$onboarding`, `$qa-log`
+- **Check quality**: `$check`
+- **Document and share**: `$document`, `$communication`, `$onboarding`, `$qa-log`
 - **Set up the framework**: `$seed`, `$design`, `$upgrade`
 
 ---
@@ -250,7 +249,29 @@ $advise --inventory List all onboarding-related UI flows and where they live.
 
 Use the advisory mode for trade-offs. Use the inventory mode when you need a map of what is already in the project.
 
-### 5.5 Build Small, Reviewable Changes
+For high-stakes decisions that are hard to reverse -- choosing a database, restructuring the data model, picking an auth strategy -- use the deep-dive flag:
+
+```text
+$advise --deep Should we switch from REST to GraphQL for the mobile API?
+```
+
+This activates a structured **council debate** where multiple expert perspectives argue their positions and cross-examine each other, surfacing trade-offs you might miss in a standard analysis.
+
+**When to use `$advise` vs. `$plan`:** Use `$advise` when you are exploring options and need to decide *what* to do. Use `$plan` when you have already decided and need to figure out *how* to do it. Follow up with `$qa-log` to preserve the decision rationale.
+
+### 5.5 Generate Documentation After Implementation
+
+After running `$implement`, use `$document` to generate or update project documentation:
+
+```text
+$document                    # auto-detect from recent plan or changes
+$document --type readme      # generate a specific documentation type
+$document --type adr         # formalize an architecture decision
+```
+
+Supported types: `readme`, `api-reference`, `changelog`, `contextual-help`, `adr`, `help-center`.
+
+### 5.6 Build Small, Reviewable Changes
 
 For a modest change that is already well scoped:
 
@@ -284,7 +305,10 @@ $check test-plan Test the new first-run onboarding flow.
 | `$check review staged` | Reviews staged code changes across engineering and design perspectives |
 | `$check smoke api` | Runs smoke tests to see whether major flows still work |
 | `$check preflight` | Combines validation and review before a commit or merge |
+| `$check health` | Framework self-diagnosis and integrity check |
 | `$check test-plan ...` | Produces a manual user test plan from a recent change or feature brief |
+| `$check docs` | Documentation consistency check |
+| `$check telemetry` | Usage analytics and skill invocation statistics |
 
 ### 6.3 The Recommended Designer Routine
 

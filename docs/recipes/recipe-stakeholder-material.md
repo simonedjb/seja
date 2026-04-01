@@ -41,7 +41,7 @@ Generate communication material tailored for a specific audience.
 - Each audience gets fundamentally different content -- evaluators need
   architecture and ROI, clients need outcomes and cost, end users need
   quality commitment, academics need theoretical foundation.
-- Use `/communication --deep` / `$communication --deep` for expanded content beyond the essentials.
+- Use `/communication --deep` / `$communication --deep` to include deeper technical sections (architecture details, development roadmap, research foundation) beyond the essentials. Useful for evaluators and academics who need comprehensive context.
 - Regenerate material after major milestones to keep it current.
 
 ## Related journeys

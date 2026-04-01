@@ -26,6 +26,14 @@ Optional flags:
     --html          Also generate an HTML report in backend/htmlcov/
     --fail-under N  Exit with code 2 if total coverage < N%
     --verbose       Show every file, not just the summary
+
+CHECK_PLUGIN_MANIFEST:
+  name: Backend Test Coverage
+  stack:
+    backend: [flask]
+    frontend: []
+  scope: coverage
+  critical: false
 """
 from __future__ import annotations
 

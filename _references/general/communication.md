@@ -30,12 +30,12 @@ Each stakeholder maps to one of five audience segments:
 | Tag | Name | File | Core Question | Primary Material Types |
 |-----|------|------|---------------|----------------------|
 | EVL | Evaluators | [evaluators.md](communication/evaluators.md) | "Should we adopt this? What's the ROI?" | Executive overview, architecture overview, comparison guide, proof of value |
-| ADO | Adopters | *(cross-ref: [general/onboarding.md](general/onboarding.md))* | "How do I get started and become productive?" | Onboarding plans, tutorials, quickstart guides |
+| ADO | Adopters | *(cross-ref: [onboarding.md](onboarding.md))* | "How do I get started and become productive?" | Onboarding plans, tutorials, quickstart guides |
 | CLT | Clients | [clients.md](communication/clients.md) | "Is the product I commissioned delivering the outcomes I need?" | Product vision alignment, delivery status, outcome evidence, metacommunication summary |
 | USR | End Users | [end-users.md](communication/end-users.md) | "Does the software serve my needs well?" | Quality manifesto, feedback channels, accessibility statement |
 | ACD | Academics | [academics.md](communication/academics.md) | "What's the theoretical contribution? How can I build on this?" | Theoretical foundation, research agenda, extension guide |
 
-**Note on A2 Adopters**: This segment is served by the `/onboarding` skill and its `general/onboarding.md` framework. The `/communication` skill does not duplicate adopter material — instead, it cross-references onboarding output when adopter-facing content is needed.
+**Note on A2 Adopters**: This segment is served by the `/onboarding` skill and its `onboarding.md` framework. The `/communication` skill does not duplicate adopter material — instead, it cross-references onboarding output when adopter-facing content is needed.
 
 **Note on CLT role variants**: The Clients segment includes two role variants: CLT-D (Decision-maker, who shapes product design intent) and CLT-F (Funder, who provides financial backing). A single stakeholder may fill both roles. See [clients.md](communication/clients.md) for details.
 

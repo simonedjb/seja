@@ -42,9 +42,9 @@ Use `/plan` / `$plan` for features, then review the plan and run `/implement <id
 
 Expected output: plan files and committed code.
 
-### Step 4: Add tests with `/update-tests` / `$update-tests`
+### Step 4: Add tests
 
-After implementing features, run `/update-tests` / `$update-tests` to generate or update unit tests following your project's conventions.
+After implementing features, ask Claude/Codex to write or update unit tests following your project's conventions (e.g., "Write tests for the new user profile endpoint").
 
 Expected output: test files with good coverage.
 

@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: Reviews code changes against all 16 engineering and design perspectives defined in general/review-perspectives.md. Reports findings with Adopted/Deferred/N/A status per perspective.
+description: Reviews code changes against engineering and design perspectives (depth-gated — deep evaluates all 16; standard/light use shortlisted subset). Reports findings with Adopted/Deferred/N/A status per perspective.
 tools: Read, Glob, Grep, Bash
 ---
 
@@ -16,6 +16,7 @@ You will receive one of:
 - A file path or directory to review
 - The word "staged" to review git staged changes
 - A git diff output to analyze
+- (Optional) A review depth: `light`, `standard`, or `deep`. If not provided, defaults to `deep` (all 16 perspectives).
 
 ## Process
 
@@ -33,7 +34,13 @@ You will receive one of:
    - If files span both backend and frontend: read all of the above
 
 3. **Evaluate each perspective:**
-   For each of the 16 perspectives (SEC, PERF, DB, API, ARCH, DX, I18N, TEST, OPS, COMPAT, DATA, UX, A11Y, VIS, RESP, MICRO), determine:
+
+   **Depth-gated perspective selection:**
+   - **Deep** (or no depth specified): Evaluate all 16 perspectives (SEC, PERF, DB, API, ARCH, DX, I18N, TEST, OPS, COMPAT, DATA, UX, A11Y, VIS, RESP, MICRO).
+   - **Standard**: Use the Perspective Shortcuts by Plan Prefix table in `general/review-perspectives.md` to select 3-6 relevant perspectives based on file scope (backend files = `FEATURE-B` shortcuts, frontend files = `FEATURE-F`, both = `FEATURE-X`). Mark remaining perspectives as N/A.
+   - **Light**: Same as Standard but skip detailed findings — only report the Adopted/Deferred/N/A status table with one-line concerns. Do not produce an Issues Found section.
+
+   For each evaluated perspective, determine:
    - **Adopted**: the perspective was evaluated and its concerns are addressed
    - **Deferred**: the perspective was evaluated but concerns exist (explain why, pros/cons)
    - **N/A**: the perspective does not apply to this change

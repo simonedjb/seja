@@ -26,7 +26,7 @@
 
 - **Dependency map**: Key third-party libraries, internal shared packages, integration points with external services.
 - **Data model**: Entity relationships, naming conventions, migration workflow. Use `/explain data-model` to generate if not available.
-- **Testing strategy**: Unit, integration, e2e test boundaries. Coverage expectations. How to write and run tests. Use `/update-tests` for guidance.
+- **Testing strategy**: Unit, integration, e2e test boundaries. Coverage expectations. How to write and run tests. See `project/testing-standards.md` for conventions.
 - **Error handling patterns**: How errors propagate through layers, logging conventions, error response formats.
 - **Performance constraints**: Known bottlenecks, caching strategy, query optimization patterns.
 - **Security boundaries**: Authentication/authorization flow, input validation expectations, secrets management.

@@ -41,7 +41,6 @@ EXCLUDED_FILES = {
     "INDEX.md",
     "briefs.md",
     "briefs-index.md",
-    "update-tests-tracker.md",
 }
 
 
@@ -98,6 +97,12 @@ _ADVISORY_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Proposal: # Proposal NNNN | PREFIX-SCOPE | datetime | title
+_PROPOSAL_RE = re.compile(
+    r"^#\s+Proposal\s+(\d+)\s*\|\s*(\S+)\s*\|\s*([\d\-: UTC]+)\s*\|\s*(.+)",
+    re.IGNORECASE,
+)
+
 # Roadmap: # Roadmap NNNN | datetime | title
 _ROADMAP_RE = re.compile(
     r"^#\s+Roadmap\s+(\d+)\s*\|\s*([\d\-: UTC]+)\s*\|\s*(.+)",
@@ -117,9 +122,9 @@ _QA_LOG_DATED_RE = re.compile(
     re.IGNORECASE,
 )
 
-# QA Log (plan) with pipe: # QA Log | Plan NNNN | title  OR  # QA Log | execute-plan NNNN, NNNN
+# QA Log (plan) with pipe: # QA Log | Plan NNNN | title  OR  # QA Log | implement NNNN, NNNN
 _QA_LOG_PLAN_PIPE_RE = re.compile(
-    r"^#\s+QA\s+Log\s*\|\s*(?:execute-plan\s+)?(?:Plan\s+)?(\d[\d\-,\s]*)(?:\s*\|\s*(.+))?\s*$",
+    r"^#\s+QA\s+Log\s*\|\s*(?:implement\s+)?(?:Plan\s+)?(\d[\d\-,\s]*)(?:\s*\|\s*(.+))?\s*$",
     re.IGNORECASE,
 )
 
@@ -260,6 +265,18 @@ def extract_artifact(filepath: Path) -> dict | None:
             "id": m.group(1).strip().zfill(6),
             "title": truncate(m.group(4).strip().rstrip("|").strip()),
             "status": "DONE",
+            "file": str(rel_path),
+        }
+
+    # Proposal
+    m = _PROPOSAL_RE.match(header_line)
+    if m:
+        return {
+            "date": _normalize_date(m.group(3).strip()),
+            "type": "Proposal",
+            "id": m.group(1).strip().zfill(6),
+            "title": truncate(m.group(4).strip().rstrip("|").strip()),
+            "status": "OPEN",
             "file": str(rel_path),
         }
 

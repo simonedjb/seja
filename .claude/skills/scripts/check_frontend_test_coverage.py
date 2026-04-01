@@ -28,6 +28,14 @@ Optional flags:
     --fail-under N  Exit with code 2 if total coverage < N%
     --verbose       Show every file, not just the summary
     --skip-tests    Skip running tests; parse an existing coverage report
+
+CHECK_PLUGIN_MANIFEST:
+  name: Frontend Test Coverage
+  stack:
+    backend: []
+    frontend: [react]
+  scope: coverage
+  critical: false
 """
 from __future__ import annotations
 

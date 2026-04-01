@@ -1,4 +1,4 @@
 interface:
-  display_name: "Execute Plan"
+  display_name: "Implement"
   short_description: "Execute a previously generated plan to add a feature, fix a b..."
   default_prompt: "Use $implement to execute a previously generated plan to add a feature, fix a bug, or refactor code."

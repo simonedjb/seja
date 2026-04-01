@@ -1,20 +1,33 @@
 #!/usr/bin/env python3
 """
 check_validation_constants_sync.py — Detect drift between backend and frontend
-validation constants in dialogos.
+validation constants.
 
 Checks performed
 ================
-  1. Parse backend/app/utils/validation_constants.py for all named constants.
-  2. Parse frontend/src/utils/constants.ts for the VALIDATION object entries.
-  3. Map known pairs and compare values.
-  4. Report mismatches and constants present on one side but not the other.
+  1. Parse the backend constants file for all named integer constants.
+  2. Parse the frontend constants.ts for the VALIDATION object entries.
+  3. Auto-detect matching pairs by intersecting constant names.
+  4. Report value mismatches and constants present on one side but not the other.
+
+Configuration (via project/conventions.md)
+------------------------------------------
+  BACKEND_UTILS_DIR        — directory containing the backend constants file
+  BACKEND_CONSTANTS_FILE   — filename (default: validation_constants.py)
+  FRONTEND_UTILS_DIR       — directory containing the frontend constants file
+  FRONTEND_CONSTANTS_FILE  — filename (default: constants.ts)
 
 Usage
 -----
-    python .codex/skills/scripts/check_validation_constants_sync.py
+    python .claude/skills/scripts/check_validation_constants_sync.py
 
-Run from the repository root (dialogos/).
+CHECK_PLUGIN_MANIFEST:
+  name: Validation Constants Sync
+  stack:
+    backend: [flask]
+    frontend: [react]
+  scope: validation
+  critical: true
 """
 from __future__ import annotations
 
@@ -22,30 +35,17 @@ import re
 import sys
 from pathlib import Path
 
-from project_config import REPO_ROOT, get_path
+from project_config import REPO_ROOT, get, get_path
+
+_be_constants_file = get("BACKEND_CONSTANTS_FILE", "validation_constants.py")
+_fe_constants_file = get("FRONTEND_CONSTANTS_FILE", "constants.ts")
 
 BACKEND_CONSTANTS = (
     get_path("BACKEND_UTILS_DIR") or REPO_ROOT / "backend" / "app" / "utils"
-) / "validation_constants.py"
+) / _be_constants_file
 FRONTEND_CONSTANTS = (
     get_path("FRONTEND_UTILS_DIR") or REPO_ROOT / "frontend" / "src" / "utils"
-) / "constants.ts"
-
-# Known mapping from backend constant names to frontend VALIDATION keys.
-# Backend uses SCREAMING_SNAKE with _LENGTH/_MIN_LENGTH/_MAX_LENGTH suffixes;
-# frontend uses shorter keys without _LENGTH.
-KNOWN_PAIRS = {
-    "LOGIN_MIN_LENGTH":              "LOGIN_MIN",
-    "LOGIN_MAX_LENGTH":              "LOGIN_MAX",
-    "PASSWORD_MIN_LENGTH":           "PASSWORD_MIN",
-    "NAME_MAX_LENGTH":               "NAME_MAX",
-    "GROUP_NAME_MAX_LENGTH":         "GROUP_TITLE_MAX",
-    "THEME_TITLE_MAX_LENGTH":        "TITLE_MAX",
-    "DISCUSSION_TITLE_MAX_LENGTH":   "DISCUSSION_TITLE_MAX",
-    "DISCUSSION_DESCRIPTION_MAX_LENGTH": "DISCUSSION_DESCRIPTION_MAX",
-    "CUSTOM_RELATION_MAX_LENGTH":    "CUSTOM_RELATION_MAX",
-    "EMAIL_MAX_LENGTH":              "EMAIL_MAX",
-}
+) / _fe_constants_file
 
 # Regex to match  CONSTANT_NAME = <number>  in Python
 _PY_CONST = re.compile(r"^([A-Z][A-Z0-9_]+)\s*=\s*(\d+)", re.MULTILINE)
@@ -76,6 +76,8 @@ def main() -> None:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
     print("# Validation Constants Sync Check\n")
+    print(f"  Backend file:  {BACKEND_CONSTANTS}")
+    print(f"  Frontend file: {FRONTEND_CONSTANTS}\n")
 
     if not BACKEND_CONSTANTS.exists():
         print(f"ERROR: Backend constants file not found: {BACKEND_CONSTANTS}")
@@ -87,52 +89,45 @@ def main() -> None:
     be = parse_backend()
     fe = parse_frontend()
 
+    if not be:
+        print("WARNING: No integer constants found in backend file")
+    if not fe:
+        print("WARNING: No entries found in frontend VALIDATION object")
+
     errors = []
 
-    # Check known pairs
-    for be_name, fe_name in sorted(KNOWN_PAIRS.items()):
-        be_val = be.get(be_name)
-        fe_val = fe.get(fe_name)
+    # Auto-detect pairs: constants with the same name on both sides
+    shared_keys = sorted(set(be.keys()) & set(fe.keys()))
+    be_only = sorted(set(be.keys()) - set(fe.keys()))
+    fe_only = sorted(set(fe.keys()) - set(be.keys()))
 
-        if be_val is None:
-            errors.append(f"Backend constant {be_name} not found (expected for {fe_name})")
-        elif fe_val is None:
-            errors.append(f"Frontend constant VALIDATION.{fe_name} not found (expected for {be_name})")
-        elif be_val != fe_val:
+    for key in shared_keys:
+        if be[key] != fe[key]:
             errors.append(
-                f"VALUE MISMATCH: {be_name}={be_val} (backend) vs "
-                f"VALIDATION.{fe_name}={fe_val} (frontend)"
+                f"VALUE MISMATCH: {key}={be[key]} (backend) vs "
+                f"VALIDATION.{key}={fe[key]} (frontend)"
             )
         else:
-            print(f"  OK  {be_name} = {be_val}  <->  VALIDATION.{fe_name} = {fe_val}")
+            print(f"  OK  {key} = {be[key]}")
 
-    # Check for backend constants without a known frontend pair
-    mapped_be = set(KNOWN_PAIRS.keys())
-    for name in sorted(be.keys()):
-        if name not in mapped_be:
-            errors.append(
-                f"Backend constant {name}={be[name]} has no known frontend mapping "
-                f"(add to KNOWN_PAIRS if a frontend counterpart exists)"
-            )
-
-    # Check for frontend constants without a known backend pair
-    mapped_fe = set(KNOWN_PAIRS.values())
-    for name in sorted(fe.keys()):
-        if name not in mapped_fe:
-            errors.append(
-                f"Frontend VALIDATION.{name}={fe[name]} has no known backend mapping "
-                f"(add to KNOWN_PAIRS if a backend counterpart exists)"
-            )
+    if be_only:
+        print(f"\n  Backend-only constants (no frontend match): {', '.join(be_only)}")
+    if fe_only:
+        print(f"\n  Frontend-only constants (no backend match): {', '.join(fe_only)}")
 
     print()
-    if errors:
+    if not shared_keys:
+        print("WARNING: No matching constant names found between backend and frontend.")
+        print("Check that constant names match or that the correct files are configured.")
+        sys.exit(1)
+    elif errors:
         print(f"## Issues ({len(errors)})\n")
         for msg in errors:
             print(f"- X {msg}")
         print(f"\nFAIL: {len(errors)} issue(s) found")
         sys.exit(1)
     else:
-        print("PASS: All validation constants are in sync")
+        print(f"PASS: All {len(shared_keys)} validation constants are in sync")
 
 
 if __name__ == "__main__":

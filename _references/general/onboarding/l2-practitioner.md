@@ -6,7 +6,7 @@
 
 - Solid professional experience (2-5 years)
 - Can complete well-defined tasks independently
-- Needs guidance on project/\*specific patterns, not general skills
+- Needs guidance on project-specific patterns, not general skills
 - Starting to understand trade-offs but may not see the full picture
 - Can contribute to code reviews but may miss architectural implications
 

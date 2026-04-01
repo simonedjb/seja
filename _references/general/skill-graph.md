@@ -16,7 +16,8 @@ After a skill completes, `/post-skill` reads this file and looks up the complete
 | --- | --- | --- |
 | `/plan` | `/implement` | Ready to execute this plan? |
 | `/plan --light` | `/implement` | Ready to execute this proposal? |
-| `/implement` | `/check validate`, `/check review` | All checks run by default unless --skip-checks was used. |
+| `/implement` | `/check validate`, `/check review`, `/check preflight` | All checks run by default unless --skip-checks was used. |
+| `/implement` | `/document` | Update documentation for the changes? |
 | `/plan --roadmap` | `/implement` | Ready to execute items from the roadmap? |
 | `/explain spec-drift` | `/plan` | Specs analyzed — ready to plan next steps? |
 
@@ -24,9 +25,9 @@ After a skill completes, `/post-skill` reads this file and looks up the complete
 
 | After | Suggest | Reason |
 | --- | --- | --- |
-| `/advise` | `/plan` | Want to turn these recommendations into a plan? |
+| `/advise` | `/plan`, `/plan --roadmap` | Want to turn these recommendations into a plan? |
 | `/explain` | `/advise` | Have questions about what you just learned? |
-| `/check review` | `/update-tests` | Want to add tests for the reviewed code? |
+| `/check review` | `/plan` | Want to plan fixes for the review findings? |
 | `/check validate` | `/plan` | Found issues? Plan and fix them. |
 | `/check validate` | `/check health` | Also check framework health? |
 | `/check smoke` | `/plan` | Found failures? Plan and fix them. |
@@ -39,15 +40,13 @@ After a skill completes, `/post-skill` reads this file and looks up the complete
 
 | After | Suggest | Reason |
 | --- | --- | --- |
-| `/generate-script` | `/check validate` | Run validations to check the new script? |
-| `/generate-script` | `/help --browse` | Regenerate the skill map to include the new script? |
-| `/update-tests` | `/check validate` | Run all checks to make sure tests pass? |
 | `/check test-plan` | `/communication` | Share the test plan with stakeholders? |
 
 ### Utilities
 
 | After | Suggest | Reason |
 | --- | --- | --- |
+| `/document` | `/check docs` | Validate documentation consistency? |
 | `/communication` | `/onboarding` | Need to onboard someone to the project too? |
 | `/onboarding` | `/communication` | Want to generate stakeholder material as well? |
 | `/help` | `/help --browse` | Browse all available skills? |

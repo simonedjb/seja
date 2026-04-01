@@ -12,11 +12,19 @@ Checks performed
 
 Usage
 -----
-    python .codex/skills/scripts/check_api_auth_decorators.py
+    python .claude/skills/scripts/check_api_auth_decorators.py
 
 Run from the repository root (dialogos/).
 Optional flags:
     --verbose       Show all endpoints including protected ones
+
+CHECK_PLUGIN_MANIFEST:
+  name: API Auth Decorators
+  stack:
+    backend: [flask]
+    frontend: []
+  scope: auth
+  critical: true
 """
 from __future__ import annotations
 

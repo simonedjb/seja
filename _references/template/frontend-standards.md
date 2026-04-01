@@ -834,3 +834,23 @@ All search hooks use a **300ms debounce** by default.
 **Rules:**
 - Use the appropriate search hook for each use case (list page search, type-ahead, full-text).
 - Separate input state from applied/submitted search state.
+
+---
+
+## 27. Module-Level README Convention
+
+Every frontend source subdirectory should contain a `README.md` with a module index and conventions.
+
+**Required in:** `src/`, `src/api/`, `src/hooks/`, `src/components/`, and any feature directories
+
+**Template:**
+
+| File/Directory | Responsibility |
+|---------------|---------------|
+| `{{name}}` | {{one-line description}} |
+
+**Rules:**
+- Update the README when adding, removing, or renaming files in the directory.
+- Keep descriptions to one line per entry.
+- For `src/components/`, list subdirectories (not individual files) with their scope.
+- Include a "Conventions" subsection for directory-specific patterns (e.g., "hooks must start with `use` prefix").

@@ -8,7 +8,7 @@ import pytest
 @pytest.fixture
 def valid_skill(tmp_path):
     """Create a minimal valid SKILL.md."""
-    skill_dir = tmp_path / ".codex" / "skills" / "test-skill"
+    skill_dir = tmp_path / ".claude" / "skills" / "test-skill"
     skill_dir.mkdir(parents=True)
     skill_md = skill_dir / "SKILL.md"
     skill_md.write_text(
@@ -45,7 +45,7 @@ def valid_skill(tmp_path):
 @pytest.fixture
 def invalid_skill_missing_desc(tmp_path):
     """Create a SKILL.md missing the description field."""
-    skill_dir = tmp_path / ".codex" / "skills" / "bad-skill"
+    skill_dir = tmp_path / ".claude" / "skills" / "bad-skill"
     skill_dir.mkdir(parents=True)
     skill_md = skill_dir / "SKILL.md"
     skill_md.write_text(
@@ -63,7 +63,7 @@ def invalid_skill_missing_desc(tmp_path):
 
 def test_valid_skill_structure(valid_skill):
     """A well-formed SKILL.md should have all required frontmatter fields."""
-    skill_md = valid_skill / ".codex" / "skills" / "test-skill" / "SKILL.md"
+    skill_md = valid_skill / ".claude" / "skills" / "test-skill" / "SKILL.md"
     text = skill_md.read_text(encoding="utf-8")
     assert "name:" in text
     assert "description:" in text
@@ -73,7 +73,7 @@ def test_valid_skill_structure(valid_skill):
 
 def test_invalid_skill_missing_description(invalid_skill_missing_desc):
     """A SKILL.md missing description should be detectable."""
-    skill_md = invalid_skill_missing_desc / ".codex" / "skills" / "bad-skill" / "SKILL.md"
+    skill_md = invalid_skill_missing_desc / ".claude" / "skills" / "bad-skill" / "SKILL.md"
     text = skill_md.read_text(encoding="utf-8")
     assert "name:" in text
     assert "description:" not in text

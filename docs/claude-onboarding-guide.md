@@ -10,19 +10,19 @@ Before anything else, you need the **SEJA repository**. Clone it from GitHub or 
 
 ### 0.1 What's in the Repository?
 
-The SEJA repository contains approximately 130 framework files organized in the `.claude/` and `_references/` directory structure:
+The SEJA repository contains approximately 270 framework files organized in the `.claude/`, `.codex/`, and `_references/` directory structures:
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| Skill definitions | 14 | Slash commands (12 user-facing + 2 internal lifecycle hooks): `/plan`, `/implement`, `/advise`, `/check`, `/explain`, `/help`, etc. |
-| General references | 12 | Reusable standards (review perspectives index, coding standards, report conventions, onboarding index, communication index, skill graph, etc.) |
+| Skill definitions | 15 | Slash commands (13 user-facing + 2 internal lifecycle hooks): `/plan`, `/implement`, `/advise`, `/check`, `/explain`, `/document`, `/help`, etc. |
+| General references | 20 | Reusable standards (review perspectives index, coding standards, report conventions, onboarding index, communication index, skill graph, batch execution patterns, etc.) |
 | Per-perspective files | 16 | Individual review perspective files with Essential/Deep-dive tiers, priority-classified P0-P4 (in `general/review-perspectives/`) |
 | Per-onboarding files | 8 | Role families (builders, shapers, guardians) and expertise levels (L1-L5) for tailored onboarding plans (in `general/onboarding/`) |
 | Per-communication files | 5 | Audience segment profiles (evaluators, clients, end users, academics) and Diataxis mapping (in `general/communication/`) |
-| Template references | 32 | Templates for generating project-specific standards, rules, agents, specs, and smoke-test scaffolding (30 `.md` + 2 `.json` in `_references/`) |
-| Agent definitions | 5 | Specialized sub-agents (code reviewer, plan reviewer, test runner, etc.) |
+| Template references | 50 | Templates for generating project-specific standards, rules, agents, specs, CI, documentation, and smoke-test scaffolding (in `_references/template/`) |
+| Agent definitions | 10 | Specialized sub-agents: 7 evaluators (code reviewer, plan reviewer, advisory reviewer, council debate, standards checker, test runner, migration validator) + 3 generators (communication, onboarding, documentation) |
 | Rule definitions | 7 | Path-scoped coding rules (backend, frontend, i18n, migrations, tests, e2e, framework-structure) |
-| Validation scripts | 29 | Python scripts for quality checks, analysis, smoke testing, and index generation (i18n, auth, migrations, secrets, coverage, briefs, etc.) |
+| Validation scripts | 35 | Python scripts for quality checks, analysis, smoke testing, and index generation (i18n, auth, migrations, secrets, coverage, briefs, etc.) |
 | Framework metadata | 3 | `.claude/CHEATSHEET.md`, `.claude/CHANGELOG.md`, and `.claude/skills/VERSION` |
 
 ### 0.2 How to Get It
@@ -50,20 +50,20 @@ Or download it as a ZIP from GitHub (Code > Download ZIP).
    ```
    my-new-project/
    ├── _references/      <- shared references, templates, and project-specific files
-   │   ├── general/*.md       <- 10 reusable standards
+   │   ├── general/*.md       <- 20 reusable standards
    │   ├── general/review-perspectives/  <- 16 per-perspective review files
    │   ├── general/onboarding/           <- 8 role/level onboarding profiles
    │   ├── general/communication/        <- 5 audience segment profiles
-   │   └── template/*.md/json <- 43 templates for /design
+   │   └── template/          <- 50 templates for /design
    └── .claude/
        ├── CHEATSHEET.md      <- generated quick-reference for the skill system
-       ├── agents/            <- 5 agent definitions
-       ├── rules/             <- 6 path-scoped coding rules
+       ├── agents/            <- 10 agent definitions
+       ├── rules/             <- 7 path-scoped coding rules
        └── skills/
-           ├── advise/        <- skill definitions (14 folders)
+           ├── advise/        <- skill definitions (15 folders)
            ├── ...
-           ├── scripts/       <- validation and analysis scripts (23 files)
-           └── VERSION         <- skill framework version and changelog
+           ├── scripts/       <- validation and analysis scripts (35 files)
+           └── VERSION         <- framework version number
    ```
 
 4. Now proceed to **Part 3 -- Bootstrapping Your New Project** to run `/seed` and `/design` to customize everything for your project.
@@ -144,15 +144,15 @@ your-project/
 │   │   ├── advise/SKILL.md
 │   │   ├── check/SKILL.md
 │   │   ├── communication/SKILL.md
-│   │   ├── implement/SKILL.md
+│   │   ├── design/SKILL.md
+│   │   ├── document/SKILL.md
 │   │   ├── explain/SKILL.md
-│   │   ├── generate-script/SKILL.md
 │   │   ├── help/SKILL.md
-│   │   ├── plan/SKILL.md
+│   │   ├── implement/SKILL.md
 │   │   ├── onboarding/SKILL.md
+│   │   ├── plan/SKILL.md
 │   │   ├── qa-log/SKILL.md
 │   │   ├── seed/SKILL.md
-│   │   ├── update-tests/SKILL.md
 │   │   ├── upgrade/SKILL.md
 │   │   ├── pre-skill/SKILL.md         <- internal lifecycle hook
 │   │   ├── post-skill/SKILL.md        <- internal lifecycle hook
@@ -184,24 +184,23 @@ This file is **always loaded** when Claude Code starts. It tells Claude:
 
 #### Skills -- Your Slash Commands
 
-Skills are predefined workflows you invoke with `/skill-name`. Each skill is a `SKILL.md` file that instructs Claude how to perform a specific task. The framework includes 12 user-facing skills (listed below) plus 2 internal lifecycle hooks (`/pre-skill`, `/post-skill`) that are called automatically by other skills.
+Skills are predefined workflows you invoke with `/skill-name`. Each skill is a `SKILL.md` file that instructs Claude how to perform a specific task. The framework includes 13 user-facing skills (listed below) plus 2 internal lifecycle hooks (`/pre-skill`, `/post-skill`) that are called automatically by other skills.
 
 | Skill | What It Does | When to Use |
 |-------|-------------|-------------|
 | `/advise` | Expert Q&A with multi-perspective analysis; `--inventory` mode catalogs codebase elements | "What's the best approach for X?", "List all API endpoints" |
-| `/check` | Unified quality gate with modes: `validate`, `review`, `smoke`, `preflight`, `health`, `test-plan` | Before committing, before merging, after changes |
+| `/check` | Unified quality gate with 8 modes: `validate`, `review`, `smoke`, `preflight`, `health`, `test-plan`, `docs`, `telemetry` | Before committing, before merging, after changes |
 | `/communication` | Generates audience-tailored stakeholder material (evaluators, clients, end users, academics) | Communicating about the project to external audiences |
-| `/implement` | Executes a previously created plan | After reviewing a plan from `/plan` |
+| `/design` | Configures project-specific files via questionnaire or spec file; `--generate-spec` for a blank spec skeleton | Customizing framework for your project after `/seed` |
+| `/document` | Generates or updates project documentation based on plan Docs: fields or auto-detected changes | After implementation to generate user/developer docs |
 | `/explain` | Explains behavior, code, data model, architecture, or spec drift with diagrams | "How does authentication work?", "Have my specs diverged?" |
-| `/generate-script` | Creates a helper Python script | Automation tasks |
 | `/help` | Contextual help for any skill; `--browse` for interactive selection | "What does /check do?", overview of all skills |
-| `/plan` | Creates a detailed plan without executing; `--framing metacomm` for design intent; `--roadmap` for product roadmaps | When you want to review before acting, design-driven planning, multi-feature roadmaps |
+| `/implement` | Executes a previously created plan | After reviewing a plan from `/plan` |
 | `/onboarding` | Generates tailored onboarding plan for a new team member | New hire joining the project |
+| `/plan` | Creates a detailed plan without executing; `--framing metacomm` for design intent; `--roadmap` for product roadmaps | When you want to review before acting, design-driven planning, multi-feature roadmaps |
 | `/qa-log` | Logs the current Q&A session to a file | Capturing advisory or design discussions |
 | `/seed` | Copies the SEJA framework into a new or existing project; `--workspace` to create a project workspace; `--demo` for a guided hello-world experience | Starting a brand-new project, creating a workspace |
-| `/design` | Configures project-specific files via questionnaire or spec file; `--generate-spec` for a blank spec skeleton | Customizing framework for your project after `/seed` |
 | `/upgrade` | Upgrades framework files in an existing project without touching project-specific files | Pulling latest framework updates |
-| `/update-tests` | Writes or updates unit tests | After code changes |
 
 #### References -- The Knowledge Base
 
@@ -215,7 +214,7 @@ All reference files live in `_references/` -- shared across both Claude and Code
 | `template/*` | Templates to generate `project/*` files for new projects | Yes -- used by `/design` |
 | `project/*` | Project-specific standards (your backend rules, frontend rules, conceptual design) | No -- generated per-project |
 
-**Key general references (10 top-level files + 3 subdirectories):**
+**Key general references (20 top-level files + 3 subdirectories):**
 
 - `general/review-perspectives.md` -- Index for 16 engineering and design perspectives, with conflict resolution rules and plan prefix shortcuts. Each perspective lives in its own file under `general/review-perspectives/` (e.g., `sec.md`, `perf.md`) with **Essential** questions (always evaluated) and **Deep-dive** questions (for thorough reviews).
 - `general/constraints.md` -- Universal rules (no invented data, no ANSI codes, etc.)
@@ -228,7 +227,7 @@ All reference files live in `_references/` -- shared across both Claude and Code
 - `general/communication.md` -- Index for audience-tailored communication, with segment profiles (EVL/CLT/USR/ACD) and Diataxis mapping. Each segment lives in its own file under `general/communication/` (e.g., `evaluators.md`, `clients.md`).
 - `general/skill-graph.md` -- Skill dependency graph and invocation relationships.
 
-**Key template references (30 files):**
+**Key template references (50 files):**
 
 - `template/conventions.md` -- Project conventions template
 - `template/conceptual-design.md`, `template/conceptual-design-as-is.md`, `template/conceptual-design-to-be.md`, `template/metacomm-as-is.md`, `template/metacomm-to-be.md`, `template/backend-standards.md`, `template/frontend-standards.md`, `template/testing-standards.md`, `template/i18n-standards.md`, `template/security-checklists.md` -- Project-specific standard templates
@@ -253,15 +252,27 @@ Example: `rules/frontend.md` applies to `frontend/src/**` and enforces TypeScrip
 
 #### Agents -- Specialized Sub-Processes
 
-Agents are specialized workers that Claude can delegate tasks to:
+Agents are specialized workers that Claude can delegate tasks to. There are 10 agents organized by role:
+
+**Evaluator agents** (7) -- review artifacts against quality perspectives:
 
 | Agent | Purpose |
 |-------|---------|
+| `advisory-reviewer` | Reviews design decisions against engineering perspectives |
 | `code-reviewer` | Reviews code against all 16 perspectives |
-| `plan-reviewer` | Reviews plans with complexity-gated two-phase process |
-| `test-runner` | Runs tests and reports failures with context |
-| `standards-checker` | Runs all validation scripts and aggregates results |
+| `council-debate` | Runs structured expert council debates for high-stakes decisions |
 | `migration-validator` | Validates database migration chain integrity |
+| `plan-reviewer` | Reviews plans with complexity-gated two-phase process |
+| `standards-checker` | Runs all validation scripts and aggregates results |
+| `test-runner` | Runs tests and reports failures with context |
+
+**Generator agents** (3) -- produce self-contained artifacts from well-defined inputs:
+
+| Agent | Purpose |
+|-------|---------|
+| `communication-generator` | Produces audience-tailored stakeholder material |
+| `document-generator` | Generates project documentation from templates |
+| `onboarding-generator` | Produces tailored onboarding plans |
 
 Agents run in parallel when possible and return structured reports.
 
@@ -334,22 +345,24 @@ The `/design` skill will:
 
 #### Step 4: Answer the Questionnaire
 
-The questionnaire has 8 sections. **Section 0 (Quick Start)** has just 8 questions and is enough for a working skeleton:
+The questionnaire has 11 sections (0–10). **Section 0 (Quick Start)** has 10 questions and is enough for a working skeleton:
 
 | # | Question | Example Answer |
 |---|----------|---------------|
 | 0.1 | Project display name? | "PortfolioManager" |
 | 0.2 | What does the app do? | "Investment portfolio tracking for retail investors" |
-| 0.3 | Backend framework? | "FastAPI" |
-| 0.4 | Frontend framework? | "React" |
-| 0.5 | Database? | "PostgreSQL" |
-| 0.6 | Primary/secondary languages? | "en-US, pt-BR" |
-| 0.7 | Output folder name? | "_output" |
-| 0.8 | Source directories? | "backend, frontend" |
+| 0.3 | Greenfield or brownfield? | "Greenfield" |
+| 0.4 | Backend framework? | "FastAPI" |
+| 0.5 | Frontend framework? | "React" |
+| 0.6 | Database? | "PostgreSQL" |
+| 0.7 | Primary/secondary languages? | "en-US, pt-BR" |
+| 0.8 | Output folder name? | "_output" |
+| 0.9 | Source directories? | "backend, frontend" |
+| 0.10 | Team composition? | "just me" |
 
 **Best practice (multi-perspective):**
 
-- **DX perspective:** Answer Section 0 first -- you get a working setup immediately. Come back to Sections 1-7 later as you refine.
+- **DX perspective:** Answer Section 0 first -- you get a working setup immediately. Come back to Sections 1-10 later as you refine.
 - **SEC perspective:** When choosing authentication (Section 4.6), prefer JWT with HttpOnly cookies over localStorage. The questionnaire explains why.
 - **ARCH perspective:** The questionnaire presents pros/cons for each technology choice. Read them carefully -- the framework recommendations account for ecosystem maturity, team size, and future maintainability.
 - **I18N perspective:** Even if you only support one language now, set up i18n from the start. Retrofitting is painful.
@@ -470,6 +483,20 @@ Claude will:
 3. Provide recommendations with pros and cons
 4. Ask follow-up questions
 5. Save the Q&A log for future reference
+
+**Deep-dive mode for high-stakes decisions:**
+
+For decisions that are hard to reverse -- choosing a database, deciding on an auth strategy, restructuring the data model -- use the `--deep` flag:
+
+```
+You: /advise --deep Should we switch from REST to GraphQL for the mobile API?
+```
+
+This activates a structured **council debate**: five expert archetypes (plus topic-specific experts) each present a position, cross-examine each other, and surface trade-offs you might miss in a standard analysis. The result is a comprehensive decision brief rather than a single recommendation.
+
+**When to use `/advise` vs. `/plan`:** Use `/advise` when you are exploring options and need to decide *what* to do. Use `/plan` when you have already decided and need to figure out *how* to do it.
+
+**Preserving decisions:** Follow up with `/qa-log` to save the advisory session as a permanent record of the decision rationale.
 
 ### 4.3 The "I Need to Understand Code" Workflow
 
@@ -604,6 +631,20 @@ Claude will:
 
 **When to use it:** After updating either the conceptual design or metacommunication files, or when you suspect they've drifted apart. Run it periodically to keep design intent aligned across both documents.
 
+### 4.12 The "I Need to Generate Documentation" Workflow
+
+```
+You: /document
+```
+
+After implementing a feature, `/document` generates or updates project documentation. It works in three ways:
+
+- **From a plan:** If you just ran `/implement`, `/document` reads the plan's `Docs:` field and generates the specified documentation types (README, API reference, contextual help, changelog, ADR, help center).
+- **Auto-detect:** If there is no recent plan, `/document` scans recent changes and proposes which documentation needs updating.
+- **Explicit type:** `/document --type readme` generates a specific documentation type directly.
+
+**When to use it:** After `/implement` completes, especially for user-facing features. The post-skill lifecycle hook will suggest running `/document` when a plan includes documentation tasks.
+
 ---
 
 ## Part 5 -- The 16 Review Perspectives
@@ -615,7 +656,7 @@ Each perspective lives in its own file under `general/review-perspectives/` with
 - **Essential** -- 3-7 P0 (critical/blocking) questions always evaluated (loaded for standard reviews)
 - **Deep-dive** -- 8-12 P1-P4 questions (loaded for thorough reviews or when the perspective is the primary focus)
 
-All questions are **priority-classified** (P0 critical through P4 informational) and **sorted by priority** within each tier. Essential = P0 only, Deep-dive = P1-P4. Total: 80 Essential + 176 Deep-dive = 256 review questions across all 16 perspectives.
+All questions are **priority-classified** (P0 critical through P4 informational) and **sorted by priority** within each tier. Essential = P0 only, Deep-dive = P1-P4. Total: 82 Essential + 174 Deep-dive = 256 review questions across all 16 perspectives.
 
 ### Engineering Perspectives
 
@@ -771,6 +812,7 @@ This gives you a timeline of all work done by Claude. Useful for:
 | `/plan --roadmap --from-spec <file>` | Generate roadmap from a spec file |
 | `/implement <id>` | Execute a saved plan |
 | `/advise <question>` | Get expert advice |
+| `/advise --deep <question>` | Expert council debate for high-stakes decisions |
 | `/advise --inventory <pattern>` | Catalog codebase elements matching a pattern |
 | `/explain architecture <scope>` | Explain system architecture and design decisions |
 | `/explain behavior <topic>` | Explain system behavior |
@@ -782,6 +824,8 @@ This gives you a timeline of all work done by Claude. Useful for:
 | `/check smoke` | Check that nothing is broken after changes |
 | `/check preflight` | Validation + code review before commit |
 | `/check test-plan <brief>` | Generate manual test plan |
+| `/check health` | Framework self-diagnosis and integrity check |
+| `/check docs` | Documentation consistency check |
 | `/seed <target>` | Copy framework files into a new project |
 | `/seed <target> --workspace` | Create a project workspace alongside an existing codebase |
 | `/seed <target> --demo` | Guided hello-world experience |
@@ -789,8 +833,8 @@ This gives you a timeline of all work done by Claude. Useful for:
 | `/design --generate-spec` | Generate a blank spec skeleton |
 | `/design <spec-file>` | Configure from a pre-filled spec file |
 | `/upgrade` | Upgrade framework files in an existing project |
+| `/document` | Generate or update project documentation |
 | `/qa-log <topic>` | Save current Q&A session to a file |
-| `/update-tests <scope>` | Write or update unit tests |
 | `/help` | Show skill help (overview or specific skill) |
 | `/help --browse` | Browse available tasks interactively |
 
@@ -801,11 +845,11 @@ After `/seed` + `/design`, verify you have:
 - [ ] `CLAUDE.md` at project root
 - [ ] `.claude/settings.json` with appropriate permissions
 - [ ] `.claude/skills/` with all SKILL.md files
-- [ ] `_references/general/*.md` (10 reusable standards)
+- [ ] `_references/general/*.md` (20 reusable standards)
 - [ ] `_references/general/review-perspectives/` (16 per-perspective files)
 - [ ] `_references/general/onboarding/` (8 role/level profiles)
 - [ ] `_references/general/communication/` (5 audience segment profiles)
-- [ ] `_references/template/*.md/json` (30 reusable templates)
+- [ ] `_references/template/` (50 templates including agent/, ci/, demo/, docs/)
 - [ ] `_references/project/*.md` (customized)
 - [ ] `.claude/rules/` with path-scoped rules
 - [ ] `.claude/agents/` with specialized agents

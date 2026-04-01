@@ -7,7 +7,7 @@
 
 | Skill | Description | Arguments |
 |-------|-------------|-----------|
-| `/design` | Define or update project design — stack, conventions, domain model, conceptua... | `[--generate-spec] [spec-file-path]` |
+| `/design` | Define or update project design — stack, conventions, domain model, conceptua... | `[--generate-spec] [--add-docs] [spec-file-path]` |
 | `/implement` | Execute a previously generated plan to add a feature, fix a bug, or refactor ... | `<planned-item-id> [--manual] [--max-iterations N] [--dry-run] [--skip-checks]` |
 | `/plan` | Make a plan to add a feature, fix a bug, or refactor code. Supports metacomm ... | `<brief> [--review <light|standard|deep>] [--framing metacomm] [--light] [--plan | --roadmap [--from-spec <path>] [--auto]]` |
 
@@ -15,26 +15,20 @@
 
 | Skill | Description | Arguments |
 |-------|-------------|-----------|
-| `/advise` | Answer questions about the codebase, architecture, or design decisions, loggi... | `<question or topic> [--inventory <pattern>]` |
-| `/check` | Run quality checks: validation, code review, smoke tests, preflight, or frame... | `<validate | review | smoke | preflight | health | test-plan> [--depth <light|standard|deep>] [scope]` |
+| `/advise` | Answer questions about the codebase, architecture, or design decisions, loggi... | `<question or topic> [--inventory <pattern>] [--deep]` |
+| `/check` | Run quality checks: validation, code review, smoke tests, preflight, or frame... | `<validate | review | smoke | preflight | health | test-plan | telemetry> [--depth <light|standard|deep>] [scope]` |
 | `/explain` | Explains behavior, code, data model, architecture, or spec drift with visual ... | `<architecture|behavior|behavior-evolution|code|data-model|spec-drift> [brief]` |
-
-## Code & Tests
-
-| Skill | Description | Arguments |
-|-------|-------------|-----------|
-| `/generate-script` | Generate a helper Python script according to the brief | `<brief>` |
-| `/update-tests` | Write or update unit tests (frontend vitest or backend pytest) following proj... | `<file or module to test>` |
 
 ## Utilities
 
 | Skill | Description | Arguments |
 |-------|-------------|-----------|
 | `/communication` | Generate tailored communication material for a specific audience segment | `<audience> [--format md|html|both] [--all] [--source <advisory-file>]` |
-| `/help` | Show contextual help, browse skills by category, or get details on a specific... | `[skill-name | --browse] [--details]` |
+| `/document` | Generate or update project documentation based on plan Docs: fields, auto-det... | `<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|adr|help-center|changelog>]` |
+| `/help` | Show contextual help, browse skills by category, or get details on a specific... | `[skill-name | --browse]` |
 | `/onboarding` | Generate a tailored onboarding plan for a new team member based on their role... | `<role-family> <expertise-level> [name] [--area <focus-area>] [--batch <spec-list>]` |
 | `/qa-log` | Log the entire current Q&A session into a file for future reference | `brief or topic` |
-| `/seed` | Copy the SEJA framework into a new or existing project, or create a workspace... | `<target-directory> [--workspace \| --demo]` |
+| `/seed` | Copy the SEJA framework into a new or existing project, or create a workspace... | `<target-directory> [--workspace | --demo]` |
 | `/upgrade` | Upgrade SEJA framework files from the seed repo without touching project-spec... | `[<seed-repo-path>] [--dry-run]` |
 
-*14 skills available. Use `/help --browse` for interactive selection.*
+*13 skills available. Use `/pick-prompt` for interactive selection.*

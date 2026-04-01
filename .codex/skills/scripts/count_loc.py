@@ -9,16 +9,16 @@ Purpose
 
 Usage:
 - Default project scan (backend + frontend):
-  - `python .codex/skills/scripts/count_loc.py`
+  - `python .claude/skills/scripts/count_loc.py`
 - JSON output (machine-readable):
-  - `python .codex/skills/scripts/count_loc.py --json`
+  - `python .claude/skills/scripts/count_loc.py --json`
 - Include per-file details:
-  - `python .codex/skills/scripts/count_loc.py --list-files`
+  - `python .claude/skills/scripts/count_loc.py --list-files`
 - Count only selected extensions:
-  - `python .codex/skills/scripts/count_loc.py --ext .py .js .jsx .ts .tsx`
+  - `python .claude/skills/scripts/count_loc.py --ext .py .js .jsx .ts .tsx`
 - Count a subset of paths:
-  - `python .codex/skills/scripts/count_loc.py frontend`
-  - `python .codex/skills/scripts/count_loc.py backend/app`
+  - `python .claude/skills/scripts/count_loc.py frontend`
+  - `python .claude/skills/scripts/count_loc.py backend/app`
 
 Notes / limitations
 - Comment detection is heuristic (cloc-like, not parser-accurate).
@@ -148,10 +148,10 @@ def parse_args() -> argparse.Namespace:
         ),
         epilog=(
             "Examples:\n"
-            "  py -3 .codex/skills/scripts/count_loc.py\n"
-            "  py -3 .codex/skills/scripts/count_loc.py --json\n"
-            "  py -3 .codex/skills/scripts/count_loc.py --list-files\n"
-            "  py -3 .codex/skills/scripts/count_loc.py frontend --ext .js .jsx .css\n"
+            "  py -3 .claude/skills/scripts/count_loc.py\n"
+            "  py -3 .claude/skills/scripts/count_loc.py --json\n"
+            "  py -3 .claude/skills/scripts/count_loc.py --list-files\n"
+            "  py -3 .claude/skills/scripts/count_loc.py frontend --ext .js .jsx .css\n"
         ),
     )
     parser.add_argument(

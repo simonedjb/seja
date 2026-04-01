@@ -22,6 +22,12 @@ Short, task-focused how-to guides for common SEJA workflows. Each recipe covers 
 |--------|---------------|
 | [Run Quality Gates](recipe-quality-gates.md) | Use `/check` modes (validate, review, smoke, preflight, health) as routine safety rails. |
 
+## Documentation
+
+| Recipe | What it covers |
+|--------|---------------|
+| [Generate Project Documentation](recipe-generate-documentation.md) | Generate or update user and developer documentation with `/document` based on plan Docs fields or auto-detected changes. |
+
 ## Team and Communication
 
 | Recipe | What it covers |
