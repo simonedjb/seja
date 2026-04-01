@@ -18,7 +18,7 @@ A framework setup that serves as both a pedagogical tool and a research instrume
 
 ### Step 1: Bootstrap a sample project
 
-Run `/quickstart .` / `$quickstart .` on a sample project (or use an existing one). For teaching, you might prepare a project with intentional design issues for students to discover. For research, use a real project that illustrates the phenomena you want to study.
+Run `/seed .` then `/design` / `$seed .` then `$design` on a sample project (or use an existing one). For teaching, you might prepare a project with intentional design issues for students to discover. For research, use a real project that illustrates the phenomena you want to study.
 
 Expected output: a project with the full framework configured.
 

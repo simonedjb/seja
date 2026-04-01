@@ -1,4 +1,0 @@
-interface:
-  display_name: "Quickstart"
-  short_description: "Bootstrap a new project's"
-  default_prompt: "Use $quickstart to bootstrap a new project's ."

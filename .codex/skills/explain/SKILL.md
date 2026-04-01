@@ -275,7 +275,7 @@ If the user chooses to sync, perform the following based on the chosen direction
 ##### Provenance Tracking
 
 Every entry created or modified by this workflow must carry:
-- `source`: one of `human`, `agent (explain)`, `agent (post-skill)`, `agent (make-plan)`
+- `source`: one of `human`, `agent (explain)`, `agent (post-skill)`, `agent (plan)`
 - `last-synced`: datetime of this sync run (format: `YYYY-MM-DD HH:mm:ss UTC`)
 
 ##### Sync Directions

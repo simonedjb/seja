@@ -22,7 +22,7 @@ If "$ARGUMENTS" is empty, ask for the skill name and brief.
 
 1. Without asking for authorization, insert into `${BRIEFS_FILE}` (see project/conventions.md) a new entry as the first entry after the `# Briefs Log` header and its following blank line (i.e., newest entries appear first). Format:
 - Format: `STARTED | <start-datetime UTC> | <skill-name> | <brief>`
-- Example: `STARTED | 2026-03-19 21:00:00 UTC | make-plan | Add user profile page`
+- Example: `STARTED | 2026-03-19 21:00:00 UTC | plan | Add user profile page`
 - The datetime must be in format `YYYY-MM-DD HH:mm:ss UTC`
 - The brief should be exactly what the user wrote, except when it is an error log. In this case, summarize the error in one sentence and use that as the brief, prepended by `ERROR: ` (e.g., "ERROR: Database connection timeout error").
 - Ensure the briefs are separated by a blank line

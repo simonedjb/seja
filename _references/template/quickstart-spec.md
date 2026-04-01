@@ -384,4 +384,4 @@ version: 2
      Also note:
      - Where validation constants are defined (backend/frontend paths)
      - Which security checklists (A-N) don't apply to your project
-     - Any project/\*specific security requirements (compliance, data residency, audit logging) -->
+     - Any project-specific security requirements (compliance, data residency, audit logging) -->

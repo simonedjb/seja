@@ -1,7 +1,7 @@
 # FRAMEWORK - REVIEW LOG TEMPLATE
 
 > Structured format for logging plan and code review iterations.
-> Used by `make-plan`, `review-code`, and any skill that evaluates against `general/review-perspectives.md`.
+> Used by `plan`, `review-code`, and any skill that evaluates against `general/review-perspectives.md`.
 
 ---
 

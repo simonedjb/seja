@@ -3,16 +3,16 @@
 > **Questionnaire version:** 2
 > **Last updated:** 2026-03-29
 >
-> **Purpose:** Answer these questions to generate all 9 `project/\**` reference files from the `template/\**` templates. An agent can read your completed answers and produce the full set of project/\*specific references.
+> **Purpose:** Answer these questions to generate all 9 `project/` reference files from the `template/` templates. An agent can read your completed answers and produce the full set of project-specific references.
 >
 > **How to use:**
 > 1. Start with **Section 0 (Quick Start)** -- these 10 answers are enough to generate a minimal skeleton.
 > 2. Work through **Sections 1-9** at your own pace for full coverage.
 > 3. For technical questions, choose from the provided alternatives or write your own.
 > 4. Write `N/A` or `Skip` for sections that don't apply to your stack.
-> 5. When done, give this file to an agent with the instruction: *"Instantiate all template/\** files into project/\** files using the answers in this questionnaire."*
+> 5. When done, give this file to an agent with the instruction: *"Instantiate all template/\* files into project/\* files using the answers in this questionnaire."*
 >
-> **Alternative:** For a faster workflow, use `/design --generate-spec` to create a pre-fillable spec file (see `template/quickstart-spec.md`).
+> **Alternative:** For a faster workflow, use `/design --generate-spec` to create a pre-fillable spec file (see `template/design-spec.md`).
 
 ---
 
@@ -134,7 +134,7 @@ Answer:
 Answer:
 
 **2.9** Is this a greenfield project (no existing implementation) or an evolving product with a gap between current and target design?
-> *Determines whether quickstart defers as-is files to post-plan execution (greenfield) or instantiates them immediately with current state (brownfield).*
+> *Determines whether /design defers as-is files to post-plan execution (greenfield) or instantiates them immediately with current state (brownfield).*
 
 Answer: (greenfield / evolving)
 
@@ -525,7 +525,7 @@ Answer:
 
 Answer:
 
-**7.4** Do you have any project/\*specific security requirements not covered by checklists A–N? (e.g., compliance certifications, data residency, audit logging requirements)
+**7.4** Do you have any project-specific security requirements not covered by checklists A–N? (e.g., compliance certifications, data residency, audit logging requirements)
 
 Answer:
 
@@ -776,7 +776,7 @@ After completing all sections:
 - [ ] Section 9 (Graphic/UI Design) has colors, typography, spacing, icons, and visual style choices
 
 **Next step:** Give this file to an agent with:
-> *"Read template/questionnaire.md and instantiate all template/\** files in `_references` into corresponding project/\** files using my answers."*
+> *"Read template/questionnaire.md and instantiate all template/\* files in `_references` into corresponding project/\* files using my answers."*
 
 ---
 
@@ -786,5 +786,5 @@ After completing all sections:
 
 | Version | Date       | Changes                                                                                                                      |
 |---------|------------|------------------------------------------------------------------------------------------------------------------------------|
-| 1       | 2026-03-25 | Initial versioned release. Sections 0-7 with all fields. Companion spec file format (template/quickstart-spec.md) introduced |
+| 1       | 2026-03-25 | Initial versioned release. Sections 0-7 with all fields. Companion spec file format (template/design-spec.md) introduced |
 | 2       | 2026-03-29 | Added Knowledge Tiers preamble (T1/T2/T3). Added questions 0.3 (project mode, moved early for directory-structure routing) and 0.10 (team composition) to Section 0. Renumbered 0.3-0.8 to 0.4-0.9. Added brownfield-only questions 2.13-2.17 to Section 2. Added Section 8 (UX Design Standards, 9 questions). Added Section 9 (Graphic/UI Design Standards, 9 questions). Updated post-questionnaire checklist. Total project files generated: 7 to 9. |

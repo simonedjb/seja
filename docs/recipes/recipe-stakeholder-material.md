@@ -6,7 +6,7 @@ Generate communication material tailored for a specific audience.
 
 ## Prerequisites
 
-- SEJA framework installed and `/quickstart` / `$quickstart` completed
+- SEJA framework seeded and project configured via `/seed` + `/design` / `$seed` + `$design`
 - Project conceptual design files populated (at minimum the to-be design)
 
 ## Steps

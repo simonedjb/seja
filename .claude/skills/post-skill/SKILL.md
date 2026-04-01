@@ -27,7 +27,7 @@ metadata:
     ```
 
     - `timestamp`: current UTC datetime in ISO 8601 format.
-    - `skill`: extract the skill name from the brief entry updated in step 1 (the field after the last `|` separator before the brief text, e.g., `advise`, `make-plan`).
+    - `skill`: extract the skill name from the brief entry updated in step 1 (the field after the last `|` separator before the brief text, e.g., `advise`, `plan`).
     - `id`: the invocation ID from $ARGUMENTS[0].
     - `duration_seconds`: compute elapsed seconds between the STARTED timestamp and the current time. If timestamps cannot be parsed, set to `null`.
     - `outcome`: `"success"` for normal completions, `"partial"` if any step reported partial completion, `"failed"` if the skill errored.

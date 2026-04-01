@@ -2,7 +2,7 @@
 
 > **How to use this template:** Copy this file to `project/conventions.md` and fill in the values for your project. This is the first file to customize — all other reference files and skills reference variables defined here.
 >
-> Centralized project/\*specific definitions. All skills and reference files reference variables from this file instead of hardcoding project/\*specific values. To adapt the skill system to a different project, edit only this file.
+> Centralized project-specific definitions. All skills and reference files reference variables from this file instead of hardcoding project-specific values. To adapt the skill system to a different project, edit only this file.
 
 ---
 
@@ -21,10 +21,12 @@
 | Variable | Value | Description |
 |----------|-------|-------------|
 | `SKILLS_DIR` | `.claude/skills` | Root directory for skill definitions |
+| `AGENT_SPECS_DIR` | `project/agent` | Agent-facing structured specifications in YAML (in `_references/`) |
 | `OUTPUT_DIR` | `_output` | Root directory for all generated artifacts |
 | `PLANS_DIR` | `${OUTPUT_DIR}/plans` | Plan output folder |
 | `SCRIPTS_DIR` | `${OUTPUT_DIR}/generated-scripts` | Script output folder |
 | `ADVISORY_DIR` | `${OUTPUT_DIR}/advisory-logs` | Advisory log output folder |
+| `PROPOSALS_DIR` | `${OUTPUT_DIR}/proposals` | Lightweight change proposals |
 | `INVENTORIES_DIR` | `${OUTPUT_DIR}/inventories` | Inventory output folder |
 | `USER_TESTS_DIR` | `${OUTPUT_DIR}/user-tests` | User test plan output folder |
 | `EXPLAINED_BEHAVIORS_DIR` | `${OUTPUT_DIR}/explained-behaviors` | Behavior explanation output folder |
@@ -49,12 +51,22 @@
 | `BRIEFS_INDEX_FILE` | `${OUTPUT_DIR}/briefs-index.md` | Lightweight briefs index (one-line summaries) |
 | `ARTIFACT_INDEX_FILE` | `${OUTPUT_DIR}/INDEX.md` | Single global artifact index (no per-folder INDEX.md files) |
 | `TESTS_TRACKER_FILE` | `${OUTPUT_DIR}/update-tests-tracker.md` | Test execution tracker for update-tests skill |
+| `CONSTITUTION_FILE` | `project/constitution.md` | Project constitution -- immutable principles (in `_references/`) |
 | `CONCEPTUAL_DESIGN_AS_IS` | `project/conceptual-design-as-is.md` | As-built conceptual design (in `_references/`) |
+| `CD_AS_IS_CHANGELOG` | `project/cd-as-is-changelog.md` | As-built conceptual design changelog (in `_references/`) |
 | `CONCEPTUAL_DESIGN_TO_BE` | `project/conceptual-design-to-be.md` | Target conceptual design (in `_references/`) |
 | `METACOMM_AS_IS` | `project/metacomm-as-is.md` | As-built metacommunication record (in `_references/`) |
 | `METACOMM_TO_BE` | `project/metacomm-to-be.md` | Target metacommunication record (in `_references/`) |
 | `UX_DESIGN_STANDARDS` | `project/ux-design-standards.md` | UX design standards (in `_references/`) |
 | `GRAPHIC_UI_DESIGN_STANDARDS` | `project/graphic-ui-design-standards.md` | Graphic/UI design standards (in `_references/`) |
+
+---
+
+## Review Configuration
+
+| Variable | Value | Description |
+|----------|-------|-------------|
+| `MINIMUM_REVIEW_DEPTH` | `{{MINIMUM_REVIEW_DEPTH}}` | Minimum review depth floor. Valid values: `light`, `standard`, `deep`. The automatic complexity gate and per-call flags can only raise the depth above this floor, never lower it. Depth ordering: light < standard < deep. Default: `light`. |
 
 ---
 
@@ -66,6 +78,8 @@
 |----------|-------|-------------|
 | `BACKEND_DIR` | `{{BACKEND_DIR}}` | Backend source root |
 | `FRONTEND_DIR` | `{{FRONTEND_DIR}}` | Frontend source root |
+| `BACKEND_FRAMEWORK` | `{{BACKEND_FRAMEWORK}}` | Backend framework identifier (e.g., `flask`, `fastapi`, `django`, `express`, `none`) |
+| `FRONTEND_FRAMEWORK` | `{{FRONTEND_FRAMEWORK}}` | Frontend framework identifier (e.g., `react`, `vue`, `angular`, `none`) |
 
 ---
 
@@ -76,6 +90,8 @@
 | `BACKEND_APP_DIR` | `${BACKEND_DIR}/app` | Backend application root |
 | `BACKEND_API_DIR` | `${BACKEND_APP_DIR}/api` | API blueprints/routes directory |
 | `BACKEND_SCHEMAS_DIR` | `${BACKEND_APP_DIR}/schemas` | Marshmallow/validation schemas |
+| `BACKEND_UTILS_DIR` | `${BACKEND_APP_DIR}/utils` | Backend utilities directory |
+| `BACKEND_CONSTANTS_FILE` | `validation_constants.py` | Backend validation constants filename (resolved under BACKEND_UTILS_DIR) |
 | `MIGRATIONS_DIR` | `${BACKEND_DIR}/migrations/versions` | Alembic migration files |
 | `TRANSLATIONS_DIR` | `${BACKEND_DIR}/translations` | Flask-Babel translation catalogs |
 
@@ -87,6 +103,8 @@
 |----------|-------|-------------|
 | `FRONTEND_SRC_DIR` | `${FRONTEND_DIR}/src` | Frontend source root |
 | `FRONTEND_API_DIR` | `${FRONTEND_SRC_DIR}/api` | API client/type definitions |
+| `FRONTEND_UTILS_DIR` | `${FRONTEND_SRC_DIR}/utils` | Frontend utilities directory |
+| `FRONTEND_CONSTANTS_FILE` | `constants.ts` | Frontend validation constants filename (resolved under FRONTEND_UTILS_DIR) |
 | `FRONTEND_I18N_DIR` | `${FRONTEND_SRC_DIR}/i18n/locales` | i18n locale JSON files |
 
 ---
@@ -114,8 +132,8 @@
 
 When using the foundational SEJA framework as a companion to an existing codebase, the recommended deployment pattern is:
 
-- The **foundational SEJA framework** is available somewhere (as a cloned repo or quickstart kit) -- it is the single source of truth for all skills, scripts, templates, and references
-- The ***ProjectName* workspace** is a standalone git repo containing `.claude/`, `_references/`, and `_output/` -- created from the foundational framework via `/quickstart --workspace` or `create_workspace.py`
+- The **foundational SEJA framework** is available somewhere (as a cloned repo) -- it is the single source of truth for all skills, scripts, templates, and references
+- The ***ProjectName* workspace** is a standalone git repo containing `.claude/`, `_references/`, and `_output/` -- created from the foundational framework via `/seed --workspace` or `create_workspace.py`
 - The ***ProjectName* codebase** is accessed via `claude --add-dir <codebase-path>` -- no framework files are added to it
 - `OUTPUT_DIR` points inside the workspace (version-controlled alongside framework config and design decisions)
 - `BACKEND_DIR` and `FRONTEND_DIR` point at the codebase via absolute paths

@@ -1,6 +1,6 @@
 # TEMPLATE - FRONTEND STANDARDS REFERENCE
 
-> **How to use this template:** Copy this file to `project/frontend-standards.md` and customize for your project. Replace `{{placeholders}}` with your project's actual values. Remove sections that don't apply to your stack. Add project/\*specific components, hooks, and patterns as they emerge.
+> **How to use this template:** Copy this file to `project/frontend-standards.md` and customize for your project. Replace `{{placeholders}}` with your project's actual values. Remove sections that don't apply to your stack. Add project-specific components, hooks, and patterns as they emerge.
 
 ---
 

@@ -6,7 +6,7 @@ Plan a feature, bug fix, or refactor, then execute it with quality checks.
 
 ## Prerequisites
 
-- SEJA framework installed and `/quickstart` / `$quickstart` completed
+- SEJA framework seeded and project configured via `/seed` + `/design` / `$seed` + `$design`
 - A clear idea of what you want to build or fix
 
 ## Steps
@@ -17,13 +17,13 @@ Plan a feature, bug fix, or refactor, then execute it with quality checks.
 
 2. **Generate a structured plan**
    ```
-   /make-plan <brief>   # Claude
-   $make-plan <brief>   # Codex
+   /plan <brief>   # Claude
+   $plan <brief>   # Codex
    ```
    For design-driven features where intent and framing matter, use:
    ```
-   /make-plan --framing metacomm <brief>   # Claude
-   $make-plan --framing metacomm <brief>   # Codex
+   /plan --framing metacomm <brief>   # Claude
+   $plan --framing metacomm <brief>   # Codex
    ```
 
 3. **Review the generated plan**
@@ -32,8 +32,8 @@ Plan a feature, bug fix, or refactor, then execute it with quality checks.
 
 4. **Execute the plan**
    ```
-   /execute-plan <plan-id>   # Claude
-   $execute-plan <plan-id>   # Codex
+   /implement <plan-id>   # Claude
+   $implement <plan-id>   # Codex
    ```
    The plan ID is shown in the plan file name (e.g., `plan-0042`).
    Execution automatically runs all quality checks at the end (validate,
@@ -43,9 +43,9 @@ Plan a feature, bug fix, or refactor, then execute it with quality checks.
 
 ## Tips
 
-- Always review the plan before running `/execute-plan` / `$execute-plan` -- especially while
+- Always review the plan before running `/implement` / `$implement` -- especially while
   learning, so you can catch issues before changes happen.
-- For larger features, use `/make-plan --roadmap` / `$make-plan --roadmap` to decompose into
+- For larger features, use `/plan --roadmap` / `$plan --roadmap` to decompose into
   dependency-aware implementation waves.
 - Keep briefs short and focused -- one feature per plan.
 

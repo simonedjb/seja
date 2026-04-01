@@ -1,7 +1,7 @@
 ---
 name: check
 description: "Run quality checks: validation, code review, smoke tests, preflight, or framework health."
-argument-hint: <validate | review | smoke | preflight | health | test-plan> [scope]
+argument-hint: "<validate | review | smoke | preflight | health | test-plan> [--depth <light|standard|deep>] [scope]"
 metadata:
   last-updated: 2026-03-29 00:15:00
   version: 1.0.0
@@ -22,29 +22,70 @@ metadata:
 **What it does**: Unified quality gate — runs validation scripts, code reviews, smoke tests, preflight checks, framework health diagnostics, or user test plan generation. One skill for all "is it OK?" questions.
 
 **Example**:
-> You: $check preflight
+> You: /check preflight
 > Agent: Runs all validation scripts and reviews staged changes in one pass. Reports a go/no-go verdict.
 
-> You: $check review staged
+> You: /check review staged
 > Agent: Reviews staged changes against security, accessibility, performance, and other quality perspectives.
 
-> You: $check smoke api
+> You: /check smoke api
 > Agent: Runs API smoke tests and reports which endpoints pass or fail.
 
-> You: $check test-plan Test the new task filtering feature
+> You: /check test-plan Test the new task filtering feature
 > Agent: Produces a structured test plan with scenarios, step-by-step instructions, expected results, and edge cases that testers should verify.
 
 **When to use**: Before committing, after making changes, or when you want to verify code quality, project health, framework integrity, or generate a manual test plan for recent changes.
 
+## Stack Filtering
+
+Validate and preflight modes use stack-based filtering to run only the check scripts relevant to the project's technology stack.
+
+**How it works:**
+
+1. Read `BACKEND_FRAMEWORK` and `FRONTEND_FRAMEWORK` from `_references/project/conventions.md` (use `project_config.py` to parse the values).
+2. Load `.claude/skills/scripts/check_plugin_registry.json` -- an array of plugin entries, each with a `stack.backend` and `stack.frontend` list.
+3. For each plugin entry, include it if:
+   - Its `stack.backend` list is empty (matches any backend) OR contains the project's `BACKEND_FRAMEWORK` value, **AND**
+   - Its `stack.frontend` list is empty (matches any frontend) OR contains the project's `FRONTEND_FRAMEWORK` value.
+4. Run only the matching scripts. Skip non-matching scripts silently.
+
+**Fallback (legacy projects):** If `conventions.md` has no `BACKEND_FRAMEWORK` or `FRONTEND_FRAMEWORK` variables, run all scripts and log this warning:
+
+> Warning: No stack framework variables found in conventions.md. Running all check scripts. Add BACKEND_FRAMEWORK and FRONTEND_FRAMEWORK to conventions.md to enable stack filtering.
+
+## Adding a Check Plugin
+
+To add a new check plugin to the system, follow these three steps:
+
+1. **Create the script.** Add a new `check_<name>.py` in `.claude/skills/scripts/`. Include a `CHECK_PLUGIN_MANIFEST` YAML block in the module docstring declaring the plugin's metadata:
+
+   ```python
+   """
+   Description of what this check does.
+
+   CHECK_PLUGIN_MANIFEST:
+     name: <human-readable name>
+     stack:
+       backend: [flask]   # or [any] for stack-agnostic
+       frontend: [react]  # or [any] for stack-agnostic
+     scope: <validate scope keyword, e.g. auth, i18n, constants>
+     critical: true       # true if failure should block preflight
+   """
+   ```
+
+2. **Register in the plugin registry.** Add a corresponding entry to `.claude/skills/scripts/check_plugin_registry.json` with `script`, `name`, `stack` (containing `backend` and `frontend` arrays), `scope`, and `critical` fields. These must match the values in the manifest.
+
+3. **Automatic pickup.** No further wiring is needed. The check skill orchestrator reads the plugin registry at runtime and includes new scripts automatically when running validate or preflight modes for projects whose stack matches the plugin's declared requirements.
+
 # Check
 
-If there are no arguments, use the ask the user directly tool to ask which mode to run (if ask the user directly is not available, present as a numbered text list), with these options:
-- "validate -- run project validation scripts"
-- "review -- structured code review against perspectives"
-- "smoke -- runtime smoke tests (API/UI)"
-- "preflight -- validate + review in one pass (pre-commit)"
-- "health -- framework self-diagnosis"
-- "test-plan -- generate manual test plan from recent plans"
+If there are no arguments, use the AskUserQuestion tool to ask which mode to run (if AskUserQuestion is not available, present as a numbered text list), with these options:
+- "1. validate -- run project validation scripts"
+- "2. review -- structured code review against perspectives"
+- "3. smoke -- runtime smoke tests (API/UI)"
+- "4. preflight -- validate + review in one pass (pre-commit)"
+- "5. health -- framework self-diagnosis"
+- "6. test-plan -- generate manual test plan from recent plans"
 
 ## Modes
 
@@ -62,11 +103,11 @@ If there are no arguments, use the ask the user directly tool to ask which mode 
 Output folder: `${CHECK_LOGS_DIR}` (see project/conventions.md)
 Filename pattern: `check-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 
-Reserve the next global ID by running `python .codex/skills/scripts/reserve_id.py --type check --title '<title>'`. Use the returned 6-digit ID.
+Reserve the next global ID by running `python .claude/skills/scripts/reserve_id.py --type check --title '<title>'`. Use the returned 6-digit ID.
 
 ## Skill-specific Instructions
 
-1. Run $pre-skill "check" $ARGUMENTS to add general instructions to the context window.
+1. Run /pre-skill "check" $ARGUMENTS to add general instructions to the context window.
 
 2. Parse the first argument to determine the mode. Remaining arguments are the scope.
 
@@ -74,28 +115,31 @@ Reserve the next global ID by running `python .codex/skills/scripts/reserve_id.p
 
 ### Mode: validate
 
-Scope options: `all` (default) | `i18n` | `auth` | `migrations` | `constants` | `po` | `coverage` | `tests`
+Scope options: `all` (default) | `i18n` | `auth` | `migrations` | `constants` | `po` | `coverage` | `tests` | `spec`
 
 > **Role boundary:** This skill is the *user-facing orchestrator*. The `standards-checker` agent is the *execution engine*.
 
 1. Determine the validation scope from the argument (default: `all`).
 
-2. Launch the appropriate agent(s):
+2. **Apply stack filtering** (see [Stack Filtering](#stack-filtering) above). Before launching any agent, resolve the set of applicable scripts from the plugin registry. Pass only the matching script list to the `standards-checker` agent. If the project has no stack variables (legacy fallback), pass all scripts and include the warning in the report output.
+
+3. Launch the appropriate agent(s):
    - For validation checks: launch the `standards-checker` agent with the scope
    - For `migrations`: launch both the `standards-checker` agent (for chain script) and the `migration-validator` agent (for deep file inspection and idempotency checks)
    - For `tests`: launch the `test-runner` agent with scope "all"
-   - For `all`: launch the `standards-checker` agent with "all"; then ask the user whether to also run tests
+   - For `spec`: run `python .claude/skills/scripts/check_spec_conformance.py` directly (no agent needed)
+   - For `all`: launch the `standards-checker` agent with "all"; also run `check_spec_conformance.py`; then ask the user whether to also run tests
 
-3. Save the report to the output file, including:
+4. Save the report to the output file, including:
    - *header*: `# Check <id> | CHORE<scope> | <current datetime> | Validation Report`
    - *scope*: what was validated
    - *summary table*: check name, status (PASS/FAIL/INFO), error count, warning count
    - *details*: for each failed check, list the specific issues
    - *overall status*: X/Y checks passed
 
-4. Present the summary to the user, highlighting any failures.
+5. Present the summary to the user, highlighting any failures.
 
-5. Run $post-skill <id>.
+6. Run /post-skill <id>.
 
 ---
 
@@ -109,9 +153,12 @@ Scope options: `staged` (default) | file path | directory path
    - If scope is a directory: the scope is all source files in that directory
    - If no scope: ask the user
 
-2. Launch the `code-reviewer` agent with the scope as input. The agent will:
+   **Review depth:**
+   If `--depth <light|standard|deep>` is provided, resolve the effective depth as `max(floor, flag)` where `floor` = `MINIMUM_REVIEW_DEPTH` from project/conventions.md (default: `light`). Pass the effective depth to the code-reviewer agent. If no `--depth` flag is provided, the code-reviewer evaluates all 16 perspectives (current behavior, equivalent to `deep`).
+
+2. Launch the `code-reviewer` agent with the scope and review depth as input. The agent will:
    - Read the code to review
-   - Evaluate against all 16 perspectives from `general/review-perspectives.md`
+   - Evaluate perspectives according to the review depth (all 16 if deep or unspecified; shortlisted if standard; status-only if light)
    - Return a structured report with findings
 
 3. Save the agent's report to the output file, including:
@@ -123,7 +170,7 @@ Scope options: `staged` (default) | file path | directory path
 
 4. Present the findings summary to the user, highlighting any HIGH severity issues.
 
-5. Run $post-skill <id>.
+5. Run /post-skill <id>.
 
 ---
 
@@ -138,16 +185,16 @@ Scope options: `all` (default) | `api` | `ui`
 2. Execute the appropriate script(s):
 
    **For `api` scope:**
-   Run `cd backend && python ../.codex/skills/scripts/smoke_test_api.py` via Bash. Capture full stdout output. This runs against an in-memory SQLite database using the Flask test client — no running servers required.
+   Run `cd backend && python ../.claude/skills/scripts/smoke_test_api.py` via Bash. Capture full stdout output. This runs against an in-memory SQLite database using the Flask test client — no running servers required.
 
    **For `ui` scope:**
-   First check if `e2e/smoke.spec.ts` exists. If not, inform the user: "UI smoke testing requires E2E infrastructure. Generate it via `$quickstart` with `e2e != none`, or create `e2e/smoke.spec.ts` manually."
+   First check if `e2e/smoke.spec.ts` exists. If not, inform the user: "UI smoke testing requires E2E infrastructure. Generate it via `/design` with `e2e != none`, or create `e2e/smoke.spec.ts` manually."
    If it exists, run `cd e2e && npx playwright test smoke.spec.ts` via Bash. Capture full stdout/stderr output. This requires both backend (port 5000) and frontend (port 3000) to be running.
 
    **For `all` scope:**
    Run API smoke test first (faster, independent). Then run UI smoke test if `e2e/smoke.spec.ts` exists.
 
-   > **Note:** The API smoke test is driven by `.codex/skills/scripts/smoke_test_registry.json`. To add or modify endpoints, edit the registry JSON. The generic engine lives in `smoke_test_core.py`.
+   > **Note:** The API smoke test is driven by `.claude/skills/scripts/smoke_test_registry.json`. To add or modify endpoints, edit the registry JSON. The generic engine lives in `smoke_test_core.py`.
 
 3. Parse the results:
    - **API results**: Extract the summary line (`PASS: N | WARN: N | FAIL: N`) and any FAIL details from stdout.
@@ -165,7 +212,7 @@ Scope options: `all` (default) | `api` | `ui`
 
 6. If failures are found, ask the user whether to investigate and fix, create a plan, or dismiss.
 
-7. Run $post-skill <id>.
+7. Run /post-skill <id>.
 
 ---
 
@@ -180,20 +227,22 @@ Combines validate + review into a single pre-merge checkpoint.
    - `all`: validate all + review all modified files (staged + unstaged)
    - A directory path: validate all + review files in that directory
 
-2. Launch both checks in parallel:
-   - **Validation**: launch the `standards-checker` agent with scope "all"
+2. **Apply stack filtering** (see [Stack Filtering](#stack-filtering) above). Resolve the set of applicable scripts from the plugin registry before launching validation. If the project has no stack variables (legacy fallback), pass all scripts and include the warning in the report output.
+
+3. Launch both checks in parallel:
+   - **Validation**: launch the `standards-checker` agent with scope "all" and the filtered script list
    - **Code review**: launch the `code-reviewer` agent with the determined review scope
 
-3. Collect results from both agents and save a combined report to the output file, including:
+4. Collect results from both agents and save a combined report to the output file, including:
    - *header*: `# Check <id> | CHORE<scope> | <current datetime> | Preflight Check`
    - *validation summary*: table of check name, status (PASS/FAIL/INFO), error count, warning count
    - *code review summary*: perspective evaluation table with Adopted/Deferred/N/A
    - *issues found*: merged list from both checks, prioritized by severity
    - *overall status*: READY / NOT READY (READY only if all validation checks pass and no HIGH severity code review issues)
 
-4. Present the overall status to the user with a clear go/no-go recommendation.
+5. Present the overall status to the user with a clear go/no-go recommendation.
 
-5. Run $post-skill <id>.
+6. Run /post-skill <id>.
 
 ---
 
@@ -204,7 +253,7 @@ Flags: `[--verbose]`
 1. Run the following checks and collect results:
 
    #### Check 1: Skill System Integrity
-   Run `python .codex/skills/scripts/check_skill_system.py`. Parse the output for errors and warnings. Report total skills found, errors, and warnings.
+   Run `python .claude/skills/scripts/check_skill_system.py`. Parse the output for errors and warnings. Report total skills found, errors, and warnings.
 
    #### Check 2: Orphaned Briefs
    Read `${BRIEFS_FILE}`. Scan for entries with status `STARTED` that have no matching `DONE` entry. Report the count and list each orphaned entry.
@@ -213,13 +262,16 @@ Flags: `[--verbose]`
    Read `${OUTPUT_DIR}/INDEX.md`. Identify plans with status `OPEN` whose creation date is more than 7 days ago. Report the count and list each stale plan.
 
    #### Check 4: Reference File Completeness
-   Scan all `.codex/skills/*/SKILL.md` files for `metadata.references` entries. For each referenced file, verify it exists in `_references/`. Report any missing references. Distinguish between `general/` references (should always exist) and `project/` references (may not exist in framework-only repos).
+   Scan all `.claude/skills/*/SKILL.md` files for `metadata.references` entries. For each referenced file, verify it exists in `_references/`. Report any missing references. Distinguish between `general/` references (should always exist) and `project/` references (may not exist in framework-only repos).
 
-   #### Check 5: .codex/.codex Sync Status
-   Compare the skill list in `.codex/skills/` with `.codex/skills/`. Report any skills that exist in one but not the other.
+   #### Check 5: .claude/.codex Sync Status
+   Compare the skill list in `.claude/skills/` with `.codex/skills/`. Report any skills that exist in one but not the other.
 
    #### Check 6: Conventions Completeness
-   Run `python .codex/skills/scripts/check_conventions.py`. Parse the output for errors (undefined variables) and warnings (unused definitions). Report PASS if no errors, WARN if only unused definitions exist, FAIL if any referenced variables are undefined.
+   Run `python .claude/skills/scripts/check_conventions.py`. Parse the output for errors (undefined variables) and warnings (unused definitions). Report PASS if no errors, WARN if only unused definitions exist, FAIL if any referenced variables are undefined.
+
+   #### Check 7: Constitution Presence
+   Check whether `_references/project/constitution.md` exists. If missing, report WARN status with message: "No project constitution found. Run `/design` to generate `project/constitution.md` with your project's immutable principles." If present, report PASS.
 
 2. Compile results into a health report:
 
@@ -232,7 +284,7 @@ Flags: `[--verbose]`
    | Orphaned Briefs | PASS/WARN | N orphaned entries |
    | Stale Plans | PASS/WARN | N stale plans (>7 days) |
    | Reference Completeness | PASS/WARN/FAIL | N missing references |
-   | .codex/.codex Sync | PASS/WARN | N out-of-sync skills |
+   | .claude/.codex Sync | PASS/WARN | N out-of-sync skills |
    | Conventions Completeness | PASS/WARN/FAIL | N errors, M warnings |
 
    Overall: X/6 checks passed
@@ -242,7 +294,7 @@ Flags: `[--verbose]`
 
 4. Present the summary to the user, highlighting any failures or warnings.
 
-5. Run $post-skill <id>.
+5. Run /post-skill <id>.
 
 ---
 
@@ -253,13 +305,13 @@ Scope: a brief describing what to test. If no brief is provided, ask the user.
 Output folder: `${USER_TESTS_DIR}` (see project/conventions.md)
 Filename pattern: `usertest-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 
-Reserve the next global ID by running `python .codex/skills/scripts/reserve_id.py --type usertest --title '<title>'`. Use the returned 6-digit ID.
+Reserve the next global ID by running `python .claude/skills/scripts/reserve_id.py --type usertest --title '<title>'`. Use the returned 6-digit ID.
 
 As input to apply this mode, use only these folders (see project/conventions.md for paths):
 - `${PLANS_DIR}`: these contain the generated plans (use `${OUTPUT_DIR}/INDEX.md` to identify relevant plans instead of scanning the directory)
 - `${USER_TESTS_DIR}`: these contain the generated user test plans
 
-1. Read `${OUTPUT_DIR}/INDEX.md` (the global artifact index). If it does not exist, run `python .codex/skills/scripts/generate_macro_index.py` to generate it. Filter for recently executed plans (status DONE) relevant to the brief. Read only the full plan files for the relevant IDs identified from the index.
+1. Read `${OUTPUT_DIR}/INDEX.md` (the global artifact index). If it does not exist, run `python .claude/skills/scripts/generate_macro_index.py` to generate it. Filter for recently executed plans (status DONE) relevant to the brief. Read only the full plan files for the relevant IDs identified from the index.
 
 2. Include the previously unchecked items from the user test plans folder in the analysis, if still applicable (i.e., not superseded by the latest changes) in the new report, so they don't get lost.
 
@@ -270,4 +322,4 @@ As input to apply this mode, use only these folders (see project/conventions.md 
    - *user brief*, *agent interpretation*, *files* -- per _references/general/report-conventions.md
    - *to do*: A brief enumeration of the plan steps
 
-5. Run $post-skill <id>.
+5. Run /post-skill <id>.

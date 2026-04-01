@@ -1,4 +1,4 @@
 interface:
   display_name: "Make Plan"
   short_description: "Make a plan to add a feature, fix a bug, or refactor code"
-  default_prompt: "Use $make-plan to make a plan to add a feature, fix a bug, or refactor code."
+  default_prompt: "Use $plan to make a plan to add a feature, fix a bug, or refactor code."

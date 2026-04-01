@@ -41,14 +41,14 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-from project_config import REPO_ROOT, get, get_path
+from project_config import REPO_ROOT, get, get_path  # get used for PROJECT_NAME
 
 ANSI_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]|\x1b\].*?\x07|\x1b\[[\d;]*m")
 
-_BACKEND_DIR = get("BACKEND_DIR", "backend")
-_FRONTEND_DIR = get("FRONTEND_DIR", "frontend")
-_E2E_DIR = get("E2E_DIR", "e2e")
-_OUTPUT_DIR = get_path("OUTPUT_DIR") or (REPO_ROOT / "_output")
+_BACKEND_DIR = get_path("BACKEND_DIR", "backend") or REPO_ROOT / "backend"
+_FRONTEND_DIR = get_path("FRONTEND_DIR", "frontend") or REPO_ROOT / "frontend"
+_E2E_DIR = get_path("E2E_DIR", "e2e") or REPO_ROOT / "e2e"
+_OUTPUT_DIR = get_path("OUTPUT_DIR", "_output") or REPO_ROOT / "_output"
 _PROJECT_NAME = get("PROJECT_NAME", "project")
 
 
@@ -169,7 +169,7 @@ def main() -> None:
         results["backend"] = run_suite(
             label="Backend tests (pytest)",
             cmd=[venv_python, "-m", "pytest", "-v", "--tb=short", "--no-header"],
-            cwd=REPO_ROOT / _BACKEND_DIR,
+            cwd=_BACKEND_DIR,
             out_path=out_dir / f"backend-tests-{ts}.txt",
         )
 
@@ -178,7 +178,7 @@ def main() -> None:
         results["frontend"] = run_suite(
             label="Frontend tests (vitest)",
             cmd=[npx, "vitest", "run", "--reporter=verbose"],
-            cwd=REPO_ROOT / _FRONTEND_DIR,
+            cwd=_FRONTEND_DIR,
             out_path=out_dir / f"frontend-tests-{ts}.txt",
         )
 
@@ -187,7 +187,7 @@ def main() -> None:
         results["e2e"] = run_suite(
             label="E2E tests (Playwright)",
             cmd=[npx, "playwright", "test", "--reporter=list"],
-            cwd=REPO_ROOT / _E2E_DIR,
+            cwd=_E2E_DIR,
             out_path=out_dir / f"e2e-tests-{ts}.txt",
         )
 

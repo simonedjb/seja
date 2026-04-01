@@ -12,7 +12,7 @@ A shared framework with role-based onboarding, documented architecture, spec-dri
 
 - Claude Code or Codex CLI installed for team members
 - Access to the existing *ProjectName* codebase (git repository)
-- The foundational SEJA framework available (quickstart kit or repo)
+- The foundational SEJA framework available (cloned repo or downloaded ZIP)
 - For teams, the [workspace setup](../recipes/recipe-workspace-setup.md) pattern is recommended so each developer has an independent *ProjectName* workspace
 
 ## Step-by-step walkthrough
@@ -25,7 +25,7 @@ Expected output: architecture and data model explanations in `_output/`.
 
 ### Step 2: Bootstrap with the workspace pattern
 
-For teams, the recommended setup is the workspace pattern: each developer gets their own *ProjectName* workspace (initialized as a git repo) containing the framework files and `_output/`. Run `/quickstart --workspace` / `$quickstart --workspace` from the foundational SEJA framework to create each workspace automatically. This gives each developer version-controlled design history (plans, advisories, briefs) independent of the shared *ProjectName* codebase, which is accessed via `--add-dir`. See the [workspace setup recipe](../recipes/recipe-workspace-setup.md) for details. One person sets up the conventions first, then the team shares `project/conventions.md`.
+For teams, the recommended setup is the workspace pattern: each developer gets their own *ProjectName* workspace (initialized as a git repo) containing the framework files and `_output/`. Run `/seed --workspace` / `$seed --workspace` from the foundational SEJA framework to create each workspace automatically. This gives each developer version-controlled design history (plans, advisories, briefs) independent of the shared *ProjectName* codebase, which is accessed via `--add-dir`. See the [workspace setup recipe](../recipes/recipe-workspace-setup.md) for details. One person sets up the conventions first, then the team shares `project/conventions.md`.
 
 ### Step 3: Onboard team members by role
 
@@ -45,7 +45,7 @@ Use `/check review` / `$check review` for structured code reviews against 16 eng
 
 ### Step 6: Plan evolution
 
-Use `/advise` / `$advise` for migration strategies. Use `/make-plan --roadmap` / `$make-plan --roadmap` to decompose the gap between as-is and to-be into dependency-aware execution waves. Assign plans to team members and execute in parallel where possible.
+Use `/advise` / `$advise` for migration strategies. Use `/plan --roadmap` / `$plan --roadmap` to decompose the gap between as-is and to-be into dependency-aware execution waves. Assign plans to team members and execute in parallel where possible.
 
 ## What to do next
 

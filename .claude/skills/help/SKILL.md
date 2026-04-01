@@ -35,13 +35,13 @@ When invoked without arguments (`/help`), display a curated overview of all user
 
 **Categories and skills:**
 
-- **Getting started** — `/quickstart`, `/help`
-- **Design & plan** — `/advise`, `/make-plan`, `/execute-plan`
+- **Getting started** — `/seed`, `/design`, `/upgrade`, `/help`
+- **Design & plan** — `/advise`, `/plan`, `/implement`
 - **Understand the system** — `/explain`
 - **Quality & review** — `/check`
 - **Communicate** — `/communication`, `/onboarding`
 - **Code & tests** — `/generate-script`, `/update-tests`
-- **Housekeeping** — `/qa-log`, `/execute-plan`
+- **Housekeeping** — `/qa-log`
 
 For each category, show the skill names and a one-sentence summary. After displaying the overview, ask: "Want details on a specific skill? Just say its name."
 
@@ -87,3 +87,15 @@ When invoked with `--browse` (`/help --browse`), or when the user says "pick pro
 4. Otherwise, show ONE question with the category options (with a count of skills in each). Then show the skills in the chosen category with their descriptions.
 
 5. After the user picks a specific skill, ask what arguments to pass (if the skill has an `argument-hint`), then execute the corresponding skill command.
+
+6. **Skill Relationships** -- After showing categories (step 4) and before the user picks a skill, include a "Skill Relationships" section. Display the contents of `_output/skill-map.mmd` inside a Mermaid code block so the user can visualize how skills connect. If the file does not exist, skip this section silently.
+
+   Format:
+
+   **Skill Relationships**
+
+   ```mermaid
+   <contents of _output/skill-map.mmd>
+   ```
+
+   > To regenerate: `python .claude/skills/scripts/generate_skill_map.py`

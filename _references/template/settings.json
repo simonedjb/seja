@@ -1,5 +1,6 @@
 {
   "_comment": "Template settings.json for new projects. Copy to .claude/settings.json and customize paths.",
+  "_hooks_comment": "To enable pre-commit validation hooks: bash .githooks/install.sh",
   "permissions": {
     "allow": [
       "Read(//PROJECT_ROOT/**)",

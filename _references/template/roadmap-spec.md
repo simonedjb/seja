@@ -1,7 +1,7 @@
 <!-- Roadmap Spec v1 — Generated {datetime} -->
 <!-- Fill in your choices below. Delete sections that don't apply. -->
-<!-- After filling, run /make-plan --roadmap --from-spec <this-file> to generate plans. -->
-<!-- Independent items can then be executed in parallel via the execute-plan skill. -->
+<!-- After filling, run /plan --roadmap --from-spec <this-file> to generate plans. -->
+<!-- Independent items can then be executed in parallel via the implement skill. -->
 
 ## Product Vision
 <!-- 1-3 sentences: where is the product heading? What user problem are you solving next? -->
@@ -27,9 +27,9 @@
      - size: S (< 5 files) | M (5-15 files) | L (15+ files)
      - depends_on: list of item ids this depends on, or "none"
      - type: optional override for automatic classification.
-             "technical" -> planned via the make-plan skill (implementation-first)
+             "technical" -> planned via the plan skill (implementation-first)
              "design" -> planned via the metacomm skill (metacommunication framing, UX-first)
-             If omitted, the make-plan --roadmap mode classifies automatically based on whether
+             If omitted, the plan --roadmap mode classifies automatically based on whether
              the item's primary concern is user-facing (design) or internal (technical).
      - description: 2-5 sentences of what needs to happen
 -->
@@ -79,7 +79,7 @@
      - Wave 3: analytics-dashboard (depends on notification-system)
 
      For parallel execution, use one of:
-     - Multiple agent terminal sessions, each running the execute-plan skill on a different plan
+     - Multiple agent terminal sessions, each running the implement skill on a different plan
      - Worktree-isolated agents from a single session (safest, auto-branches)
 -->
 

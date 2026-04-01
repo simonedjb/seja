@@ -94,8 +94,8 @@ Filename pattern: `advisory-<id>-<truncated short title slug>.md` (6-digit zero-
 9. Present the recommendations summary and ask the user (text-based, not ask the user directly -- this is a mixed open-ended/closed-set decision point where freeform response is preferred):
    - "Do you have follow-up questions or want to explore a different angle?"
    - "Would you like to proceed with any of these recommendations?"
-      - **Yes, execute now**: run $make-plan and then $execute-plan. When spawning a plan via `$make-plan`, pass the current advisory ID so the plan can record `source: advisory-<id>`.
-      - **Yes, but plan only**: run $make-plan (plan without executing). When spawning a plan via `$make-plan`, pass the current advisory ID so the plan can record `source: advisory-<id>`.
+      - **Yes, execute now**: run $plan and then $implement. When spawning a plan via `$plan`, pass the current advisory ID so the plan can record `source: advisory-<id>`.
+      - **Yes, but plan only**: run $plan (plan without executing). When spawning a plan via `$plan`, pass the current advisory ID so the plan can record `source: advisory-<id>`.
 
 10. If the user has follow-up questions, continue the Q&A conversation:
     - Answer each follow-up with clear, actionable recommendations.

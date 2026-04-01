@@ -16,14 +16,14 @@ The SEJA repository contains **145 project-independent framework files**:
 
 | Category | Count | What it means |
 |----------|-------|---------------|
-| Skill definitions | 14 | The actual reusable workflows in `.codex/skills/<name>/SKILL.md` |
-| User-facing skills | 12 | The skills you will normally invoke yourself; `$pre-skill` and `$post-skill` are internal lifecycle hooks |
+| Skill definitions | 16 | The actual reusable workflows in `.codex/skills/<name>/SKILL.md` |
+| User-facing skills | 14 | The skills you will normally invoke yourself; `$pre-skill` and `$post-skill` are internal lifecycle hooks |
 | Skill UI metadata | 14 | `agents/openai.yaml` files that help Codex hosts present each skill cleanly |
 | General references | 12 | Shared standards, constraints, report conventions, onboarding indexes, communication references, and framework-wide guidance |
 | Review perspective files | 16 | Individual engineering and design review lenses |
 | Onboarding profile files | 8 | Role-family and level profiles used by `$onboarding` |
 | Communication profile files | 5 | Audience-specific communication references |
-| Templates | 31 | Reusable `template/*.md` and `template/*.json` files used during `$quickstart` |
+| Templates | 31 | Reusable `template/*.md` and `template/*.json` files used during `$design` |
 | Agent definitions | 5 | Specialized delegated agents such as `code-reviewer` and `test-runner` |
 | Rule definitions | 7 | Path-scoped coding guidance used automatically by Codex |
 | Scripts | 29 | Validation, indexing, packaging, migration, and support scripts |
@@ -36,8 +36,8 @@ If you encounter an older screenshot, note, or workshop artifact, the command na
 | Older pattern | Current pattern | Why it matters |
 |---------------|-----------------|----------------|
 | `$validate`, `$review-code`, `$smoke-test`, `$preflight`, `$plan-user-test` | `$check validate`, `$check review`, `$check smoke`, `$check preflight`, `$check test-plan` | Most quality-related workflows now live under one skill |
-| `$metacomm` | `$make-plan --framing metacomm` | Design-intent planning is now part of planning, not a separate skill |
-| `$roadmap` | `$make-plan --roadmap` | Roadmap generation was folded into planning |
+| `$metacomm` | `$plan --framing metacomm` | Design-intent planning is now part of planning, not a separate skill |
+| `$roadmap` | `$plan --roadmap` | Roadmap generation was folded into planning |
 | `$inventory` | `$advise --inventory` | Inventory is now a mode of advisory work |
 
 For a first-time designer, this is good news: there are fewer names to memorize.
@@ -45,12 +45,12 @@ For a first-time designer, this is good news: there are fewer names to memorize.
 ### 0.3 Your First 15 Minutes
 
 1. Create a new repository and initialize git.
-2. Copy the framework files (`.codex/` and `_references/`) from the SEJA repository into the repository root.
+2. Run `$seed <target>` to copy the framework files (`.codex/` and `_references/`) from the SEJA repository into the repository root.
 3. Start Codex from that root folder.
-4. Run `$quickstart .`.
+4. Run `$design` to configure project-specific files.
 5. Answer the questions in product language, not implementation jargon.
-6. When quickstart finishes, choose "Review specs now" to walk through each generated file -- treat them like a design brief.
-7. Then choose "Generate roadmap" to create a development roadmap from your specs, or use `$make-plan` for your first feature.
+6. When design finishes, choose "Review specs now" to walk through each generated file -- treat them like a design brief.
+7. Then choose "Generate roadmap" to create a development roadmap from your specs, or use `$plan` for your first feature.
 
 That sequence gives Codex enough project context while keeping you focused on product intent.
 
@@ -77,14 +77,14 @@ That is enough to start a planning conversation.
 
 ## Part 2 - The Project Structure You Will Work With
 
-After unzipping the kit and running `$quickstart`, the project normally looks like this:
+After unzipping the kit and running `$seed` followed by `$design`, the project normally looks like this:
 
 ```text
 your-project/
 |-- AGENTS.md
 |-- _references/
 |   |-- general/            (universal conventions, perspectives, onboarding)
-|   |-- template/           (templates instantiated by $quickstart)
+|   |-- template/           (templates instantiated by $design)
 |   `-- project/            (project-specific standards, generated per-project)
 |-- .codex/
 |   |-- README.md
@@ -101,7 +101,7 @@ Here is the practical meaning of each layer:
 | Layer | Why you should care |
 |-------|---------------------|
 | `AGENTS.md` | The top-level operating guide Codex reads first |
-| `_references/project/*.md` | The project-specific knowledge base created by quickstart |
+| `_references/project/*.md` | The project-specific knowledge base created by `$design` |
 | `.codex/skills/` | Reusable workflows you can invoke with `$...` |
 | `.codex/rules/` | Automatic guidance applied when Codex edits matching files |
 | `.codex/agents/` | Specialized delegated agents used by some workflows |
@@ -115,25 +115,25 @@ The important beginner insight is this: after setup, you will spend much more ti
 
 ### 3.1 Copy the Framework Files
 
-From a new repository root, copy `.codex/` and `_references/` from the SEJA repository so they land directly in the project root.
+Run `$seed <target>` to copy `.codex/` and `_references/` from the SEJA repository so they land directly in the project root.
 
 ### 3.2 Start Codex From the Project Root
 
 Codex should be launched from the same folder that contains `AGENTS.md` and `.codex/`. That ensures it sees the project guidance immediately.
 
-### 3.3 Run Quickstart
+### 3.3 Run Design
 
 Use:
 
 ```text
-$quickstart .
+$design
 ```
 
 If this is your first AI-assisted project, choose the **interactive** path. It is slower for a few minutes, but it produces much better project guidance.
 
-### 3.4 What Quickstart Will Produce
+### 3.4 What Design Will Produce
 
-Quickstart turns the portable kit into a project-specific workspace. It will typically:
+Design turns the portable kit into a project-specific workspace. It will typically:
 
 - generate `AGENTS.md`
 - create `_references/project/*.md` files from templates
@@ -165,15 +165,15 @@ The first answer gives Codex product intent. The second is only a tool choice.
 
 ## Part 4 - The Skills You Will Actually Use
 
-The current Codex toolkit has **12 user-facing skills**, but as a new designer you can start with a much smaller working set.
+The current Codex toolkit has **14 user-facing skills**, but as a new designer you can start with a much smaller working set.
 
 ### 4.1 Best First Skills
 
 | Skill | Use it when |
 |-------|-------------|
 | `$help` | You do not know which workflow to use |
-| `$quickstart` | You are setting up or packaging a project |
-| `$make-plan` | You want a plan before implementation |
+| `$seed` / `$design` | You are setting up or configuring a project |
+| `$plan` | You want a plan before implementation |
 | `$explain` | You want the system or code explained in plain language |
 | `$check` | You want to validate, review, smoke-test, or preflight |
 | `$communication` | You need material for clients, evaluators, end users, or academics |
@@ -184,14 +184,16 @@ The current Codex toolkit has **12 user-facing skills**, but as a new designer y
 - `$advise`
 - `$check`
 - `$communication`
-- `$execute-plan`
+- `$implement`
 - `$explain`
 - `$generate-script`
 - `$help`
-- `$make-plan`
+- `$plan`
 - `$onboarding`
 - `$qa-log`
-- `$quickstart`
+- `$seed`
+- `$design`
+- `$upgrade`
 - `$update-tests`
 
 ### 4.3 The Easiest Way To Remember Them
@@ -199,10 +201,10 @@ The current Codex toolkit has **12 user-facing skills**, but as a new designer y
 Think in clusters:
 
 - **Understand**: `$help`, `$explain`, `$advise`
-- **Plan and build**: `$make-plan`, `$execute-plan`
+- **Plan and build**: `$plan`, `$implement`
 - **Check quality**: `$check`, `$update-tests`
 - **Support the team**: `$communication`, `$onboarding`, `$qa-log`
-- **Set up the framework**: `$quickstart`
+- **Set up the framework**: `$seed`, `$design`, `$upgrade`
 
 ---
 
@@ -213,7 +215,7 @@ Think in clusters:
 This is the safest and most educational default:
 
 ```text
-$make-plan Add a first-run onboarding flow that helps a new user create their first project without reading documentation.
+$plan Add a first-run onboarding flow that helps a new user create their first project without reading documentation.
 ```
 
 Codex will inspect the project, write a plan, and give you something concrete to review before code changes begin.
@@ -223,7 +225,7 @@ Codex will inspect the project, write a plan, and give you something concrete to
 When the brief is primarily about what the interface should communicate, use metacomm framing:
 
 ```text
-$make-plan --framing metacomm When a user opens the dashboard, I want the most important next step to feel obvious and reassuring.
+$plan --framing metacomm When a user opens the dashboard, I want the most important next step to feel obvious and reassuring.
 ```
 
 This is especially useful for product designers because it starts from communicative intent instead of implementation detail. Your metacommunication message is recorded **verbatim** -- the framework preserves your exact wording because precise phrasing carries design intent that paraphrasing would distort.
@@ -253,10 +255,10 @@ Use the advisory mode for trade-offs. Use the inventory mode when you need a map
 For a modest change that is already well scoped:
 
 ```text
-$make-plan Add a clearer empty state to the dashboard when a user has no projects yet.
+$plan Add a clearer empty state to the dashboard when a user has no projects yet.
 ```
 
-Then review the plan and run `$execute-plan <id>`.
+Then review the plan and run `$implement <id>`.
 
 ---
 
@@ -286,7 +288,7 @@ $check test-plan Test the new first-run onboarding flow.
 
 ### 6.3 The Recommended Designer Routine
 
-1. Use `$make-plan` for the change.
+1. Use `$plan` for the change.
 2. Let Codex implement or help implement it.
 3. Run `$check validate`.
 4. Run `$check review staged`.
@@ -362,7 +364,7 @@ Codex is powerful, but you still need to review plans, diffs, and quality checks
 
 ### Pitfall 2: Executing Without Reviewing the Plan
 
-When you are still learning the codebase or the framework, always review the plan before running `$execute-plan`.
+When you are still learning the codebase or the framework, always review the plan before running `$implement`.
 
 ### Pitfall 3: Using Old Command Names
 
@@ -383,25 +385,26 @@ You do not. Plain-language product intent is often the highest-value input a des
 ### Start a New Project
 
 ```text
-$quickstart .
+$seed <target>
+$design
 ```
 
 ### Plan A Feature
 
 ```text
-$make-plan Add a better first-run dashboard state for new users.
+$plan Add a better first-run dashboard state for new users.
 ```
 
 ### Plan From Design Intent
 
 ```text
-$make-plan --framing metacomm When a user lands here, the next step should feel obvious and low-stress.
+$plan --framing metacomm When a user lands here, the next step should feel obvious and low-stress.
 ```
 
 ### Execute A Saved Plan
 
 ```text
-$execute-plan <plan-id>
+$implement <plan-id>
 ```
 
 ### Ask For Advice
@@ -462,8 +465,8 @@ $help --browse
 
 If you are a product designer using AI-assisted development for the first time, keep your first week simple:
 
-1. Set up one project with `$quickstart`.
-2. Always review the plan before running `$execute-plan`.
+1. Set up one project with `$seed` and `$design`.
+2. Always review the plan before running `$implement`.
 3. Ask for explanations whenever the code or terminology feels opaque.
 4. Use `$check` as your safety net before trusting a change.
 5. Keep describing the product in user-centered language.

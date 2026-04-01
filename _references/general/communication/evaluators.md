@@ -36,7 +36,7 @@
 
 | Content Type | Title | Notes |
 |-------------|-------|-------|
-| Tutorial | "Try the framework in 30 min" | Hands-on walkthrough: clone, quickstart, first skill invocation |
+| Tutorial | "Try the framework in 30 min" | Hands-on walkthrough: clone, seed, design, first skill invocation |
 | Explanation | Architecture overview | Why the framework is structured this way, design decisions |
 | How-to | Adoption guide | Step-by-step: from evaluation to team rollout |
 | Reference | Skills catalog | Complete list of skills with purpose, inputs, outputs |

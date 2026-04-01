@@ -77,7 +77,7 @@ Helper scripts in `.codex/skills/scripts/`:
 
 ## Skills, Agents, and References
 
-This project uses Codex skills (`.codex/skills/`) and reference files (`_references`). Skills can be invoked explicitly via `$skill-name` or triggered automatically from the request. Key skills: `$make-plan`, `$execute-plan`, `$advise`, `$check review`, and `$check validate`.
+This project uses Codex skills (`.codex/skills/`) and reference files (`_references`). Skills can be invoked explicitly via `$skill-name` or triggered automatically from the request. Key skills: `$plan`, `$implement`, `$advise`, `$check review`, and `$check validate`.
 
 @_references/project/conventions.md
 @_references/general/constraints.md

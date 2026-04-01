@@ -17,9 +17,9 @@ A well-structured project with conventions, architecture decisions documented, t
 
 ## Step-by-step walkthrough
 
-### Step 1: Bootstrap with spec-based quickstart
+### Step 1: Bootstrap with seed + design
 
-If you already know your stack, generate a blank spec with `/quickstart --generate-spec` / `$quickstart --generate-spec`, fill it in offline, then run `/quickstart .` / `$quickstart .` and select "From spec file". This is faster than the interactive questionnaire.
+Run `/seed .` / `$seed .` to copy the framework, then run `/design` / `$design` to configure your project. If you already know your stack, you can provide a pre-filled spec file to `/design` for faster, non-interactive setup.
 
 Expected output: all `project/*.md` files generated.
 
@@ -38,7 +38,7 @@ Expected output: an advisory report in `_output/advisory-logs/`.
 
 ### Step 3: Plan and execute features
 
-Use `/make-plan` / `$make-plan` for features, then review the plan and run `/execute-plan <id>` / `$execute-plan <id>` to apply the changes.
+Use `/plan` / `$plan` for features, then review the plan and run `/implement <id>` / `$implement <id>` to apply the changes.
 
 Expected output: plan files and committed code.
 
@@ -50,7 +50,7 @@ Expected output: test files with good coverage.
 
 ### Step 5: Run quality gates
 
-Quality checks (validation, review, tests) run automatically at the end of `/execute-plan` / `$execute-plan`. For standalone checks before a commit, use `/check preflight` / `$check preflight`. For deeper review, use `/check review` / `$check review` which evaluates against all 16 engineering and design perspectives.
+Quality checks (validation, review, tests) run automatically at the end of `/implement` / `$implement`. For standalone checks before a commit, use `/check preflight` / `$check preflight`. For deeper review, use `/check review` / `$check review` which evaluates against all 16 engineering and design perspectives.
 
 Expected output: clean quality report.
 

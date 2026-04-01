@@ -1,87 +1,139 @@
 # GENERAL - CI/CD INTEGRATION
 
 > Guide for integrating SEJA framework skills and scripts into CI/CD pipelines.
-> Last revised: 2026-03-28
+> Last revised: 2026-03-30
 
 ---
 
 ## Overview
 
-The SEJA framework includes both interactive skills (requiring Claude Code) and standalone scripts (runnable without Claude Code). This guide covers how to integrate both into automated pipelines.
+The SEJA framework provides a **three-layer enforcement model** for validation:
+
+| Layer | Mechanism | Speed | Blocking? | Install |
+|-------|-----------|-------|-----------|---------|
+| **Git hooks** | `.githooks/pre-commit` runs `run_preflight_fast.py` | <10s | Hard block (bypass: `--no-verify`) | `bash .githooks/install.sh` |
+| **Post-skill gate** | Step 6b in post-skill runs same fast checks | <10s | Advisory (user can override) | Automatic (built into workflow) |
+| **CI pipeline** | `.github/workflows/seja-validate.yml` | <30s fast / full on PR | Hard block on merge | Push workflow file to repo |
+
+All three layers share a single entry point: `run_preflight_fast.py`.
 
 ---
 
-## Standalone Script Checks (No Claude Code Required)
+## Fast Preflight Entry Point
 
-These scripts produce clear pass/fail exit codes and can run directly in any CI environment with Python 3.9+:
+The `run_preflight_fast.py` script is the single entry point for all fast validation gates:
+
+```bash
+# Basic (hooks, post-skill)
+python .claude/skills/scripts/run_preflight_fast.py
+
+# Extended (CI -- includes unit tests)
+python .claude/skills/scripts/run_preflight_fast.py --ci
+
+# Verbose output
+python .claude/skills/scripts/run_preflight_fast.py --verbose
+```
+
+**Checks included:**
+- `check_conventions.py` -- validates `${VAR}` references match definitions
+- `check_skill_system.py` -- validates skill system integrity (frontmatter, metadata)
+- `check_secrets.py` -- scans for accidentally committed secrets
+- `check_spec_conformance.py` -- validates against `spec-checks.yaml` (if present)
+- `pytest` (with `--ci` flag) -- runs framework unit tests
+
+Exit code: 0 = all pass, 1 = any failure.
+
+---
+
+## Layer 1: Git Hooks (Local)
+
+Install pre-commit hooks with one command:
+
+```bash
+bash .githooks/install.sh
+```
+
+This sets `core.hooksPath` to `.githooks/`, enabling the pre-commit hook that runs `run_preflight_fast.py` before every commit. To uninstall:
+
+```bash
+git config --unset core.hooksPath
+```
+
+To bypass for a single commit (use sparingly):
+
+```bash
+git commit --no-verify -m "message"
+```
+
+---
+
+## Layer 2: Post-Skill Gate (Workflow)
+
+Step 6b in `/post-skill` automatically runs `run_preflight_fast.py` before committing skill outputs. This is advisory -- the user can override if the checks fail. This catches issues that the agent introduced during skill execution.
+
+No setup required -- built into the skill workflow.
+
+---
+
+## Layer 3: CI Pipeline (Remote)
+
+### GitHub Actions
+
+The provided workflow at `.github/workflows/seja-validate.yml` runs two jobs:
+
+1. **Fast gate** (every push): `run_preflight_fast.py --ci`
+2. **Full validation** (PRs to main only): `claude -p "/check validate all"` (requires `ANTHROPIC_API_KEY` secret)
+
+To use, ensure the workflow file is committed and add `ANTHROPIC_API_KEY` to your repo's GitHub Actions secrets (only needed for the full validation job).
+
+### GitLab CI
+
+```yaml
+seja-fast-gate:
+  stage: test
+  script:
+    - python .claude/skills/scripts/run_preflight_fast.py --ci
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+
+seja-full-validation:
+  stage: test
+  script:
+    - claude -p "/check validate all"
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+  allow_failure: true
+```
+
+### Other CI Systems
+
+Any CI system that can run Python 3.9+ can use the fast gate:
+
+```bash
+python .claude/skills/scripts/run_preflight_fast.py --ci
+```
+
+For full validation (requires Claude Code CLI):
+
+```bash
+claude -p "/check validate all"
+```
+
+---
+
+## Standalone Script Checks
+
+These scripts can also be run individually. All produce clear pass/fail exit codes:
 
 | Script | Purpose | Exit Code |
 |--------|---------|-----------|
-| `python .claude/skills/scripts/check_conventions.py` | Validates that all `${VAR}` references in skills have matching definitions in project/conventions.md | 0 = pass, 1 = missing vars |
-| `python .claude/skills/scripts/check_skill_system.py` | Validates skill system integrity (frontmatter, Quick Guides, metadata) | 0 = pass, 1 = errors |
-| `python -m pytest .claude/skills/scripts/tests/ -v` | Runs framework script unit tests | 0 = pass, 1 = failures |
-| `python .claude/skills/scripts/check_secrets.py <dir>` | Scans for accidentally committed secrets (.env files, API keys) | 0 = clean, 1 = secrets found |
+| `check_conventions.py` | Validates `${VAR}` references match definitions | 0 = pass, 1 = errors |
+| `check_skill_system.py` | Validates skill system integrity | 0 = pass, 1 = errors |
+| `check_secrets.py [--all]` | Scans for committed secrets | 0 = clean, 1 = found |
+| `check_spec_conformance.py` | Validates against spec-checks.yaml | 0 = pass, 1 = errors |
+| `check_conventions.py --verbose` | Verbose output | Same |
 
-### Recommended CI Stage
-
-Run these as a **pre-merge check** on every PR. They are fast (<10s total) and require no external services.
-
----
-
-## Claude Code Skill Invocations (Requires Claude Code CLI)
-
-These use `claude -p` (non-interactive/pipe mode) to invoke skills:
-
-### Pre-merge Checks
-
-```yaml
-# GitHub Actions example
-- name: SEJA Preflight
-  run: claude -p "/check preflight staged"
-```
-
-### Nightly Validation
-
-```yaml
-# GitHub Actions scheduled workflow
-on:
-  schedule:
-    - cron: '0 2 * * *'  # 2 AM UTC daily
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: SEJA Health Check
-        run: claude -p "/check health"
-      - name: SEJA Validation
-        run: claude -p "/check validate all"
-```
-
-### Post-merge Index Regeneration
-
-```yaml
-# After merge to main
-- name: Regenerate indexes
-  run: |
-    python .claude/skills/scripts/generate_briefs_index.py
-    python .claude/skills/scripts/generate_macro_index.py
-```
-
----
-
-## GitLab CI Example
-
-```yaml
-seja-checks:
-  stage: test
-  script:
-    - python .claude/skills/scripts/check_conventions.py
-    - python .claude/skills/scripts/check_skill_system.py
-    - python -m pytest .claude/skills/scripts/tests/ -v
-  rules:
-    - if: $CI_MERGE_REQUEST_ID
-```
+All scripts are in `.claude/skills/scripts/` and require no dependencies beyond Python 3.9+ standard library.
 
 ---
 
@@ -91,13 +143,13 @@ The following skills cannot run in headless CI mode because they require user de
 
 | Skill | Why interactive |
 |-------|----------------|
-| `/quickstart` | Questionnaire requires user answers |
+| `/design` | Questionnaire requires user answers |
 | `/advise` | Q&A conversation loop |
-| `/make-plan` | Review and approval step |
-| `/execute-plan` | May pause for guidance on failures |
+| `/plan` | Review and approval step |
+| `/implement` | May pause for guidance on failures |
 | `/help --browse` | Interactive menu selection |
 | `/explain spec-drift` | Spec analysis may require user decisions |
-| `/make-plan --roadmap` | Item review and approval |
+| `/plan --roadmap` | Item review and approval |
 
 Use these skills in local development sessions, not in CI.
 
@@ -105,7 +157,7 @@ Use these skills in local development sessions, not in CI.
 
 ## Environment Requirements
 
-- **Python 3.9+** for standalone scripts
+- **Python 3.9+** for standalone scripts and fast preflight
 - **Claude Code CLI** for skill invocations (`npm install -g @anthropic-ai/claude-code`)
 - **ANTHROPIC_API_KEY** environment variable for Claude Code invocations
 - Scripts assume they run from the repository root directory
@@ -114,6 +166,7 @@ Use these skills in local development sessions, not in CI.
 
 ## Troubleshooting
 
-- **Scripts fail with "project/conventions.md not found"**: This is a warning, not an error. The scripts fall back to `template/conventions.md`. In project repos (not the framework repo), ensure `/quickstart` has been run to generate project/conventions.md.
+- **Scripts fail with "project/conventions.md not found"**: This is a warning, not an error. The scripts fall back to `template/conventions.md`. In project repos (not the framework repo), ensure `/design` has been run to generate project/conventions.md.
 - **Claude Code invocations timeout**: Set a generous timeout (5-10 minutes) for skill invocations. `/check validate` and `/check preflight` can take several minutes on large codebases.
 - **Index regeneration fails**: Ensure the `_output/` directory exists and the scripts have write access.
+- **Pre-commit hook not running**: Verify hooks are installed with `git config core.hooksPath`. Should show `.githooks`.

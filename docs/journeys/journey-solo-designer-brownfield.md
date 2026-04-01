@@ -30,7 +30,7 @@ Expected output: inventory reports in `_output/inventories/`.
 
 ### Step 3: Bootstrap the framework
 
-Run `/quickstart .` / `$quickstart .` and walk through the questionnaire. The critical difference from greenfield: fill in the **as-is** conceptual design with what the system currently does, and the **to-be** conceptual design with what you want it to become. This gap between as-is and to-be drives all future planning.
+Run `/seed .` then `/design` / `$seed .` then `$design` and walk through the questionnaire. The critical difference from greenfield: fill in the **as-is** conceptual design with what the system currently does, and the **to-be** conceptual design with what you want it to become. This gap between as-is and to-be drives all future planning.
 
 Expected output: `project/*.md` files with the as-is/to-be distinction.
 
@@ -42,13 +42,13 @@ Expected output: advisory report with actionable recommendations.
 
 ### Step 5: Plan the first improvement
 
-Use `/make-plan` / `$make-plan` targeting the highest-priority gap between as-is and to-be. Start small: pick one entity or one flow to improve. Example: `/make-plan Refactor the user profile page to match the to-be conceptual design` / `$make-plan Refactor the user profile page to match the to-be conceptual design`.
+Use `/plan` / `$plan` targeting the highest-priority gap between as-is and to-be. Start small: pick one entity or one flow to improve. Example: `/plan Refactor the user profile page to match the to-be conceptual design` / `$plan Refactor the user profile page to match the to-be conceptual design`.
 
 Expected output: a plan file.
 
 ### Step 6: Execute and verify
 
-Run `/execute-plan <id>` / `$execute-plan <id>`. Then use `/check review` / `$check review` to verify the changes against all relevant perspectives. Use `/explain spec-drift` / `$explain spec-drift` periodically to check that your implementation stays aligned with the to-be design.
+Run `/implement <id>` / `$implement <id>`. Then use `/check review` / `$check review` to verify the changes against all relevant perspectives. Use `/explain spec-drift` / `$explain spec-drift` periodically to check that your implementation stays aligned with the to-be design.
 
 Expected output: working code and a clean review.
 

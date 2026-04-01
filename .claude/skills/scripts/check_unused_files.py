@@ -18,6 +18,14 @@ Whitelist:
 - Create `.claude/unused-whitelist.txt` to suppress known false positives.
 - One glob pattern per line. Lines starting with # are comments. Empty lines are skipped.
 - Invalid glob patterns are logged as warnings but do not abort the script.
+
+CHECK_PLUGIN_MANIFEST:
+  name: Unused Files
+  stack:
+    backend: [any]
+    frontend: [any]
+  scope: hygiene
+  critical: false
 """
 
 from __future__ import annotations
@@ -29,12 +37,12 @@ import re
 import sys
 from pathlib import Path
 
-from project_config import REPO_ROOT, get, get_path, get_list
+from project_config import REPO_ROOT, get_path, get_list
 
 # ── Configuration ──────────────────────────────────────────────────────────
 
-BACKEND_DIR = get("BACKEND_APP_DIR", "backend/app")
-FRONTEND_DIR = get("FRONTEND_SRC_DIR", "frontend/src")
+BACKEND_DIR = get_path("BACKEND_APP_DIR", "backend/app") or REPO_ROOT / "backend/app"
+FRONTEND_DIR = get_path("FRONTEND_SRC_DIR", "frontend/src") or REPO_ROOT / "frontend/src"
 
 BACKEND_EXTENSIONS = {".py"}
 FRONTEND_EXTENSIONS = {".js", ".jsx", ".ts", ".tsx"}
@@ -106,7 +114,10 @@ def load_whitelist(root: Path) -> list[str]:
 
 def is_whitelisted(path: Path, root: Path, whitelist_patterns: list[str]) -> bool:
     """Check if a file matches any whitelist pattern."""
-    rel_path = str(path.relative_to(root)).replace("\\", "/")
+    try:
+        rel_path = str(path.relative_to(root)).replace("\\", "/")
+    except ValueError:
+        rel_path = path.name
     for pattern in whitelist_patterns:
         if fnmatch.fnmatch(rel_path, pattern) or fnmatch.fnmatch(path.name, pattern):
             return True
@@ -125,22 +136,35 @@ def should_ignore(path: Path) -> bool:
     return False
 
 
-def collect_source_files(root: Path, src_dir: str, extensions: set[str]) -> list[Path]:
-    """Collect all source files in a directory."""
-    base = root / src_dir
+def collect_source_files(
+    root: Path, src_dir: Path, extensions: set[str]
+) -> tuple[list[Path], Path]:
+    """Collect all source files in a directory.
+
+    Returns the file list and the resolved base directory so callers can
+    compute relative paths even when *base* lives outside *root* (workspace
+    pattern).
+    """
+    base = src_dir if src_dir.is_absolute() else root / src_dir
     if not base.exists():
-        return []
+        return [], base
     files = []
     for path in base.rglob("*"):
         if path.is_file() and path.suffix in extensions and not should_ignore(path):
             files.append(path)
-    return files
+    return files, base
 
 
-def get_module_name(path: Path, root: Path) -> str:
-    """Extract the importable module name from a file path."""
-    rel = path.relative_to(root)
-    # Remove extension
+def get_module_name(path: Path, base: Path) -> str:
+    """Extract the importable module name from a file path.
+
+    *base* is the resolved source directory (e.g. ``root / src_dir``).
+    Falls back to the bare filename when the path is outside *base*.
+    """
+    try:
+        rel = path.relative_to(base)
+    except ValueError:
+        rel = Path(path.name)
     stem = str(rel).replace(os.sep, "/")
     for ext in (".tsx", ".ts", ".jsx", ".js", ".py"):
         if stem.endswith(ext):
@@ -168,10 +192,10 @@ def build_import_patterns(module_name: str, filename: str) -> list[str]:
 
 
 def check_references(
-    source_file: Path, all_files: list[Path], root: Path
+    source_file: Path, all_files: list[Path], base: Path
 ) -> list[Path]:
     """Find files that reference the given source file."""
-    module_name = get_module_name(source_file, root)
+    module_name = get_module_name(source_file, base)
     filename = source_file.name
     patterns = build_import_patterns(module_name, filename)
     compiled = [re.compile(p) for p in patterns]
@@ -210,16 +234,28 @@ def main() -> None:
     root = REPO_ROOT
     all_source_files: list[Path] = []
     check_files: list[Path] = []
+    # Maps each source file to the base directory it was collected from,
+    # so relative-path computations work even when base is outside root
+    # (workspace pattern where codebase lives in a sibling directory).
+    file_base: dict[Path, Path] = {}
 
     if args.scope in ("all", "backend"):
-        backend_files = collect_source_files(root, BACKEND_DIR, BACKEND_EXTENSIONS)
+        backend_files, backend_base = collect_source_files(
+            root, BACKEND_DIR, BACKEND_EXTENSIONS
+        )
         all_source_files.extend(backend_files)
         check_files.extend(backend_files)
+        for f in backend_files:
+            file_base[f] = backend_base
 
     if args.scope in ("all", "frontend"):
-        frontend_files = collect_source_files(root, FRONTEND_DIR, FRONTEND_EXTENSIONS)
+        frontend_files, frontend_base = collect_source_files(
+            root, FRONTEND_DIR, FRONTEND_EXTENSIONS
+        )
         all_source_files.extend(frontend_files)
         check_files.extend(frontend_files)
+        for f in frontend_files:
+            file_base[f] = frontend_base
 
     if not check_files:
         print(f"No source files found in scope '{args.scope}'.")
@@ -236,20 +272,25 @@ def main() -> None:
     referenced: list[Path] = []
     whitelisted_count = 0
 
+    def _display_rel(path: Path) -> Path:
+        """Best-effort relative path for display."""
+        try:
+            return path.relative_to(root)
+        except ValueError:
+            return path.relative_to(file_base[path])
+
     for sf in check_files:
         # Skip whitelisted files
         if whitelist_patterns and is_whitelisted(sf, root, whitelist_patterns):
             whitelisted_count += 1
             if args.verbose:
-                rel = sf.relative_to(root)
-                print(f"  SKIP {rel}  (whitelisted)")
+                print(f"  SKIP {_display_rel(sf)}  (whitelisted)")
             continue
-        refs = check_references(sf, all_source_files, root)
+        refs = check_references(sf, all_source_files, file_base[sf])
         if refs:
             referenced.append(sf)
             if args.verbose:
-                rel = sf.relative_to(root)
-                print(f"  OK  {rel}  (referenced by {len(refs)} file(s))")
+                print(f"  OK  {_display_rel(sf)}  (referenced by {len(refs)} file(s))")
         else:
             orphans.append(sf)
 
@@ -263,7 +304,7 @@ def main() -> None:
         print("POTENTIALLY ORPHANED FILES:")
         print("(Not imported or referenced by any other source file)\n")
         for o in sorted(orphans):
-            print(f"  {o.relative_to(root)}")
+            print(f"  {_display_rel(o)}")
         print(
             "\nNote: Entry points, __init__.py, tests, and migrations are excluded."
         )

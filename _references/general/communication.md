@@ -30,7 +30,7 @@ Each stakeholder maps to one of five audience segments:
 | Tag | Name | File | Core Question | Primary Material Types |
 |-----|------|------|---------------|----------------------|
 | EVL | Evaluators | [evaluators.md](communication/evaluators.md) | "Should we adopt this? What's the ROI?" | Executive overview, architecture overview, comparison guide, proof of value |
-| ADO | Adopters | *(cross-ref: [general/onboarding.md](onboarding.md))* | "How do I get started and become productive?" | Onboarding plans, tutorials, quickstart guides |
+| ADO | Adopters | *(cross-ref: [general/onboarding.md](general/onboarding.md))* | "How do I get started and become productive?" | Onboarding plans, tutorials, quickstart guides |
 | CLT | Clients | [clients.md](communication/clients.md) | "Is the product I commissioned delivering the outcomes I need?" | Product vision alignment, delivery status, outcome evidence, metacommunication summary |
 | USR | End Users | [end-users.md](communication/end-users.md) | "Does the software serve my needs well?" | Quality manifesto, feedback channels, accessibility statement |
 | ACD | Academics | [academics.md](communication/academics.md) | "What's the theoretical contribution? How can I build on this?" | Theoretical foundation, research agenda, extension guide |
@@ -151,5 +151,5 @@ ${COMMUNICATION_DIR}/
 - **Review perspectives** (`general/review-perspectives.md`): The UX perspective's focus on audience-appropriate communication is directly addressed by this framework's per-audience tone guidance.
 - **Conceptual design** (`project/conceptual-design-as-is.md`): Layer 0 universal content draws project identity and value proposition from the conceptual design files.
 - **Metacommunication** (`project/metacomm-as-is.md`): The designer's intent documented in metacommunication files informs how the project's story is told to each audience.
-- **Style template** (`template/communication-style.md` / `project/communication-style.md`): Controls visual presentation and tone overrides. Instantiated per-project by `/quickstart`.
+- **Style template** (`template/communication-style.md` / `project/communication-style.md`): Controls visual presentation and tone overrides. Instantiated per-project by `/design`.
 - **Skills system** (`.claude/skills/communication/SKILL.md`): The communication skill orchestrates all of the above.

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-upgrade_framework.py — Upgrade a project using the SEJA-Codex framework to a
+upgrade_framework.py — Upgrade a project using the SEJA-Claude framework to a
 newer version by replacing framework files while preserving project-specific data.
 
 Usage:
     python upgrade_framework.py --from <source_path> [--target <project_path>] [--dry-run]
 
-Source can be a directory (unpacked quickstart kit) or a .zip file.
+Source can be a directory (framework source directory) or a .zip file.
 The script is idempotent — safe to run multiple times.
 """
 
@@ -23,7 +23,7 @@ from pathlib import Path
 from project_config import diff_conventions
 
 # Old-layout path for references (v1)
-_OLD_REFS_REL = Path(".codex", "skills", "references")
+_OLD_REFS_REL = Path(".claude", "skills", "references")
 
 # New-layout path for references (v2)
 _REFERENCES_REL = Path("_references")
@@ -35,18 +35,18 @@ _REFERENCES_REL = Path("_references")
 
 
 def find_project_root() -> Path:
-    """Walk up from CWD to find the directory containing .codex/."""
+    """Walk up from CWD to find the directory containing .claude/."""
     current = Path.cwd().resolve()
     while current != current.parent:
-        if (current / ".codex").is_dir():
+        if (current / ".claude").is_dir():
             return current
         current = current.parent
     return Path.cwd().resolve()
 
 
 def read_version(root: Path) -> str | None:
-    """Parse version string from a VERSION file under .codex/skills/."""
-    version_file = root / ".codex" / "skills" / "VERSION"
+    """Parse version string from a VERSION file under .claude/skills/."""
+    version_file = root / ".claude" / "skills" / "VERSION"
     if not version_file.is_file():
         return None
     text = version_file.read_text(encoding="utf-8", errors="replace")
@@ -75,7 +75,7 @@ def detect_layout(target: Path) -> str:
 def collect_source_files(source: Path) -> list[Path]:
     """Collect all framework files from source directory."""
     files: list[Path] = []
-    claude_dir = source / ".codex"
+    claude_dir = source / ".claude"
     ar_dir = source / "_references"
 
     # Skills
@@ -140,31 +140,31 @@ def is_preserved(rel_path: str) -> bool:
     # _output directory
     if parts and parts[0] == "_output":
         return True
-    # AGENTS.md at root
-    if rel_path == "AGENTS.md":
+    # CLAUDE.md at root
+    if rel_path == "CLAUDE.md":
         return True
 
     return False
 
 
 def scan_old_path_references(target: Path) -> list[tuple[str, int, str]]:
-    """Scan project/*.md and AGENTS.md for old layout path references.
+    """Scan project/*.md and CLAUDE.md for old layout path references.
 
     Returns list of (file_rel_path, line_number, line_text) tuples.
     """
-    old_path = ".codex/skills/references/"
+    old_path = ".claude/skills/references/"
     hits: list[tuple[str, int, str]] = []
     files_to_scan: list[Path] = []
 
-    # project/*.md in _references/project/
+    # project/*.md in _references/
     project_dir = target / _REFERENCES_REL / "project"
     if project_dir.is_dir():
         for f in sorted(project_dir.iterdir()):
             if f.is_file() and f.name.endswith(".md"):
                 files_to_scan.append(f)
 
-    # AGENTS.md at root
-    claude_md = target / "AGENTS.md"
+    # CLAUDE.md at root
+    claude_md = target / "CLAUDE.md"
     if claude_md.is_file():
         files_to_scan.append(claude_md)
 
@@ -220,13 +220,13 @@ def run_upgrade(
     print(f"INFO: {report_version[0]}")
 
     # --- Backup ---
-    claude_backup = target / f".codex-backup-{timestamp}"
+    claude_backup = target / f".claude-backup-{timestamp}"
     if not dry_run:
-        shutil.copytree(target / ".codex", claude_backup)
-        report_backup.append(f"Backed up .codex/ → {claude_backup.name}/")
+        shutil.copytree(target / ".claude", claude_backup)
+        report_backup.append(f"Backed up .claude/ → {claude_backup.name}/")
         print(f"OK: {report_backup[-1]}")
     else:
-        report_backup.append(f"Would back up .codex/ → .codex-backup-{timestamp}/")
+        report_backup.append(f"Would back up .claude/ → .claude-backup-{timestamp}/")
         print(f"INFO: {prefix}{report_backup[-1]}")
 
     if layout == "new":
@@ -323,9 +323,22 @@ def run_upgrade(
         report_updated.append(rel)
         print(f"OK: {prefix}Updated {rel}")
 
+    # --- Remove retired skills from target ---
+    _RETIRED_SKILLS = ["quickstart"]
+    for skill_name in _RETIRED_SKILLS:
+        for framework_dir in (".claude", ".codex"):
+            retired_dir = target / framework_dir / "skills" / skill_name
+            if retired_dir.is_dir():
+                if not dry_run:
+                    shutil.rmtree(retired_dir)
+                report_updated.append(
+                    f"Removed retired skill {framework_dir}/skills/{skill_name}/"
+                )
+                print(f"OK: {prefix}Removed retired skill {framework_dir}/skills/{skill_name}/")
+
     # --- Preserved files summary ---
-    # Check for settings files and AGENTS.md
-    for check_rel in (".codex/settings.json", ".codex/settings.local.json", "AGENTS.md"):
+    # Check for settings files and CLAUDE.md
+    for check_rel in (".claude/settings.json", ".claude/settings.local.json", "CLAUDE.md"):
         check_path = target / check_rel
         if check_path.is_file() and check_rel not in report_preserved:
             report_preserved.append(check_rel)
@@ -335,7 +348,7 @@ def run_upgrade(
         if "_output/" not in report_preserved:
             report_preserved.append("_output/ (entire directory)")
 
-    # project/*.md files in _references/project/
+    # project/*.md files in _references/
     project_dir = target / _REFERENCES_REL / "project"
     if project_dir.is_dir():
         for f in sorted(project_dir.rglob("*.md")):
@@ -344,8 +357,8 @@ def run_upgrade(
                 report_preserved.append(rel)
 
     # --- Convention schema diff ---
-    project_conv = target / _REFERENCES_REL / "project/conventions.md"
-    template_conv = target / _REFERENCES_REL / "template/conventions.md"
+    project_conv = target / _REFERENCES_REL / "project" / "conventions.md"
+    template_conv = target / _REFERENCES_REL / "template" / "conventions.md"
 
     if project_conv.is_file() and template_conv.is_file():
         diff = diff_conventions(project_conv, template_conv)
@@ -383,10 +396,10 @@ def run_upgrade(
         else:
             report_manual.append("No old path references found — migration clean.")
 
-    # AGENTS.md always flagged for review
-    if (target / "AGENTS.md").is_file():
+    # CLAUDE.md always flagged for review
+    if (target / "CLAUDE.md").is_file():
         report_manual.append(
-            "Review AGENTS.md — root project instructions may need updates to "
+            "Review CLAUDE.md — root project instructions may need updates to "
             "reflect new framework version."
         )
 
@@ -426,7 +439,7 @@ def run_upgrade(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Upgrade a SEJA-Codex framework project to a newer version.",
+        description="Upgrade a SEJA-Claude framework project to a newer version.",
         epilog=(
             "Example:\n"
             "  python upgrade_framework.py --from ../seja-public/\n"
@@ -468,27 +481,27 @@ def main() -> None:
         entries = list(source_root.iterdir())
         if len(entries) == 1 and entries[0].is_dir():
             source_root = entries[0]
-        # If zip has .codex/ at root level, use that root
-        if not (source_root / ".codex").is_dir():
+        # If zip has .claude/ at root level, use that root
+        if not (source_root / ".claude").is_dir():
             # Try one level deeper
             for child in source_root.iterdir():
-                if child.is_dir() and (child / ".codex").is_dir():
+                if child.is_dir() and (child / ".claude").is_dir():
                     source_root = child
                     break
     elif source_path.is_dir():
         source_root = source_path
-        # Navigate to root with .codex/ if needed
-        if not (source_root / ".codex").is_dir():
+        # Navigate to root with .claude/ if needed
+        if not (source_root / ".claude").is_dir():
             for child in source_root.iterdir():
-                if child.is_dir() and (child / ".codex").is_dir():
+                if child.is_dir() and (child / ".claude").is_dir():
                     source_root = child
                     break
     else:
         print(f"ERROR: Source path does not exist or is not a directory/zip: {source_path}")
         sys.exit(1)
 
-    if not (source_root / ".codex").is_dir():
-        print(f"ERROR: Source does not contain a .codex/ directory: {source_root}")
+    if not (source_root / ".claude").is_dir():
+        print(f"ERROR: Source does not contain a .claude/ directory: {source_root}")
         sys.exit(1)
 
     # Resolve target
@@ -497,8 +510,8 @@ def main() -> None:
     else:
         target = find_project_root()
 
-    if not (target / ".codex").is_dir():
-        print(f"ERROR: Target does not contain a .codex/ directory: {target}")
+    if not (target / ".claude").is_dir():
+        print(f"ERROR: Target does not contain a .claude/ directory: {target}")
         sys.exit(1)
 
     print(f"INFO: Source: {source_root}")

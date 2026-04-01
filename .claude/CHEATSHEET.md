@@ -7,15 +7,16 @@
 
 | Skill | Description | Arguments |
 |-------|-------------|-----------|
-| `/execute-plan` | Execute a previously generated plan to add a feature, fix a bug, or refactor ... | `<planned-item-id> [--manual] [--max-iterations N] [--dry-run]` |
-| `/make-plan` | Make a plan to add a feature, fix a bug, or refactor code. Supports metacomm ... | `<brief> [--framing metacomm] [--roadmap [--from-spec <path>] [--auto]]` |
+| `/design` | Define or update project design — stack, conventions, domain model, conceptua... | `[--generate-spec] [spec-file-path]` |
+| `/implement` | Execute a previously generated plan to add a feature, fix a bug, or refactor ... | `<planned-item-id> [--manual] [--max-iterations N] [--dry-run] [--skip-checks]` |
+| `/plan` | Make a plan to add a feature, fix a bug, or refactor code. Supports metacomm ... | `<brief> [--review <light|standard|deep>] [--framing metacomm] [--light] [--plan | --roadmap [--from-spec <path>] [--auto]]` |
 
 ## Analysis & Review
 
 | Skill | Description | Arguments |
 |-------|-------------|-----------|
 | `/advise` | Answer questions about the codebase, architecture, or design decisions, loggi... | `<question or topic> [--inventory <pattern>]` |
-| `/check` | Run quality checks: validation, code review, smoke tests, preflight, or frame... | `<validate | review | smoke | preflight | health | test-plan> [scope]` |
+| `/check` | Run quality checks: validation, code review, smoke tests, preflight, or frame... | `<validate | review | smoke | preflight | health | test-plan> [--depth <light|standard|deep>] [scope]` |
 | `/explain` | Explains behavior, code, data model, architecture, or spec drift with visual ... | `<architecture|behavior|behavior-evolution|code|data-model|spec-drift> [brief]` |
 
 ## Code & Tests
@@ -29,10 +30,11 @@
 
 | Skill | Description | Arguments |
 |-------|-------------|-----------|
-| `/communication` | Generate tailored communication material for a specific audience segment | `<audience> [--format md|html] [--all] [--source <advisory-file>]` |
+| `/communication` | Generate tailored communication material for a specific audience segment | `<audience> [--format md|html|both] [--all] [--source <advisory-file>]` |
 | `/help` | Show contextual help, browse skills by category, or get details on a specific... | `[skill-name | --browse] [--details]` |
 | `/onboarding` | Generate a tailored onboarding plan for a new team member based on their role... | `<role-family> <expertise-level> [name] [--area <focus-area>] [--batch <spec-list>]` |
 | `/qa-log` | Log the entire current Q&A session into a file for future reference | `brief or topic` |
-| `/quickstart` | Bootstrap a new project's .claude directory from templates. | `<target-directory> [--generate-spec | --upgrade | --workspace]` |
+| `/seed` | Copy the SEJA framework into a new or existing project, or create a workspace... | `<target-directory> [--workspace \| --demo]` |
+| `/upgrade` | Upgrade SEJA framework files from the seed repo without touching project-spec... | `[<seed-repo-path>] [--dry-run]` |
 
-*13 skills available. Use `/pick-prompt` for interactive selection.*
+*14 skills available. Use `/help --browse` for interactive selection.*

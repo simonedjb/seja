@@ -6,7 +6,7 @@ newer version by replacing framework files while preserving project-specific dat
 Usage:
     python upgrade_framework.py --from <source_path> [--target <project_path>] [--dry-run]
 
-Source can be a directory (unpacked quickstart kit) or a .zip file.
+Source can be a directory (framework source directory) or a .zip file.
 The script is idempotent — safe to run multiple times.
 """
 
@@ -156,7 +156,7 @@ def scan_old_path_references(target: Path) -> list[tuple[str, int, str]]:
     hits: list[tuple[str, int, str]] = []
     files_to_scan: list[Path] = []
 
-    # project/*.md in _references/project/
+    # project/*.md in _references/
     project_dir = target / _REFERENCES_REL / "project"
     if project_dir.is_dir():
         for f in sorted(project_dir.iterdir()):
@@ -323,6 +323,19 @@ def run_upgrade(
         report_updated.append(rel)
         print(f"OK: {prefix}Updated {rel}")
 
+    # --- Remove retired skills from target ---
+    _RETIRED_SKILLS = ["quickstart"]
+    for skill_name in _RETIRED_SKILLS:
+        for framework_dir in (".claude", ".codex"):
+            retired_dir = target / framework_dir / "skills" / skill_name
+            if retired_dir.is_dir():
+                if not dry_run:
+                    shutil.rmtree(retired_dir)
+                report_updated.append(
+                    f"Removed retired skill {framework_dir}/skills/{skill_name}/"
+                )
+                print(f"OK: {prefix}Removed retired skill {framework_dir}/skills/{skill_name}/")
+
     # --- Preserved files summary ---
     # Check for settings files and CLAUDE.md
     for check_rel in (".claude/settings.json", ".claude/settings.local.json", "CLAUDE.md"):
@@ -335,7 +348,7 @@ def run_upgrade(
         if "_output/" not in report_preserved:
             report_preserved.append("_output/ (entire directory)")
 
-    # project/*.md files in _references/project/
+    # project/*.md files in _references/
     project_dir = target / _REFERENCES_REL / "project"
     if project_dir.is_dir():
         for f in sorted(project_dir.rglob("*.md")):
@@ -344,8 +357,8 @@ def run_upgrade(
                 report_preserved.append(rel)
 
     # --- Convention schema diff ---
-    project_conv = target / _REFERENCES_REL / "project/conventions.md"
-    template_conv = target / _REFERENCES_REL / "template/conventions.md"
+    project_conv = target / _REFERENCES_REL / "project" / "conventions.md"
+    template_conv = target / _REFERENCES_REL / "template" / "conventions.md"
 
     if project_conv.is_file() and template_conv.is_file():
         diff = diff_conventions(project_conv, template_conv)

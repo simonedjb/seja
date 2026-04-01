@@ -1,7 +1,7 @@
 ---
 name: seed
 description: "Copy the SEJA framework into a new or existing project, or create a workspace alongside an existing codebase."
-argument-hint: "<target-directory> [--workspace]"
+argument-hint: "<target-directory> [--workspace | --demo]"
 metadata:
   last-updated: 2026-03-31 16:30:00
   version: 1.0.0
@@ -12,17 +12,20 @@ metadata:
 
 ## Quick Guide
 
-**What it does**: Copies the SEJA framework files into a target directory. For greenfield projects, creates the directory and initializes git. For existing codebases, embeds the framework alongside existing code. With `--workspace`, creates a separate workspace directory.
+**What it does**: Copies the SEJA framework files into a target directory. For greenfield projects, creates the directory and initializes git. For existing codebases, embeds the framework alongside existing code. With `--workspace`, creates a separate workspace directory. With `--demo`, seeds a pre-configured TaskFlow demo project so you can explore skills immediately.
 
 **Example**:
 > You: /seed /path/to/my-project
 > Agent: Detects the scenario (greenfield/existing/workspace), copies all framework files, and tells you to run `/design` next.
 
-**When to use**: You are setting up SEJA in a new or existing project for the first time. Use `/upgrade` instead if the project already has SEJA and you want to update the framework version.
+> You: /seed /path/to/taskflow-demo --demo
+> Agent: Seeds the framework, copies demo design files into project/, and prints a walkthrough message.
+
+**When to use**: You are setting up SEJA in a new or existing project for the first time. Use `--demo` for a guided hello-world experience. Use `/upgrade` instead if the project already has SEJA and you want to update the framework version.
 
 # Seed
 
-> **`/seed`** copies the framework. **`/design`** defines WHAT to build and WHY. **`/make-plan`** defines HOW to build it and WHY those "hows."
+> **`/seed`** copies the framework. **`/design`** defines WHAT to build and WHY. **`/plan`** defines HOW to build it and WHY those "hows."
 
 ## Overview
 
@@ -34,7 +37,7 @@ SEJA follows a **copy-and-continue** (seed repo) model:
 
 - **This project is a seed repo** — it is the source of the framework, used for development and distributing updates via GitHub. It is NOT a runtime dependency for target projects.
 - **`/seed` copies the framework into the target project**, where all skills, rules, agents, and references become self-contained.
-- **After seeding, the user continues working from the target project**, not from this repo. All skills (`/design`, `/make-plan`, `/execute-plan`, `/advise`, etc.) operate on the project they live in.
+- **After seeding, the user continues working from the target project**, not from this repo. All skills (`/design`, `/plan`, `/implement`, `/advise`, etc.) operate on the project they live in.
 - **Return to this repo only** to develop framework improvements. To bootstrap a new project, clone the repo and run `/seed`. To upgrade an existing project, use `/upgrade` from the target project or re-seed with "overwrite framework only".
 
 ## Steps
@@ -76,7 +79,7 @@ SEJA follows a **copy-and-continue** (seed repo) model:
 
 4. **Copy framework files** from this project to the target:
    - All files under `_references/general/` (as-is)
-   - All files under `_references/template/` (consumed by `/design`)
+   - All files under `_references/template/` (consumed by `/design`), including `template/constitution.md` (immutable project principles template) and `template/agent/*.yaml` (agent-facing structured specs)
    - `template/settings.json`
    - All skill `SKILL.md` files (project-independent)
    - All agent definitions (`.claude/agents/*.md`)
@@ -92,9 +95,32 @@ SEJA follows a **copy-and-continue** (seed repo) model:
 
 7. **Summary**: Report what was copied (file count by category).
 
-8. **Handoff**:
+8. **Handoff** (standard mode):
    > Your project has been seeded at `<target>`. Next steps:
    >
    > 1. Open a new Claude Code session in `<target>` (or workspace directory if separated)
    > 2. Run `/design` to configure the framework for your project
-   > 3. This seed repo is no longer needed for day-to-day work — return to it only for framework development
+   > 3. This seed repo is no longer needed for day-to-day work -- return to it only for framework development
+
+---
+
+## --demo Flag
+
+> **Incompatible with `--workspace`.** If both flags are provided, reject with an error message.
+
+When `--demo` is passed, the seed process runs the standard steps 1-7 above and then performs these additional actions:
+
+9. **Copy demo design files into project/**: Copy every file from `_references/template/demo/` (except `WALKTHROUGH.md`) into `_references/project/`, giving the target project pre-filled design files:
+   - `conventions.md` -- TypeScript + React conventions (TaskFlow)
+   - `constitution.md` -- accessibility, simplicity, test coverage principles
+   - `conceptual-design-to-be.md` -- Task and Category entities
+   - `metacomm-to-be.md` -- task creation and category filtering intents
+
+10. **Copy walkthrough**: Copy `_references/template/demo/WALKTHROUGH.md` into the target project root as `WALKTHROUGH.md`.
+
+11. **Print walkthrough message**:
+    > Your demo project "TaskFlow" has been seeded at `<target>` with pre-filled design files.
+    >
+    > Open `WALKTHROUGH.md` for a guided tour of the core SEJA skills (/advise, /plan, /implement, /check).
+    >
+    > To start fresh with your own project instead, run `/design` to replace the demo configuration.

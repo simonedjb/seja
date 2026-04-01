@@ -11,7 +11,7 @@ A single foundational SEJA framework and independent *ClientName* workspaces per
 ## Prerequisites
 
 - Claude Code or Codex CLI installed
-- The foundational SEJA framework available (as a cloned repo or quickstart kit)
+- The foundational SEJA framework available (as a cloned repo or downloaded ZIP)
 - Familiarity with git
 
 ## Step-by-step walkthrough
@@ -24,7 +24,7 @@ Expected output: team members have a local copy of the foundational framework.
 
 ### Step 2: Set up a workspace per client codebase
 
-For each client codebase, use `/quickstart --workspace` / `$quickstart --workspace` (or `create_workspace.py`) to create a *ClientName* workspace from the foundational framework. This automates: creating the directory, running `git init`, copying framework files, setting up `_output/`, and configuring absolute paths to the client codebase. The workspace is its own git repo -- tracking framework configuration, conceptual design, plans, advisories, and all output artifacts independently of the *ClientName* codebase:
+For each client codebase, use `/seed --workspace` / `$seed --workspace` (or `create_workspace.py`) to create a *ClientName* workspace from the foundational framework. This automates: creating the directory, running `git init`, copying framework files, setting up `_output/`, and configuring absolute paths to the client codebase. The workspace is its own git repo -- tracking framework configuration, conceptual design, plans, advisories, and all output artifacts independently of the *ClientName* codebase:
 
 ```
 d:\workspaces\client-a\      <-- ClientA workspace (its own git repo)
@@ -38,7 +38,7 @@ See the [workspace setup recipe](../recipes/recipe-workspace-setup.md) for detai
 
 ### Step 3: Bootstrap each client workspace
 
-In each *ClientName* workspace, run `/quickstart .` / `$quickstart .` and walk through the questionnaire for that specific client's codebase. Set absolute paths in `project/conventions.md`: `OUTPUT_DIR` should point inside the workspace (e.g., `D:/workspaces/client-a/_output`) so output artifacts are version-controlled alongside the framework configuration. `BACKEND_DIR` and `FRONTEND_DIR` point at the *ClientName* codebase. Start the agent from the workspace with the generated launcher script or your host's equivalent additional-directory workflow.
+In each *ClientName* workspace, run `/seed .` then `/design` / `$seed .` then `$design` and walk through the questionnaire for that specific client's codebase. Set absolute paths in `project/conventions.md`: `OUTPUT_DIR` should point inside the workspace (e.g., `D:/workspaces/client-a/_output`) so output artifacts are version-controlled alongside the framework configuration. `BACKEND_DIR` and `FRONTEND_DIR` point at the *ClientName* codebase. Start the agent from the workspace with the generated launcher script or your host's equivalent additional-directory workflow.
 
 Expected output: all `project/*.md` files generated for the client project.
 
@@ -50,7 +50,7 @@ Expected output: communication files in the output directory.
 
 ### Step 5: Maintain consistency across workspaces
 
-All client workspaces originate from the same foundational SEJA framework. When the foundational framework is updated, pull the latest version of the foundational framework repository and run `/quickstart --upgrade` / `$quickstart --upgrade` on each workspace. The upgrade preserves all project-specific files while updating framework files.
+All client workspaces originate from the same foundational SEJA framework. When the foundational framework is updated, pull the latest version of the foundational framework repository and run `/upgrade` / `$upgrade` on each workspace. The upgrade preserves all project-specific files while updating framework files.
 
 Expected output: updated framework files in each workspace with project-specific files intact.
 

@@ -4,6 +4,8 @@
 
 > **How to use this template:** This file reflects the **target design**. Updated by the designer (human) or via `/explain spec-drift`. For what is currently implemented, see `project/conceptual-design-as-is.md`.
 >
+> For the changelog tracking how the as-is design has evolved, see `project/cd-as-is-changelog.md`.
+>
 > For implementation details, see `project/backend-standards.md` and `project/frontend-standards.md`.
 
 ---

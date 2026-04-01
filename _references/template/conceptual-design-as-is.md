@@ -4,6 +4,8 @@
 
 > **How to use this template:** This file reflects what the code **currently implements**. Updated automatically by post-skill after plan execution. For the target design, see `project/conceptual-design-to-be.md`.
 >
+> For the changelog tracking how this design has evolved, see `project/cd-as-is-changelog.md`.
+>
 > For implementation details, see `project/backend-standards.md` and `project/frontend-standards.md`.
 
 ---
@@ -166,14 +168,3 @@
 | {{field}} length | {{min}}–{{max}} chars | {{why}} |
 
 > **Note:** These constants must be kept in sync between backend and frontend. See `project/security-checklists.md` Quick Reference for the technical mapping.
-
----
-
-## 11. Changelog
-
-> Versioned entries tracking how the implemented conceptual design has evolved. Each entry is appended automatically by post-skill after plan execution.
-
-### v1 — {{YYYY-MM-DD}}
-- **Initial**: Baseline conceptual design record created
-- **Source**: human (quickstart)
-- **Plan**: N/A

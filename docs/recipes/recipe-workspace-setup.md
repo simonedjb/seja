@@ -15,7 +15,7 @@ artifacts, and source code physically separated.
 
 ## Quick path (automated)
 
-If you have the foundational SEJA framework locally, run `/quickstart --workspace` / `$quickstart --workspace`
+If you have the foundational SEJA framework locally, run `/seed --workspace` / `$seed --workspace`
 and follow the prompts. This automates everything below: creates the workspace
 directory, runs `git init`, copies framework files from the foundational
 framework, creates `_output/`, generates `project/conventions.md` with absolute
@@ -47,7 +47,7 @@ python .claude/skills/scripts/create_workspace.py \
    Copy `.claude/` (or `.codex/`) and `_references/` from the SEJA repository into the workspace root.
    This creates `.claude/` or `.codex/` and `_references/` inside the workspace.
 
-3. **Run `/quickstart .` / `$quickstart .` and walk through the questionnaire**
+3. **Run `/seed .` then `/design` / `$seed .` then `$design` and walk through the questionnaire**
    Answer the prompts to generate project-specific files. Point the conceptual
    design at the existing system in the codebase.
 
@@ -77,7 +77,7 @@ python .claude/skills/scripts/create_workspace.py \
    Alternatively, start the agent in the workspace and add `D:/git/my-project` as an additional directory if your host supports that pattern.
 
 2. **Review specs and generate roadmap**
-   Quickstart ends by offering to walk through the generated `project/*` files
+   The design step ends by offering to walk through the generated `project/*` files
    for review. Take advantage of this -- changes are cheapest at the spec level.
    Then optionally generate a development roadmap from your specs.
 
@@ -96,10 +96,10 @@ python .claude/skills/scripts/create_workspace.py \
 
 ```
 foundational SEJA framework        the single source of truth
-  (repo or quickstart kit)         (skills, scripts, templates, references)
+  (repo or downloaded ZIP)         (skills, scripts, templates, references)
           |
-          | /quickstart --workspace (Claude)
-          | $quickstart --workspace (Codex)
+          | /seed --workspace (Claude)
+          | $seed --workspace (Codex)
           v
 MyProject workspace                its own git repo
   d:/workspaces/my-project/
@@ -119,7 +119,7 @@ MyProject codebase                 stays completely clean
 
 - The workspace pattern is recommended for teams (each member gets their own
   workspace) and agencies (one workspace per client codebase).
-- When upgrading the foundational framework, run `/quickstart --upgrade` / `$quickstart --upgrade` in
+- When upgrading the foundational framework, run `/upgrade` / `$upgrade` in
   the workspace -- it preserves all project-specific files and `_output/`.
 - The workspace git repo captures your entire design and decision history
   (conceptual design, plans, advisories, briefs) independently of the

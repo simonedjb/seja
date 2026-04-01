@@ -49,7 +49,7 @@ Understand an existing codebase before making changes to it.
 
 6. **Feed findings into the conceptual design**
    Use the reports to fill in the as-is conceptual design when running
-   `/quickstart` / `$quickstart`. This closes the loop between discovery and project setup.
+   `/seed` + `/design` / `$seed` + `$design`. This closes the loop between discovery and project setup.
 
 ## Tips
 

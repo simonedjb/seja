@@ -6,7 +6,7 @@ Generate a tailored onboarding plan for a new team member joining the project.
 
 ## Prerequisites
 
-- The foundational SEJA framework installed (in the codebase or a project workspace) and `/quickstart` / `$quickstart` completed
+- The foundational SEJA framework installed (in the codebase or a project workspace) and project configured via `/seed` + `/design` / `$seed` + `$design`
 - Knowledge of the new member's role and experience level
 
 ## Steps

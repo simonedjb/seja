@@ -20,8 +20,8 @@ to a newer version without losing project-specific data.
 
 2. **Run the upgrade**
    ```
-   /quickstart --upgrade   # Claude
-   $quickstart --upgrade   # Codex
+   /upgrade   # Claude
+   $upgrade   # Codex
    ```
    The skill fetches the latest foundational framework from GitHub and runs
    the upgrade script automatically. No local copy of the framework repo is

@@ -19,7 +19,7 @@ A shared project with conventions aligned across the team, role-based onboarding
 
 ### Step 1: Bootstrap the project together
 
-One team member runs `/quickstart .` / `$quickstart .` and walks through the interactive questionnaire with the team. The conceptual design section is especially important -- it captures the shared understanding of who the users are and what the product should do. Commit the generated files so everyone shares the same conventions.
+One team member runs `/seed .` then `/design` / `$seed .` then `$design` and walks through the interactive questionnaire with the team. The conceptual design section is especially important -- it captures the shared understanding of who the users are and what the product should do. Commit the generated files so everyone shares the same conventions.
 
 ### Step 2: Onboard each team member
 
@@ -36,13 +36,13 @@ Expected output: onboarding plans in `_output/onboarding-plans/`.
 
 ### Step 3: Generate a product roadmap
 
-Run `/make-plan --roadmap` / `$make-plan --roadmap` to decompose the conceptual design into work items organized by dependency waves. Wave 0 is foundation (models, migrations), Wave 1 is services/API, Wave 2 is frontend, etc. Review and adjust the roadmap with the team.
+Run `/plan --roadmap` / `$plan --roadmap` to decompose the conceptual design into work items organized by dependency waves. Wave 0 is foundation (models, migrations), Wave 1 is services/API, Wave 2 is frontend, etc. Review and adjust the roadmap with the team.
 
 Expected output: a roadmap file with individual plans for each work item.
 
 ### Step 4: Execute the roadmap
 
-Start with Wave 0 (sequential due to migration dependencies). Then execute Wave 1+ in parallel -- each developer can work on independent plans simultaneously. Use `/execute-plan <id>` / `$execute-plan <id>` for each.
+Start with Wave 0 (sequential due to migration dependencies). Then execute Wave 1+ in parallel -- each developer can work on independent plans simultaneously. Use `/implement <id>` / `$implement <id>` for each.
 
 ### Step 5: Establish quality rituals
 

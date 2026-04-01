@@ -307,7 +307,7 @@ Smoke tests provide a fast, automated sanity check that all API endpoints respon
 |-----------|----------|---------|
 | `smoke_test_core.py` | `.claude/skills/scripts/` | Generic engine: runner, registry loader, framework adapters, auth adapters |
 | `smoke_test_registry.json` | `.claude/skills/scripts/` | Endpoint registry: groups, expected statuses, auth requirements, ID capture |
-| `smoke_test_api.py` | `.claude/skills/scripts/` | Thin project/\*specific runner: imports core, creates test client, loads registry |
+| `smoke_test_api.py` | `.claude/skills/scripts/` | Thin project-specific runner: imports core, creates test client, loads registry |
 
 ### How It Works
 

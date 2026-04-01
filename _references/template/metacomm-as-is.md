@@ -77,4 +77,4 @@
 
 ### v1 — {{YYYY-MM-DD}}
 - **Initial**: Baseline metacommunication record created
-- **Source**: human (quickstart)
+- **Source**: human (design)

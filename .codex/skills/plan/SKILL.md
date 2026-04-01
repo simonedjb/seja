@@ -1,7 +1,7 @@
 ---
-name: make-plan
+name: plan
 description: "Make a plan to add a feature, fix a bug, or refactor code. Supports metacomm framing for design-intent briefs."
-argument-hint: <brief> [--framing metacomm] [--roadmap [--from-spec <path>] [--auto]]
+argument-hint: "<brief> [--review <light|standard|deep>] [--framing metacomm] [--light] [--plan | --roadmap [--from-spec <path>] [--auto]]"
 metadata:
   last-updated: 2026-03-29 00:15:00
   version: 1.0.0
@@ -31,17 +31,17 @@ metadata:
 **What it does**: Creates a step-by-step plan for your next feature, bug fix, or improvement. You describe what you want, and the agent produces a detailed plan you can review before anything changes. With `--roadmap`, it generates a full product roadmap with dependency-aware execution waves from your project's design specs.
 
 **Example**:
-> You: /make-plan Add a tagging feature so users can organize their tasks by topic
+> You: /plan Add a tagging feature so users can organize their tasks by topic
 > Agent: Creates Plan 0042 with 8 steps covering data model, UI components, and search integration. Each step lists files to change, verification criteria, and dependencies. Asks if you want to execute it.
 
-> You: /make-plan --roadmap --auto
+> You: /plan --roadmap --auto
 > Agent: Reads project design specs, decomposes into work items, groups into 5 waves (foundation, services/API, frontend, cross-cutting, testing), and generates individual plans for each item.
 
-**When to use**: You have a clear idea of what you want to build or fix and want to see a structured plan before any code changes happen. Use `--framing metacomm` when describing the change from the user's perspective. Use `--roadmap` when you need a high-level view of what to build next, want to organize features into delivery phases, or need to communicate the plan to stakeholders.
+**When to use**: You have a clear idea of what you want to build or fix and want to see a structured plan before any code changes happen. Use `--framing metacomm` when describing the change from the user's perspective. Use `--roadmap` when you need a high-level view of what to build next, want to organize features into delivery phases, or need to communicate the plan to stakeholders. Use `--plan` to force a single plan when the agent would otherwise suggest a roadmap. If you omit both `--plan` and `--roadmap`, the agent auto-detects the best mode from your brief and asks for confirmation before proceeding.
 
 # Make a plan
 
-> **`/design`** defines WHAT to build and WHY. **`/make-plan`** defines HOW to build it and WHY those "hows." Design produces project definitions (`_references/project/`); plans consume them to produce actionable implementation steps.
+> **`/design`** defines WHAT to build and WHY. **`/plan`** defines HOW to build it and WHY those "hows." Design produces project definitions (`_references/project/`); plans consume them to produce actionable implementation steps.
 
 ## Design Guard
 
@@ -52,7 +52,30 @@ Before planning, verify that minimum project design exists:
 
 If there are no arguments, ask for the brief.
 
-**If the argument includes `--roadmap`**, skip the standard planning workflow below and follow the [Roadmap Workflow](#roadmap-workflow) section at the end of this file instead.
+## Mode Detection
+
+Determine which workflow to use based on the arguments and the brief:
+
+1. **Explicit override** — if the argument includes `--light`, use the [Lightweight Proposal Workflow](#lightweight-proposal-workflow). If the argument includes `--roadmap`, use the [Roadmap Workflow](#roadmap-workflow). If the argument includes `--plan`, use the standard planning workflow below. Skip the rest of this section.
+
+2. **Auto-detection** — if neither `--plan` nor `--roadmap` is present, assess the brief against these signals:
+
+   | Signal | Points toward |
+   |---|---|
+   | Brief mentions ≥3 distinct entities, resources, or features | Roadmap |
+   | Brief spans ≥2 architectural layers (e.g., model + API + UI) | Roadmap |
+   | Brief mentions multiple pages, screens, or user flows | Roadmap |
+   | Brief describes a single bug, fix, or refactor | Single plan |
+   | Brief references a specific file, component, or endpoint | Single plan |
+   | Brief scope fits comfortably in ≤12 plan steps | Single plan |
+
+   Count the signals. If the majority point toward roadmap, recommend roadmap mode; otherwise recommend single plan.
+
+3. **Confirmation gate** — present the recommendation to the user and ask for confirmation before proceeding (text-based, not AskUserQuestion — this is a quick yes/no with an override option):
+   - If recommending roadmap: *"This brief spans multiple entities/layers. I'd recommend generating a **roadmap** with dependency-aware waves rather than a single plan. Proceed with roadmap mode, or force a single plan?"*
+   - If recommending single plan: *"This brief looks well-scoped for a **single plan**. Proceed, or would you prefer a full roadmap instead?"*
+
+   Use the user's answer to select the workflow.
 
 ## Definitions
 
@@ -69,6 +92,15 @@ This skill supports two framings:
 - **Metacomm** — the brief is a designer's metacommunication message, phrased as "I" (designer) speaking to "you" (user). Record the brief **verbatim** in the plan (see `general/shared-definitions.md` § Verbatim rule and § Phrasing rule). Interpret it as the designer telling the user what they can do, how, when (in which context, under which constraints), with what purpose, or why, and ensure the generated plan will make it happen as stated. All metacomm text the agent generates (summaries, intention notes, per-feature intents) must also use I/you phrasing — never third-person or passive voice.
 
 When invoked with `--framing metacomm`, use the metacomm framing. Otherwise, use the default framing.
+
+## Review Depth Override
+
+This skill supports a `--review <light|standard|deep>` flag to override the complexity-gated review depth for a single invocation. When provided, the effective depth is resolved as `max(auto, floor, flag)` where:
+- `auto` = the depth determined by the complexity gate (step 4)
+- `floor` = `MINIMUM_REVIEW_DEPTH` from project/conventions.md (default: `light`)
+- `flag` = the `--review` value (if provided)
+
+The strictest (deepest) source always wins. Depth ordering: light < standard < deep.
 
 ### Metacomm framing — additional context
 
@@ -91,7 +123,7 @@ When using the metacomm framing:
 
 ## Skill-specific Instructions
 
-1. Run the /pre-skill "make-plan" $ARGUMENTS[0] to add general instructions to the context window.
+1. Run the /pre-skill "plan" $ARGUMENTS[0] to add general instructions to the context window.
 
 2. Following best practices, create a structured, self-contained plan that can be executed independently by an agent, including:
 - *header*: `# Plan <id> | <prefix><scope> | <current datetime> | <short title> | Review: <depth>` followed by a metadata line `plan_format_version: 1` on the next line — prefix based on the brief; `<depth>` is Light, Standard, or Deep (set in step 4). If metacomm framing, add `METACOMM |` after the prefix-scope. If invoked from an advisory Q&A flow with a source advisory ID, include `source: advisory-<id>` on the metadata line after `plan_format_version: 1`.
@@ -104,7 +136,7 @@ When using the metacomm framing:
 - *steps*: structured step list (see **Step format** below)
 - *review log*: a log of the review iterations, if applicable
 - *outcomes*: expected outcomes
-- *smoke*: `true` if any step creates or modifies API route files or frontend page/component files; `false` otherwise. This flag is consumed by `/execute-plan` to decide whether to run `/check smoke api` during the quality gate.
+- *smoke*: `true` if any step creates or modifies API route files or frontend page/component files; `false` otherwise. This flag is consumed by `/implement` to decide whether to run `/check smoke api` during the quality gate.
   
    **Step format:**
 
@@ -120,6 +152,7 @@ When using the metacomm framing:
    - **References**: <reference-name>, <reference-name>, ...
    - **Depends on**: none | Step N, Step M
    - **Verify**: <how to know this step succeeded — e.g., "tests pass", "migration runs forward and backward", "endpoint returns 200">
+   - **Tests**: <what tests to create or update — e.g., "Add unit tests for new service method", "Update existing API tests for changed response format"> | N/A (no testable code changes)
    - [ ] Done
    ```
 
@@ -130,6 +163,7 @@ When using the metacomm framing:
    - **References**: list only the `_references/` reference files relevant to this step (e.g., `project/backend-standards` for a Python step, `project/frontend-standards` for a React step). Omit irrelevant ones.
    - **Depends on**: list step numbers whose output this step requires. Use `none` if the step is independent. The orchestrator uses this to avoid executing steps before their dependencies complete.
    - **Verify**: a concrete, testable condition. Prefer automated checks ("tests pass", "linter clean") over subjective ones ("looks right").
+   - **Tests**: required for steps with prefix FEATURE, FIX, or REFACTOR that create or modify source code files. Set to `N/A` for steps that only modify documentation, configuration, framework files, or other non-testable artifacts. Steps with prefix CHORE, DOCUMENT, or TEST may use N/A. Each step that modifies source code should declare what tests are needed. If the step is too small to warrant its own tests, indicate which step's tests will cover it.
    - Steps should be ordered so that dependencies flow forward (Step 2 depends on Step 1, not the reverse).
 
 3. Save the plan to the plan file. If not overwriting a file, proceed without asking for authorization.
@@ -138,7 +172,7 @@ When using the metacomm framing:
 
    **Step metadata validation (before perspective review):**
    Before starting the perspective review, validate each step's metadata:
-   - Every step has all required fields (Files, References, Depends on, Verify, checkbox)
+   - Every step has all required fields (Files, References, Depends on, Verify, Tests, checkbox)
    - File paths for existing files are verified (the file exists on disk)
    - Dependencies flow forward (no circular dependencies, no backwards references)
    - No step touches >5 files (split if so)
@@ -150,7 +184,14 @@ When using the metacomm framing:
    - **Light** — the plan has ≤6 action steps AND touches ≤4 files. Perform a quick inline scan of the shortlisted perspectives (Phase 1 only, no Phase 2 eligibility). Label the review log `Review: Light`.
    - **Standard** — the plan has 7–12 action steps OR touches 5–8 files. Perform full Phase 1; Phase 2 eligible if needed. Label `Review: Standard`.
    - **Deep** — the plan has >12 action steps OR touches >8 files OR involves migrations, auth, or cross-cutting (X-scope) changes. Perform full Phase 1 + Phase 2 for all Deferred concerns (not just regression-risk ones). Label `Review: Deep`.
-   Update the plan header's `Review: <depth>` field to match.
+   **Depth resolution:**
+   After determining the automatic depth, resolve the effective depth:
+   1. Read `MINIMUM_REVIEW_DEPTH` from `project/conventions.md` (default: `light` if not set).
+   2. If `--review <depth>` flag was provided, include it.
+   3. Effective depth = `max(auto, floor, flag)` using ordering `light < standard < deep`.
+   4. If the effective depth differs from auto, log in the review: "Review depth overridden: auto=`<auto>`, floor=`<floor>`, flag=`<flag>`, effective=`<effective>`".
+
+   Update the plan header's `Review: <depth>` field to match the effective depth.
 
    **Phase 1 — Perspective triage and scan (inline, no subagents):**
    Based on the plan's prefix and scope, identify the default shortlist of 3–6 most relevant perspectives using the **Perspective Shortcuts by Plan Prefix** table in `general/review-perspectives.md`.
@@ -191,9 +232,68 @@ When using the metacomm framing:
 
 5. Output the plan id.
 
-6. Ask the user if they want to execute the plan and, if so, run /execute-plan <id>.
+6. Ask the user if they want to execute the plan and, if so, run /implement <id>.
 
 7. If the user does not execute the plan, run /post-skill <id>.
+
+---
+
+# Lightweight Proposal Workflow
+
+> This section is used when `--light` is present in the arguments. Skip the standard planning workflow above entirely.
+
+## Overview
+
+Generates a minimal change proposal for small, surgical modifications. No multi-step decomposition, no multi-phase review. Designed for changes that are too small to warrant a full plan but should still be tracked.
+
+## Definitions
+
+Output folder: `${PROPOSALS_DIR}` (see project/conventions.md)
+Filename pattern: `proposal-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
+
+Reserve the next global ID by running `python .claude/skills/scripts/reserve_id.py --type proposal --title '<short title>'`. Use the returned 6-digit ID.
+
+## Steps
+
+1. Run /pre-skill "plan" to add general instructions to the context window.
+
+2. Reserve a global ID via `reserve_id.py --type proposal --title '<title>'`.
+
+3. Generate the proposal in the following format:
+
+   ```markdown
+   # Proposal <id> | <prefix><scope> | <datetime> | <short title>
+   plan_format_version: 1
+
+   ## What
+   <one-paragraph description of the change>
+
+   ## Why
+   <motivation -- what problem this solves>
+
+   ## Files
+   <list of files to create/modify/delete, with one-line description of each change>
+
+   ## Verify
+   <single verification criterion>
+
+   ## Risks
+   <potential issues or side effects, or "None identified">
+
+   - [ ] Done
+   ```
+
+4. **Quick review**: Perform an inline scan of the 2-3 most relevant perspectives (always include SEC if code changes are involved). Record as a compact review section:
+
+   ```markdown
+   ## Review (Light)
+   - SEC: <Adopted/N/A -- one line>
+   - <perspective>: <Adopted/N/A -- one line>
+   ```
+
+5. Save the proposal to `${PROPOSALS_DIR}/proposal-<id>-<slug>.md`.
+
+6. Ask the user: "Execute this proposal now?" If yes, execute the changes inline (no subagent orchestration needed for single-change proposals), then mark the checkbox as done and run /post-skill <id>. If no, run /post-skill <id>.
 
 ---
 
@@ -203,7 +303,7 @@ When using the metacomm framing:
 
 ## Overview
 
-This mode generates a product roadmap by decomposing a project's conceptual design and standards into independent work items, classifying each as technical or design, grouping them into dependency-aware execution waves, and generating plans via the standard make-plan workflow (with optional `--framing metacomm` for design items). It supports three modes: auto-generate from project references, parse a pre-filled spec file, or generate a blank spec skeleton.
+This mode generates a product roadmap by decomposing a project's conceptual design and standards into independent work items, classifying each as technical or design, grouping them into dependency-aware execution waves, and generating plans via the standard plan workflow (with optional `--framing metacomm` for design items). It supports three modes: auto-generate from project references, parse a pre-filled spec file, or generate a blank spec skeleton.
 
 ## Definitions
 
@@ -215,9 +315,9 @@ Reserve the next global ID by running `python .claude/skills/scripts/reserve_id.
 ## Mode Selection
 
 If no sub-argument or mode flag is provided beyond `--roadmap`, use the AskUserQuestion tool to ask which mode (if AskUserQuestion is not available, present as a numbered text list), with these options:
-- "Auto-generate -- read project reference files and decompose into work items (best after /quickstart)"
-- "From spec file -- provide a pre-filled roadmap-spec.md (best for existing projects or manual control)"
-- "Generate blank spec -- create a roadmap-spec skeleton to fill out offline"
+- "1. Auto-generate -- read project reference files and decompose into work items (best after /design)"
+- "2. From spec file -- provide a pre-filled roadmap-spec.md (best for existing projects or manual control)"
+- "3. Generate blank spec -- create a roadmap-spec skeleton to fill out offline"
 
 If the argument includes `--auto`, skip the menu and go directly to Mode 1.
 If the argument includes `--from-spec <path>`, skip the menu and go directly to Mode 2.
@@ -228,9 +328,9 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
 
 ### Steps
 
-1. **Run /pre-skill "make-plan"** to load general instructions.
+1. **Run /pre-skill "plan"** to load general instructions.
 
-2. **Read project references**: Verify the following files exist in the current project's `_references`. If `project/conceptual-design-to-be.md` is missing, abort with a message suggesting the user run `/quickstart` first. `project/conceptual-design-as-is.md` is required for brownfield projects but optional for greenfield. Other files are optional (warn but continue). Read:
+2. **Read project references**: Verify the following files exist in the current project's `_references`. If `project/conceptual-design-to-be.md` is missing, abort with a message suggesting the user run `/design` first. `project/conceptual-design-as-is.md` is required for brownfield projects but optional for greenfield. Other files are optional (warn but continue). Read:
    - `project/conceptual-design-as-is.md` (current-state entities, hierarchy, permissions, UX patterns -- empty or absent for greenfield)
    - `project/conceptual-design-to-be.md` (target-state entities, hierarchy, permissions, UX patterns)
    - `project/conventions.md` (directory structure, source paths)
@@ -267,8 +367,8 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
    - Touches shared files -- limited parallelism
 
 4. **Classify each work item** as:
-   - **Technical** -- infrastructure, models, services, API endpoints, migrations, tests. Will be planned via the standard make-plan workflow.
-   - **Design** -- UX flows, page layouts, information hierarchy, empty states, onboarding, feature discoverability. Will be planned via make-plan with `--framing metacomm`.
+   - **Technical** -- infrastructure, models, services, API endpoints, migrations, tests. Will be planned via the standard plan workflow.
+   - **Design** -- UX flows, page layouts, information hierarchy, empty states, onboarding, feature discoverability. Will be planned via the plan skill with `--framing metacomm`.
 
    Classification heuristic: if the work item's primary value is in *what the user sees and experiences*, it is design. If the primary value is in *what the system does internally*, it is technical.
 
@@ -290,8 +390,8 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
 7. Ask the user to review, add, remove, or reorder items before generating plans.
 
 8. **Generate plans**: For each approved work item:
-   - If classified as **technical**: invoke the standard make-plan workflow with the item's description
-   - If classified as **design**: invoke make-plan with `--framing metacomm` and the item's description phrased as a metacommunication message using I/you (e.g., "When you open the home page, I want you to see...")
+   - If classified as **technical**: invoke the standard plan workflow with the item's description
+   - If classified as **design**: invoke the plan skill with `--framing metacomm` and the item's description phrased as a metacommunication message using I/you (e.g., "When you open the home page, I want you to see...")
    - Record the generated plan ID next to each work item
 
 9. **Save roadmap summary**: Save to `${ROADMAP_DIR}/roadmap-<id>-<slug>.md` with:
@@ -311,7 +411,7 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
 
 ### Steps
 
-1. **Run /pre-skill "make-plan"** to load general instructions.
+1. **Run /pre-skill "plan"** to load general instructions.
 
 2. **Locate spec file**: Use the path from `--from-spec` argument, or ask the user.
 
@@ -355,7 +455,7 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
    >
    > Fill in your choices -- each field has inline comments explaining the options. Required fields per work item: id, title, scope, description. Everything else is optional.
    >
-   > When ready, run `/make-plan --roadmap --from-spec <path>`.
+   > When ready, run `/plan --roadmap --from-spec <path>`.
 
 ---
 
@@ -382,8 +482,8 @@ The Alembic migration chain is linear -- each migration depends on the previous 
 
 | Primary concern | Classification | Planned via | Examples |
 |----------------|---------------|-------------|----------|
-| What the system does internally | Technical | `/make-plan` | Models, migrations, services, API endpoints, validation |
-| What the user sees and experiences | Design | `/make-plan --framing metacomm` | Page UX, onboarding, empty states, navigation flow, error feedback |
+| What the system does internally | Technical | `/plan` | Models, migrations, services, API endpoints, validation |
+| What the user sees and experiences | Design | `/plan --framing metacomm` | Page UX, onboarding, empty states, navigation flow, error feedback |
 
 Design items are phrased as metacommunication messages using I/you: "When you [context], I want you to [experience/action], because I know you [rationale]."
 
@@ -423,8 +523,8 @@ Design items are phrased as metacommunication messages using I/you: "When you [c
 
 ### Wave 0 (sequential)
 Execute these plans one at a time, in order:
-1. /execute-plan XXXX (user-model)
-2. /execute-plan XXXX (group-model)
+1. /implement XXXX (user-model)
+2. /implement XXXX (group-model)
 
 ### Wave 1 (parallel -- 2 plans)
 All depend on Wave 0. Execute in parallel via:

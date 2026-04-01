@@ -7,7 +7,7 @@ Usage:
     python create_workspace.py --from <foundational_framework> --workspace <ws_path> --target <codebase_path> [--dry-run]
 
 The --from source (foundational SEJA framework) can be a directory (repo or
-unpacked quickstart kit) or a .zip file.  The script copies framework files
+framework source directory) or a .zip file.  The script copies framework files
 into the workspace and configures absolute paths to the target codebase.
 """
 

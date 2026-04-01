@@ -28,7 +28,7 @@ the [workspace setup recipe](recipe-workspace-setup.md) instead.
    Confirm that `.claude/` or `.codex/` and `_references/` directories exist at the
    codebase root. These are the two pillars of the toolkit.
 
-4. **Run `/quickstart .` / `$quickstart .` and choose your mode**
+4. **Run `/seed .` then `/design` / `$seed .` then `$design` and choose your mode**
    - **Interactive** -- walk through a guided questionnaire (recommended for
      first-time users).
    - **From spec** -- provide an existing PRD or design document and let the
@@ -39,7 +39,7 @@ the [workspace setup recipe](recipe-workspace-setup.md) instead.
    of your system. Spend time here -- it drives every downstream artifact.
 
 6. **Review the generated specs**
-   After the summary, quickstart offers three options:
+   After the summary, the design skill offers three options:
    - **Review specs now** -- walk through each `project/*` file to verify and adjust.
    - **Generate roadmap** -- auto-derive a development roadmap from your specs.
    - **Done for now** -- review offline, generate roadmap later.
@@ -51,9 +51,9 @@ the [workspace setup recipe](recipe-workspace-setup.md) instead.
    - `project/ux-design-standards.md` and `project/graphic-ui-design-standards.md`.
 
 7. **Generate a roadmap** (optional but recommended)
-   If you chose "Generate roadmap" in step 6, quickstart creates a roadmap spec
+   If you chose "Generate roadmap" in step 6, the design skill creates a roadmap spec
    in `_output/roadmaps/` with themes derived from your conceptual design and
-   metacommunication. You can then run `/make-plan --roadmap` / `$make-plan --roadmap`
+   metacommunication. You can then run `/plan --roadmap` / `$plan --roadmap`
    to turn it into executable plans.
 
 8. **Make your first commit**
@@ -68,7 +68,7 @@ the [workspace setup recipe](recipe-workspace-setup.md) instead.
   change them later.
 - The conceptual design is the most important investment during bootstrap.
 - Review specs before generating a roadmap -- changes are cheapest at the spec level.
-- You can re-run `/quickstart` / `$quickstart` at any time to regenerate or update files.
+- You can re-run `/design` / `$design` at any time to regenerate or update files.
 
 ## Related journeys
 

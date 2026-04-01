@@ -19,7 +19,7 @@
 - **Metacommunication message**: The designer's intent as expressed through the system (`project/metacomm-as-is.md`, `project/metacomm-to-be.md`). Understanding who the user is, what they need, and why the system works this way.
 - **User personas and journey maps**: Who uses the system, what their goals are, and how they move through key workflows.
 - **Design system and component library**: Visual language, design tokens, reusable components, interaction patterns.
-- **Product roadmap and priorities**: Current and upcoming work, strategic goals, how features are prioritized. Use `/make-plan --roadmap` output if available.
+- **Product roadmap and priorities**: Current and upcoming work, strategic goals, how features are prioritized. Use `/plan --roadmap` output if available.
 - **AI-assisted design workflow**: How to use AI tools (like Claude Code with the skill system) to explore the codebase, validate design decisions, and generate explanations without needing to read code directly.
 
 ### Deep-dive (load for thorough onboarding or when Shaper is the primary role)

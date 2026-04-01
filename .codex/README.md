@@ -11,4 +11,4 @@ Contents:
 - `rules/`: path-scoped guidance used by this framework.
 - `CHEATSHEET.md`: generated quick reference.
 
-Primary skills: `$advise`, `$check`, `$communication`, `$execute-plan`, `$explain`, `$generate-script`, `$help`, `$make-plan`, `$onboarding`, `$post-skill`, `$pre-skill`, `$qa-log`, `$quickstart`, `$update-tests`.
+Primary skills: `$advise`, `$check`, `$communication`, `$implement`, `$explain`, `$generate-script`, `$help`, `$plan`, `$onboarding`, `$post-skill`, `$pre-skill`, `$qa-log`, `$seed`, `$upgrade`, `$update-tests`.

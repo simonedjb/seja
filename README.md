@@ -42,9 +42,9 @@ Both toolkits are fully supported. Choose based on your preferred AI agent.
 
 ## Shared recommendations
 
-1. Run the quickstart skill (`/quickstart` in Claude, `$quickstart` in Codex) early so the project guidance exists before implementation work starts.
+1. Run `/seed` (Claude) or `$seed` (Codex) to copy the framework, then `/design` or `$design` to configure project-specific files early, so the project guidance exists before implementation work starts.
 2. Treat the conceptual design and project conventions as first-class artifacts, not setup boilerplate.
-3. Always review the plan before running `/execute-plan` / `$execute-plan` until the codebase and workflow feel familiar.
+3. Always review the plan before running `/implement` / `$implement` until the codebase and workflow feel familiar.
 4. Use `/check` / `$check` (validate, review, preflight) as routine safety rails.
 5. Keep agent configuration (`CLAUDE.md` for Claude, `AGENTS.md` for Codex) and the `project/*.md` files current as the product evolves.
 6. Break larger work into small, reviewable steps.

@@ -7,7 +7,7 @@ compliance.
 
 ## Prerequisites
 
-- SEJA framework installed and `/quickstart` / `$quickstart` completed
+- SEJA framework seeded and project configured via `/seed` + `/design` / `$seed` + `$design`
 - Code changes ready to validate
 
 ## Steps
