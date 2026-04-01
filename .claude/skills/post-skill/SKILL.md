@@ -100,14 +100,7 @@ metadata:
    c. **Cross-reference update**: If the produced artifact has a `source: <type>-<id>` header field, open the source artifact file, read its YAML/Markdown header, and append the new artifact's ID to the source's `spawned:` field (comma-separated if `spawned:` already has values; create the field if absent).
 
    Write checkpoint: `7 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
-
-8. Git stage the affected files (including regenerated index files and any updated as-is files) and commit using the generated message.
-
-   Write checkpoint: `8 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
-
-   Delete `${OUTPUT_DIR}/.post-skill-checkpoint` — post-skill completed successfully.
-
-8b. **Telemetry flush** — Enrich the telemetry record prepared in step 1b with commit metadata and write it to disk:
+8. **Telemetry flush** — Enrich the telemetry record prepared in step 1b with commit metadata and write it to disk:
 
     - Add 3 fields to the record:
       - `git_commit_sha` (string|null): run `git rev-parse HEAD` after the commit in step 8. If the commit was skipped, set to `null`.
@@ -122,11 +115,18 @@ metadata:
 
     - This step is lightweight and must not block subsequent steps. If writing fails (e.g., permission error), log a warning and continue.
 
-9. If there are any manual actions to be taken (db upgrade, environment update or config, restart backend or frontend), append the plan file with the action instructions, separating dev and production environments, and inform the user.
+9. Git stage the affected files (including regenerated index files and any updated as-is files) and commit using the generated message.
 
-10. Output a link to the generated file within `${OUTPUT_DIR}` (see project/conventions.md).
+   Write checkpoint: `8 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
 
-11. **Contextual next-step suggestions**: Read `_references/general/skill-graph.md`. Look up the completed skill in the "After" column. If found, display the suggested skill(s) and reason as a tip:
+   Delete `${OUTPUT_DIR}/.post-skill-checkpoint` — post-skill completed successfully.
+
+
+10. If there are any manual actions to be taken (db upgrade, environment update or config, restart backend or frontend), append the plan file with the action instructions, separating dev and production environments, and inform the user.
+
+11. Output a link to the generated file within `${OUTPUT_DIR}` (see project/conventions.md).
+
+12. **Contextual next-step suggestions**: Read `_references/general/skill-graph.md`. Look up the completed skill in the "After" column. If found, display the suggested skill(s) and reason as a tip, using AskUserQuestion with the suggestions formatted as numbered buttons. Example:
 
     ```
     Tip: You might want to try next:
