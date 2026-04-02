@@ -2,6 +2,7 @@
 name: help
 description: "Show contextual help, browse skills by category, or get details on a specific skill."
 argument-hint: "[skill-name | --browse]"
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-03-29 00:15:00
   version: 1.0.0

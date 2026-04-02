@@ -2,6 +2,7 @@
 name: upgrade
 description: "Upgrade SEJA framework files from the seed repo without touching project-specific files. Use when user mentions 'upgrade', 'upgrade framework', 'update framework', or 'pull framework updates'."
 argument-hint: "[<seed-repo-path>] [--dry-run]"
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-03-31 16:30:00
   version: 1.0.0

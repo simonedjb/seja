@@ -39,6 +39,8 @@ FAST_CHECKS: list[tuple[str, list[str]]] = [
     ("conventions", [sys.executable, str(SCRIPTS_DIR / "check_conventions.py")]),
     ("skill-system", [sys.executable, str(SCRIPTS_DIR / "check_skill_system.py")]),
     ("secrets", [sys.executable, str(SCRIPTS_DIR / "check_secrets.py"), "--all"]),
+    ("skills-manifest", [sys.executable, str(SCRIPTS_DIR / "generate_skills_manifest.py"), "--check"]),
+    ("skill-spec", [sys.executable, str(SCRIPTS_DIR / "check_skill_spec.py")]),
 ]
 
 SPEC_CHECKS_LOCATIONS = [

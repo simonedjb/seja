@@ -1,0 +1,97 @@
+{
+  "generated": "2026-04-02T18:07:21Z",
+  "count": 13,
+  "skills": [
+    {
+      "name": "advise",
+      "description": "Answer questions about the codebase, architecture, or design decisions, logging Q&A pairs. With --inventory, catalog codebase elements matching a pattern.",
+      "argument_hint": "<question or topic> [--inventory <pattern>] [--deep]",
+      "category": "analysis",
+      "version": "1.2.0"
+    },
+    {
+      "name": "check",
+      "description": "Run quality checks: validation, code review, smoke tests, preflight, or framework health.",
+      "argument_hint": "<validate | review | smoke | preflight | health | test-plan | telemetry> [--depth <light|standard|deep>] [scope]",
+      "category": "analysis",
+      "version": "1.0.0"
+    },
+    {
+      "name": "communication",
+      "description": "Generate tailored communication material for a specific audience segment.",
+      "argument_hint": "<audience> [--format md|html|both] [--all] [--source <advisory-file>]",
+      "category": "utility",
+      "version": "1.1.0"
+    },
+    {
+      "name": "design",
+      "description": "Define or update project design — stack, conventions, domain model, conceptual design, and standards. Use when user mentions 'design', 'design project', 'configure project', 'update design', or 'project setup'.",
+      "argument_hint": "[--generate-spec] [--add-docs] [spec-file-path]",
+      "category": "planning",
+      "version": "1.0.0"
+    },
+    {
+      "name": "document",
+      "description": "Generate or update project documentation based on plan Docs: fields, auto-detection, or explicit type selection.",
+      "argument_hint": "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|adr|help-center|changelog>]",
+      "category": "utility",
+      "version": "1.0.0"
+    },
+    {
+      "name": "explain",
+      "description": "Explains behavior, code, data model, architecture, or spec drift with visual diagrams and analogies.",
+      "argument_hint": "<architecture|behavior|behavior-evolution|code|data-model|spec-drift> [brief]",
+      "category": "analysis",
+      "version": "1.1.0"
+    },
+    {
+      "name": "help",
+      "description": "Show contextual help, browse skills by category, or get details on a specific skill.",
+      "argument_hint": "[skill-name | --browse]",
+      "category": "utility",
+      "version": "1.0.0"
+    },
+    {
+      "name": "implement",
+      "description": "Execute a previously generated plan to add a feature, fix a bug, or refactor code. Use when user mentions \"implement\", \"execute plan\", or \"run plan\".",
+      "argument_hint": "<planned-item-id> [--manual] [--max-iterations N] [--dry-run] [--skip-checks]",
+      "category": "planning",
+      "version": "1.0.0"
+    },
+    {
+      "name": "onboarding",
+      "description": "Generate a tailored onboarding plan for a new team member based on their role and expertise level.",
+      "argument_hint": "<role-family> <expertise-level> [name] [--area <focus-area>] [--batch <spec-list>]",
+      "category": "utility",
+      "version": "1.0.0"
+    },
+    {
+      "name": "plan",
+      "description": "Make a plan to add a feature, fix a bug, or refactor code. Supports metacomm framing for design-intent briefs.",
+      "argument_hint": "<brief> [--review <light|standard|deep>] [--framing metacomm] [--light] [--plan | --roadmap [--from-spec <path>] [--auto]]",
+      "category": "planning",
+      "version": "1.0.0"
+    },
+    {
+      "name": "qa-log",
+      "description": "Log the entire current Q&A session into a file for future reference.",
+      "argument_hint": "brief or topic",
+      "category": "utility",
+      "version": "1.0.0"
+    },
+    {
+      "name": "seed",
+      "description": "Copy the SEJA framework into a new or existing project, or create a workspace alongside an existing codebase.",
+      "argument_hint": "<target-directory> [--workspace | --demo]",
+      "category": "utility",
+      "version": "1.0.0"
+    },
+    {
+      "name": "upgrade",
+      "description": "Upgrade SEJA framework files from the seed repo without touching project-specific files. Use when user mentions 'upgrade', 'upgrade framework', 'update framework', or 'pull framework updates'.",
+      "argument_hint": "[<seed-repo-path>] [--dry-run]",
+      "category": "utility",
+      "version": "1.0.0"
+    }
+  ]
+}

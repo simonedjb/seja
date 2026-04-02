@@ -2,6 +2,7 @@
 name: onboarding
 description: "Generate a tailored onboarding plan for a new team member based on their role and expertise level."
 argument-hint: "<role-family> <expertise-level> [name] [--area <focus-area>] [--batch <spec-list>]"
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-03-28 18:45:00
   version: 1.0.0

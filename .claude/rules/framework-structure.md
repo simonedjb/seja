@@ -8,7 +8,7 @@ Detailed inventory of the SEJA Claude framework components. Auto-loaded when wor
 
 ## Skills
 
-15 skills in `.claude/skills/<name>/SKILL.md` -- 13 user-facing + 2 internal lifecycle hooks (pre-skill, post-skill). The `/document` skill generates and updates project documentation based on plan Docs: fields or auto-detected changes. Each user-facing skill includes a `## Quick Guide` section with designer-friendly description, example, and usage scenario. The `/plan` skill supports three modes: standard planning, `--light` (lightweight proposals), and `--roadmap` (full product roadmap). Pre-skill executes as a pipeline of 6 composable stages (help, brief-log, orphan-check, budget-eval, ref-load, constitution) -- 3 critical (always run) and 3 non-critical (error-isolated, skippable). Skills can declare `skip_stages: [stage-id, ...]` in their YAML frontmatter (`metadata.skip_stages`) to opt out of non-critical stages.
+15 skills in `.claude/skills/<name>/SKILL.md` -- 13 user-facing + 2 internal lifecycle hooks (pre-skill, post-skill). The `/document` skill generates and updates project documentation based on plan Docs: fields or auto-detected changes. Each user-facing skill includes a `## Quick Guide` section with designer-friendly description, example, and usage scenario. The `/plan` skill supports three modes: standard planning, `--light` (lightweight proposals), and `--roadmap` (full product roadmap). Pre-skill executes as a pipeline of 7 composable stages (help, brief-log, orphan-check, budget-eval, ref-load, constitution) -- 3 critical (always run) and 4 non-critical (error-isolated, skippable). Skills can declare `skip_stages: [stage-id, ...]` in their YAML frontmatter (`metadata.skip_stages`) to opt out of non-critical stages.
 
 ## Agent-Agnostic References
 
@@ -20,7 +20,7 @@ Shared reference files located in `_references/`:
 
 ## Helper Scripts
 
-35 scripts in `.claude/skills/scripts/` -- validation checks, index generators, conversion utilities, the central `project_config.py` module that parses `project/conventions.md` to supply all scripts with project-specific paths and settings, `run_all_checks.py` (CI-independent validation orchestrator that discovers and runs all check scripts with unified exit codes and JUnit XML output), and `check_docs.py` (plugin-based documentation consistency checker with 6 scanners: framework integrity, path liveness, env vars, command refs, terminology, structural-completeness).
+38 scripts in `.claude/skills/scripts/` -- validation checks, index generators, conversion utilities, the central `project_config.py` module that parses `project/conventions.md` to supply all scripts with project-specific paths and settings, `run_all_checks.py` (CI-independent validation orchestrator that discovers and runs all check scripts with unified exit codes and JUnit XML output), and `check_docs.py` (plugin-based documentation consistency checker with 6 scanners: framework integrity, path liveness, env vars, command refs, terminology, structural-completeness).
 
 ## Subagent Prompts
 
@@ -46,6 +46,9 @@ New agents must justify that their domain is distinct from existing agents. Agen
 - **Executor**: dynamically constructed by `/implement` auto mode (not standalone prompt files).
 Current count: 10 agents (7 evaluator + 3 generator).
 
+### agentskills.io Spec Alignment
+SEJA SKILL.md frontmatter follows the [agentskills.io](https://agentskills.io) universal specification. Top-level fields (`name`, `description`, `compatibility`) conform to the spec; SEJA-specific fields (`context_budget`, `eager_references`, `references`, `skip_stages`, `plan_format_version`, `questionnaire_version`) are namespaced under `metadata` to avoid conflicts with future spec fields. New skills must validate against the agentskills.io spec (enforced by `check_skill_spec.py`).
+
 ### Architectural Decisions
 
 **Pre/post-skill monolithic pipelines**: Pre-skill (6 stages) and post-skill (13 steps) are intentionally monolithic. The full lifecycle is readable in a single file. Decomposing into micro-hooks would add file count and configuration without solving an actual problem. The `skip_stages` mechanism handles per-skill overrides. Revisit only if a stage needs independent versioning.
@@ -55,6 +58,12 @@ Current count: 10 agents (7 evaluator + 3 generator).
 **Onboarding/document separation**: `/onboarding` (person-centric onboarding plans) and `/document` (artifact-centric project documentation) remain separate skills. Onboarding has interactive argument resolution, role-conditional project scanning, batch mode with parallel subagents, date-versioned output, and zero reference overlap with document. Onboarding implements a pedagogical framework (Dreyfus-aligned levels, role families, progressive disclosure layers), not a document template. Revisit if onboarding loses its interactive/batch capabilities or if reference sets converge. (advisory-000156)
 
 **Agent single-responsibility**: Each agent operates on one type of artifact through one lens. Evaluators: `code-reviewer` reviews diffs, `plan-reviewer` reviews plans, `advisory-reviewer` reviews design decisions, `council-debate` runs structured debates, `standards-checker` aggregates script results, `test-runner` runs test suites, `migration-validator` validates migrations. Generators: `communication-generator` produces stakeholder material, `onboarding-generator` produces onboarding plans, `document-generator` produces project documentation. Do not merge agents or add cross-cutting responsibilities to existing agents.
+
+**Generator-critic loops in auto mode**: `/implement` auto mode uses a bounded generator-critic loop (max 2 retries) when the code-reviewer identifies critical findings during the quality gate. Interactive (manual) mode retains advisory-only review — the user decides what to fix. Rationale: auto mode has already opted out of per-step human oversight, so automated fix attempts improve output quality without undermining user agency. The 2-iteration cap prevents runaway token consumption.
+
+**Parallel fan-out for preflight checks**: `/check preflight` launches independent sub-checks (validate and review) as parallel Agent invocations, then synthesizes their results into a unified report. Each check writes to a unique output section to avoid conflicts. If one check fails, the other still produces results. Rationale: reduces wall-clock time for preflight checks without sacrificing completeness. The pattern applies to any future check modes that are independent and stateless.
+
+**Meta-skills deferral**: Runtime skill generation (agents creating new SKILL.md files at runtime, per the ADK "Skill Factory" pattern) is deferred. Prerequisites for adoption: (1) agentskills.io spec compliance is enforced via automated validation (plan-000196 -- done); (2) a permission inheritance model is defined -- generated skills must inherit the permission ceiling of their parent skill; (3) constitution injection is mandatory for generated skills (cannot bypass); (4) generated skills cannot declare new file-write permissions beyond their parent's scope; (5) a "skill template" factory pattern (constrained parameters, pre-approved templates) is designed as the safe middle ground between full generation and prohibition. Revisit when prerequisites 1-4 are met. Reference: advisory-000188, council debate synthesis.
 
 ## Reference File Maintainer Summary
 

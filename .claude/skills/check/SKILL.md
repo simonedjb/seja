@@ -2,6 +2,7 @@
 name: check
 description: "Run quality checks: validation, code review, smoke tests, preflight, or framework health."
 argument-hint: "<validate | review | smoke | preflight | health | test-plan | telemetry> [--depth <light|standard|deep>] [scope]"
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-03-29 00:15:00
   version: 1.0.0
@@ -252,11 +253,14 @@ Combines validate + review into a single pre-merge checkpoint.
 
 2. **Apply stack filtering** (see [Stack Filtering](#stack-filtering) above). Resolve the set of applicable scripts from the plugin registry before launching validation. If the project has no stack variables (legacy fallback), pass all scripts and include the warning in the report output.
 
-3. Launch both checks in parallel:
+3. **Parallel fan-out**: Launch independent checks as concurrent Agent invocations (multiple Agent tool calls in a single message). Each check writes to a unique output section to avoid conflicts:
    - **Validation**: launch the `standards-checker` agent with scope "all" and the filtered script list
    - **Code review**: launch the `code-reviewer` agent with the determined review scope
+   - **Smoke** (if plan's `smoke` field is `true`): launch smoke test in parallel with the above
 
-4. Collect results from both agents and save a combined report to the output file, including:
+   If any individual check fails (agent error, timeout), the other checks still produce results — do not abort the entire preflight.
+
+4. **Gather and synthesize**: Collect results from all agents and save a combined report to the output file, including:
    - *header*: `# Check <id> | CHORE<scope> | <current datetime> | Preflight Check`
    - *validation summary*: table of check name, status (PASS/FAIL/INFO), error count, warning count
    - *code review summary*: perspective evaluation table with Adopted/Deferred/N/A
@@ -293,6 +297,9 @@ Flags: `[--verbose]`
    #### Check 7: Constitution Presence
    Check whether `_references/project/constitution.md` exists. If missing, report WARN status with message: "No project constitution found. Run `/design` to generate `project/constitution.md` with your project's immutable principles." If present, report PASS.
 
+   #### Check 8: Skill Spec Compliance
+   Run `python .claude/skills/scripts/check_skill_spec.py`. This validates all SKILL.md files against the agentskills.io specification (name format, description length, directory name match, optional fields). Report PASS if exit code 0, FAIL if exit code 1 with violation details.
+
 2. Compile results into a health report:
 
    ```
@@ -306,8 +313,9 @@ Flags: `[--verbose]`
    | Reference Completeness | PASS/WARN/FAIL | N missing references |
    | Conventions Completeness | PASS/WARN/FAIL | N errors, M warnings |
    | Constitution Presence | PASS/WARN | Present or missing |
+   | Skill Spec Compliance | PASS/FAIL | N violations |
 
-   Overall: X/6 checks passed
+   Overall: X/7 checks passed
    ```
 
 3. Save the report to the output file per report conventions.

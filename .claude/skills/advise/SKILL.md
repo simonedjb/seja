@@ -2,6 +2,7 @@
 name: advise
 description: "Answer questions about the codebase, architecture, or design decisions, logging Q&A pairs. With --inventory, catalog codebase elements matching a pattern."
 argument-hint: "<question or topic> [--inventory <pattern>] [--deep]"
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-04-01 13:22:00
   version: 1.2.0

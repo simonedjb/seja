@@ -2,6 +2,7 @@
 name: seed
 description: "Copy the SEJA framework into a new or existing project, or create a workspace alongside an existing codebase."
 argument-hint: "<target-directory> [--workspace | --demo]"
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-03-31 16:30:00
   version: 1.0.0

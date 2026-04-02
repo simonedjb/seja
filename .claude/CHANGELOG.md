@@ -3,6 +3,27 @@
 All notable changes to the SEJA-Claude framework are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.6.0] -- 2026-04-02
+
+### Added
+- `compatibility` field in all 15 SKILL.md frontmatter files for agentskills.io spec alignment
+- `check_skill_spec.py` -- validates SKILL.md files against agentskills.io spec (name rules, description, compatibility, metadata structure)
+- `generate_skill_graph.py` -- generates skill-graph.json from skill-graph.md for programmatic skill-dependency lookup
+- `generate_skills_manifest.py` -- generates skills-manifest.json (L1 metadata index for fast skill scanning, ~100 tokens per skill)
+- `skills-manifest.json` -- L1 metadata index of 13 user-facing skills (name, description, argument_hint, category, version)
+- `compaction-check` stage in pre-skill pipeline (non-critical) -- warns when session has many skill invocations; pipeline now has 7 stages (3 critical + 4 non-critical)
+- Generator-critic retry loop in `/implement` auto mode -- bounded loop (max 2 retries) when code-reviewer finds critical findings during quality gate; interactive mode unchanged
+- Parallel fan-out for `/check preflight` -- launches validate and review as concurrent Agent invocations, synthesizes unified report
+- Meta-skills deferral ADR -- documents prerequisites for runtime skill generation (permission inheritance, constitution injection, template factory pattern)
+- agentskills.io Spec Alignment section in `framework-structure.md` governance documentation
+- Preflight checks for skills-manifest and skill-spec validation in `run_preflight_fast.py`
+
+### Changed
+- Script count increased from 35 to 38 (3 new scripts: check_skill_spec.py, generate_skill_graph.py, generate_skills_manifest.py)
+- Pre-skill pipeline expanded from 6 to 7 composable stages
+- `generate_cheatsheet.py` now escapes pipe characters in description and argument_hint fields for correct markdown table rendering
+- `/check preflight` rewritten with parallel fan-out pattern and failure isolation
+
 ## [2.5.0] -- 2026-04-02
 
 ### Changed

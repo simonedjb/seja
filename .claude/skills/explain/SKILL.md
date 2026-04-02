@@ -2,6 +2,7 @@
 name: explain
 description: "Explains behavior, code, data model, architecture, or spec drift with visual diagrams and analogies."
 argument-hint: "<architecture|behavior|behavior-evolution|code|data-model|spec-drift> [brief]"
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-03-28 12:40:00
   version: 1.1.0

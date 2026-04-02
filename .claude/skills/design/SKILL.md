@@ -2,6 +2,7 @@
 name: design
 description: "Define or update project design — stack, conventions, domain model, conceptual design, and standards. Use when user mentions 'design', 'design project', 'configure project', 'update design', or 'project setup'."
 argument-hint: "[--generate-spec] [--add-docs] [spec-file-path]"
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-03-31 16:30:00
   version: 1.0.0

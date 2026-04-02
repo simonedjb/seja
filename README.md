@@ -34,7 +34,7 @@ The framework lives in `.claude/` and is configured via `CLAUDE.md` and `/slash`
 - **15 skills** (13 user-facing + 2 internal lifecycle hooks): `/plan`, `/implement`, `/advise`, `/check`, `/explain`, `/document`, and more
 - **10 specialized agents** for code review, plan review, testing, migrations, communication, onboarding, and documentation
 - **7 path-scoped rules** that activate automatically when editing matching files
-- **35 validation scripts** for quality checks, analysis, and smoke testing
+- **38 validation scripts** for quality checks, analysis, and smoke testing
 - **51 reference templates** in `_references/` for generating project-specific standards
 
 ---

@@ -132,8 +132,10 @@ def generate_cheatsheet() -> int:
         lines.append("|-------|-------------|-----------|")
 
         for s in sorted(skills, key=lambda x: x["name"]):
-            arg = f"`{s['argument_hint']}`" if s["argument_hint"] else "—"
-            lines.append(f"| `/{s['name']}` | {s['description']} | {arg} |")
+            desc = s["description"].replace("|", r"\|")
+            arg_hint = s["argument_hint"].replace("|", r"\|")
+            arg = f"`{arg_hint}`" if arg_hint else "—"
+            lines.append(f"| `/{s['name']}` | {desc} | {arg} |")
             total += 1
 
         lines.append("")

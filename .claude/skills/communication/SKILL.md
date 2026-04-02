@@ -2,6 +2,7 @@
 name: communication
 description: "Generate tailored communication material for a specific audience segment."
 argument-hint: "<audience> [--format md|html|both] [--all] [--source <advisory-file>]"
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-03-30 00:00:00
   version: 1.1.0

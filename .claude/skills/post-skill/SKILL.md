@@ -3,6 +3,7 @@ name: post-skill
 description: "[Internal] Lifecycle hook invoked by other skills for briefs update, QA logging, and git commit. Not intended for direct user invocation."
 argument-hint: "<id>"
 user-invocable: false
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-04-01 12:59:00
   version: 1.2.0

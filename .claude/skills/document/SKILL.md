@@ -2,6 +2,7 @@
 name: document
 description: "Generate or update project documentation based on plan Docs: fields, auto-detection, or explicit type selection."
 argument-hint: "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|adr|help-center|changelog>]"
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-04-01 16:42:22
   version: 1.0.0

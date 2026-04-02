@@ -2,6 +2,7 @@
 name: qa-log
 description: "Log the entire current Q&A session into a file for future reference."
 argument-hint: brief or topic
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-03-27 00:00:00
   version: 1.0.0

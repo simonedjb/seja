@@ -2,6 +2,7 @@
 name: implement
 description: Execute a previously generated plan to add a feature, fix a bug, or refactor code. Use when user mentions "implement", "execute plan", or "run plan".
 argument-hint: "<planned-item-id> [--manual] [--max-iterations N] [--dry-run] [--skip-checks]"
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-03-27 12:00:00
   version: 1.0.0
@@ -70,6 +71,29 @@ The quality gate runs validation, code review, and tests. It is referenced from 
 3. Launch the `test-runner` agent with scope "all" to verify tests pass.
 4. If the plan's `smoke` field is `true`, run `/check smoke api`.
 5. If any check surfaces **critical** issues (failing tests, security findings, blocking validation errors), fix them before proceeding. For non-critical issues, list them in the plan file summary as deferred items.
+
+### Generator-Critic Loop (Auto Mode Only)
+
+When running in **auto mode**, the quality gate applies a bounded generator-critic retry loop for critical code review findings. In **manual (interactive) mode**, review findings remain advisory — the user decides what to fix.
+
+**Retry logic** (auto mode, after step 2 above):
+
+1. Classify each code-reviewer finding as **critical** (blocking: security, correctness, failing tests) or **advisory** (non-blocking: style, minor improvements).
+2. Set `retry_count = 0`.
+3. While critical findings exist AND `retry_count < 2`:
+   a. Increment `retry_count`.
+   b. For each critical finding: construct a fix prompt containing the finding description, affected file(s) and line(s), and the original plan context.
+   c. Launch a `general-purpose` subagent to apply the fix.
+   d. Re-run `/check review` on the changed files only.
+   e. Re-classify findings from the new review.
+4. If `retry_count` reaches 2 and critical findings remain, log them as **unresolved** in the plan file summary and continue — do not block the workflow.
+5. Append a **Generator-Critic Iterations** section to the quality gate output:
+   ```
+   ### Generator-Critic Iterations
+   - Iteration count: N/2
+   - Findings per iteration: [list counts]
+   - Resolution status: all resolved / N unresolved critical findings remain
+   ```
 
 ## Execution Modes
 

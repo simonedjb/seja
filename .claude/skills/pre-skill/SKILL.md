@@ -3,6 +3,7 @@ name: pre-skill
 description: "[Internal] Lifecycle hook invoked by other skills to load references and log briefs. Not intended for direct user invocation."
 argument-hint: "<skill-name> <brief>"
 user-invocable: false
+compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-03-28 12:40:00
   version: 1.0.0
@@ -13,7 +14,7 @@ metadata:
 
 ## Stage Catalog
 
-Pre-skill executes as a pipeline of 6 composable stages. Each stage is independently skippable (if non-critical) and error-isolated (if non-critical).
+Pre-skill executes as a pipeline of 7 composable stages. Each stage is independently skippable (if non-critical) and error-isolated (if non-critical).
 
 | Stage ID | Name | Critical | Description |
 |----------|------|----------|-------------|
@@ -21,6 +22,7 @@ Pre-skill executes as a pipeline of 6 composable stages. Each stage is independe
 | `brief-log` | Brief logging | Yes | Logs skill invocation to briefs file |
 | `orphan-check` | Orphaned-brief detection | No | Detects orphaned STARTED entries |
 | `budget-eval` | Context budget evaluation | Yes | Determines context budget tier and loads briefs |
+| `compaction-check` | Context compaction warning | No | Warns when session has many skill invocations |
 | `ref-load` | Reference file loading | Yes | Loads constitution, conventions, permissions, constraints, and skill-specific references |
 | `constitution` | Constitution injection | No | Injects project constitution if it exists |
 
@@ -31,7 +33,7 @@ Any skill's SKILL.md frontmatter may include `skip_stages` under the `metadata` 
 - **Field**: `metadata.skip_stages`
 - **Format**: YAML list of stage IDs -- `skip_stages: [stage-id, ...]`
 - **Default**: empty list `[]` (all stages run)
-- **Allowed values**: only non-critical stage IDs may be listed: `help`, `orphan-check`, `constitution`
+- **Allowed values**: only non-critical stage IDs may be listed: `help`, `orphan-check`, `compaction-check`, `constitution`
 - **Critical stage protection**: if a critical stage ID (`brief-log`, `budget-eval`, `ref-load`) appears in `skip_stages`, it is silently ignored -- critical stages always run
 
 Example frontmatter usage:
@@ -96,7 +98,22 @@ Read the calling skill's SKILL.md file at `.claude/skills/$ARGUMENTS[0]/SKILL.md
 
 **`standard`** (default) -- Load the briefs index (`${BRIEFS_INDEX_FILE}`) instead of the full `${BRIEFS_FILE}`. If the index does not exist, generate it by running `python .claude/skills/scripts/generate_briefs_index.py`. Then proceed to the ref-load stage.
 
-**`heavy`** -- Load `${BRIEFS_FILE}` with **recency windowing**: read only the first 50 entries from the file (newest first). Append a summary line for older entries: "N earlier entries from DATE to DATE, not loaded." Also load the plan index (`${PLANS_DIR}/INDEX.md`). Then proceed to the ref-load stage.
+**`heavy`** -- Load `${BRIEFS_FILE}` with **recency windowing**: read only the first 50 entries from the file (newest first). Append a summary line for older entries: "N earlier entries from DATE to DATE, not loaded." Also load the plan index (`${PLANS_DIR}/INDEX.md`). Then proceed to the compaction-check stage.
+
+### Stage: compaction-check
+
+**Skip guard**: If `compaction-check` is in the calling skill's `metadata.skip_stages`, skip this stage.
+
+**Error isolation**: If this stage encounters an error, log a one-line warning: "Warning: compaction-check stage failed: <reason>" and continue to the next stage. Do not abort pre-skill.
+
+Check for context bloat by counting recent skill invocations in the current session:
+
+1. Read `${BRIEFS_FILE}` and count STARTED entries (both orphaned and completed) whose timestamp falls within the last 2 hours. This approximates the number of skill invocations in the current session.
+2. If the count exceeds the threshold (default: 8 invocations), emit a warning:
+   > "Warning: Context may be getting heavy after N skill invocations in this session. Consider starting a fresh conversation for best results, or use the session scratchpad (`${TMP_DIR}/session-notes.md`) to persist key decisions before starting a new session."
+3. If the count is below the threshold, proceed silently.
+
+This stage is advisory-only -- it warns but does not block or auto-compact. Future phases may add automatic compaction.
 
 ### Stage: ref-load
 
