@@ -12,6 +12,7 @@ Our goal is to design a human-centered computing methodology based on semiotic e
 - Clone this repository or download it as ZIP from GitHub to get started
 - [Journeys](docs/journeys/) -- scenario-based starting points for solo work, teams, agencies, and regulated environments
 - [Recipes](docs/recipes/) -- short task-focused how-to guides
+- [Changelog](.claude/CHANGELOG.md) -- version history and migration notes
 
 ---
 
