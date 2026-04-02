@@ -10,14 +10,13 @@ metadata:
   context_budget: heavy
   eager_references:
     - project/conceptual-design-as-is.md
-    - project/conceptual-design-to-be.md
+    - project/design-intent-to-be.md
     - general/report-conventions.md
     - general/coding-standards.md
     - general/review-perspectives-index.md
   references:
     - project/conceptual-design-as-is.md
-    - project/conceptual-design-to-be.md
-    - project/metacomm-to-be.md
+    - project/design-intent-to-be.md
     - project/conventions.md
     - general/report-conventions.md
     - general/coding-standards.md
@@ -128,9 +127,9 @@ The maximum (deepest) depth from all three sources always wins, using the orderi
 
 When using the metacomm framing:
 
-1. **Read existing metacomm intentions**: If `_references/project/metacomm-to-be.md` exists, read it before generating the plan. This file contains per-feature metacommunication intentions that describe how the designer intends the system to communicate with users.
+1. **Read existing metacomm intentions**: If `_references/project/design-intent-to-be.md` exists, read it before generating the plan. This file contains per-feature metacommunication intentions that describe how the designer intends the system to communicate with users.
 
-2. **Contradiction detection**: Compare the new brief against the existing intentions in `project/metacomm-to-be.md`. If the new brief contradicts an existing intention (e.g., the brief says "remove the tagging flow" but an existing intention describes tagging behavior), emit a **⚠ Metacomm contradiction** warning in the plan output, listing:
+2. **Contradiction detection**: Compare the new brief against the existing intentions in `project/design-intent-to-be.md`. If the new brief contradicts an existing intention (e.g., the brief says "remove the tagging flow" but an existing intention describes tagging behavior), emit a **⚠ Metacomm contradiction** warning in the plan output, listing:
    - The new brief's directive
    - The conflicting existing intention (quote the relevant line)
    - A recommendation: update the existing intention, or confirm the new brief supersedes it
@@ -141,14 +140,14 @@ When using the metacomm framing:
    - **Summary**: <one-sentence summary of the metacommunication message this plan implements>
    - **Source**: agent (metacomm)
    ```
-   This note is consumed downstream by `/explain spec-drift` or `/post-skill` to keep `project/metacomm-to-be.md` in sync.
+   This note is consumed downstream by `/explain spec-drift` or `/post-skill` to keep `project/design-intent-to-be.md` in sync.
 
 ## Skill-specific Instructions
 
 1. Run the /pre-skill "plan" $ARGUMENTS[0] to add general instructions to the context window.
 
 2. **Load references on demand**: Load lazy references from the "Available references" list as needed during planning:
-   - Load `project/metacomm-to-be.md` when using `--framing metacomm`
+   - Load `project/design-intent-to-be.md` when using `--framing metacomm`
    - Load `project/frontend-standards.md` when plan steps touch frontend files
    - Load `project/backend-standards.md` when plan steps touch backend files
    - Load `project/testing-standards.md` when defining test strategy
@@ -362,9 +361,9 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
 
 1. **Run /pre-skill "plan"** to load general instructions.
 
-2. **Read project references**: Verify the following files exist in the current project's `_references`. If `project/conceptual-design-to-be.md` is missing, abort with a message suggesting the user run `/design` first. `project/conceptual-design-as-is.md` is required for brownfield projects but optional for greenfield. Other files are optional (warn but continue). Read:
+2. **Read project references**: Verify the following files exist in the current project's `_references`. If `project/design-intent-to-be.md` is missing, abort with a message suggesting the user run `/design` first. `project/conceptual-design-as-is.md` is required for brownfield projects but optional for greenfield. Other files are optional (warn but continue). Read:
    - `project/conceptual-design-as-is.md` (current-state entities, hierarchy, permissions, UX patterns -- empty or absent for greenfield)
-   - `project/conceptual-design-to-be.md` (target-state entities, hierarchy, permissions, UX patterns)
+   - `project/design-intent-to-be.md` (target-state entities, hierarchy, permissions, UX patterns, metacommunication intentions)
    - `project/conventions.md` (directory structure, source paths)
    - `project/backend-standards.md` (API patterns, service layer)
    - `project/frontend-standards.md` (pages, components, routing)
@@ -528,7 +527,7 @@ Design items are phrased as metacommunication messages using I/you: "When you [c
 
 ## Source
 - project/conceptual-design-as-is.md (read)
-- project/conceptual-design-to-be.md (read)
+- project/design-intent-to-be.md (read)
 - project/conventions.md (read)
 - ... (list all files read)
 

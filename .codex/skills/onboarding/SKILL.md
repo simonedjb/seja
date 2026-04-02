@@ -16,13 +16,17 @@ metadata:
 
 ## Quick Guide
 
-**What it does**: Creates a personalized onboarding plan for a new team member based on their role and experience level. Covers what to learn, in what order, and where to find things.
+**What it does**: Creates a personalized onboarding plan based on role and experience level. Covers what to learn, in what order, and where to find things. Use it to onboard a new teammate — or yourself, if you are new to the toolkit or the project.
 
-**Example**:
-> You: /onboarding shaper L2 Alice --area frontend
-> Agent: Generates a 30-60-90 day onboarding plan tailored for a mid-level product designer, with focus on the frontend. Includes reading lists, key contacts, and milestone checkpoints.
+**Example (onboarding a new designer)**:
+> You: $onboarding shaper L2 Alice --area frontend
+> Agent: Generates a 30-60-90 day onboarding plan for a mid-level product designer focused on the frontend. Includes reading lists, key contacts, and milestone checkpoints.
 
-**When to use**: A new team member is joining and you want a structured, role-appropriate onboarding experience rather than ad-hoc knowledge transfer.
+**Example (onboarding yourself as a product designer new to AI-assisted development)**:
+> You: $onboarding shaper L1 --area design
+> Agent: Generates a starter onboarding plan for a newcomer in a shaper (designer/PM) role, with focus on design workflows and how to use the toolkit effectively.
+
+**When to use**: A new team member is joining and you want a structured, role-appropriate onboarding experience rather than ad-hoc knowledge transfer. Also useful when *you* are the newcomer and want a clear learning path into the project and the toolkit.
 
 # Onboarding
 
@@ -108,10 +112,10 @@ If a batch spec is incomplete (e.g., missing level), resolve all incomplete spec
 
    If the role family is not provided or cannot be inferred, use the AskUserQuestion tool to ask (if AskUserQuestion is not available, present as a numbered text list), with these options:
    - "1. Builder (BLD) -- Developer, DevOps, infra engineer"
-   - "2. Shaper (SHP) -- Product manager, designer, analyst"
+   - "2. Shaper (SHP) -- Product designer, product manager, UX researcher, analyst"
    - "3. Guardian (GRD) -- QA, security, tech lead, engineering manager"
    - "4. Builder + Guardian -- Tech lead who codes, security-focused developer"
-   - "5. Shaper + Builder -- Designer using AI tools, full-stack PM"
+   - "5. Shaper + Builder -- Designer or PM using AI tools directly (writing prompts, reviewing plans, working alongside code)"
 
    If the expertise level is not provided or cannot be inferred, use the AskUserQuestion tool to ask (if AskUserQuestion is not available, present as a numbered text list), with these options:
    - "1. L1 Newcomer -- Junior, learning fundamentals (0-2 years)"

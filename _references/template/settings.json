@@ -1,0 +1,54 @@
+{
+  "_comment": "Template settings.json for new projects. Copy to .claude/settings.json and customize paths.",
+  "_hooks_comment": "To enable pre-commit validation hooks: bash .githooks/install.sh",
+  "permissions": {
+    "allow": [
+      "Read(//PROJECT_ROOT/**)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(git log:*)",
+      "Bash(python:*)",
+      "Bash(python -c:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(pip install:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx playwright:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx vite:*)",
+      "Bash(npm install:*)",
+      "Bash(npm audit:*)",
+      "Bash(npm run:*)",
+      "Bash(node -e:*)",
+      "Bash(source venv/Scripts/activate)",
+      "Bash(source .venv/Scripts/activate)",
+      "WebSearch",
+      "Skill(post-skill:*)",
+      "Skill(implement:*)",
+      "Skill(plan:*)",
+      "Skill(pre-skill:*)"
+    ],
+    "additionalDirectories": [
+      "PROJECT_TMP_DIR",
+      "PROJECT_ROOT",
+      "PROJECT_OUTPUT_DIR",
+      "PROJECT_ROOT/.claude",
+      "PROJECT_ROOT/.claude/skills",
+      "PROJECT_ROOT/.claude/skills/scripts"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Check if the command contains destructive operations like 'rm -rf', 'DROP TABLE', 'DROP DATABASE', 'git reset --hard', 'git clean -f', 'git push --force', 'truncate', or 'del /s /q'. If it does, respond with a warning explaining the risk. If it does not contain destructive operations, respond with an empty string."
+          }
+        ]
+      }
+    ]
+  }
+}

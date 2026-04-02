@@ -39,6 +39,7 @@ If you encounter an older screenshot, note, or workshop artifact, the command na
 | `$metacomm` | `$plan --framing metacomm` | Design-intent planning is now part of planning, not a separate skill |
 | `$roadmap` | `$plan --roadmap` | Roadmap generation was folded into planning |
 | `$inventory` | `$advise --inventory` | Inventory is now a mode of advisory work |
+| `conceptual-design-to-be.md` + `metacomm-to-be.md` (two files) | `design-intent-to-be.md` (one file, two parts) | Design and communicative intent are now in one place |
 
 For a first-time designer, this is good news: there are fewer names to memorize.
 
@@ -136,7 +137,7 @@ If this is your first AI-assisted project, choose the **interactive** path. It i
 Design turns the portable kit into a project-specific workspace. It will typically:
 
 - generate `AGENTS.md`
-- create `_references/project/*.md` files from templates
+- create `_references/project/` files from templates -- including `design-intent-to-be.md` (your design brief: domain model + communicative intent), `design-intent-established.md` (archive of processed decisions), `user-research-new.md`, and `journey-maps.md`
 - tailor rules and agents to your stack
 - prepare smoke-test scaffolding when your stack needs it
 - create an output area for plans, advisory notes, and logs
@@ -494,5 +495,6 @@ If you are a product designer using AI-assisted development for the first time, 
 3. Ask for explanations whenever the code or terminology feels opaque.
 4. Use `$check` as your safety net before trusting a change.
 5. Keep describing the product in user-centered language.
+6. When describing what you want to build, lead with user perspective, not technical specs -- `$plan --framing metacomm` is your entry point for design-led planning.
 
 That is enough to become productive without pretending to be a full-time engineer.

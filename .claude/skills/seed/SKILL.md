@@ -121,8 +121,7 @@ When `--demo` is passed, the seed process runs the standard steps 1-7 above and 
 9. **Copy demo design files into project/**: Copy every file from `_references/template/demo/` (except `WALKTHROUGH.md`) into `_references/project/`, giving the target project pre-filled design files:
    - `conventions.md` -- TypeScript + React conventions (TaskFlow)
    - `constitution.md` -- accessibility, simplicity, test coverage principles
-   - `conceptual-design-to-be.md` -- Task and Category entities
-   - `metacomm-to-be.md` -- task creation and category filtering intents
+   - `design-intent-to-be.md` -- Task and Category entities, task creation and category filtering intents
 
 10. **Copy walkthrough**: Copy `_references/template/demo/WALKTHROUGH.md` into the target project root as `WALKTHROUGH.md`.
 

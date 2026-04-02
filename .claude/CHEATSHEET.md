@@ -31,4 +31,4 @@
 | `/seed` | Copy the SEJA framework into a new or existing project, or create a workspace... | `<target-directory> [--workspace | --demo]` |
 | `/upgrade` | Upgrade SEJA framework files from the seed repo without touching project-spec... | `[<seed-repo-path>] [--dry-run]` |
 
-*13 skills available. Use `/pick-prompt` for interactive selection.*
+*13 skills available. Use `/help --browse` for interactive selection.*

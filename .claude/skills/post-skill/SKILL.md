@@ -70,7 +70,23 @@ metadata:
       - In both cases, append a changelog entry to §3.
       - Tag all changes with `source: agent (post-skill)`.
 
-   d. Include the updated as-is files in the commit scope (step 8).
+   d. For `project/journey-maps-as-is.md` in `_references/`:
+      - If neither `project/journey-maps-as-is.md` nor `project/journey-maps.md` exists (project hasn't adopted journey map templates): skip silently.
+      - If `project/journey-maps.md` (to-be) exists but `project/journey-maps-as-is.md` does **not exist** (first plan execution with journey maps): instantiate it from `template/journey-maps-as-is.md`, populating the steps table based on what the plan implemented. For each journey in the to-be file, check if the plan implemented steps corresponding to that journey and set implementation status accordingly.
+      - If `project/journey-maps-as-is.md` **exists**: update incrementally -- for each feature added/modified by the plan, check if it corresponds to a journey step in `project/journey-maps.md` and update the implementation status. Update the Delta from To-Be section.
+      - In all cases where the file is updated, append a changelog entry.
+      - Tag all changes with `source: agent (post-skill)`.
+
+   e. Include the updated as-is files in the commit scope (step 8).
+
+   > **Note:** User research files (`project/user-research-new.md`, `project/user-research-established.md`) are human-maintained and are NOT updated by post-skill. The agent can verify consistency between user research, design intent, and implementation via `/explain spec-drift` or `/check validate`, but does not modify user research.
+
+2c. **Design intent curation reminder** — If the completed skill produced or executed a plan (same condition as step 2):
+
+   Output (text-based, not AskUserQuestion):
+   > "Design intent from plan [plan-id] has been implemented. Consider moving processed entries from `design-intent-to-be.md` to `design-intent-established.md` — P0 priority: §4 Permission Model, §11 Global Vision, §13 Solution Representations, §14 Per-Feature Intentions."
+
+   Do **not** perform the move. The designer curates this file manually to preserve their rationale alongside the plan reference. This is informational only.
 
 2b. **Documentation check** — If the completed skill produced or executed a plan (detectable from the plan ID in the argument or from the brief entry):
 
@@ -108,7 +124,7 @@ metadata:
 6. **Commit scope verification** before staging:
    - Run `git diff --cached --name-only` to list any pre-staged files.
    - Determine the skill's expected output paths using these methods, in order of priority:
-     a. If the invocation produced a plan file (detectable from the plan ID argument), read the plan file's "Files" section (Modified + Created lists) to get the expected paths. Also include `project/conceptual-design-as-is.md` and `project/metacomm-as-is.md` from `_references/` when a plan was executed.
+     a. If the invocation produced a plan file (detectable from the plan ID argument), read the plan file's "Files" section (Modified + Created lists) to get the expected paths. Also include `project/conceptual-design-as-is.md`, `project/metacomm-as-is.md`, and `project/journey-maps-as-is.md` from `_references/` when a plan was executed.
      b. Otherwise, use the calling skill's output directory convention from project/conventions.md (e.g., `/advise` outputs to `${ADVISORY_DIR}`, `/explain` outputs to the appropriate `${EXPLAINED_*_DIR}`).
      c. Always include `${BRIEFS_FILE}`, `${BRIEFS_INDEX_FILE}`, `${ARTIFACT_INDEX_FILE}`, the QA log file, and `${OUTPUT_DIR}/telemetry.jsonl` as expected outputs (post-skill itself produces these; note that `telemetry.jsonl` is written in step 8b after commit).
    - Compare pre-staged files against expected paths. Files under `_loom/` and `.claude/` matching the skill's output convention are always allowed.

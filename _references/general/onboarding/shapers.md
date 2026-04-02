@@ -15,8 +15,8 @@
 
 ### Essential (all Shapers must cover)
 
-- **Conceptual design**: The as-is and to-be conceptual design documents (`project/conceptual-design-as-is.md`, `project/conceptual-design-to-be.md`). These capture the system's entity model, user roles, permissions, and interaction patterns.
-- **Metacommunication message**: The designer's intent as expressed through the system (`project/metacomm-as-is.md`, `project/metacomm-to-be.md`). Understanding who the user is, what they need, and why the system works this way.
+- **Conceptual design**: The as-is and to-be design intent documents (`project/conceptual-design-as-is.md`, `project/design-intent-to-be.md`). These capture the system's entity model, user roles, permissions, and interaction patterns.
+- **Metacommunication message**: The designer's intent as expressed through the system (`project/metacomm-as-is.md`, `project/design-intent-to-be.md`). Understanding who the user is, what they need, and why the system works this way.
 - **User personas and journey maps**: Who uses the system, what their goals are, and how they move through key workflows.
 - **Design system and component library**: Visual language, design tokens, reusable components, interaction patterns.
 - **Product roadmap and priorities**: Current and upcoming work, strategic goals, how features are prioritized. Use `/plan --roadmap` output if available.
@@ -44,9 +44,8 @@
 ## Key Reference Files
 
 - `project/conceptual-design-as-is.md` (current system design)
-- `project/conceptual-design-to-be.md` (target system design)
+- `project/design-intent-to-be.md` (target design intent -- conceptual design + metacommunication)
 - `project/metacomm-as-is.md` (current metacommunication record)
-- `project/metacomm-to-be.md` (target metacommunication record)
 - `general/shared-definitions.md` (project terminology)
 - `general/review-perspectives/ux.md` (UX review standards)
 - `general/review-perspectives/a11y.md` (accessibility standards)

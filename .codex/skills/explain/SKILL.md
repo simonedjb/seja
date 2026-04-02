@@ -9,9 +9,8 @@ metadata:
   context_budget: standard
   references:
     - project/conceptual-design-as-is.md
-    - project/conceptual-design-to-be.md
+    - project/design-intent-to-be.md
     - project/metacomm-as-is.md
-    - project/metacomm-to-be.md
     - general/shared-definitions.md
     - general/report-conventions.md
 ---
@@ -231,7 +230,7 @@ The spec-drift type combines drift analysis (read-only comparison) with an optio
 
 3. **Conceptual Design Drift Analysis** (if in scope):
 
-   Compare `${CONCEPTUAL_DESIGN_AS_IS}` and `${CONCEPTUAL_DESIGN_TO_BE}` section by section:
+   Compare `${CONCEPTUAL_DESIGN_AS_IS}` and Part I (Conceptual Design) of `${DESIGN_INTENT_TO_BE}` section by section:
 
    | Category | What to compare |
    |----------|----------------|
@@ -244,7 +243,7 @@ The spec-drift type combines drift analysis (read-only comparison) with an optio
 
 4. **Metacomm Drift Analysis** (if in scope):
 
-   Compare `${METACOMM_AS_IS}` and `${METACOMM_TO_BE}`:
+   Compare `${METACOMM_AS_IS}` and Part II (Metacommunication) of `${DESIGN_INTENT_TO_BE}`:
 
    | Category | What to compare |
    |----------|----------------|
@@ -296,24 +295,24 @@ Every entry created or modified by this workflow must carry:
 ##### Sync Directions
 
 **Direction 1 — conceptual-design -> metacomm**:
-For each entity, feature, or UX pattern in `${CONCEPTUAL_DESIGN_TO_BE}` that lacks a corresponding entry in `${METACOMM_TO_BE}`:
+For each entity, feature, or UX pattern in `${DESIGN_INTENT_TO_BE}` that lacks a corresponding entry in `${DESIGN_INTENT_TO_BE}`:
 - Draft a metacommunication intention describing what the designer communicates to the user through this feature
 - Present the draft to the user for confirmation or revision
 - If the user revises the draft, record their revision **verbatim** (see `general/shared-definitions.md` § Verbatim rule)
-- On confirmation, add the entry to `${METACOMM_TO_BE}` with `source: agent (explain)`
+- On confirmation, add the entry to `${DESIGN_INTENT_TO_BE}` with `source: agent (explain)`
 
 **Direction 2 — metacomm -> conceptual-design**:
-For each metacommunication intention in `${METACOMM_TO_BE}` that implies entities, permissions, or UX patterns not present in `${CONCEPTUAL_DESIGN_TO_BE}`:
+For each metacommunication intention in `${DESIGN_INTENT_TO_BE}` that implies entities, permissions, or UX patterns not present in `${DESIGN_INTENT_TO_BE}`:
 - Propose additions to the conceptual design (new entities, permissions, or UX patterns)
 - Present the proposal to the user for confirmation or revision
-- On confirmation, add the entry to `${CONCEPTUAL_DESIGN_TO_BE}` with `source: agent (explain)`
+- On confirmation, add the entry to `${DESIGN_INTENT_TO_BE}` with `source: agent (explain)`
 
 **Direction 3 — bidirectional**:
 Run both directions sequentially. Present all gaps and conflicts together for human resolution.
 
 ##### Conflict Detection
 
-When the two files disagree (e.g., `${CONCEPTUAL_DESIGN_TO_BE}` removes an entity but `${METACOMM_TO_BE}` still references it):
+When the two files disagree (e.g., `${DESIGN_INTENT_TO_BE}` removes an entity but `${DESIGN_INTENT_TO_BE}` still references it):
 - Present the conflict with both sides clearly shown
 - Ask the user to resolve: keep conceptual-design version, keep metacomm version, or provide a new resolution
 - **Never auto-resolve conflicts** — always ask the user

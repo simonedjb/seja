@@ -21,6 +21,7 @@
 1. Analysis (understanding needs and defining requirements)
    1.1. What do I know or don’t know about (all of) you and how?
    {{EMT_ANALYSIS_WHAT_I_KNOW_OR_DONT_KNOW_ABOUT_YOU_AND_HOW}}
+   > For persona profiles and problem scenarios informing the current design, see `project/user-research-established.md`.
    1.2. What do I know or don’t know about affected others and how?
    {{EMT_ANALYSIS_WHAT_I_KNOW_OR_DONT_KNOW_ABOUT_AFFECTED_OTHERS_AND_HOW}}
    1.3. What do I know or don’t know about the intended (and other anticipated) contexts of use?
@@ -34,8 +35,10 @@
    {{EMT_DESIGN_WHICH_OF_YOUR_GOALS_HAVE_I_DESIGNED_THE_SYSTEM_TO_SUPPORT}}
    2.3. In what situations/contexts do I intend/accept you will use the system to achieve each goal? Why?
    {{EMT_DESIGN_IN_WHAT_SITUATIONS_CONTEXTS_DO_I_INTEND_ACCEPT_YOU_WILL_USE_THE_SYSTEM_TO_ACHIEVE_EACH_GOAL}}
+   > For implemented solution representations, see Section 3 below. For visual journey maps, see `project/journey-maps-as-is.md`.
    2.4. How should you use the system to achieve each goal, according to my design?
    {{EMT_DESIGN_HOW_SHOULD_YOU_USE_THE_SYSTEM_TO_ACHIEVE_EACH_GOAL}}
+   > For step-by-step user journeys, see `project/journey-maps.md`.
    2.5. For what purposes do I not want you to use the system?
    {{EMT_DESIGN_FOR_WHAT_PURPOSES_DO_I_NOT_WANT_YOU_TO_USE_THE_SYSTEM}}
    2.6. *What ethical principles influenced my design decisions?
@@ -61,7 +64,38 @@
    4.4. *What ethical issues need to be handled through system redesign, redevelopment, policy, or even decommissioning?
    {{EMT_CONTINUOUS_POST_DEPLOYMENT_EVALUATION_AND_MONITORING_WHAT_ETHICAL_ISSUES_NEED_TO_BE_HANDLED_THROUGH_SYSTEM_REDESIGN_REVOLUTIONARY_POLICY_OR_EVEN_DECOMMISSIONING}}
 
-## 3. Per-Feature Metacommunication Log
+## 3. Solution Representations (Implemented)
+
+> Solution representations that have been implemented. Mirrors the structure in `project/design-intent-to-be.md` Section 13, but reflects what is actually built. Maintained by post-skill after plan execution.
+
+### Option A: Solution Scenarios
+
+#### {{SS-001}}: {{Solution Scenario Title}}
+
+- **Persona:** {{PersonaName}} (from user research)
+- **Goals:** {{G-001}}, {{G-002}} (from user research)
+- **Problem Scenario:** {{PS-001}} (from user research, optional)
+- **Setting:** {{where and when the user uses the system}}
+- **Implementation Status:** {{implemented / partial / not started}}
+- **Design Rationale:** {{optional -- why this solution approach was chosen over alternatives}}
+
+{{2-3 paragraphs describing how the user achieves their goal with the implemented system.}}
+
+### Option B: User Stories
+
+#### {{US-001}}: {{User Story Title}}
+
+- **Story:** As {{PersonaName}}, I want to {{action}} so that {{benefit}}.
+- **Goals:** {{G-001}}, {{G-002}} (from user research)
+- **Problem Scenario:** {{PS-001}} (from user research, optional)
+- **Implementation Status:** {{implemented / partial / not started}}
+- **Acceptance Criteria:**
+  - {{criterion 1}} -- {{met / not met}}
+  - {{criterion 2}} -- {{met / not met}}
+
+---
+
+## 4. Per-Feature Metacommunication Log
 
 > For each feature or interaction flow, document the designer's intent as currently implemented. **Each intent must be phrased as "I ... for you / because you ..." — see `general/shared-definitions.md` § Phrasing rule.**
 
@@ -71,7 +105,7 @@
 
 ---
 
-## 4. Changelog
+## 5. Changelog
 
 > Versioned entries tracking how the implemented metacommunication has evolved. Each entry is appended automatically by post-skill after plan execution.
 

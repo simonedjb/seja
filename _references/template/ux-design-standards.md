@@ -236,8 +236,9 @@ Every empty state must include:
 
 | Artifact | Cadence | Owner | Format |
 |----------|---------|-------|--------|
-| **Persona documents** | Review quarterly, update after major research | Product designer | Markdown in `_references/` or design tool |
-| **Journey maps** | Update per major feature | Product designer | Diagram (Mermaid, FigJam, or Miro) |
+| **Persona documents** | Review quarterly, update after major research | Product designer | Markdown in `project/user-research-new.md` (fresh) and `project/user-research-established.md` (processed) |
+| **Problem/solution scenarios** | Update per major feature or user research round | Product designer | Markdown in `project/user-research-new.md` (fresh) and `project/user-research-established.md` (processed) |
+| **Journey maps** | Update per major feature | Product designer | Diagram in `project/journey-maps.md` (see template) or design tool |
 | **Usability test reports** | Per-release (minimum) | Product designer or UX researcher | Markdown report with findings + severity |
 
 > *Default: Quarterly persona review + per-release usability test. Rationale: personas drift as the product evolves; usability tests before release catch the highest-impact issues. Example: a 5-participant usability test using think-aloud protocol on the 3 most critical user flows.*

@@ -6,7 +6,7 @@ tools: Read, Bash, Glob, Grep
 
 # Standards Checker Agent
 
-> **Role boundary:** This agent is the *execution engine* — it runs scripts and collects raw results. The `/validate` skill is the *user-facing orchestrator* — it manages lifecycle (pre-skill/post-skill), formats output, and saves reports. Users invoke `/validate`; this agent is launched internally by the skill.
+> **Role boundary:** This agent is the *execution engine* — it runs scripts and collects raw results. The `/check validate` mode is the *user-facing orchestrator* — it manages lifecycle (pre-skill/post-skill), formats output, and saves reports. Users invoke `/check validate`; this agent is launched internally by the skill.
 
 You are a validation agent. Your task is to run all project validation scripts and produce a unified compliance report.
 

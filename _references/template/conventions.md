@@ -54,9 +54,13 @@
 | `CONSTITUTION_FILE` | `project/constitution.md` | Project constitution -- immutable principles (in `_references/`) |
 | `CONCEPTUAL_DESIGN_AS_IS` | `project/conceptual-design-as-is.md` | As-built conceptual design (in `_references/`) |
 | `CD_AS_IS_CHANGELOG` | `project/cd-as-is-changelog.md` | As-built conceptual design changelog (in `_references/`) |
-| `CONCEPTUAL_DESIGN_TO_BE` | `project/conceptual-design-to-be.md` | Target conceptual design (in `_references/`) |
+| `DESIGN_INTENT_TO_BE` | `project/design-intent-to-be.md` | Target design intent -- conceptual design + metacommunication (in `_references/`) |
+| `DESIGN_INTENT_ESTABLISHED` | `project/design-intent-established.md` | Processed design intent with preserved rationale (human-maintained, never agent-altered) (in `_references/`) |
 | `METACOMM_AS_IS` | `project/metacomm-as-is.md` | As-built metacommunication record (in `_references/`) |
-| `METACOMM_TO_BE` | `project/metacomm-to-be.md` | Target metacommunication record (in `_references/`) |
+| `USER_RESEARCH_NEW` | `project/user-research-new.md` | User research -- fresh insights not yet processed into design (human-maintained) (in `_references/`) |
+| `USER_RESEARCH_ESTABLISHED` | `project/user-research-established.md` | User research -- processed into current design (human-maintained) (in `_references/`) |
+| `JOURNEY_MAPS` | `project/journey-maps.md` | Journey maps -- intended user journeys (to-be, human-maintained) (in `_references/`) |
+| `JOURNEY_MAPS_AS_IS` | `project/journey-maps-as-is.md` | Journey maps -- implemented user journeys (as-is, agent-maintained) (in `_references/`) |
 | `UX_DESIGN_STANDARDS` | `project/ux-design-standards.md` | UX design standards (in `_references/`) |
 | `GRAPHIC_UI_DESIGN_STANDARDS` | `project/graphic-ui-design-standards.md` | Graphic/UI design standards (in `_references/`) |
 
@@ -151,6 +155,18 @@
 | `BACKEND_SUBPACKAGES` | `{{BACKEND_SUBPACKAGES}}` | Comma-separated backend subpackage names for coverage grouping |
 | `FRONTEND_SUBPACKAGES` | `{{FRONTEND_SUBPACKAGES}}` | Comma-separated frontend subpackage names for coverage grouping |
 | `FRONTEND_ENTRY_POINTS` | `{{FRONTEND_ENTRY_POINTS}}` | Comma-separated entry point filenames to exclude from unused-file checks |
+
+---
+
+## Secret Scanning
+
+| Variable | Value | Description |
+|----------|-------|-------------|
+| `SECRETS_EXTRA_SKIP_PATTERNS` | `{{SECRETS_EXTRA_SKIP_PATTERNS}}` | Additional filename substrings to skip during secret scanning (comma-separated) |
+| `SECRETS_EXTRA_SKIP_DIRS` | `{{SECRETS_EXTRA_SKIP_DIRS}}` | Additional directory names to skip during secret scanning (comma-separated) |
+| `SECRETS_EXTRA_SKIP_EXTENSIONS` | `{{SECRETS_EXTRA_SKIP_EXTENSIONS}}` | Additional file extensions to skip during secret scanning (comma-separated, with dots) |
+| `SECRETS_EXTRA_FALSE_POSITIVES` | `{{SECRETS_EXTRA_FALSE_POSITIVES}}` | Additional false-positive regex patterns (comma-separated, case-insensitive) |
+| `SECRETS_EXTRA_PATTERNS` | `{{SECRETS_EXTRA_PATTERNS}}` | Additional secret-detection regex patterns (comma-separated, case-insensitive, auto-named) |
 
 ---
 

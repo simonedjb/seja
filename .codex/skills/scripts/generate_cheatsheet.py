@@ -138,7 +138,7 @@ def generate_cheatsheet() -> int:
 
         lines.append("")
 
-    lines.append(f"*{total} skills available. Use `/pick-prompt` for interactive selection.*")
+    lines.append(f"*{total} skills available. Use `/help --browse` for interactive selection.*")
     lines.append("")
 
     OUTPUT_FILE.write_text("\n".join(lines), encoding="utf-8")

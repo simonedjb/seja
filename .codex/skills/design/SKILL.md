@@ -7,7 +7,7 @@ metadata:
   version: 1.0.0
   category: planning
   context_budget: standard
-  questionnaire_version: 2
+  questionnaire_version: 3
   references:
     - general/report-conventions.md
     - general/review-perspectives.md
@@ -71,10 +71,11 @@ If a spec file path is provided, go directly to Mode 2.
 1. **Check for in-progress design**: Look for `specs/design-in-progress.md`. If found, ask: "Resume previous design session or start fresh?"
 
 2. **Run the questionnaire**: Read `template/questionnaire.md` and walk the user through it:
-   - Start with **Section 0 (Quick Start)** — 8 minimum questions for a skeleton
+   - If Section metacomm-message (M.1) has been answered, parse it before proceeding: extract project name hint, description, target user type, and primary use case. When the agent reaches questions 0.1, 0.2, 2.1, 2.10, and 2.11, present the extracted value as: "From your metacomm message, I suggest: [extracted value]. Accept or override?"
+   - Start with **Section M (metacomm-message)** (optional but recommended) and **Section 0 (quick-start)** -- 10 minimum questions for a working skeleton
    - For each question, present the options with their pros/cons and a recommendation
    - Record all answers
-   - After Section 0, ask if the user wants to continue with detailed sections (1-9) or use defaults
+   - After Section quick-start, ask if the user wants to continue with the remaining sections or use defaults
 
 3. **Interruptibility**: At any point, if the user wants to stop:
    - Save all answers collected so far to `specs/design-in-progress.md`
@@ -84,11 +85,12 @@ If a spec file path is provided, go directly to Mode 2.
    - Fill remaining fields from the defaults table (see Field Classification)
    - Proceed to template instantiation
 
-5. **Mandatory conceptual design**: Section 2 core questions are **required** for all projects. The agent must not allow the user to skip these by accepting defaults. At minimum, the user must provide:
+5. **Mandatory conceptual design**: Section conceptual-design (Section 2) core questions are **required** for all projects. The agent must not allow the user to skip these by accepting defaults. At minimum, the user must provide:
    - Entity hierarchy (2.3) — what the system manages
    - Permission levels (2.6) — who can do what
    - Greenfield/evolving status (2.9) — determines as-is/to-be population
    - Metacommunication message (2.10) — what the product communicates to users. Record **verbatim** (see `general/shared-definitions.md` § Verbatim rule).
+   If Section metacomm-message (M.1) was answered, use it as the default for 2.10 and present it for confirmation. The verbatim rule applies to the final confirmed answer.
 
    For **brownfield** projects, additionally require:
    - Existing tech stack (2.13)
@@ -102,8 +104,8 @@ If a spec file path is provided, go directly to Mode 2.
 7. **Instantiate templates**: Using the questionnaire answers, create project-specific files in `_references/`:
    - Copy `template/conventions.md` to `project/conventions.md`, substituting answers
    - Copy `template/constitution.md` to `project/constitution.md` (Required -- always generated for new projects. Content may be customized but file cannot be skipped.)
-   - Copy `template/conceptual-design-to-be.md` to `project/conceptual-design-to-be.md`
-   - Copy `template/metacomm-to-be.md` to `project/metacomm-to-be.md` (**I/you phrasing rule**)
+   - Copy `template/design-intent-to-be.md` to `project/design-intent-to-be.md` (**I/you phrasing rule** for Part II metacommunication sections)
+   - Copy `template/design-intent-established.md` to `project/design-intent-established.md` (empty archive — no entries yet for greenfield; for brownfield projects, note that the designer may populate it manually from their existing design decisions)
    - **For evolving (brownfield) projects only**: also copy as-is templates (including `template/cd-as-is-changelog.md` to `project/cd-as-is-changelog.md`)
    - **For greenfield projects**: do **not** instantiate as-is files (post-skill will create the changelog on first plan execution)
    - Copy `template/backend-standards.md` to `project/backend-standards.md`
@@ -113,8 +115,10 @@ If a spec file path is provided, go directly to Mode 2.
    - Copy `template/testing-standards.md` to `project/testing-standards.md`
    - Copy `template/ux-design-standards.md` to `project/ux-design-standards.md`
    - Copy `template/graphic-ui-design-standards.md` to `project/graphic-ui-design-standards.md`
+   - Copy `template/user-research-new.md` to `project/user-research-new.md`, pre-populating persona and user community entries from section 2.11 answers if provided
+   - Copy `template/journey-maps.md` to `project/journey-maps.md`, seeding the key journey list from the metacommunication intent in section 2.10
    - Copy agent YAML templates (`template/agent/constraints.yaml`, `entities.yaml`, `permissions.yaml`, `spec-checks.yaml`) to `project/agent/`
-   - Based on Section 10 answers: copy selected `template/docs/*.md` files to `project/docs/` in `_references/`. If the user chose "defaults", copy only the 3 recommended templates (readme.md, contextual-help.md, adr.md). If "skip", copy none.
+   - Based on Section docs-templates (Section 10) answers: copy selected `template/docs/*.md` files to `project/docs/` in `_references/`. If the user chose "defaults", copy only the 3 recommended templates (readme.md, contextual-help.md, adr.md). If "skip", copy none.
    - Customize `template/settings.json` to `.claude/settings.json` with actual paths
 
 8. **Generate CLAUDE.md**: Create a `CLAUDE.md` in the codebase root with:
@@ -142,8 +146,10 @@ If a spec file path is provided, go directly to Mode 2.
     |------|----------|
     | `project/conventions.md` | Directory paths, variable definitions |
     | `project/constitution.md` | Immutable principles, security invariants |
-    | `project/conceptual-design-to-be.md` | Entity hierarchy, permissions, domain concepts |
-    | `project/metacomm-to-be.md` | Target metacommunication with full EMT |
+    | `project/design-intent-to-be.md` | Conceptual design (Part I) + metacommunication (Part II) |
+    | `project/design-intent-established.md` | Processed design intent archive (human-maintained) |
+    | `project/user-research-new.md` | User personas, goals, and unprocessed research insights |
+    | `project/journey-maps.md` | Intended user journeys through key product flows |
     | `project/backend-standards.md` | Backend architecture conventions |
     | `project/frontend-standards.md` | Frontend architecture conventions |
     | `project/ux-design-standards.md` | Interaction patterns, accessibility |
@@ -152,6 +158,23 @@ If a spec file path is provided, go directly to Mode 2.
     | `project/i18n-standards.md` | Internationalization conventions |
     | `project/security-checklists.md` | Security checklists, validation constants |
     | `project/docs/*.md` | Documentation structure templates |
+
+    **Questionnaire-to-output mapping** (include in summary so the designer knows which answers produced which files):
+
+    | Questionnaire Section | Generated File |
+    |---|---|
+    | 2.3 Entity hierarchy, 2.6 Permissions, 2.10 Metacomm | `project/design-intent-to-be.md` |
+    | 2.1, 2.11 (product description, user community) | `project/user-research-new.md` |
+    | 2.10 (metacomm intent) | `project/journey-maps.md` |
+    | Stack choices (T2) | `project/conventions.md` |
+    | Immutable principles (T2) | `project/constitution.md` |
+    | Backend patterns (T3) | `project/backend-standards.md` |
+    | Frontend patterns (T3) | `project/frontend-standards.md` |
+    | UX patterns (T1) | `project/ux-design-standards.md` |
+    | Visual design (T1) | `project/graphic-ui-design-standards.md` |
+    | Testing conventions (T3) | `project/testing-standards.md` |
+    | i18n conventions (T3) | `project/i18n-standards.md` |
+    | Security constraints (T3) | `project/security-checklists.md` |
 
     Then offer: 1) Review specs now, 2) Generate roadmap (`/plan --roadmap`), 3) Done for now.
 
@@ -175,7 +198,7 @@ If a spec file path is provided, go directly to Mode 2.
 
 9. **Secrets check**: Same as Mode 1, step 11.
 
-10. **Preserve spec**: Copy to `specs/design-spec-YYYY-MM-DD HH.MM UTC.md`.
+10. **Preserve spec**: Copy to `specs/project-spec-YYYY-MM-DD HH.MM UTC.md`.
 
 11. **Summary + Review**: Same as Mode 1, steps 13-14.
 
@@ -201,7 +224,7 @@ Triggered when `--add-docs` is passed.
 
 1. **Create specs/ subfolder** if it does not exist.
 
-2. **Generate the spec file**: Copy `template/design-spec.md` to `specs/design-spec-YYYY-MM-DD HH.MM UTC.md`.
+2. **Generate the spec file**: Copy `template/project-spec.md` to `specs/project-spec-YYYY-MM-DD HH.MM UTC.md`.
 
 3. **Output next steps**:
    > Spec file created at `<path>`.
@@ -312,6 +335,6 @@ Tasks: Create source dirs, Python venv, backend requirements, Node.js init, scaf
 - When versions differ, consult the Version History table in `template/questionnaire.md`.
 - When adding new questions:
   1. Increment `questionnaire_version` in both this skill's frontmatter and `template/questionnaire.md`
-  2. Add the new fields to `template/design-spec.md`
+  2. Add the new fields to `template/project-spec.md`
   3. Add an entry to the Version History table
   4. Add default values to the Field Classification table above

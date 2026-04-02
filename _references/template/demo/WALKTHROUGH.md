@@ -10,8 +10,7 @@ You are working in a project that has been seeded with the SEJA framework and pr
 
 - `_references/project/conventions.md` -- project identity and directory layout
 - `_references/project/constitution.md` -- immutable quality principles
-- `_references/project/conceptual-design-to-be.md` -- the domain model (Task and Category entities)
-- `_references/project/metacomm-to-be.md` -- designer-to-user communication intentions
+- `_references/project/design-intent-to-be.md` -- the domain model (Task and Category entities) and designer-to-user communication intentions
 
 Browse these files now to see what a configured SEJA project looks like.
 

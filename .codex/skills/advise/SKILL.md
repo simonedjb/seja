@@ -11,7 +11,7 @@ metadata:
     - project/conceptual-design-as-is.md
   references:
     - project/conceptual-design-as-is.md
-    - project/conceptual-design-to-be.md
+    - project/design-intent-to-be.md
     - general/shared-definitions.md
     - general/report-conventions.md
     - general/review-perspectives.md
@@ -88,7 +88,7 @@ Filename pattern: `advisory-<id>-<truncated short title slug>.md` (6-digit zero-
 2. Reserve the next global ID by running `python .claude/skills/scripts/reserve_id.py --type advisory --title '<short title>'`. Use the returned 6-digit ID.
 
 3. **Load references on demand**: Before researching, load lazy references as needed from the "Available references" list emitted by pre-skill:
-   - Load `project/conceptual-design-to-be.md` when comparing current vs. target design
+   - Load `project/design-intent-to-be.md` when comparing current vs. target design
    - Load `general/shared-definitions.md` when domain terminology is ambiguous
    - Load `general/report-conventions.md` before writing the advisory report
    - Load `general/review-perspectives.md` before evaluating from multiple perspectives

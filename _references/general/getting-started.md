@@ -33,8 +33,7 @@ Best for users starting a greenfield project from scratch.
 4. Review the generated specs in `_references/project/`:
    - `conventions.md` -- project identity and directory layout
    - `constitution.md` -- immutable quality principles
-   - `conceptual-design-to-be.md` -- entity hierarchy and domain model
-   - `metacomm-to-be.md` -- designer-to-user communication intentions
+   - `design-intent-to-be.md` -- entity hierarchy, domain model, and designer-to-user communication intentions
 5. Optionally run `/plan --roadmap` to generate a full development roadmap.
 
 **Expected output:** A fully configured project with conventions, domain model, standards files, and a generated `CLAUDE.md` tailored to your stack.

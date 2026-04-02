@@ -50,7 +50,7 @@ version: 2
 
      You can use prose, bullet lists, tables, or any Markdown format.
      The agent will use this to populate project/conceptual-design-as-is.md
-     and project/conceptual-design-to-be.md. -->
+     and project/design-intent-to-be.md. -->
 
 
 ## Source Directories

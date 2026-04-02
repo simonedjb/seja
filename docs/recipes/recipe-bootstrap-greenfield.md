@@ -47,7 +47,7 @@ the [workspace setup recipe](recipe-workspace-setup.md) instead.
    Key outputs to inspect:
    - `CLAUDE.md` / `AGENTS.md` -- project-level instructions for the agent.
    - `project/conventions.md` -- paths, naming, tech stack settings.
-   - `project/conceptual-design-as-is.md` and `project/conceptual-design-to-be.md`.
+   - `project/conceptual-design-as-is.md` and `project/design-intent-to-be.md`.
    - `project/ux-design-standards.md` and `project/graphic-ui-design-standards.md`.
 
 7. **Generate a roadmap** (optional but recommended)

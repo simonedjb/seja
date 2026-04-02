@@ -35,8 +35,8 @@
 | `BRIEFS_FILE` | `${OUTPUT_DIR}/briefs.md` | Execution log of all skill invocations |
 | `ARTIFACT_INDEX_FILE` | `${OUTPUT_DIR}/INDEX.md` | Single global artifact index |
 | `CONSTITUTION_FILE` | `project/constitution.md` | Project constitution (in `_references/`) |
-| `CONCEPTUAL_DESIGN_TO_BE` | `project/conceptual-design-to-be.md` | Target conceptual design (in `_references/`) |
-| `METACOMM_TO_BE` | `project/metacomm-to-be.md` | Target metacommunication record (in `_references/`) |
+| `DESIGN_INTENT_TO_BE` | `project/design-intent-to-be.md` | Target design intent -- conceptual design + metacommunication (in `_references/`) |
+| `DESIGN_INTENT_ESTABLISHED` | `project/design-intent-established.md` | Processed design intent with preserved rationale (human-maintained, never agent-altered) (in `_references/`) |
 
 ---
 

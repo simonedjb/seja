@@ -10,12 +10,12 @@ metadata:
   context_budget: heavy
   eager_references:
     - project/conceptual-design-as-is.md
-    - project/conceptual-design-to-be.md
+    - project/design-intent-to-be.md
     - general/report-conventions.md
     - general/coding-standards.md
   references:
     - project/conceptual-design-as-is.md
-    - project/conceptual-design-to-be.md
+    - project/design-intent-to-be.md
     - general/report-conventions.md
     - general/coding-standards.md
     - project/frontend-standards.md

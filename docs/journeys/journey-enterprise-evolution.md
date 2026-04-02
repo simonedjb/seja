@@ -29,7 +29,7 @@ Set up the workspace pattern: each team member gets a *ProjectName* workspace cr
 
 ### Step 3: Document the as-is/to-be gap
 
-Fill in the conceptual design files carefully: `project/conceptual-design-as-is.md` for what exists, `project/conceptual-design-to-be.md` for the target state. Use `/explain spec-drift` / `$explain spec-drift` to systematically compare them.
+Fill in the design files carefully: `project/conceptual-design-as-is.md` for what exists, `project/design-intent-to-be.md` for the target state. Use `/explain spec-drift` / `$explain spec-drift` to systematically compare them.
 
 Expected output: spec drift analysis highlighting compliance-relevant gaps.
 

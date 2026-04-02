@@ -2,7 +2,7 @@
 
 <!-- maintained-by: agent (post-skill) -->
 
-> **How to use this template:** This file reflects what the code **currently implements**. Updated automatically by post-skill after plan execution. For the target design, see `project/conceptual-design-to-be.md`.
+> **How to use this template:** This file reflects what the code **currently implements**. Updated automatically by post-skill after plan execution. For the target design, see `project/design-intent-to-be.md`.
 >
 > For the changelog tracking how this design has evolved, see `project/cd-as-is-changelog.md`.
 >
