@@ -1,4 +1,0 @@
-interface:
-  display_name: "Help"
-  short_description: "Show contextual help, browse skills by category, or get detai..."
-  default_prompt: "Use $help to show contextual help, browse skills by category, or get details on a specific skill."

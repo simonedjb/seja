@@ -10,48 +10,47 @@ A bootstrapped project with conventions, conceptual design, and your first featu
 
 ## Prerequisites
 
-- Claude Code or Codex CLI installed
+- Claude Code installed
 - A git-initialized codebase folder
-- The foundational SEJA framework extracted into it (see Part 0 of the onboarding guide: [Claude](../claude-onboarding-guide.md) | [Codex](../codex-onboarding-guide.md))
+- The foundational SEJA framework extracted into it (see Part 0 of the [onboarding guide](../claude-onboarding-guide.md))
 
 ## Step-by-step walkthrough
 
-### Step 1: Bootstrap your project with `/seed` + `/design` / `$seed` + `$design`
+### Step 1: Bootstrap your project with `/seed` + `/design`
 
-Run `/seed .` then `/design` / `$seed .` then `$design` and walk through the interactive questionnaire. Focus on Section 0 (Quick Start) first, accept smart defaults for technical choices. The key investment is the conceptual design: describe who your users are, what they need to do, and why.
+Run `/seed .` then `/design` and walk through the interactive questionnaire. Focus on Section 0 (Quick Start) first, accept smart defaults for technical choices. The key investment is the conceptual design: describe who your users are, what they need to do, and why.
 
 Expected output: `project/conventions.md`, `project/conceptual-design-*.md`, and other `project/*.md` files generated in `_references/`.
 
 ### Step 2: Review what was generated
 
-Read through `CLAUDE.md` / `AGENTS.md` (your project's identity card) and the conceptual design files. These are the foundation everything else builds on. If something doesn't look right, edit the files directly or re-run `/design` / `$design`.
+Read through `CLAUDE.md` (your project's identity card) and the conceptual design files. These are the foundation everything else builds on. If something doesn't look right, edit the files directly or re-run `/design`.
 
-### Step 3: Plan your first feature with `/plan` / `$plan`
+### Step 3: Plan your first feature with `/plan`
 
 Describe what you want to build in plain language. Always review the plan before executing. Example:
 
 ```
-/plan Add a home page that shows the user's recent activity   # Claude
-$plan Add a home page that shows the user's recent activity   # Codex
+/plan Add a home page that shows the user's recent activity
 ```
 
 Review the generated plan before proceeding.
 
 Expected output: a plan file in `_output/plans/`.
 
-### Step 4: Execute the plan with `/implement` / `$implement`
+### Step 4: Execute the plan with `/implement`
 
-Run `/implement <plan-id>` / `$implement <plan-id>` to implement the plan step by step. The agent creates code, tests, and verifies each step.
+Run `/implement <plan-id>` to implement the plan step by step. The agent creates code, tests, and verifies each step.
 
 Expected output: working code committed to your project.
 
 ### Step 5: Review and share
 
-Quality checks (validation, review, tests) run automatically at the end of `/implement` / `$implement`. Before sharing or deploying, review the quality report in the plan summary. For additional manual checks, use `/check preflight` / `$check preflight`.
+Quality checks (validation, review, tests) run automatically at the end of `/implement`. Before sharing or deploying, review the quality report in the plan summary. For additional manual checks, use `/check preflight`.
 
 ## What to do next
 
-- [Bootstrap a greenfield project](../recipes/recipe-bootstrap-greenfield.md) (detailed recipe)
 - [Plan and execute a feature](../recipes/recipe-plan-and-execute.md)
 - [Generate stakeholder material](../recipes/recipe-stakeholder-material.md) for investors or early users
-- For the full framework reference, see the onboarding guide: [Claude](../claude-onboarding-guide.md) | [Codex](../codex-onboarding-guide.md)
+- [Run quality gates](../recipes/recipe-quality-gates.md) to set up pre-commit checks
+- For the full framework reference, see the [onboarding guide](../claude-onboarding-guide.md).

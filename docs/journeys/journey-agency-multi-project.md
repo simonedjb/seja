@@ -10,7 +10,7 @@ A single foundational SEJA framework and independent *ClientName* workspaces per
 
 ## Prerequisites
 
-- Claude Code or Codex CLI installed
+- Claude Code installed
 - The foundational SEJA framework available (as a cloned repo or downloaded ZIP)
 - Familiarity with git
 
@@ -24,11 +24,11 @@ Expected output: team members have a local copy of the foundational framework.
 
 ### Step 2: Set up a workspace per client codebase
 
-For each client codebase, use `/seed --workspace` / `$seed --workspace` (or `create_workspace.py`) to create a *ClientName* workspace from the foundational framework. This automates: creating the directory, running `git init`, copying framework files, setting up `_output/`, and configuring absolute paths to the client codebase. The workspace is its own git repo -- tracking framework configuration, conceptual design, plans, advisories, and all output artifacts independently of the *ClientName* codebase:
+For each client codebase, use `/seed --workspace` (or `create_workspace.py`) to create a *ClientName* workspace from the foundational framework. This automates: creating the directory, running `git init`, copying framework files, setting up `_output/`, and configuring absolute paths to the client codebase. The workspace is its own git repo -- tracking framework configuration, conceptual design, plans, advisories, and all output artifacts independently of the *ClientName* codebase:
 
 ```
 d:\workspaces\client-a\      <-- ClientA workspace (its own git repo)
-  .claude/ or .codex\        <-- copied from foundational framework
+  .claude/                   <-- copied from foundational framework
   _references\           <-- copied + project-specific files generated
   _output\                    <-- plans, advisories, briefs (version-controlled here)
 d:\git\client-a-project\     <-- ClientA codebase (added via --add-dir)
@@ -38,25 +38,25 @@ See the [workspace setup recipe](../recipes/recipe-workspace-setup.md) for detai
 
 ### Step 3: Bootstrap each client workspace
 
-In each *ClientName* workspace, run `/seed .` then `/design` / `$seed .` then `$design` and walk through the questionnaire for that specific client's codebase. Set absolute paths in `project/conventions.md`: `OUTPUT_DIR` should point inside the workspace (e.g., `D:/workspaces/client-a/_output`) so output artifacts are version-controlled alongside the framework configuration. `BACKEND_DIR` and `FRONTEND_DIR` point at the *ClientName* codebase. Start the agent from the workspace with the generated launcher script or your host's equivalent additional-directory workflow.
+In each *ClientName* workspace, run `/seed .` then `/design` and walk through the questionnaire for that specific client's codebase. Set absolute paths in `project/conventions.md`: `OUTPUT_DIR` should point inside the workspace (e.g., `D:/workspaces/client-a/_output`) so output artifacts are version-controlled alongside the framework configuration. `BACKEND_DIR` and `FRONTEND_DIR` point at the *ClientName* codebase. Start the agent from the workspace with the generated launcher script or your host's equivalent additional-directory workflow.
 
 Expected output: all `project/*.md` files generated for the client project.
 
 ### Step 4: Generate client-facing material
 
-Use `/communication EVL` / `$communication EVL` (for evaluators/CTOs) or `/communication CLT` / `$communication CLT` (for clients/budget owners) to generate tailored material about the project. Each audience segment gets content structured for their specific questions.
+Use `/communication EVL` (for evaluators/CTOs) or `/communication CLT` (for clients/budget owners) to generate tailored material about the project. Each audience segment gets content structured for their specific questions.
 
 Expected output: communication files in the output directory.
 
 ### Step 5: Maintain consistency across workspaces
 
-All client workspaces originate from the same foundational SEJA framework. When the foundational framework is updated, pull the latest version of the foundational framework repository and run `/upgrade` / `$upgrade` on each workspace. The upgrade preserves all project-specific files while updating framework files.
+All client workspaces originate from the same foundational SEJA framework. When the foundational framework is updated, pull the latest version of the foundational framework repository and run `/upgrade` on each workspace. The upgrade preserves all project-specific files while updating framework files.
 
 Expected output: updated framework files in each workspace with project-specific files intact.
 
 ### Step 6: Scale the team per client codebase
 
-When a client codebase needs more people, use `/onboarding <role> <level>` / `$onboarding <role> <level>` to generate tailored onboarding plans. Each new team member gets their own *ClientName* workspace pointing to the shared client codebase.
+When a client codebase needs more people, use `/onboarding <role> <level>` to generate tailored onboarding plans. Each new team member gets their own *ClientName* workspace pointing to the shared client codebase.
 
 Expected output: a role-specific onboarding plan in the output directory.
 
@@ -66,4 +66,4 @@ Expected output: a role-specific onboarding plan in the output directory.
 - [Bootstrap a greenfield codebase](../recipes/recipe-bootstrap-greenfield.md)
 - [Generate stakeholder material](../recipes/recipe-stakeholder-material.md)
 - [Upgrade the foundational framework](../recipes/recipe-upgrade-framework.md)
-- For the full framework reference, see the onboarding guide: [Claude](../claude-onboarding-guide.md) | [Codex](../codex-onboarding-guide.md)
+- For the full framework reference, see the [onboarding guide](../claude-onboarding-guide.md).

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Plan"
-  short_description: "Make a plan to add a feature, fix a bug, or refactor code. Su..."
-  default_prompt: "Use $plan to make a plan to add a feature, fix a bug, or refactor code."

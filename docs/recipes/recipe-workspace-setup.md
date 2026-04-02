@@ -1,21 +1,23 @@
 # Recipe: Set Up a Project Workspace
 
+Use this recipe when you want to keep framework artifacts and design history in a separate repository from your product source code.
+
 ## Goal
 
 Create a *ProjectName* workspace from the foundational SEJA framework, linking
 it to the *ProjectName* codebase -- keeping framework configuration, design
-artifacts, and source code physically separated.
+artifacts, and source code physically separated. The workspace pattern keeps framework files in their own git repo, pointing at the product codebase without copying framework files into it.
 
 ## Prerequisites
 
-- Claude Code or Codex CLI installed
+- Claude Code installed
 - The foundational SEJA framework available (as a cloned repo or downloaded
   ZIP from GitHub)
 - An existing *ProjectName* codebase (git repository) you want to work with
 
 ## Quick path (automated)
 
-If you have the foundational SEJA framework locally, run `/seed --workspace` / `$seed --workspace`
+If you have the foundational SEJA framework locally, run `/seed --workspace`
 and follow the prompts. This automates everything below: creates the workspace
 directory, runs `git init`, copies framework files from the foundational
 framework, creates `_output/`, generates `project/conventions.md` with absolute
@@ -44,10 +46,10 @@ python .claude/skills/scripts/create_workspace.py \
    independent of the *MyProject* codebase.
 
 2. **Copy the foundational SEJA framework into the workspace**
-   Copy `.claude/` (or `.codex/`) and `_references/` from the SEJA repository into the workspace root.
-   This creates `.claude/` or `.codex/` and `_references/` inside the workspace.
+   Copy `.claude/` and `_references/` from the SEJA repository into the workspace root.
+   This creates `.claude/` and `_references/` inside the workspace.
 
-3. **Run `/seed .` then `/design` / `$seed .` then `$design` and walk through the questionnaire**
+3. **Run `/seed .` then `/design` and walk through the questionnaire**
    Answer the prompts to generate project-specific files. Point the conceptual
    design at the existing system in the codebase.
 
@@ -83,8 +85,7 @@ python .claude/skills/scripts/create_workspace.py \
 
 3. **Verify and commit**
    ```
-   /check validate   # Claude
-   $check validate   # Codex
+   /check validate
    ```
    Confirm that all paths resolve correctly. Then commit the initial workspace:
    ```bash
@@ -98,12 +99,11 @@ python .claude/skills/scripts/create_workspace.py \
 foundational SEJA framework        the single source of truth
   (repo or downloaded ZIP)         (skills, scripts, templates, references)
           |
-          | /seed --workspace (Claude)
-          | $seed --workspace (Codex)
+          | /seed --workspace
           v
 MyProject workspace                its own git repo
   d:/workspaces/my-project/
-    .claude/ or .codex/            copied from foundational framework
+    .claude/                       copied from foundational framework
     _references/              copied + project-specific files generated
     _output/                       plans, advisories, briefs (version-controlled)
     launch.sh / launch.bat         starts the agent with the codebase attached
@@ -119,7 +119,7 @@ MyProject codebase                 stays completely clean
 
 - The workspace pattern is recommended for teams (each member gets their own
   workspace) and agencies (one workspace per client codebase).
-- When upgrading the foundational framework, run `/upgrade` / `$upgrade` in
+- When upgrading the foundational framework, run `/upgrade` in
   the workspace -- it preserves all project-specific files and `_output/`.
 - The workspace git repo captures your entire design and decision history
   (conceptual design, plans, advisories, briefs) independently of the

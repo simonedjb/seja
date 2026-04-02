@@ -1,5 +1,7 @@
 # Recipe: Map an Existing Codebase
 
+Use this recipe when adopting the framework on a project that already has code.
+
 ## Goal
 
 Understand an existing codebase before making changes to it.
@@ -14,31 +16,27 @@ Understand an existing codebase before making changes to it.
 
 1. **Get a visual architecture overview**
    ```
-   /explain architecture   # Claude
-   $explain architecture   # Codex
+   /explain architecture
    ```
    This produces a high-level diagram of the system structure, layers, and
    key dependencies.
 
 2. **Understand entities and relationships**
    ```
-   /explain data-model   # Claude
-   $explain data-model   # Codex
+   /explain data-model
    ```
    Generates an entity-relationship view of your domain objects.
 
 3. **Dive into specific features**
    ```
-   /explain behavior <feature>   # Claude
-   $explain behavior <feature>   # Codex
+   /explain behavior <feature>
    ```
    Replace `<feature>` with the name of a flow you need to understand (e.g.,
    "user-registration", "payment-checkout").
 
 4. **Catalog codebase elements**
    ```
-   /advise --inventory List all API endpoints   # Claude
-   $advise --inventory List all API endpoints   # Codex
+   /advise --inventory List all API endpoints
    ```
    Also try: "List all components", "List all database models", "List all
    background jobs". Each produces a structured inventory.
@@ -49,7 +47,7 @@ Understand an existing codebase before making changes to it.
 
 6. **Feed findings into the conceptual design**
    Use the reports to fill in the as-is conceptual design when running
-   `/seed` + `/design` / `$seed` + `$design`. This closes the loop between discovery and project setup.
+   `/seed` + `/design`. This closes the loop between discovery and project setup.
 
 ## Tips
 

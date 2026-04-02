@@ -7,7 +7,7 @@ metadata:
   version: 1.0.0
   category: planning
   context_budget: standard
-  questionnaire_version: 3
+  questionnaire_version: 6
   references:
     - general/report-conventions.md
     - general/review-perspectives.md
@@ -37,7 +37,7 @@ metadata:
 
 # Design
 
-> **`/design`** defines WHAT to build and WHY. **`/plan`** defines HOW to build it and WHY those "hows." Design produces project definitions (`_references/project/`); plans consume them to produce actionable implementation steps.
+> **`/design`** defines WHAT to build and WHY. **`/plan`** defines HOW to build it and WHY those tasks are the way they are. Design produces project definitions (`_references/project/`); plans consume them to produce actionable implementation steps.
 
 ## Overview
 
@@ -71,11 +71,11 @@ If a spec file path is provided, go directly to Mode 2.
 1. **Check for in-progress design**: Look for `specs/design-in-progress.md`. If found, ask: "Resume previous design session or start fresh?"
 
 2. **Run the questionnaire**: Read `template/questionnaire.md` and walk the user through it:
-   - If Section metacomm-message (M.1) has been answered, parse it before proceeding: extract project name hint, description, target user type, and primary use case. When the agent reaches questions 0.1, 0.2, 2.1, 2.10, and 2.11, present the extracted value as: "From your metacomm message, I suggest: [extracted value]. Accept or override?"
-   - Start with **Section M (metacomm-message)** (optional but recommended) and **Section 0 (quick-start)** -- 10 minimum questions for a working skeleton
+   - If Section metacomm-message (0.1) has been answered, parse it before proceeding: extract project name hint, description, target user type, and primary use case. When the agent reaches questions basic-definitions 1.1, 1.2, and conceptual-design 2.1, 2.10, present the extracted value as: "From your metacomm message, I suggest: [extracted value]. Accept or override?"
+   - Start with **Section metacomm-message (0)** (optional but recommended) and **Section basic-definitions (1)** -- 10 minimum questions for a working skeleton
    - For each question, present the options with their pros/cons and a recommendation
    - Record all answers
-   - After Section quick-start, ask if the user wants to continue with the remaining sections or use defaults
+   - After Section basic-definitions, ask if the user wants to continue with the remaining sections or use defaults
 
 3. **Interruptibility**: At any point, if the user wants to stop:
    - Save all answers collected so far to `specs/design-in-progress.md`
@@ -85,16 +85,15 @@ If a spec file path is provided, go directly to Mode 2.
    - Fill remaining fields from the defaults table (see Field Classification)
    - Proceed to template instantiation
 
-5. **Mandatory conceptual design**: Section conceptual-design (Section 2) core questions are **required** for all projects. The agent must not allow the user to skip these by accepting defaults. At minimum, the user must provide:
-   - Entity hierarchy (2.3) — what the system manages
-   - Permission levels (2.6) — who can do what
-   - Greenfield/evolving status (2.9) — determines as-is/to-be population
-   - Metacommunication message (2.10) — what the product communicates to users. Record **verbatim** (see `general/shared-definitions.md` § Verbatim rule).
-   If Section metacomm-message (M.1) was answered, use it as the default for 2.10 and present it for confirmation. The verbatim rule applies to the final confirmed answer.
+5. **Mandatory conceptual design**: Section conceptual-design core questions are **required** for all projects. The agent must not allow the user to skip these by accepting defaults. At minimum, the user must provide:
+   - Entity hierarchy (conceptual-design 2.3) — what the system manages
+   - Permission levels (conceptual-design 2.6) — who can do what
+   - Greenfield/evolving status (conceptual-design 2.9) — determines as-is/to-be population
+   The metacommunication message is handled separately in the Final Step (see `template/questionnaire.md`). If Section metacomm-message (0.1) was answered, the Final Step uses it as the default. The verbatim rule applies to the final confirmed answer.
 
    For **brownfield** projects, additionally require:
-   - Existing tech stack (2.13)
-   - Migration constraints (2.14)
+   - Existing tech stack (conceptual-design 2.12)
+   - Migration constraints (conceptual-design 2.13)
 
 6. **Codebase scaffolding question**: After stack decisions are made, ask:
    > "Should I create the initial project structure (directories, config files, entry points) for your chosen stack?"
@@ -115,10 +114,11 @@ If a spec file path is provided, go directly to Mode 2.
    - Copy `template/testing-standards.md` to `project/testing-standards.md`
    - Copy `template/ux-design-standards.md` to `project/ux-design-standards.md`
    - Copy `template/graphic-ui-design-standards.md` to `project/graphic-ui-design-standards.md`
-   - Copy `template/user-research-new.md` to `project/user-research-new.md`, pre-populating persona and user community entries from section 2.11 answers if provided
-   - Copy `template/journey-maps.md` to `project/journey-maps.md`, seeding the key journey list from the metacommunication intent in section 2.10
+   - Copy `template/ux-research-new.md` to `project/ux-research-new.md`, pre-populating persona and user community entries from section conceptual-design (2.10) answers if provided
+   - Copy `template/ux-research-established.md` to `project/ux-research-established.md` (empty archive -- no entries yet; the researcher populates this from processed research sessions; §5 Discovered User Journeys is populated with JM-E-NNN entries)
+   > **Registry note:** For each to-be/as-is triple in the To-Be / As-Is Registry (see conventions.md), ensure the to-be and established templates are copied during project setup. As new pairs are added to the registry in future framework versions, add their template copies here.
    - Copy agent YAML templates (`template/agent/constraints.yaml`, `entities.yaml`, `permissions.yaml`, `spec-checks.yaml`) to `project/agent/`
-   - Based on Section docs-templates (Section 10) answers: copy selected `template/docs/*.md` files to `project/docs/` in `_references/`. If the user chose "defaults", copy only the 3 recommended templates (readme.md, contextual-help.md, adr.md). If "skip", copy none.
+   - Based on Section docs-templates (5) answers: copy selected `template/docs/*.md` files to `project/docs/` in `_references/`. If the user chose "defaults", copy only the 3 recommended templates (readme.md, contextual-help.md, adr.md). If "skip", copy none.
    - Customize `template/settings.json` to `.claude/settings.json` with actual paths
 
 8. **Generate CLAUDE.md**: Create a `CLAUDE.md` in the codebase root with:
@@ -148,8 +148,8 @@ If a spec file path is provided, go directly to Mode 2.
     | `project/constitution.md` | Immutable principles, security invariants |
     | `project/design-intent-to-be.md` | Conceptual design (Part I) + metacommunication (Part II) |
     | `project/design-intent-established.md` | Processed design intent archive (human-maintained) |
-    | `project/user-research-new.md` | User personas, goals, and unprocessed research insights |
-    | `project/journey-maps.md` | Intended user journeys through key product flows |
+    | `project/ux-research-new.md` | User personas, goals, and unprocessed research insights (§5 lists discovered journeys pending processing) |
+    | `project/ux-research-established.md` | User research processed into the current design (human-maintained archive; §5 lists research-grounded journeys as JM-E-NNN entries) |
     | `project/backend-standards.md` | Backend architecture conventions |
     | `project/frontend-standards.md` | Frontend architecture conventions |
     | `project/ux-design-standards.md` | Interaction patterns, accessibility |
@@ -163,9 +163,9 @@ If a spec file path is provided, go directly to Mode 2.
 
     | Questionnaire Section | Generated File |
     |---|---|
-    | 2.3 Entity hierarchy, 2.6 Permissions, 2.10 Metacomm | `project/design-intent-to-be.md` |
-    | 2.1, 2.11 (product description, user community) | `project/user-research-new.md` |
-    | 2.10 (metacomm intent) | `project/journey-maps.md` |
+    | conceptual-design 2.3 Entity hierarchy, 2.6 Permissions | `project/design-intent-to-be.md` |
+    | conceptual-design 2.1, 2.10 (product description, user community) | `project/ux-research-new.md` |
+    | Final Step metacomm (or metacomm-message 0.1) | `project/design-intent-to-be.md §15` (journey intent seeded in design-intent-to-be.md) |
     | Stack choices (T2) | `project/conventions.md` |
     | Immutable principles (T2) | `project/constitution.md` |
     | Backend patterns (T3) | `project/backend-standards.md` |
@@ -190,7 +190,7 @@ If a spec file path is provided, go directly to Mode 2.
 
 5. **Targeted Q&A**: Ask for missing required fields. Enforce **mandatory conceptual design** fields.
 
-6. **Offer detailed sections**: Present Sections 1-9 as a numbered multi-select list.
+6. **Offer detailed sections**: Present Sections conceptual-design through security-checklists (2-11) as a numbered multi-select list.
 
 7. **Instantiate templates**: Same as Mode 1, step 7.
 
@@ -282,15 +282,15 @@ Tasks: Create source dirs, Python venv, backend requirements, Node.js init, scaf
 
 ### Required conceptual design (agent must ask if missing)
 
-- Entity hierarchy (questionnaire 2.3)
-- Permission levels (questionnaire 2.6)
-- Greenfield/evolving status (questionnaire 2.9)
-- Metacommunication message (questionnaire 2.10)
+- Entity hierarchy (questionnaire conceptual-design 2.3)
+- Permission levels (questionnaire conceptual-design 2.6)
+- Greenfield/evolving status (questionnaire conceptual-design 2.9)
+- Metacommunication message (questionnaire Final Step, or metacomm-message 0.1)
 
 ### Additionally required for brownfield projects
 
-- Existing tech stack (questionnaire 2.13)
-- Migration constraints (questionnaire 2.14)
+- Existing tech stack (questionnaire conceptual-design 2.12)
+- Migration constraints (questionnaire conceptual-design 2.13)
 
 ### Required with sensible defaults (inform user of default if missing)
 
@@ -323,7 +323,7 @@ Tasks: Create source dirs, Python venv, backend requirements, Node.js init, scaf
 - `secondary_locale`, `backend_default_locale`, `localized_emails`, `translatable_entities`
 - `access_token_expiry`, `refresh_token_expiry`, `rate_limit`
 - `file_uploads`, `import_export`, `integration_suite`, `e2e_base_url`
-- Conceptual design details beyond 2.3/2.6/2.10 (free-form)
+- Conceptual design details beyond conceptual-design 2.3/2.6 (free-form)
 - Security validation constants (free-form)
 
 ---

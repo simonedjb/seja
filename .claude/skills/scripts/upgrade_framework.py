@@ -327,7 +327,7 @@ def run_upgrade(
     # --- Remove retired skills from target ---
     _RETIRED_SKILLS = ["quickstart"]
     for skill_name in _RETIRED_SKILLS:
-        for framework_dir in (".claude", ".codex"):
+        for framework_dir in (".claude",):
             retired_dir = target / framework_dir / "skills" / skill_name
             if retired_dir.is_dir():
                 if not dry_run:

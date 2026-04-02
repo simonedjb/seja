@@ -1,4 +1,0 @@
-interface:
-  display_name: "Post Skill"
-  short_description: "[Internal] Lifecycle hook invoked by other skills for briefs..."
-  default_prompt: "Use $post-skill to [internal] lifecycle hook invoked by other skills for briefs update, qa logging, and git commit."

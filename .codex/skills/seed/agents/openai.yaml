@@ -1,4 +1,0 @@
-interface:
-  display_name: "Seed"
-  short_description: "Copy the SEJA framework into a new or existing project, or cr..."
-  default_prompt: "Use $seed to copy the SEJA framework into a new or existing project, or create a workspace alongside an existing codebase."

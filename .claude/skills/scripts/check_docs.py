@@ -164,8 +164,9 @@ def plugin_path_liveness(root: Path, verbose: bool) -> list[Finding]:
 
     # Patterns to exclude
     url_re = re.compile(r"https?://|mailto:")
-    placeholder_re = re.compile(r"\{\{.*?\}\}|\$\{.*?\}")
+    placeholder_re = re.compile(r"\{\{.*?\}\}|\$\{.*?\}|<[a-z][a-z0-9_-]*>")
     anchor_re = re.compile(r"^#")
+    fenced_re = re.compile(r"^```")
 
     # Markdown link/image patterns
     md_link_re = re.compile(r"!?\[(?:[^\]]*)\]\(([^)]+)\)")
@@ -194,7 +195,13 @@ def plugin_path_liveness(root: Path, verbose: bool) -> list[Finding]:
         except OSError:
             continue
 
+        in_fence = False
         for line_no, line in enumerate(text.splitlines(), 1):
+            if fenced_re.match(line.strip()):
+                in_fence = not in_fence
+                continue
+            if in_fence:
+                continue
             for m in md_link_re.finditer(line):
                 ref_path = m.group(1).strip()
 
@@ -547,12 +554,22 @@ def plugin_terminology(root: Path, verbose: bool) -> list[Finding]:
         except OSError:
             continue
 
+        _inline_code_re = re.compile(r"`[^`]*`")
+        _fenced_re = re.compile(r"^```")
+        in_fence = False
         for line_no, line in enumerate(text.splitlines(), 1):
+            if _fenced_re.match(line.strip()):
+                in_fence = not in_fence
+                continue
+            if in_fence:
+                continue
+            # Strip inline code spans before checking terminology
+            clean_line = _inline_code_re.sub("``", line)
             for term, pattern, msg in variant_checks:
-                if pattern.search(line):
+                if pattern.search(clean_line):
                     findings.append(Finding(
                         str(md_file), line_no, "info",
-                        f"{msg}: found '{pattern.search(line).group()}'",
+                        f"{msg}: found '{pattern.search(clean_line).group()}'",
                         "terminology",
                     ))
 

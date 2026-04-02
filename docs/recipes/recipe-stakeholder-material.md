@@ -1,12 +1,14 @@
 # Recipe: Generate Stakeholder Material
 
+Use this recipe when you need to communicate about the project to audiences outside the development team.
+
 ## Goal
 
 Generate communication material tailored for a specific audience.
 
 ## Prerequisites
 
-- SEJA framework seeded and project configured via `/seed` + `/design` / `$seed` + `$design`
+- SEJA framework seeded and project configured via `/seed` + `/design`
 - Project conceptual design files populated (at minimum the to-be design)
 
 ## Steps
@@ -19,8 +21,7 @@ Generate communication material tailored for a specific audience.
 
 2. **Generate material for one audience**
    ```
-   /communication EVL   # Claude
-   $communication EVL   # Codex
+   /communication EVL
    ```
    Replace `EVL` with the segment code that matches your audience.
    By default, both a Markdown artifact and a styled HTML version are
@@ -28,8 +29,7 @@ Generate communication material tailored for a specific audience.
 
 3. **Generate material for all segments at once**
    ```
-   /communication --all   # Claude
-   $communication --all   # Codex
+   /communication --all
    ```
 
 4. **Review and customize**
@@ -41,7 +41,7 @@ Generate communication material tailored for a specific audience.
 - Each audience gets fundamentally different content -- evaluators need
   architecture and ROI, clients need outcomes and cost, end users need
   quality commitment, academics need theoretical foundation.
-- Use `/communication --deep` / `$communication --deep` to include deeper technical sections (architecture details, development roadmap, research foundation) beyond the essentials. Useful for evaluators and academics who need comprehensive context.
+- Use `/communication --deep` to include deeper technical sections (architecture details, development roadmap, research foundation) beyond the essentials. Useful for evaluators and academics who need comprehensive context.
 - Regenerate material after major milestones to keep it current.
 
 ## Related journeys

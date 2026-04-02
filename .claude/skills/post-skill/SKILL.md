@@ -71,15 +71,27 @@ metadata:
       - Tag all changes with `source: agent (post-skill)`.
 
    d. For `project/journey-maps-as-is.md` in `_references/`:
-      - If neither `project/journey-maps-as-is.md` nor `project/journey-maps.md` exists (project hasn't adopted journey map templates): skip silently.
-      - If `project/journey-maps.md` (to-be) exists but `project/journey-maps-as-is.md` does **not exist** (first plan execution with journey maps): instantiate it from `template/journey-maps-as-is.md`, populating the steps table based on what the plan implemented. For each journey in the to-be file, check if the plan implemented steps corresponding to that journey and set implementation status accordingly.
-      - If `project/journey-maps-as-is.md` **exists**: update incrementally -- for each feature added/modified by the plan, check if it corresponds to a journey step in `project/journey-maps.md` and update the implementation status. Update the Delta from To-Be section.
+      - If neither `project/journey-maps-as-is.md` nor `project/design-intent-to-be.md §15` exists (project hasn't adopted journey map templates): skip silently.
+      - If `project/design-intent-to-be.md` exists with a §15 section (detectable by scanning for `## 15. Designed User Journeys`) but `project/journey-maps-as-is.md` does **not exist** (first plan execution with journey maps): instantiate it from `template/journey-maps-as-is.md`, populating the steps table based on what the plan implemented. For each JM-TB-NNN entry in `project/design-intent-to-be.md §15 (Designed User Journeys)`, check if the plan implemented steps corresponding to that journey and set implementation status accordingly.
+      - If `project/journey-maps-as-is.md` **exists**: update incrementally -- for each feature added/modified by the plan, check if it corresponds to a JM-TB-NNN entry in `project/design-intent-to-be.md §15 (Designed User Journeys)` and update the implementation status. For JM-E-NNN entries, cross-reference `project/ux-research-established.md §5 (Discovered User Journeys)`. Update the Delta from To-Be section.
       - In all cases where the file is updated, append a changelog entry.
       - Tag all changes with `source: agent (post-skill)`.
 
-   e. Include the updated as-is files in the commit scope (step 8).
+   e. **DONE marker proposal** -- If the plan implemented any user-facing features or journey steps:
+      1. Read the to-be/as-is registry from `project/conventions.md` (or `template/conventions.md` if the project file is absent). For each to-be file listed in the registry, check if the file exists in `_references/project/`.
+      2. For each existing to-be file, scan for sections (headings) or table rows that correspond to features implemented by this plan -- match against the plan's step descriptions and the Files list (Modified/Created). Ignore sections that already carry a `STATUS: IMPLEMENTED` or `ESTABLISHED` marker.
+      3. If candidate items are found, prepare a proposal listing for each:
+         - File path (relative to `_references/`)
+         - Section heading or table row identifier
+         - The marker that would be added: `<!-- STATUS: IMPLEMENTED | plan-NNNNNN | YYYY-MM-DD -->`
+      4. Present the proposal via AskUserQuestion: "The following to-be items appear to have been implemented by this plan. Mark them as IMPLEMENTED?" (show the list; include a "None / skip" option).
+      5. If the user confirms: apply the markers inline. If the user declines or no candidates are found, skip silently.
+      6. Tag all marker changes with `source: agent (post-skill)`.
+      > Note: Do NOT apply markers to `ux-research-new.md` or `ux-research-established.md` -- these are research artifacts, not design intent.
 
-   > **Note:** User research files (`project/user-research-new.md`, `project/user-research-established.md`) are human-maintained and are NOT updated by post-skill. The agent can verify consistency between user research, design intent, and implementation via `/explain spec-drift` or `/check validate`, but does not modify user research.
+   f. Include the updated as-is files and any to-be files with DONE markers in the commit scope (step 8).
+
+   > **Note:** UX research files (`project/ux-research-new.md`, `project/ux-research-established.md`) are human-maintained and are NOT updated by post-skill. The agent can verify consistency between UX research, design intent, and implementation via `/explain spec-drift` or `/check validate`, but does not modify these files.
 
 2c. **Design intent curation reminder** — If the completed skill produced or executed a plan (same condition as step 2):
 

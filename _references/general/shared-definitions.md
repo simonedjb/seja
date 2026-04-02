@@ -10,6 +10,68 @@ The **metacommunication message** is a designer-to-user message that is conveyed
 
 ---
 
+## Lifecycle Markers
+
+> Standard inline markers for tracking the lifecycle of to-be items across all registered
+> to-be files (see conventions.md To-Be / As-Is Registry). Defined here so all skills
+> and agents use a consistent convention when reading or writing markers.
+>
+> **Agent rules**: agents may read markers and propose new IMPLEMENTED markers (via
+> AskUserQuestion in post-skill). Agents must NEVER remove or alter any existing
+> IMPLEMENTED or ESTABLISHED marker -- these are audit records.
+
+### IMPLEMENTED marker (prose sections)
+
+Applied as an inline HTML comment immediately before the section heading -- invisible in
+rendered markdown, machine-parseable by agent tooling:
+
+```markdown
+<!-- STATUS: IMPLEMENTED | plan-NNNNNN | YYYY-MM-DD -->
+### Section Title
+```
+
+A marker without a plan ID is valid for items implemented outside the plan workflow:
+`<!-- STATUS: IMPLEMENTED | manual | YYYY-MM-DD -->`
+
+### IMPLEMENTED marker (table rows)
+
+For structured tables (e.g. journey map steps), add a Status column:
+
+| # | ... | Status |
+|---|-----|--------|
+| 1 | ... | DONE (plan-000178, 2026-04-02) |
+| 2 | ... | - |
+
+### ESTABLISHED stamp
+
+Applied when a human confirms promotion of an IMPLEMENTED item to its established
+counterpart file (via `/explain spec-drift --promote` or manual curation):
+
+```markdown
+<!-- ESTABLISHED: plan-NNNNNN | YYYY-MM-DD | vX.Y.Z -->
+```
+
+The version field (`vX.Y.Z`) is optional -- projects without semver use date only:
+`<!-- ESTABLISHED: plan-000178 | 2026-04-02 -->`.
+
+The stamp is appended to the corresponding established file entry. In the to-be file,
+the IMPLEMENTED marker is replaced with the ESTABLISHED stamp (or the entry is removed
+-- designer's choice, both are valid).
+
+---
+
+## File Maintainer Classification
+
+Three-value scheme applied to all reference files in `_references/` (principally the `project/` subdirectory, which varies by project). Used as the "Maintained by" column in `project/conventions.md` Key Files table, and summarized in `.claude/rules/framework-structure.md`.
+
+| Value | Meaning | Agent rule |
+|-------|---------|-----------|
+| **Human** | Authored and updated exclusively by humans. | Agents must NOT write to this file. Agents may read it and propose changes via `AskUserQuestion`. |
+| **Agent** | Auto-maintained by agents and skills (e.g., via post-skill). | Agents may read and write. Humans typically do not edit directly. |
+| **Human / Agent** | Seeded by an agent (e.g., via /design), then human-owned; both may update. Also applies to framework source files (`general/`, `template/`) maintained by both framework authors and framework tooling. | Agents may write, following the file's own update rules. Humans are the primary curators after initial generation. |
+
+---
+
 ## Generic Terminology
 
 | Term | Definition | Used In |

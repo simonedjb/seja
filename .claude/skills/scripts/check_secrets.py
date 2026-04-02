@@ -35,7 +35,17 @@ import subprocess
 import sys
 from pathlib import Path
 
+from project_config import get_list
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
+
+_PLACEHOLDER_RE = re.compile(r"^\{\{.*\}\}$")
+
+
+def _extra(var: str) -> list[str]:
+    """Read a SECRETS_EXTRA_* list, filtering out template placeholders."""
+    return [v for v in get_list(var, []) if v and not _PLACEHOLDER_RE.fullmatch(v)]
+
 
 # File patterns to skip (test fixtures, examples, docs, migrations)
 SKIP_PATTERNS = {
@@ -43,6 +53,7 @@ SKIP_PATTERNS = {
     ".sample",
     ".template",
 }
+SKIP_PATTERNS |= set(_extra("SECRETS_EXTRA_SKIP_PATTERNS"))
 
 SKIP_DIRS = {
     "node_modules",
@@ -56,6 +67,7 @@ SKIP_DIRS = {
     "migrations",
     "_loom",
 }
+SKIP_DIRS |= set(_extra("SECRETS_EXTRA_SKIP_DIRS"))
 
 SKIP_EXTENSIONS = {
     ".md",
@@ -77,6 +89,7 @@ SKIP_EXTENSIONS = {
     ".pyc",
     ".pyo",
 }
+SKIP_EXTENSIONS |= set(_extra("SECRETS_EXTRA_SKIP_EXTENSIONS"))
 
 # Secret detection patterns: (name, compiled regex)
 SECRET_PATTERNS = [
@@ -105,6 +118,15 @@ SECRET_PATTERNS = [
         r"""['"]Bearer\s+[A-Za-z0-9\-_.]{20,}['"]"""
     )),
 ]
+for _i, _pat in enumerate(_extra("SECRETS_EXTRA_PATTERNS"), start=1):
+    if _pat.strip():
+        try:
+            SECRET_PATTERNS.append(
+                (f"Custom pattern {_i}", re.compile(_pat.strip(), re.IGNORECASE))
+            )
+        except re.error as _e:
+            print(f"WARNING: invalid SECRETS_EXTRA_PATTERNS regex {_pat!r}: {_e}",
+                  file=sys.stderr)
 
 # Patterns that indicate the line is a false positive (comments, docs, examples)
 FALSE_POSITIVE_PATTERNS = [
@@ -120,6 +142,13 @@ FALSE_POSITIVE_PATTERNS = [
     re.compile(r"dummy", re.IGNORECASE),
     re.compile(r"mock", re.IGNORECASE),
 ]
+for _pat in _extra("SECRETS_EXTRA_FALSE_POSITIVES"):
+    if _pat.strip():
+        try:
+            FALSE_POSITIVE_PATTERNS.append(re.compile(_pat.strip(), re.IGNORECASE))
+        except re.error as _e:
+            print(f"WARNING: invalid SECRETS_EXTRA_FALSE_POSITIVES regex {_pat!r}: {_e}",
+                  file=sys.stderr)
 
 
 def is_false_positive(line: str) -> bool:

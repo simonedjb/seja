@@ -46,23 +46,38 @@
 
 ## Key Files
 
-| Variable | Value | Description |
-|----------|-------|-------------|
-| `BRIEFS_FILE` | `${OUTPUT_DIR}/briefs.md` | Execution log of all skill invocations |
-| `BRIEFS_INDEX_FILE` | `${OUTPUT_DIR}/briefs-index.md` | Lightweight briefs index (one-line summaries) |
-| `ARTIFACT_INDEX_FILE` | `${OUTPUT_DIR}/INDEX.md` | Single global artifact index (no per-folder INDEX.md files) |
-| `CONSTITUTION_FILE` | `project/constitution.md` | Project constitution -- immutable principles (in `_references/`) |
-| `CONCEPTUAL_DESIGN_AS_IS` | `project/conceptual-design-as-is.md` | As-built conceptual design (in `_references/`) |
-| `CD_AS_IS_CHANGELOG` | `project/cd-as-is-changelog.md` | As-built conceptual design changelog (in `_references/`) |
-| `DESIGN_INTENT_TO_BE` | `project/design-intent-to-be.md` | Target design intent -- conceptual design + metacommunication (in `_references/`) |
-| `DESIGN_INTENT_ESTABLISHED` | `project/design-intent-established.md` | Processed design intent with preserved rationale (human-maintained, never agent-altered) (in `_references/`) |
-| `METACOMM_AS_IS` | `project/metacomm-as-is.md` | As-built metacommunication record (in `_references/`) |
-| `USER_RESEARCH_NEW` | `project/user-research-new.md` | User research -- fresh insights not yet processed into design (human-maintained) (in `_references/`) |
-| `USER_RESEARCH_ESTABLISHED` | `project/user-research-established.md` | User research -- processed into current design (human-maintained) (in `_references/`) |
-| `JOURNEY_MAPS` | `project/journey-maps.md` | Journey maps -- intended user journeys (to-be, human-maintained) (in `_references/`) |
-| `JOURNEY_MAPS_AS_IS` | `project/journey-maps-as-is.md` | Journey maps -- implemented user journeys (as-is, agent-maintained) (in `_references/`) |
-| `UX_DESIGN_STANDARDS` | `project/ux-design-standards.md` | UX design standards (in `_references/`) |
-| `GRAPHIC_UI_DESIGN_STANDARDS` | `project/graphic-ui-design-standards.md` | Graphic/UI design standards (in `_references/`) |
+| Variable | Value | Description | Maintained by |
+|----------|-------|-------------|-------------- |
+| `BRIEFS_FILE` | `${OUTPUT_DIR}/briefs.md` | Execution log of all skill invocations | Agent |
+| `BRIEFS_INDEX_FILE` | `${OUTPUT_DIR}/briefs-index.md` | Lightweight briefs index (one-line summaries) | Agent |
+| `ARTIFACT_INDEX_FILE` | `${OUTPUT_DIR}/INDEX.md` | Single global artifact index (no per-folder INDEX.md files) | Agent |
+| `CONSTITUTION_FILE` | `project/constitution.md` | Project constitution -- immutable principles (in `_references/`) | Human |
+| `CONCEPTUAL_DESIGN_AS_IS` | `project/conceptual-design-as-is.md` | As-built conceptual design (in `_references/`) | Agent |
+| `CD_AS_IS_CHANGELOG` | `project/cd-as-is-changelog.md` | As-built conceptual design changelog (in `_references/`) | Agent |
+| `DESIGN_INTENT_TO_BE` | `project/design-intent-to-be.md` | Target design intent -- conceptual design + metacommunication (in `_references/`) | Human |
+| `DESIGN_INTENT_ESTABLISHED` | `project/design-intent-established.md` | Processed design intent with preserved rationale (in `_references/`) | Human |
+| `METACOMM_AS_IS` | `project/metacomm-as-is.md` | As-built metacommunication record (in `_references/`) | Agent |
+| `UX_RESEARCH_NEW` | `project/ux-research-new.md` | UX research -- fresh insights not yet processed into design (includes §5 Discovered User Journeys) (in `_references/`) | Human |
+| `UX_RESEARCH_ESTABLISHED` | `project/ux-research-established.md` | UX research -- processed into current design, including §5 Discovered User Journeys (in `_references/`) | Human |
+| `JOURNEY_MAPS_AS_IS` | `project/journey-maps-as-is.md` | Journey maps -- implemented user journeys (as-is) (in `_references/`) | Agent |
+| `UX_DESIGN_STANDARDS` | `project/ux-design-standards.md` | UX design standards (in `_references/`) | Human / Agent |
+| `GRAPHIC_UI_DESIGN_STANDARDS` | `project/graphic-ui-design-standards.md` | Graphic/UI design standards (in `_references/`) | Human / Agent |
+
+---
+
+## To-Be / As-Is Registry
+
+> Canonical list of all to-be / established / as-is file triples in this project.
+> Read by `/design` (template generation), `/explain spec-drift` (drift checking),
+> and post-skill (DONE marking proposals). Add a row when a new to-be/as-is pair
+> is introduced. `established` and `as-is` are optional -- set to `-` if not applicable.
+> The Section column identifies which portion of a file corresponds to each registry row when a file hosts multiple artifact types. Tools that scan for drift use the ID prefix (JM-TB-NNN for designed journeys, JM-E-NNN for discovered journeys) to discriminate artifact types within the same file.
+
+| To-be file | Section | Established counterpart | Section | As-is counterpart |
+| ---------- | ------- | ---------------------- | ------- | ----------------- |
+| `${DESIGN_INTENT_TO_BE}` | §1-§14 design intent | `${DESIGN_INTENT_ESTABLISHED}` | §1-§14 | `${CONCEPTUAL_DESIGN_AS_IS}`, `${METACOMM_AS_IS}` |
+| `${DESIGN_INTENT_TO_BE}` | §15 designed journeys | `${DESIGN_INTENT_ESTABLISHED}` | §15 | `${JOURNEY_MAPS_AS_IS}` |
+| `${UX_RESEARCH_NEW}` | all (incl. §5 discovered journeys) | `${UX_RESEARCH_ESTABLISHED}` | all | `-` |
 
 ---
 

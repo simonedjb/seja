@@ -39,7 +39,7 @@ metadata:
 | `behavior-evolution [brief]` | -- | Explain current behavior AND how it evolved over time |
 | `code [brief]` | -- | Explain how code works, aimed at junior developers |
 | `data-model [brief]` | -- | Explain data model, pitfalls, and refactoring opportunities |
-| `spec-drift [scope]` | -- | Compare as-is and to-be design specs, with optional sync. Scope: `all`, `conceptual-design`, `metacomm` |
+| `spec-drift [scope]` | -- | Compare as-is and to-be design specs, with optional sync. Scope: `all`, `conceptual-design`, `metacomm`, `--promote` |
 
 > One type is required. Types are mutually exclusive.
 
@@ -99,7 +99,7 @@ If the explanation type (architecture, behavior, behavior-evolution, code, data-
 - Filename pattern: `advisory-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 - Reserve ID: `python .claude/skills/scripts/reserve_id.py --type advisory --title '<short title>'`
 - Header pattern: `# Advisory <id> | <prefix><scope> | <current datetime> | <short title>`
-- General instructions: This type combines drift analysis and optional sync. It replaces the former `/spec` skill. The scope can be `all` (default), `conceptual-design`, or `metacomm`.
+- General instructions: This type combines drift analysis and optional sync. It replaces the former `/spec` skill. The scope can be `all` (default), `conceptual-design`, `metacomm`, or `--promote` (promotion-only mode that promotes IMPLEMENTED items to established files -- see Step C below).
 
 ## Skill-specific Instructions
 
@@ -171,7 +171,7 @@ The report must contain these sections in order:
 
 #### Step A — Survey the system
 
-1. Read `AGENTS.md` (or `README.md`) for the high-level project description and stack.
+1. Read `CLAUDE.md` (or `README.md`) for the high-level project description and stack.
 2. Read `project/conventions.md` for directory structure and key variables.
 3. Scan the top-level directory layout and primary source directories to identify major components (backend, frontend, shared libraries, infrastructure, etc.).
 4. If a scope is provided, focus on that area and its direct dependencies. Otherwise, cover the full system.
@@ -220,13 +220,21 @@ The report must contain these sections in order:
 
 ### If spec-drift:
 
-The spec-drift type combines drift analysis (read-only comparison) with an optional sync workflow. It accepts an optional scope argument: `all` (default), `conceptual-design`, or `metacomm`.
+The spec-drift type combines drift analysis (read-only comparison) with an optional sync workflow. It accepts an optional scope argument: `all` (default), `conceptual-design`, `metacomm`, or `--promote` (promotion-only mode -- skip drift analysis and go directly to Step C).
 
 #### Step A — Drift Analysis
 
+If `--promote` is the scope argument, skip Steps A and B entirely and go directly to Step C (Promote Workflow).
+
 1. Determine the scope from the argument (default: `all`).
 
-2. For each pair in scope, read both the as-is and to-be files. If either file in a pair does not exist, report it and skip that pair.
+2. Read the to-be/as-is registry from `project/conventions.md` (or `template/conventions.md` if the project file is absent). The registry lists all registered to-be/established/as-is file triples (see "To-Be / As-Is Registry" section). The registry includes a Section column indicating which section of the file holds the relevant entries -- use the Section column to narrow scans to the correct heading rather than searching the entire file. For each triple, determine whether it falls within the requested scope. If either the to-be or as-is file in a pair does not exist, report it and skip that pair.
+
+   Key registry entries for journey-related IDs:
+   - JM-TB-NNN entries live in `project/design-intent-to-be.md §15 (Designed User Journeys)`.
+   - JM-E-NNN entries live in `project/ux-research-established.md §5 (Discovered User Journeys)`.
+
+   Also, for each existing to-be file in scope, scan for `STATUS: IMPLEMENTED` markers that do NOT yet carry a corresponding `ESTABLISHED:` stamp. Collect these as "pending promotion" items.
 
 3. **Conceptual Design Drift Analysis** (if in scope):
 
@@ -266,6 +274,15 @@ The spec-drift type combines drift analysis (read-only comparison) with an optio
 
    ## Detailed Changes
    (list each change with its category, type, and description)
+
+   ## Pending Promotions
+
+   Items marked IMPLEMENTED in to-be files but not yet promoted to their established
+   counterpart. These are candidates for `/explain spec-drift --promote`.
+
+   | To-be file | Section / Row | Marker | Established file |
+   |------------|--------------|--------|-----------------|
+   | (none) OR list of found items |
    ```
 
 6. Save the drift report to the output file per report conventions.
@@ -274,17 +291,47 @@ The spec-drift type combines drift analysis (read-only comparison) with an optio
 
 #### Step B — Sync Prompt
 
-After presenting the drift report, use the AskUserQuestion tool to ask the user whether to sync (if AskUserQuestion is not available, present as a numbered text list), with these options:
+After presenting the drift report, use the AskUserQuestion tool to ask the user what to do next (if AskUserQuestion is not available, present as a numbered text list), with these options:
 - "1. Conceptual-design to metacomm -- align metacomm with the conceptual design"
 - "2. Metacomm to conceptual-design -- align conceptual design with the metacomm"
 - "3. Bidirectional -- reconcile both (with user confirmation for conflicts)"
-- "4. No -- skip sync"
+- "4. Promote IMPLEMENTED items -- promote marked items to their established counterparts"
+- "5. No -- skip sync"
 
 If the user chooses **No**, run /post-skill <id> and stop.
+If the user chooses **Promote IMPLEMENTED items**, go to Step C.
 
-#### Step C — Sync Workflow
+#### Step C — Promote Workflow
 
-If the user chooses to sync, perform the following based on the chosen direction.
+Used when `--promote` is the scope argument, OR when the user selects "Promote IMPLEMENTED items" from the Step B menu.
+
+1. Read the to-be/as-is registry from `project/conventions.md` (or `template/conventions.md` if absent). For each registered to-be file, scan for `STATUS: IMPLEMENTED` markers that do NOT yet carry an `ESTABLISHED:` stamp.
+
+2. Group candidates by to-be file. If no candidates are found, inform the user ("No IMPLEMENTED items pending promotion.") and run /post-skill <id>.
+
+3. Present the candidates to the user via AskUserQuestion, grouped by file:
+   - Show: file path, section heading or row identifier, plan ID and date from the marker
+   - Ask: "Promote these items to their established counterparts?" with per-item selection or "All" / "None"
+
+4. Ask once: "Enter version tag for these promotions (optional -- leave blank to use date only):"
+
+5. For each user-confirmed item:
+   a. Open (or create from template if absent) the corresponding established file. Use the Section column from the registry to target the correct section.
+
+      Promotion targets for journey-related IDs:
+      - JM-TB-NNN items (from `project/design-intent-to-be.md §15`): promote to `project/design-intent-established.md §15 (Designed User Journeys)`.
+      - JM-E-NNN items (in `project/ux-research-established.md §5`): these are research-grounded entries already in their final location -- they do not have a promotion target and should not appear in the candidates list.
+
+   b. Append a new entry block to the established file, copying the content from the to-be section and adding the stamp: `<!-- ESTABLISHED: plan-NNNNNN | YYYY-MM-DD | vX.Y.Z -->` (omit version if blank).
+   c. In the to-be file, replace the `<!-- STATUS: IMPLEMENTED ... -->` marker with `<!-- ESTABLISHED: plan-NNNNNN | YYYY-MM-DD | vX.Y.Z -->`. Optionally remove the entry body if the user confirms -- present this choice per item.
+   d. Append an entry to the established file's Processing Log (date, artifacts, design iteration = plan ID, notes).
+   e. Tag all changes with `source: agent (explain --promote)`.
+
+6. Run /post-skill <id>.
+
+#### Step D — Sync Workflow
+
+If the user chooses to sync (from Step B), perform the following based on the chosen direction.
 
 ##### Provenance Tracking
 

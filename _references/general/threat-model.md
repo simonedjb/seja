@@ -17,7 +17,7 @@ Lightweight threat model for the SEJA agent framework. Uses STRIDE-lite categori
 | Vector | STRIDE | Severity | Likelihood | Mitigation | Status |
 |---|---|---|---|---|---|
 | V1 -- Shell metacharacters in conventions values | Tampering | High | Low | `_SHELL_INJECTION_RE` rejects backticks, `$(`, `$((` | Enforced |
-| V2 -- Circular/missing `${VAR}` references | Denial of Service | Low | Medium | `_MAX_RESOLVE_PASSES=10` cap; post-resolve warning | Enforced |
+| V2 -- Circular/missing `${var}` references | Denial of Service | Low | Medium | `_MAX_RESOLVE_PASSES=10` cap; post-resolve warning | Enforced |
 | V3 -- Path traversal via `get_path()` | Information Disclosure | Medium | Low | `resolve()` + `relative_to(REPO_ROOT)` containment check | Enforced |
 | V4 -- Unreviewed generated scripts | Elevation of Privilege | High | Medium | General guideline: display full script contents and request user confirmation before writing any generated script to disk | Enforced |
 | V5 -- Prompt injection via user arguments | Spoofing | Medium | Medium | Skills receive arguments through structured frontmatter; no direct shell pass-through | Partial |
@@ -45,7 +45,7 @@ Any agent-generated Python script could contain hallucinated or malicious code. 
 
 ### S4 -- Variable resolution bomb (V2)
 
-Circular references like `A=${B}`, `B=${A}` cause the resolver to loop. With no cap, this would hang the process.
+Circular references like `a=${b}`, `b=${a}` cause the resolver to loop. With no cap, this would hang the process.
 
 **Mitigation**: `_MAX_RESOLVE_PASSES=10` ensures termination. Unresolved references after exhaustion trigger a warning.
 

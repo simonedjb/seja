@@ -1,4 +1,0 @@
-interface:
-  display_name: "Explain"
-  short_description: "Explains behavior, code, data model, architecture, or spec dr..."
-  default_prompt: "Use $explain to explains behavior, code, data model, architecture, or spec drift with visual diagrams and analogies."

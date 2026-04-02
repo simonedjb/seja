@@ -11,12 +11,13 @@
 > |----------|----------|----------|
 > | P0 — must move | §4 Permission Model, §11 Global Vision, §13 Solution Representations, §14 Per-Feature Intentions | Core rationale and semiotic engineering intent — always preserve |
 > | P1 — should move | §1 Platform Purpose, §2 Entity Hierarchy, §3 Domain Concepts, §8 UX Patterns, §12 EMT | Architectural and analytical framing — preserve when non-trivial |
+> | §15 Designed User Journeys | P1 -- should move | Journey design rationale and validated flow designs |
 > | P2 — optional | §5 Content Authoring, §6 Import/Export, §7 Community/L10n, §9 Admin, §10 Validation | Supporting decisions — preserve if rationale is not obvious from code |
 >
 > **Rules:**
 > - Append only — never edit or delete prior entries; history is the value.
 > - Each entry covers one plan's worth of processed intent.
-> - Sections §0 (Planned Changes), §15 (CD Delta), and §16 (Metacomm Delta) are ephemeral and do **not** belong here — they live in `design-intent-to-be.md` until processed.
+> - Sections §0 (Planned Changes), §16 (CD Delta), and §17 (Metacomm Delta) are ephemeral and do **not** belong here — they live in `design-intent-to-be.md` until processed.
 > - Agents must not write to this file. If post-skill reminds you to curate — that reminder is informational only.
 >
 > **Related files:**
@@ -36,6 +37,8 @@
   > Summary of what design intent this entry captures and which plan implemented it.
 
   [Paste the relevant sections from design-intent-to-be.md below, using the section structure from Part I and Part II. Include only the sections that were processed — skip sections with no content for this entry.]
+
+  [Optional sections: §15 Designed User Journeys -- JM-TB-NNN entries with ESTABLISHED stamps]
 
   =========================================================================
 -->
@@ -147,6 +150,19 @@
 | Feature / Flow | Designer Intent | Priority | Plan ID | Date |
 |---|---|---|---|---|
 | {{feature}} | {{intent}} | {{P0 / P1 / P2}} | {{plan-id}} | {{YYYY-MM-DD}} |
+
+---
+
+## 15. Designed User Journeys
+<!-- P1: should move to established -- journey design rationale and validated flows -->
+
+> *Archive the designed journey entries (JM-TB-NNN) from §15 of design-intent-to-be.md
+> that have been validated and promoted via `/explain spec-drift --promote`. Copy validated
+> entries here with their ESTABLISHED stamp. Use I/you phrasing for any rationale notes.
+> Append-only.*
+>
+> Each JM-TB-NNN entry appears here after receiving an ESTABLISHED stamp:
+> `<!-- ESTABLISHED: plan-NNNNNN | YYYY-MM-DD | vX.Y.Z -->`
 
 ---
 

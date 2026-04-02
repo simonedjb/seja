@@ -1,4 +1,0 @@
-interface:
-  display_name: "Communication"
-  short_description: "Generate tailored communication material for a specific audie..."
-  default_prompt: "Use $communication to generate tailored communication material for a specific audience segment."

@@ -1,29 +1,29 @@
 # Recipe: Plan and Execute a Change
 
+Use this recipe when you have a clear idea of what to build and want a structured approach.
+
 ## Goal
 
 Plan a feature, bug fix, or refactor, then execute it with quality checks.
 
 ## Prerequisites
 
-- SEJA framework seeded and project configured via `/seed` + `/design` / `$seed` + `$design`
+- SEJA framework seeded and project configured via `/seed` + `/design`
 - A clear idea of what you want to build or fix
 
 ## Steps
 
 1. **Write a clear brief**
    Describe what you want in plain language. Focus on the "what" and "why",
-   not the "how". One paragraph is usually enough.
+   not the "how". One paragraph is usually enough. For example: "Add a user profile page with avatar upload and bio editing."
 
 2. **Generate a structured plan**
    ```
-   /plan <brief>   # Claude
-   $plan <brief>   # Codex
+   /plan <brief>
    ```
    For design-driven features where intent and framing matter, use:
    ```
-   /plan --framing metacomm <brief>   # Claude
-   $plan --framing metacomm <brief>   # Codex
+   /plan --framing metacomm <brief>
    ```
 
 3. **Review the generated plan**
@@ -32,8 +32,7 @@ Plan a feature, bug fix, or refactor, then execute it with quality checks.
 
 4. **Execute the plan**
    ```
-   /implement <plan-id>   # Claude
-   $implement <plan-id>   # Codex
+   /implement <plan-id>
    ```
    The plan ID is shown in the plan file name (e.g., `plan-0042`).
    Execution automatically runs all quality checks at the end (validate,
@@ -43,9 +42,9 @@ Plan a feature, bug fix, or refactor, then execute it with quality checks.
 
 ## Tips
 
-- Always review the plan before running `/implement` / `$implement` -- especially while
+- Always review the plan before running `/implement` -- especially while
   learning, so you can catch issues before changes happen.
-- For larger features, use `/plan --roadmap` / `$plan --roadmap` to decompose into
+- For larger features, use `/plan --roadmap` to decompose into
   dependency-aware implementation waves.
 - Keep briefs short and focused -- one feature per plan.
 

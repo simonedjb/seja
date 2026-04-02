@@ -8,9 +8,7 @@ Our goal is to design a human-centered computing methodology based on semiotic e
 
 ## Start here
 
-- Onboarding guides -- end-to-end walkthroughs for a product designer new to AI-assisted development:
-  - [Claude onboarding guide](docs/claude-onboarding-guide.md) (Anthropic Claude)
-  - [Codex onboarding guide](docs/codex-onboarding-guide.md) (OpenAI Codex)
+- **New to the framework?** Start with the [onboarding guide](docs/claude-onboarding-guide.md) -- an end-to-end walkthrough for product designers new to AI-assisted development
 - Clone this repository or download it as ZIP from GitHub to get started
 - [Journeys](docs/journeys/) -- scenario-based starting points for solo work, teams, agencies, and regulated environments
 - [Recipes](docs/recipes/) -- short task-focused how-to guides
@@ -22,33 +20,34 @@ Our goal is to design a human-centered computing methodology based on semiotic e
 | Term | Meaning |
 |------|---------|
 | **Foundational SEJA framework** | The reusable source of truth for skills, scripts, templates, agents, and guidance files. |
-| ***ProjectName* workspace** | A standalone git repository that holds the framework files (`.claude/` or `.codex/`, plus `_references/`), project guidance, and generated artifacts under `_output/`. |
+| ***ProjectName* workspace** | A standalone git repository that holds the framework files (`.claude/` plus `_references/`), project guidance, and generated artifacts under `_output/`. |
 | ***ProjectName* codebase** | The product source code itself. In the workspace pattern, the framework points at this codebase without copying framework files into it. |
 
 The workspace pattern is best when you want to keep framework artifacts and design history separate from product source code. The collocated pattern is best for solo or greenfield work when you want everything in one repository.
 
 ---
 
-## Which toolkit?
+## Toolkit
 
-This repository contains **two parallel toolkits**:
+The framework lives in `.claude/` and is configured via `CLAUDE.md` and `/slash` commands. It includes:
 
-- `.claude/`: the Claude toolkit, configured via `CLAUDE.md` and `/slash` commands
-- `.codex/`: the Codex toolkit, configured via `AGENTS.md` and `$skill` commands
-
-Both toolkits are fully supported. Choose based on your preferred AI agent.
+- **15 skills** (13 user-facing + 2 internal lifecycle hooks): `/plan`, `/implement`, `/advise`, `/check`, `/explain`, `/document`, and more
+- **10 specialized agents** for code review, plan review, testing, migrations, communication, onboarding, and documentation
+- **7 path-scoped rules** that activate automatically when editing matching files
+- **35 validation scripts** for quality checks, analysis, and smoke testing
+- **51 reference templates** in `_references/` for generating project-specific standards
 
 ---
 
-## Shared recommendations
+## Recommendations
 
-1. Run `/seed` (Claude) or `$seed` (Codex) to copy the framework, then `/design` or `$design` to configure project-specific files early, so the project guidance exists before implementation work starts.
+1. Run `/seed` to copy the framework, then `/design` to configure project-specific files early, so the project guidance exists before implementation work starts.
 2. Treat the conceptual design and project conventions as first-class artifacts, not setup boilerplate.
-3. Always review the plan before running `/implement` / `$implement` until the codebase and workflow feel familiar.
-4. Use `/check` / `$check` (validate, review, preflight) as routine safety rails.
-5. Keep agent configuration (`CLAUDE.md` for Claude, `AGENTS.md` for Codex) and the `project/*.md` files current as the product evolves.
+3. Always review the plan before running `/implement` until the codebase and workflow feel familiar.
+4. Use `/check` (validate, review, preflight) as routine safety rails.
+5. Keep `CLAUDE.md` and the `project/*.md` files current as the product evolves.
 6. Break larger work into small, reviewable steps.
-7. Never defer SEC or A11Y findings without an explicit decision.
+7. Never defer security (SEC) or accessibility (A11Y) findings without an explicit decision.
 8. Use metacommunication framing when the main challenge is what the interface should communicate.
 9. Review plans and diffs before accepting changes.
 10. Capture longer-term reasoning with roadmap, advisory, and Q&A artifacts.

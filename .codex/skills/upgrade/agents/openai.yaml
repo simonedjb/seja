@@ -1,4 +1,0 @@
-interface:
-  display_name: "Upgrade"
-  short_description: "Upgrade SEJA framework files from the seed repo without touch..."
-  default_prompt: "Use $upgrade to upgrade SEJA framework files from the seed repo without touching project-specific files."

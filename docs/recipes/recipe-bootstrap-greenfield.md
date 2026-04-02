@@ -1,5 +1,7 @@
 # Recipe: Bootstrap a Greenfield Project
 
+Use this recipe when starting a brand-new project from scratch with no existing codebase.
+
 ## Goal
 
 Bootstrap a brand-new project with the foundational SEJA framework from scratch.
@@ -10,7 +12,7 @@ the [workspace setup recipe](recipe-workspace-setup.md) instead.
 ## Prerequisites
 
 - Git installed
-- Claude Code or Codex CLI installed
+- Claude Code installed
 - The foundational SEJA framework available (cloned repo or downloaded ZIP from GitHub)
 
 ## Steps
@@ -22,13 +24,13 @@ the [workspace setup recipe](recipe-workspace-setup.md) instead.
    ```
 
 2. **Copy the foundational SEJA framework into the codebase root**
-   Copy `.claude/` (or `.codex/`) and `_references/` from the SEJA repository into the codebase root.
+   Copy `.claude/` and `_references/` from the SEJA repository you cloned in the prerequisites into the codebase root.
 
 3. **Verify the structure**
-   Confirm that `.claude/` or `.codex/` and `_references/` directories exist at the
+   Confirm that `.claude/` and `_references/` directories exist at the
    codebase root. These are the two pillars of the toolkit.
 
-4. **Run `/seed .` then `/design` / `$seed .` then `$design` and choose your mode**
+4. **Run `/seed .` then `/design` and choose your mode**
    - **Interactive** -- walk through a guided questionnaire (recommended for
      first-time users).
    - **From spec** -- provide an existing PRD or design document and let the
@@ -45,7 +47,7 @@ the [workspace setup recipe](recipe-workspace-setup.md) instead.
    - **Done for now** -- review offline, generate roadmap later.
 
    Key outputs to inspect:
-   - `CLAUDE.md` / `AGENTS.md` -- project-level instructions for the agent.
+   - `CLAUDE.md` -- project-level instructions for the agent.
    - `project/conventions.md` -- paths, naming, tech stack settings.
    - `project/conceptual-design-as-is.md` and `project/design-intent-to-be.md`.
    - `project/ux-design-standards.md` and `project/graphic-ui-design-standards.md`.
@@ -53,7 +55,7 @@ the [workspace setup recipe](recipe-workspace-setup.md) instead.
 7. **Generate a roadmap** (optional but recommended)
    If you chose "Generate roadmap" in step 6, the design skill creates a roadmap spec
    in `_output/roadmaps/` with themes derived from your conceptual design and
-   metacommunication. You can then run `/plan --roadmap` / `$plan --roadmap`
+   metacommunication. You can then run `/plan --roadmap`
    to turn it into executable plans.
 
 8. **Make your first commit**
@@ -68,7 +70,7 @@ the [workspace setup recipe](recipe-workspace-setup.md) instead.
   change them later.
 - The conceptual design is the most important investment during bootstrap.
 - Review specs before generating a roadmap -- changes are cheapest at the spec level.
-- You can re-run `/design` / `$design` at any time to regenerate or update files.
+- You can re-run `/design` at any time to regenerate or update files.
 
 ## Related journeys
 

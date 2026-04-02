@@ -1,6 +1,6 @@
 # SEJA Claude Framework
 
-This repository contains two parallel agent frameworks: `.claude/` (source) and `.codex/` (generated mirror). Prefer `.claude/` when working on framework resources.
+This repository contains the SEJA agent framework in `.claude/`.
 
 Before editing files that match a rule scope, read the corresponding file in `.claude/rules/`.
 When a task benefits from delegation, use the prompt files in `.claude/agents/` as the source of truth for subagent behavior.

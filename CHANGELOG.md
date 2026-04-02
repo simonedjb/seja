@@ -3,24 +3,6 @@
 All notable changes to the SEJA-Claude framework are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [2.5.0] -- 2026-04-02
-
-### Changed
-- Questionnaire sections renumbered sequentially by tier order: M->0, 0->1 (renamed "Basic Definitions", slug `quick-start`->`basic-definitions`), 2->2, 8->3, 9->4, 10->5, 1->6, 3->7, 4->8, 5->9, 6->10, 7->11. All question sub-numbers updated to match new section prefixes.
-- `/design` skill references migrated from section numbers to slugs for cross-reference stability; `questionnaire_version` bumped from 3 to 6
-- Metacommunication message moved from mandatory conceptual-design field (old 2.10) to the questionnaire Final Step; agent now generates a recommended message from prior answers if Section metacomm-message was skipped
-- Post-Questionnaire Checklist now uses slug-based references
-
-### Removed
-- `.codex/` framework mirror and all Codex-specific files (`AGENTS.md`, `agents-md.md` template, `codex-onboarding-guide.md`, `migrate_claude_to_codex.py`). The framework is now Claude-only.
-- `/check health` Check 5 (.claude/.codex sync) removed; remaining checks renumbered (5=Conventions, 6=Constitution). Health report total reduced from 7 to 6.
-
-### Migration (for existing projects)
-
-- **Questionnaire**: consumed once during `/design`; no migration needed for filled-out projects. Old section numbers remain documented in the Version History table.
-- **Framework files**: auto-updated by `/upgrade`. Running `/upgrade` will pull the renumbered questionnaire and slug-aware design skill.
-- **Existing plans/advisories referencing old section numbers**: numbers in historical documents remain valid as point-in-time records. Prefer slugs in new documents.
-
 ## [2.4.0] -- 2026-04-02 13:04:48 UTC
 
 ### Added

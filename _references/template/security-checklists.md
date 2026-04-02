@@ -79,7 +79,7 @@
 - [ ] All queries via ORM (prevents SQL injection)
 - [ ] Separate admin credentials for DDL migrations (if applicable)
 - [ ] Connection pooling with health checks
-- [ ] Soft-delete queries always filter `deleted_at.is_(None)`
+- [ ] Soft delete queries always filter `deleted_at.is_(None)`
 
 ## Checklist I — Mass Assignment Prevention
 

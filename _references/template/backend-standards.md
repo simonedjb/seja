@@ -209,7 +209,7 @@ db.session.commit()
 ```
 
 **Rules:**
-- Soft-delete entities must always filter by `deleted_at.is_(None)`.
+- Soft delete entities must always filter by `deleted_at.is_(None)`.
 - All timestamps are timezone-aware UTC.
 - Use a naming convention for deterministic migration constraint names.
 

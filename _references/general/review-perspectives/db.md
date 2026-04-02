@@ -11,7 +11,7 @@
 
 ## Deep-dive
 
-- [P1] Are FK constraints, cascades, and soft-delete filters correctly applied?
+- [P1] Are FK constraints, cascades, and soft delete filters correctly applied?
 - [P1] Does the health check endpoint verify database responsiveness (not just return a static status)?
 - [P1] Is test environment parity maintained (same DB engine for unit and integration tests)?
 - [P1] Do critical queries have covering indexes, and are there guardrails against full-table scans on large tables (e.g., missing WHERE clauses, implicit type casts that prevent index use)?

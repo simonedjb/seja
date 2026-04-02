@@ -35,7 +35,7 @@ python .claude/skills/scripts/run_preflight_fast.py --verbose
 ```
 
 **Checks included:**
-- `check_conventions.py` -- validates `${VAR}` references match definitions
+- `check_conventions.py` -- validates `${var}` references match definitions
 - `check_skill_system.py` -- validates skill system integrity (frontmatter, metadata)
 - `check_secrets.py` -- scans for accidentally committed secrets
 - `check_spec_conformance.py` -- validates against `spec-checks.yaml` (if present)
@@ -127,7 +127,7 @@ These scripts can also be run individually. All produce clear pass/fail exit cod
 
 | Script | Purpose | Exit Code |
 |--------|---------|-----------|
-| `check_conventions.py` | Validates `${VAR}` references match definitions | 0 = pass, 1 = errors |
+| `check_conventions.py` | Validates `${var}` references match definitions | 0 = pass, 1 = errors |
 | `check_skill_system.py` | Validates skill system integrity | 0 = pass, 1 = errors |
 | `check_secrets.py [--all]` | Scans for committed secrets | 0 = clean, 1 = found |
 | `check_spec_conformance.py` | Validates against spec-checks.yaml | 0 = pass, 1 = errors |

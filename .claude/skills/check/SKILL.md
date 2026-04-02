@@ -287,10 +287,7 @@ Flags: `[--verbose]`
    #### Check 4: Reference File Completeness
    Scan all `.claude/skills/*/SKILL.md` files for `metadata.references` entries. For each referenced file, verify it exists in `_references/`. Report any missing references. Distinguish between `general/` references (should always exist) and `project/` references (may not exist in framework-only repos).
 
-   #### Check 5: .claude/.codex Sync Status
-   Compare the skill list in `.claude/skills/` with `.codex/skills/`. Report any skills that exist in one but not the other.
-
-   #### Check 6: Conventions Completeness
+   #### Check 5: Conventions Completeness
    Run `python .claude/skills/scripts/check_conventions.py`. Parse the output for errors (undefined variables) and warnings (unused definitions). Report PASS if no errors, WARN if only unused definitions exist, FAIL if any referenced variables are undefined.
 
    #### Check 7: Constitution Presence
@@ -307,11 +304,10 @@ Flags: `[--verbose]`
    | Orphaned Briefs | PASS/WARN | N orphaned entries |
    | Stale Plans | PASS/WARN | N stale plans (>7 days) |
    | Reference Completeness | PASS/WARN/FAIL | N missing references |
-   | .claude/.codex Sync | PASS/WARN | N out-of-sync skills |
    | Conventions Completeness | PASS/WARN/FAIL | N errors, M warnings |
    | Constitution Presence | PASS/WARN | Present or missing |
 
-   Overall: X/7 checks passed
+   Overall: X/6 checks passed
    ```
 
 3. Save the report to the output file per report conventions.

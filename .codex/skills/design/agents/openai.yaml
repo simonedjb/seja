@@ -1,4 +1,0 @@
-interface:
-  display_name: "Design"
-  short_description: "Define or update project design — stack, conventions, domain model, and standards."
-  default_prompt: "$design"

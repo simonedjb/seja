@@ -1,16 +1,16 @@
 # TEMPLATE - PROJECT INSTANTIATION QUESTIONNAIRE
 
-> **Questionnaire version:** 4
+> **Questionnaire version:** 6
 > **Last updated:** 2026-04-02
 >
 > **Purpose:** Answer these questions to generate all 9 `project/` reference files from the `template/` templates. An agent can read your completed answers and produce the full set of project-specific references.
 >
 > **How to use:**
-> 1. Start with **Section M (metacomm-message)** (optional, but fills defaults) and **Section 0 (quick-start)** -- these 10 answers are enough to generate a minimal skeleton.
-> 2. Optionally answer **Section M (metacomm-message)** first -- an agent will extract project name, description, and user type to suggest defaults throughout the questionnaire.
+> 1. Start with **Section 0 (`metacomm-message`)** (optional, but fills defaults) and **Section 1 (`basic-definitions`)** -- these 10 answers are enough to generate a minimal skeleton.
+> 2. Optionally answer **Section 0 (`metacomm-message`)** first -- an agent will extract project name, description, and user type to suggest defaults throughout the questionnaire.
 > 3. For technical questions, choose from the provided alternatives or write your own.
 > 4. Write `N/A` or `Skip` for sections that don't apply to your stack.
-> 5. Work through remaining sections at your own pace. Sections are grouped by tier (T1 first, then T2, then T3); numbers are preserved for cross-reference stability.
+> 5. Work through remaining sections at your own pace. Sections are grouped by tier (T1 first, then T2, then T3). Use slugs for stable cross-references across documents.
 > 6. When done, give this file to an agent with the instruction: *"Instantiate all template/\* files into project/\* files using the answers in this questionnaire."*
 >
 > **Alternative:** For a faster workflow, use `/design --generate-spec` to create a pre-fillable spec file (see `template/design-spec.md`).
@@ -23,9 +23,9 @@
 
 | Tier | Sections | Who Fills It | Description |
 |------|----------|-------------|-------------|
-| **T1 -- Product & Design** | M, 0, 2, 8, 9, 10 | Product designer (solo or with team) | What the product is, how it should feel, how it should look |
-| **T2 -- Architecture** | 1, 3, 4 | Product designer with defaults OR software architect | Tech stack selection and architecture decisions |
-| **T3 -- Engineering Standards** | 5, 6, 7 | Auto-generated from T2 OR engineering team | Testing, i18n, and security standards |
+| **T1 -- Product & Design** | 0, 1, 2, 3, 4, 5 | Product designer (solo or with team) | What the product is, how it should feel, how it should look |
+| **T2 -- Architecture** | 6, 7, 8 | Product designer with defaults OR software architect | Tech stack selection and architecture decisions |
+| **T3 -- Engineering Standards** | 9, 10, 11 | Auto-generated from T2 OR engineering team | Testing, i18n, and security standards |
 
 > **Solo designer?** Complete T1 sections fully. For T2, accept the recommended defaults (marked **Recommended** in option tables) or type `?` next to any answer to trigger an interactive discussion. T3 sections will be auto-generated from your T2 choices.
 
@@ -33,30 +33,28 @@
 
 ## Section Reference Table
 
-> Stable slug identifiers for all sections. Slugs match template filenames (e.g., `ux-design-standards` -> `template/ux-design-standards.md`). Use slugs for stable cross-references in plans and documentation; section numbers are preserved as backward-compatible aliases.
->
-> **Section ordering note:** Sections appear grouped by knowledge tier (T1 first, T2, T3). Numbers are preserved as stable identifiers -- a reference to "Section 2" always means Conceptual Design regardless of its physical position.
+> Stable slug identifiers for all sections. Slugs match template filenames (e.g., `ux-design-standards` -> `template/ux-design-standards.md`). Use slugs for stable cross-references in plans and documentation.
 
 | Slug | # | Title | Tier |
 |------|---|-------|------|
-| `metacomm-message` | M | Metacommunication Message | T1 |
-| `quick-start` | 0 | Quick Start | T1 |
+| `metacomm-message` | 0 | Metacommunication Message | T1 |
+| `basic-definitions` | 1 | Basic Definitions | T1 |
 | `conceptual-design` | 2 | Conceptual Design | T1 |
-| `ux-design-standards` | 8 | UX Design Standards | T1 |
-| `graphic-ui-design-standards` | 9 | Graphic/UI Design Standards | T1 |
-| `docs-templates` | 10 | Documentation Templates | T1 |
-| `conventions` | 1 | Project Conventions | T2 |
-| `frontend-standards` | 3 | Frontend Standards | T2 |
-| `backend-standards` | 4 | Backend Standards | T2 |
-| `testing-standards` | 5 | Testing Standards | T3 |
-| `i18n-standards` | 6 | i18n Standards | T3 |
-| `security-checklists` | 7 | Security Checklists | T3 |
+| `ux-design-standards` | 3 | UX Design Standards | T1 |
+| `graphic-ui-design-standards` | 4 | Graphic/UI Design Standards | T1 |
+| `docs-templates` | 5 | Documentation Templates | T1 |
+| `conventions` | 6 | Project Conventions | T2 |
+| `frontend-standards` | 7 | Frontend Standards | T2 |
+| `backend-standards` | 8 | Backend Standards | T2 |
+| `testing-standards` | 9 | Testing Standards | T3 |
+| `i18n-standards` | 10 | i18n Standards | T3 |
+| `security-checklists` | 11 | Security Checklists | T3 |
 
 ---
 
 <!-- T1: Product & Design -- fill first; solo designers can stop after this block -->
 
-## Section M -- Metacommunication Message (`metacomm-message`) [T1]
+## Section 0 -- Metacommunication Message (`metacomm-message`) [T1]
 
 > **What this is:** An optional 1-3 sentence message from you (the designer) speaking directly to your future users. Use "I" (designer) and "you" (user) -- never third-person. See `general/shared-definitions.md` for the phrasing rule.
 >
@@ -64,35 +62,35 @@
 >
 > **Example:** "I know you are a busy researcher who needs to track your experiments across projects. Therefore, I have designed a lightweight experiment tracking platform that lets you log runs, compare results, and share findings with your team."
 
-**M.1** Write your metacommunication message (optional):
+**0.1** Write your metacommunication message (optional):
 
 Answer:
 
 > *Agent extraction hints -- from this answer, an agent will suggest defaults for:*
-> - *[quick-start] 0.1 -- project display name*
-> - *[quick-start] 0.2 -- application description (1-2 sentences)*
+>
+> - *[basic-definitions] 1.1 -- project display name*
+> - *[basic-definitions] 1.2 -- application description (1-2 sentences)*
 > - *[conceptual-design] 2.1 -- what the platform does and who it is for*
-> - *[conceptual-design] 2.10 -- metacommunication message (this answer re-used verbatim unless the user overrides it at 2.10)*
-> - *[conceptual-design] 2.11 -- target user community*
+> - *[conceptual-design] 2.10 -- target user community*
 
 ---
 
-## Section 0 -- Quick Start (`quick-start`) (Minimum Viable Answers)
+## Section 1 -- Basic Definitions (`basic-definitions`) [T1]
 
 > These 10 questions generate a working skeleton for all 9 files. You can refine later.
 
 | # | Question | Fills | Your Answer |
 |---|----------|-------|-------------|
-| 0.1 | What is your project's display name? | `{{PROJECT_NAME}}` | |
-| 0.2 | What does your application do? (1--2 sentences) | Conceptual design intro | |
-| 0.3 | Is this a new project (greenfield) or an existing project with code already written (brownfield)? | Project mode, directory structure | |
-| 0.4 | What is your backend language/framework? | Backend standards scope | |
-| 0.5 | What is your frontend language/framework? | Frontend standards scope | |
-| 0.6 | What database will you use? | Backend DB sections | |
-| 0.7 | What are your primary and secondary UI languages? (e.g., en-US, pt-BR) | `{{PRIMARY_LOCALE}}`, `{{SECONDARY_LOCALE}}` | |
-| 0.8 | Name your generated-artifacts output folder (e.g., `_output`, `_generated`) | `{{OUTPUT_DIR}}` | |
-| 0.9 | Name your backend and frontend source directories (e.g., `backend`, `frontend`) | `{{BACKEND_DIR}}`, `{{FRONTEND_DIR}}` | |
-| 0.10 | Who is available on your team? (check all that apply: just me / + architect / + engineer(s) / + UX designer / + graphic/UI designer / + data engineer / + tester(s)) | Team composition | |
+| 1.1 | What is your project's display name? | `{{PROJECT_NAME}}` | |
+| 1.2 | What does your application do? (1--2 sentences) | Conceptual design intro | |
+| 1.3 | Is this a new project (greenfield) or an existing project with code already written (brownfield)? | Project mode, directory structure | |
+| 1.4 | What is your backend language/framework? | Backend standards scope | |
+| 1.5 | What is your frontend language/framework? | Frontend standards scope | |
+| 1.6 | What database will you use? | Backend DB sections | |
+| 1.7 | What are your primary and secondary UI languages? (e.g., en-US, pt-BR) | `{{PRIMARY_LOCALE}}`, `{{SECONDARY_LOCALE}}` | |
+| 1.8 | Name your generated-artifacts output folder (e.g., `_output`, `_generated`) | `{{OUTPUT_DIR}}` | |
+| 1.9 | Name your backend and frontend source directories (e.g., `backend`, `frontend`) | `{{BACKEND_DIR}}`, `{{FRONTEND_DIR}}` | |
+| 1.10 | Who is available on your team? (check all that apply: just me / + architect / + engineer(s) / + UX designer / + graphic/UI designer / + data engineer / + tester(s)) | Team composition | |
 
 ---
 
@@ -155,16 +153,11 @@ Answer:
 
 Answer: (greenfield / evolving)
 
-**2.10** What is the initial metacommunication message? Write it as the designer speaking directly to the user, using "I" (designer) and "you" (user). Describe who you think they are, what you have designed for them, and why. Example: "I know you are a busy person who needs... Therefore, I have designed... for you."
-> *Feeds `project/design-intent-to-be.md`. Must follow the phrasing rule in `general/shared-definitions.md` -- always "I" (designer) and "you" (user), never third-person.*
+**2.10** Describe your target user community: language, geography, domain expertise.
 
 Answer:
 
-**2.11** Describe your target user community: language, geography, domain expertise.
-
-Answer:
-
-**2.12** What are your domain-driven validation limits? (e.g., title max 200 chars because of academic citation standards)
+**2.11** What are your domain-driven validation limits? (e.g., title max 200 chars because of academic citation standards)
 > *List field names, min/max values, and the domain rationale for each.*
 
 | Field | Min | Max | Rationale |
@@ -173,37 +166,37 @@ Answer:
 
 ### Brownfield-Only Questions
 
-> *Skip this subsection if you answered "greenfield" to question 0.3.*
+> *Skip this subsection if you answered "greenfield" to question 1.3.*
 
-**2.13** What is the existing tech stack? (languages, frameworks, database, hosting)
-
-Answer:
-
-**2.14** What are the main migration constraints? (e.g., cannot change database, must support existing API clients, data migration required)
+**2.12** What is the existing tech stack? (languages, frameworks, database, hosting)
 
 Answer:
 
-**2.15** How many active users does the current system have?
+**2.13** What are the main migration constraints? (e.g., cannot change database, must support existing API clients, data migration required)
 
 Answer:
 
-**2.16** What are the top 3 pain points with the current system? (from a user or developer perspective)
+**2.14** How many active users does the current system have?
 
 Answer:
 
-**2.17** Does the current system have an existing design system or style guide? If yes, provide a link or describe it.
+**2.15** What are the top 3 pain points with the current system? (from a user or developer perspective)
+
+Answer:
+
+**2.16** Does the current system have an existing design system or style guide? If yes, provide a link or describe it.
 
 Answer: (yes + link / no)
 
 ---
 
-## Section 8 -- UX Design Standards (`ux-design-standards`) [T1]
+## Section 3 -- UX Design Standards (`ux-design-standards`) [T1]
 
 > Fills: `project/ux-design-standards.md` -- interaction patterns, usability, accessibility workflow, and responsive strategy. This is a **T1 (Product & Design)** section -- product designers should complete this directly.
 
 ### App Type
 
-**8.1** What type of application are you building?
+**3.1** What type of application are you building?
 > *This determines recommended defaults for navigation, forms, empty states, and other UX patterns throughout this section.*
 
 | Option | Description | Example | Recommendation |
@@ -218,7 +211,7 @@ Answer:
 
 ### Navigation
 
-**8.2** What is your primary navigation pattern?
+**3.2** What is your primary navigation pattern?
 
 | Option | Best For | Pros | Cons | Recommendation |
 |--------|----------|------|------|----------------|
@@ -231,7 +224,7 @@ Answer:
 
 ### Forms
 
-**8.3** What is your form validation strategy?
+**3.3** What is your form validation strategy?
 
 | Option | Best For | Pros | Cons | Recommendation |
 |--------|----------|------|------|----------------|
@@ -243,7 +236,7 @@ Answer:
 
 ### Feedback & Notifications
 
-**8.4** What is your primary feedback pattern for success messages?
+**3.4** What is your primary feedback pattern for success messages?
 
 | Option | Best For | Pros | Cons | Recommendation |
 |--------|----------|------|------|----------------|
@@ -255,7 +248,7 @@ Answer:
 
 ### Empty States
 
-**8.5** What is your empty state strategy?
+**3.5** What is your empty state strategy?
 
 | Option | Best For | Pros | Cons | Recommendation |
 |--------|----------|------|------|----------------|
@@ -267,7 +260,7 @@ Answer:
 
 ### Error Handling
 
-**8.6** What is your error display preference?
+**3.6** What is your error display preference?
 
 | Option | Best For | Pros | Cons | Recommendation |
 |--------|----------|------|------|----------------|
@@ -279,7 +272,7 @@ Answer:
 
 ### Accessibility
 
-**8.7** What WCAG level do you target?
+**3.7** What WCAG level do you target?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -288,7 +281,7 @@ Answer:
 
 Answer:
 
-**8.8** What is your accessibility audit cadence?
+**3.8** What is your accessibility audit cadence?
 
 | Option | Best For | Pros | Cons | Recommendation |
 |--------|----------|------|------|----------------|
@@ -300,7 +293,7 @@ Answer:
 
 ### Responsive Design
 
-**8.9** What is your responsive approach?
+**3.9** What is your responsive approach?
 
 | Option | Best For | Pros | Cons | Recommendation |
 |--------|----------|------|------|----------------|
@@ -311,15 +304,15 @@ Answer:
 
 ---
 
-## Section 9 -- Graphic / UI Design Standards (`graphic-ui-design-standards`) [T1]
+## Section 4 -- Graphic / UI Design Standards (`graphic-ui-design-standards`) [T1]
 
 > Fills: `project/graphic-ui-design-standards.md` -- visual identity, color system, typography, spacing, iconography, and motion. This is a **T1 (Product & Design)** section -- product designers should complete this directly.
 >
-> **Minimal viable path:** Answer only 9.1-9.3 (two colors + one font). All other values will be generated using established design scales.
+> **Minimal viable path:** Answer only 4.1-4.3 (two colors + one font). All other values will be generated using established design scales.
 
 ### Colors
 
-**9.1** What are your brand colors? Provide hex values.
+**4.1** What are your brand colors? Provide hex values.
 > *Minimum: primary and secondary. The agent will generate a full palette (light/dark variants, semantic colors) from these two inputs.*
 
 | Token | Hex | Usage | Example |
@@ -330,7 +323,7 @@ Answer:
 
 > *Default: Primary `#2563eb`, Secondary `#64748b`. Rationale: blue is the most universally trusted color for digital products; slate provides neutral contrast without the coldness of pure gray. Example: GitHub, Stripe, and Linear all use blue primary palettes.*
 
-**9.2** Will your application support dark mode?
+**4.2** Will your application support dark mode?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -342,7 +335,7 @@ Answer:
 
 ### Typography
 
-**9.3** What is your primary UI font?
+**4.3** What is your primary UI font?
 > *The agent will generate a full typography scale (7 sizes from xs to 3xl) using the Major Third ratio (1.250) from this font choice.*
 
 | Option | Pros | Cons | Recommendation |
@@ -353,7 +346,7 @@ Answer:
 
 Answer:
 
-**9.4** What typography scale do you prefer?
+**4.4** What typography scale do you prefer?
 
 | Option | Ratio | Best For | Example |
 |--------|-------|----------|---------|
@@ -367,7 +360,7 @@ Answer:
 
 ### Spacing & Layout
 
-**9.5** What is your base spacing unit?
+**4.5** What is your base spacing unit?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -378,7 +371,7 @@ Answer:
 
 ### Iconography
 
-**9.6** Which icon set will you use?
+**4.6** Which icon set will you use?
 
 | Option | Style | Icons | License | Pros | Cons | Recommendation |
 |--------|-------|-------|---------|------|------|----------------|
@@ -391,7 +384,7 @@ Answer:
 
 ### Component Visual Style
 
-**9.7** What border radius style do you prefer?
+**4.7** What border radius style do you prefer?
 
 | Option | Value | Best For | Recommendation |
 |--------|-------|----------|----------------|
@@ -402,7 +395,7 @@ Answer:
 
 Answer:
 
-**9.8** What shadow style do you prefer?
+**4.8** What shadow style do you prefer?
 
 | Option | Best For | Pros | Cons | Recommendation |
 |--------|----------|------|------|----------------|
@@ -414,7 +407,7 @@ Answer:
 
 ### Motion
 
-**9.9** What level of motion/animation do you want?
+**4.9** What level of motion/animation do you want?
 
 | Option | Best For | Pros | Cons | Recommendation |
 |--------|----------|------|------|----------------|
@@ -426,13 +419,13 @@ Answer:
 
 ---
 
-## Section 10 -- Documentation Templates (`docs-templates`) [T1]
+## Section 5 -- Documentation Templates (`docs-templates`) [T1]
 
 > Fills: `project/docs/` -- documentation structures for your project. These templates define what documentation your project will maintain and how it's organized.
 >
 > **Quick path:** Accept defaults to get the 3 recommended templates (README, contextual help, ADR). Say "skip" to opt out entirely.
 
-**10.1** Which documentation structures do you want?
+**5.1** Which documentation structures do you want?
 > *Recommended templates are pre-selected. Optional templates depend on your app type.*
 
 | Template | What it provides | Recommended |
@@ -446,12 +439,12 @@ Answer:
 
 Answer: (list selected templates, or "defaults" for recommended only, or "skip" for none)
 
-**10.2** Does your application have user-facing screens that need contextual help?
+**5.2** Does your application have user-facing screens that need contextual help?
 > *If yes, the contextual help template will include i18n-ready structure for per-screen help pages following the proven "What can I do? / How to do it? / How to verify?" pattern.*
 
 Answer: (yes / no)
 
-**10.3** Do you want to track architecture decisions as ADRs?
+**5.3** Do you want to track architecture decisions as ADRs?
 > *Architecture Decision Records capture the "why" behind significant decisions (framework choices, design patterns, trade-offs). They prevent future developers from undoing decisions without understanding the context.*
 
 Answer: (yes / no)
@@ -460,43 +453,43 @@ Answer: (yes / no)
 
 <!-- T2: Architecture -- fill with team or accept Recommended defaults -->
 
-## Section 1 -- Project Conventions (`conventions`) [T2]
+## Section 6 -- Project Conventions (`conventions`) [T2]
 
 > Fills: `project/conventions.md` -- the master variable file that all other references depend on.
 
-**1.1** Project display name?
+**6.1** Project display name?
 > *Fills `{{PROJECT_NAME}}`.*
 
 Answer:
 
-**1.2** Root directory for generated artifacts (plans, scripts, inventories, advisories)?
+**6.2** Root directory for generated artifacts (plans, scripts, inventories, advisories)?
 > *Fills `{{OUTPUT_DIR}}`. This folder will be created at the repo root. Choose a name that won't conflict with source directories.*
 
 Answer:
 
-**1.3** Backend source root directory?
+**6.3** Backend source root directory?
 > *Fills `{{BACKEND_DIR}}`. Typically `backend`, `server`, `api`, or `src`.*
 
 Answer:
 
-**1.4** Frontend source root directory?
+**6.4** Frontend source root directory?
 > *Fills `{{FRONTEND_DIR}}`. Typically `frontend`, `client`, `web`, or `src`.*
 
 Answer:
 
-**1.5** Do you have additional source directories (e.g., `mobile`, `shared`, `libs`)? If so, list them with a short description.
+**6.5** Do you have additional source directories (e.g., `mobile`, `shared`, `libs`)? If so, list them with a short description.
 
 Answer:
 
 ---
 
-## Section 3 -- Frontend Standards (`frontend-standards`) [T2]
+## Section 7 -- Frontend Standards (`frontend-standards`) [T2]
 
 > Fills: `project/frontend-standards.md` -- architectural and design conventions for the frontend.
 
 ### Framework Choices
 
-**3.1** Which frontend framework will you use?
+**7.1** Which frontend framework will you use?
 > *Fills overall frontend architecture. Choose one:*
 
 | Option | Pros | Cons | Recommendation |
@@ -508,7 +501,7 @@ Answer:
 
 Answer:
 
-**3.2** Which build tool?
+**7.2** Which build tool?
 > *Affects dev server, bundling, and plugin ecosystem.*
 
 | Option | Pros | Cons | Recommendation |
@@ -519,7 +512,7 @@ Answer:
 
 Answer:
 
-**3.3** Which CSS framework/approach?
+**7.3** Which CSS framework/approach?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -530,7 +523,7 @@ Answer:
 
 Answer:
 
-**3.4** Which state management approach?
+**7.4** Which state management approach?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -541,7 +534,7 @@ Answer:
 
 Answer:
 
-**3.5** Which data fetching/caching library?
+**7.5** Which data fetching/caching library?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -551,7 +544,7 @@ Answer:
 
 Answer:
 
-**3.6** Which HTTP client?
+**7.6** Which HTTP client?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -561,7 +554,7 @@ Answer:
 
 Answer:
 
-**3.7** Which rich text editor? (Skip if not needed)
+**7.7** Which rich text editor? (Skip if not needed)
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -572,7 +565,7 @@ Answer:
 
 Answer:
 
-**3.8** Which router? (if React)
+**7.8** Which router? (if React)
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -583,7 +576,7 @@ Answer:
 
 ### Design Choices
 
-**3.9** What are your brand colors?
+**7.9** What are your brand colors?
 > *Provide semantic names and hex values. Minimum: primary, secondary.*
 
 | Token | Hex | Usage |
@@ -591,7 +584,7 @@ Answer:
 | `primary` | | Main actions, headings |
 | `secondary` | | Links, secondary actions |
 
-**3.10** What fonts will you use?
+**7.10** What fonts will you use?
 > *Provide font family names for sans-serif (UI) and serif (content, if applicable).*
 
 | Token | Font Family | Usage |
@@ -599,11 +592,11 @@ Answer:
 | `sans` | | Primary UI font |
 | `serif` | | Content font (if applicable) |
 
-**3.11** Will your application support dark mode?
+**7.11** Will your application support dark mode?
 
 Answer: (yes / no / later)
 
-**3.12** What WCAG level do you target?
+**7.12** What WCAG level do you target?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -612,7 +605,7 @@ Answer: (yes / no / later)
 
 Answer:
 
-**3.13** List the React Context providers your app will need:
+**7.13** List the React Context providers your app will need:
 > *Common contexts: Auth, Theme, Notifications. Add domain-specific ones.*
 
 | Context | Purpose | Hook |
@@ -620,20 +613,20 @@ Answer:
 | `AuthContext` | User session | `useAuth()` |
 | | | |
 
-**3.14** What reusable components will your app start with?
+**7.14** What reusable components will your app start with?
 > *Common: AlertMessage, Modal, DoubleConfirmationModal, Toast, Breadcrumb, ErrorBoundary. Add domain-specific ones.*
 
 Answer:
 
 ---
 
-## Section 4 -- Backend Standards (`backend-standards`) [T2]
+## Section 8 -- Backend Standards (`backend-standards`) [T2]
 
 > Fills: `project/backend-standards.md` -- architectural conventions for the backend.
 
 ### Framework Choices
 
-**4.1** Which backend framework?
+**8.1** Which backend framework?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -644,7 +637,7 @@ Answer:
 
 Answer:
 
-**4.2** Which ORM / database layer?
+**8.2** Which ORM / database layer?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -655,7 +648,7 @@ Answer:
 
 Answer:
 
-**4.3** Which database?
+**8.3** Which database?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -666,7 +659,7 @@ Answer:
 
 Answer:
 
-**4.4** Which migration tool?
+**8.4** Which migration tool?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -677,7 +670,7 @@ Answer:
 
 Answer:
 
-**4.5** Which validation library?
+**8.5** Which validation library?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -688,7 +681,7 @@ Answer:
 
 Answer:
 
-**4.6** Which authentication approach?
+**8.6** Which authentication approach?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -699,7 +692,7 @@ Answer:
 
 Answer:
 
-**4.7** What JWT token expiry times?
+**8.7** What JWT token expiry times?
 > *Fills `{{access_token_expiry}}`, `{{refresh_token_expiry}}`.*
 
 - Access token: (e.g., 1 hour)
@@ -707,23 +700,23 @@ Answer:
 
 Answer:
 
-**4.8** What is the default rate limit?
+**8.8** What is the default rate limit?
 > *Fills `{{default_rate_limit}}`.*
 
 Answer: (e.g., 200/minute)
 
-**4.9** List your initial backend extensions/libraries:
+**8.9** List your initial backend extensions/libraries:
 > *Common: ORM, JWT auth, migrations, rate limiter, i18n, CORS, validation, API docs.*
 
 | Extension | Purpose |
 |-----------|---------|
 | | |
 
-**4.10** Will your backend serve file uploads? If yes, what are the size limits and allowed formats?
+**8.10** Will your backend serve file uploads? If yes, what are the size limits and allowed formats?
 
 Answer:
 
-**4.11** Will your backend support import/export? If yes, what formats?
+**8.11** Will your backend support import/export? If yes, what formats?
 
 Answer:
 
@@ -731,11 +724,11 @@ Answer:
 
 <!-- T3: Engineering Standards -- auto-generated from T2 choices or fill with engineering team -->
 
-## Section 5 -- Testing Standards (`testing-standards`) [T3]
+## Section 9 -- Testing Standards (`testing-standards`) [T3]
 
 > Fills: `project/testing-standards.md` -- testing conventions across all layers.
 
-**5.1** Which backend test framework?
+**9.1** Which backend test framework?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -745,7 +738,7 @@ Answer:
 
 Answer:
 
-**5.2** Which frontend test framework?
+**9.2** Which frontend test framework?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -754,7 +747,7 @@ Answer:
 
 Answer:
 
-**5.3** Which E2E test framework?
+**9.3** Which E2E test framework?
 
 | Option | Pros | Cons | Recommendation |
 |--------|------|------|----------------|
@@ -764,22 +757,22 @@ Answer:
 
 Answer:
 
-**5.4** Will you use a separate integration test suite against a real database? (yes / no)
+**9.4** Will you use a separate integration test suite against a real database? (yes / no)
 
 Answer:
 
-**5.5** What is your E2E base URL?
+**9.5** What is your E2E base URL?
 > *Fills `{{base_url}}`.*
 
 Answer: (e.g., `http://localhost:3000`)
 
 ---
 
-## Section 6 -- i18n Standards (`i18n-standards`) [T3]
+## Section 10 -- i18n Standards (`i18n-standards`) [T3]
 
 > Fills: `project/i18n-standards.md` -- internationalization conventions.
 
-**6.1** How many languages will your application support at launch?
+**10.1** How many languages will your application support at launch?
 > *List RFC 5646 codes (e.g., `en-US`, `pt-BR`, `fr-FR`, `de-DE`).*
 
 | Locale Code | Language | Role |
@@ -788,33 +781,33 @@ Answer: (e.g., `http://localhost:3000`)
 | | | Secondary |
 | | | (additional, if any) |
 
-**6.2** What is the backend's default locale for error messages?
+**10.2** What is the backend's default locale for error messages?
 > *Fills `{{BACKEND_DEFAULT_LOCALE}}`. Often differs from frontend default (e.g., backend defaults to `en-US` for developer-facing logs while frontend defaults to the community's primary language).*
 
 Answer:
 
-**6.3** Why did you choose these defaults?
+**10.3** Why did you choose these defaults?
 > *Helps document the rationale in the i18n standards file.*
 
 - Frontend default rationale:
 - Backend default rationale:
 
-**6.4** Does your application send localized emails? (yes / no)
+**10.4** Does your application send localized emails? (yes / no)
 
 Answer:
 
-**6.5** Do any domain entities store translations in the database? (e.g., category names in multiple languages)
+**10.5** Do any domain entities store translations in the database? (e.g., category names in multiple languages)
 > *If yes, list the entities and their translatable fields.*
 
 Answer:
 
 ---
 
-## Section 7 -- Security Checklists (`security-checklists`) [T3]
+## Section 11 -- Security Checklists (`security-checklists`) [T3]
 
 > Fills: `project/security-checklists.md` -- security checklists are mostly generic; customize the constants table.
 
-**7.1** List your validation constants with their values:
+**11.1** List your validation constants with their values:
 > *These will populate the Quick Reference table and must stay in sync between backend and frontend.*
 
 | Field | Backend Constant | Frontend Constant | Value |
@@ -826,20 +819,36 @@ Answer:
 | Email max | | | |
 | (add more) | | | |
 
-**7.2** Where are validation constants defined?
+**11.2** Where are validation constants defined?
 > *Fills `{{backend_constants_path}}` and `{{frontend_constants_path}}`.*
 
 - Backend:
 - Frontend:
 
-**7.3** Are there any checklists (A--N) that don't apply to your project? List them.
+**11.3** Are there any checklists (A--N) that don't apply to your project? List them.
 > *Example: "Checklist B (File Upload) -- N/A, no file uploads" or "Checklist L (SSRF) -- N/A, no user-supplied URLs"*
 
 Answer:
 
-**7.4** Do you have any project-specific security requirements not covered by checklists A--N? (e.g., compliance certifications, data residency, audit logging requirements)
+**11.4** Do you have any project-specific security requirements not covered by checklists A--N? (e.g., compliance certifications, data residency, audit logging requirements)
 
 Answer:
+
+---
+
+## Final Step -- Metacommunication Message (if not provided in Section 0)
+
+> **When this applies:** Only when the user did not provide a metacommunication message in Section 0 (`metacomm-message`). This step is always the last item asked, regardless of whether the user skipped other sections.
+>
+> **What the agent does:** Using the answers (or assumed defaults) from all previous sections, the agent composes a recommended metacommunication message -- a 1-3 sentence message from the designer (I) speaking directly to the user (you), describing who the user is, what the designer has designed for them, and why (see `general/shared-definitions.md` for the full definition and phrasing rule).
+>
+> **Interaction:** The agent presents the recommended message and asks the user to:
+>
+> - **Accept** -- the message is recorded as-is. The agent appends a note: *"Generated by the design agent based on specifications defined in the design session on \<YYYY-MM-DD HH:MM UTC\>."*
+> - **Edit** -- the user modifies the message; the agent records the edited version verbatim (per the verbatim rule in `general/shared-definitions.md`). No generation note is appended.
+> - **Reject and skip** -- no metacommunication message is recorded; the field is left blank.
+>
+> *Feeds `project/design-intent-to-be.md`. Must follow the phrasing rule in `general/shared-definitions.md` -- always "I" (designer) and "you" (user), never third-person.*
 
 ---
 
@@ -847,18 +856,18 @@ Answer:
 
 After completing all sections:
 
-- [ ] Section M (Metacommunication Message) is filled or explicitly skipped
-- [ ] Section 0 (Quick Start) is fully filled -- enough for a skeleton (including project mode and team composition)
-- [ ] Section 1 (Conventions) defines all directory paths
-- [ ] Section 2 (Conceptual Design) describes entities, permissions, metacommunication, and greenfield/evolving status
-- [ ] Section 3 (Frontend) has framework and design choices
-- [ ] Section 4 (Backend) has framework and architecture choices
-- [ ] Section 5 (Testing) has framework choices per layer
-- [ ] Section 6 (i18n) has locale codes and defaults
-- [ ] Section 7 (Security) has validation constants
-- [ ] Section 8 (UX Design) has interaction patterns, accessibility, and responsive choices
-- [ ] Section 9 (Graphic/UI Design) has colors, typography, spacing, icons, and visual style choices
-- [ ] Section 10 (Documentation) has selected templates or explicit "skip"
+- [ ] Section `metacomm-message` (0) -- Metacommunication Message is filled or explicitly skipped
+- [ ] Section `basic-definitions` (1) -- Basic Definitions is fully filled (including project mode and team composition)
+- [ ] Section `conceptual-design` (2) -- describes entities, permissions, and greenfield/evolving status
+- [ ] Section `ux-design-standards` (3) -- has interaction patterns, accessibility, and responsive choices
+- [ ] Section `graphic-ui-design-standards` (4) -- has colors, typography, spacing, icons, and visual style choices
+- [ ] Section `docs-templates` (5) -- has selected templates or explicit "skip"
+- [ ] Section `conventions` (6) -- defines all directory paths
+- [ ] Section `frontend-standards` (7) -- has framework and design choices
+- [ ] Section `backend-standards` (8) -- has framework and architecture choices
+- [ ] Section `testing-standards` (9) -- has framework choices per layer
+- [ ] Section `i18n-standards` (10) -- has locale codes and defaults
+- [ ] Section `security-checklists` (11) -- has validation constants
 
 **Next step:** Give this file to an agent with:
 > *"Read template/questionnaire.md and instantiate all template/\* files in `_references` into corresponding project/\* files using my answers."*
@@ -875,3 +884,5 @@ After completing all sections:
 | 2       | 2026-03-29 | Added Knowledge Tiers preamble (T1/T2/T3). Added questions 0.3 (project mode, moved early for directory-structure routing) and 0.10 (team composition) to Section 0. Renumbered 0.3-0.8 to 0.4-0.9. Added brownfield-only questions 2.13-2.17 to Section 2. Added Section 8 (UX Design Standards, 9 questions). Added Section 9 (Graphic/UI Design Standards, 9 questions). Updated post-questionnaire checklist. Total project files generated: 7 to 9. |
 | 3       | 2026-04-01 | Added Section 10 (Documentation Templates, 3 questions) to T1 tier. Documentation templates in `template/docs/` can now be instantiated during project setup. Updated post-questionnaire checklist. |
 | 4       | 2026-04-02 | Added Section M (Metacommunication Message) as first T1 section. Added Section Reference Table with slugs. Annotated all section headers with slug identifiers and tier tags. Reordered sections by tier (T1: M, 0, 2, 8, 9, 10; T2: 1, 3, 4; T3: 5, 6, 7). Added HTML tier block dividers. Updated How to use block. T1 tier now includes section M. |
+| 5       | 2026-04-02 | Moved metacommunication message fallback from question 2.10 to a new "Final Step" section after all questionnaire sections. When the user did not provide a message in Section M, the agent now generates a recommended metacommunication message inferred from previous answers, allowing the user to accept, edit, or reject-and-skip. Accepted generated messages are annotated with a generation note. Renumbered 2.11-2.17 to 2.10-2.16. |
+| 6       | 2026-04-02 | Renumbered all sections sequentially by tier order: M->0, 0->1 (renamed "Basic Definitions", slug `quick-start`->`basic-definitions`), 2->2, 8->3, 9->4, 10->5, 1->6, 3->7, 4->8, 5->9, 6->10, 7->11. All question sub-numbers updated to match new section prefixes. Post-Questionnaire Checklist now uses slug-based references. External references (SKILL.md) migrated from section numbers to slugs. |

@@ -1,5 +1,7 @@
 # Recipe: Upgrade the Foundational Framework
 
+Use this recipe to pull the latest framework updates without overwriting your project-specific files.
+
 ## Goal
 
 Upgrade the foundational SEJA framework files in a codebase or project workspace
@@ -20,8 +22,7 @@ to a newer version without losing project-specific data.
 
 2. **Run the upgrade**
    ```
-   /upgrade   # Claude
-   $upgrade   # Codex
+   /upgrade
    ```
    The skill fetches the latest foundational framework from GitHub and runs
    the upgrade script automatically. No local copy of the framework repo is
@@ -40,14 +41,13 @@ to a newer version without losing project-specific data.
 5. **Accept path migrations if offered**
    If path references changed (for example, from the old `skills/references/` layout to the current `_references/` layout), accept the offered migration to update all references.
 
-6. **Regenerate `CLAUDE.md` / `AGENTS.md` (optional)**
+6. **Regenerate `CLAUDE.md` (optional)**
    If the framework structure changed significantly, regenerate the agent
    configuration to reflect the updated layout.
 
 7. **Verify framework integrity**
    ```
-   /check health   # Claude
-   $check health   # Codex
+   /check health
    ```
    Confirms that all framework components are present and consistent.
 
