@@ -20,7 +20,7 @@ Shared reference files located in `_references/`:
 
 ## Helper Scripts
 
-38 scripts in `.claude/skills/scripts/` -- validation checks, index generators, conversion utilities, the central `project_config.py` module that parses `project/conventions.md` to supply all scripts with project-specific paths and settings, `run_all_checks.py` (CI-independent validation orchestrator that discovers and runs all check scripts with unified exit codes and JUnit XML output), and `check_docs.py` (plugin-based documentation consistency checker with 6 scanners: framework integrity, path liveness, env vars, command refs, terminology, structural-completeness).
+39 scripts in `.claude/skills/scripts/` -- validation checks, index generators, conversion utilities, the central `project_config.py` module that parses `project/conventions.md` to supply all scripts with project-specific paths and settings, `run_all_checks.py` (CI-independent validation orchestrator that discovers and runs all check scripts with unified exit codes and JUnit XML output), and `check_docs.py` (plugin-based documentation consistency checker with 6 scanners: framework integrity, path liveness, env vars, command refs, terminology, structural-completeness).
 
 ## Subagent Prompts
 
