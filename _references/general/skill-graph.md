@@ -14,11 +14,11 @@ After a skill completes, `/post-skill` reads this file and looks up the complete
 
 | After | Suggest | Reason |
 | --- | --- | --- |
-| `/plan` | `/implement` | Ready to execute this plan? |
-| `/plan --light` | `/implement` | Ready to execute this proposal? |
+| `/plan` | `/implement` | Ready to implement this plan? |
+| `/plan --light` | `/implement` | Ready to implement this proposal? |
 | `/implement` | `/check validate`, `/check review`, `/check preflight` | All checks run by default unless --skip-checks was used. |
 | `/implement` | `/document` | Update documentation for the changes? |
-| `/plan --roadmap` | `/implement` | Ready to execute items from the roadmap? |
+| `/plan --roadmap` | `/implement` | Ready to implement items from the roadmap? |
 | `/explain spec-drift` | `/plan` | Specs analyzed — ready to plan next steps? |
 
 ### Analysis & Review

@@ -20,4 +20,9 @@
 - [P2] Is the caching strategy documented — what is cached, TTL, invalidation triggers?
 - [P2] Has the technical debt introduced (or resolved) by this change been catalogued, and is there a payoff timeline tied to upcoming roadmap items? *(Technical debt strategist)*
 - [P2] If this change touches legacy components, is there a strangler-fig or anti-corruption layer strategy in place to isolate new code from legacy coupling? *(Legacy modernization specialist)*
+- [P2] **Consistency** (CDN): Do similar architectural patterns (error handling, dependency injection, configuration) use similar structures across modules?
+- [P2] **Role-expressiveness** (CDN): Can a developer infer a module's responsibility from its name, location, and public interface without reading implementation details?
+- [P2] **Error-proneness** (CDN): Does the architecture invite structural mistakes -- e.g., easy to put logic in the wrong layer, easy to create circular dependencies?
+- [P2] **Hidden dependencies** (CDN): Are cross-module dependencies, shared state, and implicit contracts visible in the dependency graph or explicitly documented?
+- [P2] **Viscosity** (CDN): How much effort is needed to make a change that respects the architecture vs. taking a shortcut? High viscosity encourages architectural erosion.
 - [P3] Can the core design be explained in terms of fundamental trade-offs (latency vs. throughput, consistency vs. availability, coupling vs. autonomy) with explicit justification for each choice? *(System design interviewer / first-principles thinker)*

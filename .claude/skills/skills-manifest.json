@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-02T18:07:21Z",
+  "generated": "2026-04-03T00:02:03Z",
   "count": 13,
   "skills": [
     {
@@ -12,7 +12,7 @@
     {
       "name": "check",
       "description": "Run quality checks: validation, code review, smoke tests, preflight, or framework health.",
-      "argument_hint": "<validate | review | smoke | preflight | health | test-plan | telemetry> [--depth <light|standard|deep>] [scope]",
+      "argument_hint": "<validate | review | smoke | preflight | health | test-plan | docs | telemetry | semiotic-inspection> [--depth <light|standard|deep>] [scope]",
       "category": "analysis",
       "version": "1.0.0"
     },

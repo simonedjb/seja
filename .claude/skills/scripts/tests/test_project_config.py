@@ -9,8 +9,8 @@ import pytest
 def fake_repo(tmp_path):
     """Create a minimal repo structure with .claude/ and template/conventions.md."""
     (tmp_path / ".claude").mkdir()
-    (tmp_path / "_references").mkdir()
-    conventions = tmp_path / "_references" / "template/conventions.md"
+    (tmp_path / "_references" / "template").mkdir(parents=True)
+    conventions = tmp_path / "_references" / "template" / "conventions.md"
     conventions.write_text(
         "# TEMPLATE - PROJECT CONVENTIONS\n\n"
         "| Variable | Value | Description |\n"

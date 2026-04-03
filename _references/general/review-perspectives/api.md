@@ -20,4 +20,9 @@
 - [P2] Is the OpenAPI spec browsable via a documentation UI (Swagger UI, ReDoc)?
 - [P2] Are example request/response payloads included in the API spec?
 - [P2] Does every endpoint have a human-readable description, parameter constraints, and at least one success and one error example documented inline in the spec?
+- [P2] **Consistency** (CDN): Do similar API operations use similar parameter names, response shapes, and error formats, so that learning one endpoint transfers to others?
+- [P2] **Role-expressiveness** (CDN): Can a developer infer the purpose of an endpoint, parameter, or response field from its name and position alone, without reading documentation?
+- [P2] **Error-proneness** (CDN): Does the API design invite mistakes -- e.g., easily confused parameter names, missing required field validation, or destructive operations without confirmation?
+- [P2] **Hidden dependencies** (CDN): Are relationships between API resources (ordering constraints, cascade effects, required sequences) visible in the API surface or documented, not hidden?
+- [P2] **Viscosity** (CDN): How many API calls or configuration changes are needed to make a single logical change? High viscosity discourages legitimate modifications.
 - [P3] Do error messages, status codes, and pagination patterns feel intuitive and consistent enough that a new developer can integrate without reading supplementary guides?

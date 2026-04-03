@@ -163,10 +163,18 @@ When using the metacomm framing:
 - *header*: `# Plan <id> | <prefix><scope> | <current datetime> | <short title> | Review: <depth>` followed by a metadata line `plan_format_version: 1` on the next line — prefix based on the brief; `<depth>` is Light, Standard, or Deep (set in step 5). If metacomm framing, add `METACOMM |` after the prefix-scope. If invoked from an advisory Q&A flow with a source advisory ID, include `source: advisory-<id>` on the metadata line after `plan_format_version: 1`.
 - If default framing: *user brief*, *agent interpretation*, *files* — per _references/general/report-conventions.md
 - If metacomm framing: *designer's metacommunication message* (the brief), *agent interpretation*, *files* — per _references/general/report-conventions.md
+- *agent interpretation* must consistently cover three elements:
+  1. **Problem**: one sentence describing what problem this plan solves or what need it addresses
+  2. **Approach**: the chosen approach and why it was selected -- what makes it the right fit
+  3. **Alternatives rejected** (for Standard/Deep plans): key alternatives that were considered and why they were not chosen. Omit for Light-depth plans where the approach is self-evident.
 - If the prefix is FIX (the brief describes an error or bug), also include:
   - *error log* (optional): if an extensive error log is provided, summarize it and prepend with "summarized error log:". In this case, replace the error log in the user brief with "<error log> (see summary below)"
   - *root cause*: diagnostics of the problem
 - *best practices*: used in the plan
+- *design decisions* (Standard/Deep plans only; omit for Light): a single section capturing:
+  - **User-visible impact**: what changes from the user's perspective (one paragraph)
+  - **Trade-offs accepted**: what was gained and what was given up
+  - **Metacommunication impact** (when the plan modifies user-facing communication -- error messages, help text, UI copy, CLI output, documentation): what the system will now communicate differently to the user. Use I/you phrasing per shared-definitions.md. Include this line regardless of whether `--framing metacomm` was used -- any plan that changes what users see or read has metacommunication impact.
 - *steps*: structured step list (see **Step format** below)
 - *review log*: a log of the review iterations, if applicable
 - *outcomes*: expected outcomes

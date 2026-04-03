@@ -9,7 +9,7 @@ When a skill produces a report file in `${OUTPUT_DIR}` (see project/conventions.
 - *short title*: a brief descriptive title.
 - *user brief*: user-provided feature or request description.
 - *agent interpretation*: processed description, generated after interpreting the user-provided description.
-- *source* (optional): `source: <type>-<id>` -- the artifact that triggered this one (e.g., `source: advisory-000042`).
+- *source* (optional): `source: <type>-<id> -- <motivation summary>` -- the artifact that triggered this one, with a short inline motivation summary so readers don't need to open the source artifact to understand why this plan exists. Example: `source: advisory-000042 -- review perspectives lack communicability vocabulary`. The motivation summary should be under 80 characters.
 - *spawned* (optional): `spawned: <type>-<id>[, ...]` -- artifacts created from this one (updated by post-skill).
 - *files*: files relevant to the skill output.
 
@@ -20,6 +20,10 @@ Reserve the id by calling `python .claude/skills/scripts/reserve_id.py --type <t
 If any clarification question is asked of the user (excluding authorization-seeking questions), include the agent's question and user's answer in the report.
 
 NEVER replace existing plan text. Instead, mark it as revoked or superseded, provide a rationale, create an identifier for the revoked fragment and append the replacement text to the file, referencing the revoked fragment.
+
+## Artifact Immutability
+
+Existing output artifacts in `${OUTPUT_DIR}` are immutable design history. When format conventions change (e.g., new sections, enriched fields), apply the new format only to newly generated artifacts. Do not retroactively modify existing artifacts to match new conventions. If rationale needs to be added to an existing artifact after the fact, create a companion QA log or advisory that references it rather than editing the artifact itself.
 
 ## Report Filenames
 

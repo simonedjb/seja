@@ -1,0 +1,180 @@
+{
+  "version": "1.0",
+  "generated": "2026-04-02T17:50:28Z",
+  "categories": [
+    "planning-execution",
+    "analysis-review",
+    "code-tests",
+    "utilities"
+  ],
+  "edges": [
+    {
+      "after": "/plan",
+      "suggest": "/implement",
+      "reason": "Ready to execute this plan?",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/plan --light",
+      "suggest": "/implement",
+      "reason": "Ready to execute this proposal?",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/implement",
+      "suggest": "/check validate",
+      "reason": "All checks run by default unless --skip-checks was used.",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/implement",
+      "suggest": "/check review",
+      "reason": "All checks run by default unless --skip-checks was used.",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/implement",
+      "suggest": "/check preflight",
+      "reason": "All checks run by default unless --skip-checks was used.",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/implement",
+      "suggest": "/document",
+      "reason": "Update documentation for the changes?",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/plan --roadmap",
+      "suggest": "/implement",
+      "reason": "Ready to execute items from the roadmap?",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/explain spec-drift",
+      "suggest": "/plan",
+      "reason": "Specs analyzed — ready to plan next steps?",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/advise",
+      "suggest": "/plan",
+      "reason": "Want to turn these recommendations into a plan?",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/advise",
+      "suggest": "/plan --roadmap",
+      "reason": "Want to turn these recommendations into a plan?",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/explain",
+      "suggest": "/advise",
+      "reason": "Have questions about what you just learned?",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/check review",
+      "suggest": "/plan",
+      "reason": "Want to plan fixes for the review findings?",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/check validate",
+      "suggest": "/plan",
+      "reason": "Found issues? Plan and fix them.",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/check validate",
+      "suggest": "/check health",
+      "reason": "Also check framework health?",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/check smoke",
+      "suggest": "/plan",
+      "reason": "Found failures? Plan and fix them.",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/check health",
+      "suggest": "/plan",
+      "reason": "Found issues? Plan and fix them.",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/check preflight",
+      "suggest": "/check review",
+      "reason": "Want a detailed code review of the changes?",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/advise --inventory",
+      "suggest": "/explain",
+      "reason": "Want a deeper explanation of any of these?",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/check telemetry",
+      "suggest": "/advise",
+      "reason": "Want to discuss usage patterns?",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/check test-plan",
+      "suggest": "/communication",
+      "reason": "Share the test plan with stakeholders?",
+      "category": "code-tests"
+    },
+    {
+      "after": "/document",
+      "suggest": "/check docs",
+      "reason": "Validate documentation consistency?",
+      "category": "utilities"
+    },
+    {
+      "after": "/communication",
+      "suggest": "/onboarding",
+      "reason": "Need to onboard someone to the project too?",
+      "category": "utilities"
+    },
+    {
+      "after": "/onboarding",
+      "suggest": "/communication",
+      "reason": "Want to generate stakeholder material as well?",
+      "category": "utilities"
+    },
+    {
+      "after": "/help",
+      "suggest": "/help --browse",
+      "reason": "Browse all available skills?",
+      "category": "utilities"
+    },
+    {
+      "after": "/help --browse",
+      "suggest": "general/recipes.md",
+      "reason": "See common multi-skill workflow recipes",
+      "category": "utilities"
+    },
+    {
+      "after": "/seed",
+      "suggest": "general/getting-started.md",
+      "reason": "New to SEJA? Follow the getting-started guide",
+      "category": "utilities"
+    },
+    {
+      "after": "/design",
+      "suggest": "/plan --roadmap",
+      "reason": "Project configured — generate a development roadmap?",
+      "category": "utilities"
+    },
+    {
+      "after": "/qa-log",
+      "suggest": "/advise",
+      "reason": "Have more questions to explore?",
+      "category": "utilities"
+    }
+  ]
+}

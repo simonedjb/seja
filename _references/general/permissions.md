@@ -8,4 +8,5 @@
 - Don't ask for confirmation before creating non-executable temporary files.
 - Don't ask for confirmation before any read-only operation.
 - Don't ask for confirmation before running backend or frontend tests.
+- Don't ask for confirmation before creating, reading, or writing the session scratchpad file (`${SESSION_NOTES_FILE}`).
 - Ask for clarifications whenever appropriate.

@@ -10,19 +10,19 @@ Before anything else, you need the **SEJA repository**. Clone it from GitHub or 
 
 ### 0.1 What's in the Repository?
 
-The SEJA repository contains approximately 170 framework files organized in the `.claude/` and `_references/` directory structures:
+The SEJA repository contains approximately 185 framework files organized in the `.claude/` and `_references/` directory structures:
 
 | Category | Count | Description |
 |----------|-------|-------------|
 | Skill definitions | 15 | Slash commands (13 user-facing + 2 internal lifecycle hooks): `/plan`, `/implement`, `/advise`, `/check`, `/explain`, `/document`, `/help`, etc. |
-| General references | 20 | Reusable standards (review perspectives index, coding standards, report conventions, onboarding index, communication index, skill graph, batch execution patterns, etc.) |
+| General references | 21 | Reusable standards (review perspectives index, coding standards, report conventions, onboarding index, communication index, skill graph, batch execution patterns, etc.) |
 | Per-perspective files | 16 | Individual review perspective files with Essential/Deep-dive tiers, priority-classified P0-P4 (in `general/review-perspectives/`) |
 | Per-onboarding files | 8 | Role families (builders, shapers, guardians) and expertise levels (L1-L5) for tailored onboarding plans (in `general/onboarding/`) |
 | Per-communication files | 5 | Audience segment profiles (evaluators, clients, end users, academics) and Diataxis mapping (in `general/communication/`) |
 | Template references | 51 | Templates for generating project-specific standards, rules, agents, specs, CI, documentation, and smoke-test scaffolding (in `_references/template/`) |
 | Agent definitions | 10 | Specialized sub-agents: 7 evaluators (code reviewer, plan reviewer, advisory reviewer, council debate, standards checker, test runner, migration validator) + 3 generators (communication, onboarding, documentation) |
 | Rule definitions | 7 | Path-scoped coding rules (backend, frontend, i18n, migrations, tests, e2e, framework-structure) |
-| Validation scripts | 35 | Python scripts for quality checks, analysis, smoke testing, and index generation (i18n, auth, migrations, secrets, coverage, briefs, etc.) |
+| Validation scripts | 39 | Python scripts for quality checks, analysis, smoke testing, and index generation (i18n, auth, migrations, secrets, coverage, briefs, etc.) |
 | Framework metadata | 4 | `CLAUDE.md`, `.claude/CHEATSHEET.md`, `.claude/CHANGELOG.md`, and `.claude/skills/VERSION` |
 
 ### 0.2 How to Get It
@@ -180,7 +180,7 @@ Skills are predefined workflows you invoke with `/skill-name`. Each skill is a `
 | Skill | What It Does | When to Use |
 |-------|-------------|-------------|
 | `/advise` | Expert Q&A with multi-perspective analysis; `--inventory` mode catalogs codebase elements | "What's the best approach for X?", "List all API endpoints" |
-| `/check` | Unified quality gate with 8 modes: `validate`, `review`, `smoke`, `preflight`, `health`, `test-plan`, `docs`, `telemetry` | Before committing, before merging, after changes |
+| `/check` | Unified quality gate with 9 modes: `validate`, `review`, `smoke`, `preflight`, `health`, `test-plan`, `docs`, `telemetry`, `semiotic-inspection` | Before committing, before merging, after changes |
 | `/communication` | Generates audience-tailored stakeholder material (evaluators, clients, end users, academics) | Communicating about the project to external audiences |
 | `/design` | Configures project-specific files via questionnaire or spec file; `--generate-spec` for a blank spec skeleton | Customizing framework for your project after `/seed` |
 | `/document` | Generates or updates project documentation based on plan Docs: fields or auto-detected changes | After implementation to generate user/developer docs |
@@ -205,7 +205,7 @@ All reference files live in `_references/`:
 | `template/*` | Templates to generate `project/*` files for new projects | Yes -- used by `/design` |
 | `project/*` | Project-specific standards (your backend rules, frontend rules, conceptual design) | No -- generated per-project |
 
-**Key general references (20 top-level files + 3 subdirectories):**
+**Key general references (21 top-level files + 3 subdirectories):**
 
 - `general/review-perspectives.md` -- Index for 16 engineering and design perspectives, with conflict resolution rules and plan prefix shortcuts. Each perspective lives in its own file under `general/review-perspectives/` (e.g., `sec.md`, `perf.md`) with **Essential** questions (always evaluated) and **Deep-dive** questions (for thorough reviews).
 - `general/constraints.md` -- Universal rules (no invented data, no ANSI codes, etc.)

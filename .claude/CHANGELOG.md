@@ -19,7 +19,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - Preflight checks for skills-manifest and skill-spec validation in `run_preflight_fast.py`
 
 ### Changed
-- Script count increased from 35 to 38 (3 new scripts: check_skill_spec.py, generate_skill_graph.py, generate_skills_manifest.py)
+- Script count increased from 35 to 39 (4 new scripts: check_skill_spec.py, generate_skill_graph.py, generate_skills_manifest.py, check_version_changelog_sync.py)
 - Pre-skill pipeline expanded from 6 to 7 composable stages
 - `generate_cheatsheet.py` now escapes pipe characters in description and argument_hint fields for correct markdown table rendering
 - `/check preflight` rewritten with parallel fan-out pattern and failure isolation

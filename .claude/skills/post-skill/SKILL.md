@@ -175,6 +175,7 @@ metadata:
       {"timestamp": "2026-03-29T14:00:00Z", "skill": "advise", "id": "000014", "duration_seconds": 1800, "outcome": "success", "brief": "What other attributes could be incorporated into telemetry?", "prefix_scope": "CHORE-O", "plan_id": null, "error_type": null, "output_file": "_output/advisory-logs/advisory-000014-telemetry-attributes-expansion.md", "context_budget": "standard", "git_commit_sha": "9709d91abc123...", "files_changed": 6, "parent_skill": "advise"}
       ```
 
+    - After writing, stage `${OUTPUT_DIR}/telemetry.jsonl` and amend the commit from step 8 to include it (`git add ${OUTPUT_DIR}/telemetry.jsonl && git commit --amend --no-edit`). This keeps telemetry co-located with the rest of the skill's output in a single commit. If the amend fails (e.g., commit was skipped), log a warning and continue.
     - This step is lightweight and must not block subsequent steps. If writing fails (e.g., permission error), log a warning and continue.
 
 9. If there are any manual actions to be taken (db upgrade, environment update or config, restart backend or frontend), append the plan file with the action instructions, separating dev and production environments, and inform the user.

@@ -62,6 +62,7 @@
 | `JOURNEY_MAPS_AS_IS` | `project/journey-maps-as-is.md` | Journey maps -- implemented user journeys (as-is) (in `_references/`) | Agent |
 | `UX_DESIGN_STANDARDS` | `project/ux-design-standards.md` | UX design standards (in `_references/`) | Human / Agent |
 | `GRAPHIC_UI_DESIGN_STANDARDS` | `project/graphic-ui-design-standards.md` | Graphic/UI design standards (in `_references/`) | Human / Agent |
+| `SESSION_NOTES_FILE` | `${TMP_DIR}/session-notes.md` | Session-scoped working memory for structured note-taking | Agent |
 
 ---
 

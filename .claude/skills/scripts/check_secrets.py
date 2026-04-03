@@ -158,6 +158,10 @@ def is_false_positive(line: str) -> bool:
 
 def should_skip_file(filepath: Path) -> bool:
     """Check if a file should be skipped based on path patterns."""
+    # Skip copies of this scanner (contains test fixtures with fake secrets)
+    if filepath.name == "check_secrets.py":
+        return True
+
     name = filepath.name.lower()
     suffix = filepath.suffix.lower()
 

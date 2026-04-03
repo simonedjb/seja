@@ -1,7 +1,7 @@
 ---
 name: check
 description: "Run quality checks: validation, code review, smoke tests, preflight, or framework health."
-argument-hint: "<validate | review | smoke | preflight | health | test-plan | telemetry> [--depth <light|standard|deep>] [scope]"
+argument-hint: "<validate | review | smoke | preflight | health | test-plan | docs | telemetry | semiotic-inspection> [--depth <light|standard|deep>] [scope]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-03-29 00:15:00
@@ -36,7 +36,10 @@ metadata:
 > You: /check test-plan Test the new task filtering feature
 > Agent: Produces a structured test plan with scenarios, step-by-step instructions, expected results, and edge cases that testers should verify.
 
-**When to use**: Before committing, after making changes, or when you want to verify code quality, project health, framework integrity, or generate a manual test plan for recent changes.
+> You: /check semiotic-inspection task-filtering
+> Agent: Conducts a 5-step Semiotic Inspection Method (SIM) evaluation of the task-filtering feature's communicability. Analyzes metalinguistic, static, and dynamic signs independently, then collates and compares the three metacommunication messages to identify communicative problems.
+
+**When to use**: Before committing, after making changes, or when you want to verify code quality, project health, framework integrity, generate a manual test plan, or evaluate interface communicability.
 
 ## Arguments
 
@@ -106,6 +109,7 @@ If there are no arguments, use the AskUserQuestion tool to ask which mode to run
 - "6. test-plan -- generate a structured manual test plan from a brief or recent plans"
 - "7. docs -- documentation consistency check via plugin-based scanners (paths, env vars, terminology)"
 - "8. telemetry -- usage analytics and skill invocation statistics from telemetry.jsonl"
+- "9. semiotic-inspection -- Semiotic Inspection Method (SIM) evaluation of interface communicability (scope: feature, page, flow)"
 
 ## Modes
 
@@ -119,6 +123,7 @@ If there are no arguments, use the AskUserQuestion tool to ask which mode to run
 | `test-plan [brief]` | Generate manual test plan from recent plans | `/plan-user-test` |
 | `docs [--plugins LIST]` | Documentation consistency check | -- |
 | `telemetry` | Usage analytics from telemetry.jsonl | -- |
+| `semiotic-inspection [scope]` | SIM-based communicability evaluation | -- |
 
 ## Definitions
 
@@ -396,5 +401,107 @@ Informational usage analytics. No check-log file is written.
 1. Run `python .claude/skills/scripts/generate_telemetry_report.py` via Bash. Capture stdout.
 
 2. Display the markdown output directly to the user.
+
+---
+
+### Mode: semiotic-inspection
+
+Conducts a Semiotic Inspection Method (SIM) evaluation [SIM-2006; SemEng-Methods-2009, pp.26-33] of a project's interface communicability. SIM reconstructs the designer's metacommunication message by examining three classes of interface signs independently (segmented analysis), then collating and comparing them (synthesis). The agent acts as **evaluator-as-user-advocate** [SIM-2006, p.151] -- representing users' interests through HCI knowledge, not replacing them.
+
+SIM evaluates the **emission** of metacommunication (what the designer's deputy communicates). It is complementary to CEM (which evaluates reception via observed breakdowns -- see the Communicability sub-sections in UX/DX review perspectives).
+
+**Scope**: the user specifies what to inspect -- a feature name, page, user flow, or `all` for a broad inspection. The agent selects the portions of the artifact to inspect based on this scope.
+
+#### Preparation
+
+1. **Identify inspection context**: Read the project's metacommunication files to establish the designer's intended message:
+   - `project/metacomm-as-is.md` or `project/design-intent-to-be.md` (who the users are, what they need, the design vision)
+   - `project/conceptual-design-as-is.md` (entities, permissions, UX patterns)
+   - `project/journey-maps-as-is.md` or `project/design-intent-to-be.md §15` (user flows and journeys)
+   - `project/ux-design-standards.md` (if it exists)
+
+2. **Establish focus of analysis**: Based on the scope argument, identify:
+   - (i) Who are the intended users of the system (from metacomm files, user profiles, role families)
+   - (ii) What are the top-level goals and activities that the system supports (from journey maps, conceptual design)
+
+3. **Elaborate inspection scenarios**: Construct 1-3 inspection scenarios [SemEng-Methods-2009, p.28] that project the evaluation question onto the territory of possible interactions. Each scenario defines:
+   - A user persona (from the project's role families or metacomm user profile)
+   - A goal-directed activity (from journey maps or user flows)
+   - The context and constraints of the activity
+
+   Inspection scenarios are necessary because aimless interaction cannot provide the appropriate communicative intent for analysis.
+
+#### SIM Step 1: Analysis of metalinguistic signs
+
+Examine signs that **explicitly inform, illustrate, or explain** the meaning of other signs: help text, documentation, error messages, tooltips, tutorials, onboarding text, contextual help pages, confirmation dialogs.
+
+For each inspection scenario:
+- Read the project's help/documentation content related to the scenario's scope (contextual help files, error message definitions, onboarding flows)
+- Read the frontend code for metalinguistic elements: error messages, validation messages, empty state text, helper text, modal explanations, toast notifications
+- Fill out the **metacommunication template** based on what metalinguistic signs communicate:
+  > "Here is my understanding of who you are [from metalinguistic signs], what I've learned you want or need to do [from metalinguistic signs], in which preferred ways, and why. This is the system that I have therefore designed for you, and this is the way you can or should use it in order to fulfill a range of purposes that fall within this vision."
+- Record the metacommunication message X (metalinguistic)
+
+#### SIM Step 2: Analysis of static signs
+
+Examine signs whose meaning is interpreted independently of temporal and causal relations -- a **single-moment snapshot**: labels, icons, form fields, layout structure, menu options, navigation hierarchy, button text, visual grouping, typography choices.
+
+For each inspection scenario:
+- Read the frontend code for static interface elements: component structure, layout, labels, icons, navigation, form fields
+- Analyze what these signs communicate about available actions, their relationships, and the designer's model of the user
+- Fill out the metacommunication template again **independently** (do not reference step 1 findings)
+- Record the metacommunication message Y (static)
+- Note any mismatches or elaborations compared to what metalinguistic signs communicated
+
+#### SIM Step 3: Analysis of dynamic signs
+
+Examine signs bound to temporal and causal aspects -- signs that **emerge through interaction**: state transitions, animations, loading states, form validation feedback, hover/focus states, progressive disclosure, navigation transitions.
+
+For each inspection scenario:
+- Read the frontend code for dynamic behavior: event handlers, state transitions, conditional rendering, animation triggers, validation flows, loading states
+- Analyze what these signs communicate about system behavior, cause-and-effect relationships, and the consequences of user actions
+- Fill out the metacommunication template again **independently**
+- Record the metacommunication message Z (dynamic)
+
+#### SIM Step 4: Collate and compare metacommunication messages
+
+Compare messages X, Y, and Z. Apply the **5 scaffold questions** [SIM-2006, p.153]:
+
+1. Would the user plausibly be able to interpret this sign differently? How? Why?
+2. Would this interpretation still be consistent with the design intent?
+3. Does the current interpretive path remind of other interpretive paths identified in the inspection? Which? Why?
+4. Can classes of static and dynamic signs be drawn from the semiotic analysis? Which?
+5. Are there static or dynamic signs that are apparently misclassified according to the classes identified? Can this affect communication?
+
+Identify:
+- **Consistencies**: where all three sign classes reinforce the same message
+- **Inconsistencies**: where metalinguistic signs say one thing but static/dynamic signs say another
+- **Gaps**: where a sign class is silent on something another class communicates
+- **Ambiguities**: where signs could plausibly be interpreted in contradictory ways
+- **Redundancies** (positive or negative): where multiple sign classes reinforce or contradict each other
+
+#### SIM Step 5: Final evaluation of communicability
+
+Produce a conclusive appreciation [SIM-2006, pp.153-154] containing:
+
+i. A brief description of SIM and how it was applied
+ii. The criteria for selecting which portions of the artifact were inspected
+iii. For each sign class (metalinguistic, static, dynamic):
+   - Relevant signs identified (with justification)
+   - Sign systems and sign classes in use
+   - The reconstructed metacommunication message for that class
+iv. A substantiated judgment of communicative problems (actual or potential) that may prevent users from getting the designer's message and interacting productively
+
+#### Output
+
+Save the report to `${CHECK_LOGS_DIR}/check-<id>-semiotic-inspection-<scope-slug>.md` with:
+- *header*: `# Check <id> | CHORE-O | <current datetime> | Semiotic Inspection: <scope>`
+- *inspection context*: user profiles, goals, scenarios
+- *per-sign-class analysis*: metalinguistic (X), static (Y), dynamic (Z) -- each with relevant signs, sign classification, and reconstructed metacommunication message
+- *contrastive analysis*: consistencies, inconsistencies, gaps, ambiguities (with scaffold questions applied)
+- *communicability judgment*: substantiated assessment with specific recommendations
+- *sign inventory*: table of all significant signs identified, their class, and their communicative role
+
+Run /post-skill <id>.
 
 3. Do **not** reserve an ID, write a check-log file, or run /post-skill. This mode is read-only and informational.

@@ -7,11 +7,11 @@
 
 | Type | Count |
 |------|-------|
-| check | 16 |
-| generator | 6 |
+| check | 17 |
+| generator | 8 |
 | orchestrator | 4 |
 | utility | 9 |
-| **Total** | **35** |
+| **Total** | **38** |
 
 ## Scripts
 
@@ -29,6 +29,7 @@
 | `check_po_parity.py` | check | project_config | no |
 | `check_route_coverage.py` | check | project_config | no |
 | `check_secrets.py` | check | -- | no |
+| `check_skill_spec.py` | check | -- | no |
 | `check_skill_system.py` | check | -- | no |
 | `check_spec_conformance.py` | check | project_config | no |
 | `check_telemetry.py` | check | project_config | no |
@@ -40,7 +41,9 @@
 | `generate_cheatsheet.py` | generator | -- | no |
 | `generate_essential_perspectives_summary.py` | generator | -- | no |
 | `generate_macro_index.py` | generator | project_config | no |
+| `generate_skill_graph.py` | generator | -- | no |
 | `generate_skill_map.py` | generator | project_config | no |
+| `generate_skills_manifest.py` | generator | -- | no |
 | `generate_telemetry_report.py` | generator | project_config | no |
 | `md_to_html.py` | utility | project_config | no |
 | `migrate_to_global_ids.py` | utility | project_config | no |

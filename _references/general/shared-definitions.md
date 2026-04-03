@@ -10,6 +10,35 @@ The **metacommunication message** is a designer-to-user message that is conveyed
 
 ---
 
+## Theoretical Foundations
+
+> SEJA's architecture is grounded in Semiotic Engineering (SemEng), a theory of HCI
+> that treats human-computer interaction as a special case of computer-mediated human
+> communication. The following table maps SEJA concepts to their SemEng origins.
+> This grounding is for reference and intellectual traceability -- SEJA skills and
+> agents do not require users to know SemEng terminology.
+
+| SEJA Concept | SemEng Origin | Source |
+|---|---|---|
+| Metacommunication files (metacomm-to-be/as-is) | Metacommunication template -- the abstract message every system delivers from designers to users | [SemEng-2005, Ch. 1 & 3] |
+| First-person "I/you" phrasing rule | Designer's personal engagement -- designers are communicators, not anonymous producers | [SemEng-2005, Ch. 3 p.84] |
+| Extended Metacommunication Template (EMT) | EMT with guiding questions aligned to lifecycle stages (Analysis, Design, Prototype, Evaluation) | [EMT-Ethics-2021, pp.365-368] |
+| Spec-drift detection (as-is vs. to-be) | Communicability monitoring -- tracking whether design intent is being communicated | [SemEng-2005, Ch. 4; SemEng-Methods-2009] |
+| Constitution (immutable principles) | Value inscription governance -- making implicit values explicit and binding | [SemEng-2005, Ch. 1 pp.9-10] |
+| Design -> plan -> implement -> check pipeline | Meaning propagation -- tracking how meanings transform from conception to code | [SigniFYI-2016] |
+| Review perspectives (16 lenses) | Communicability evaluation -- segmented analysis from multiple viewpoints | [SemEng-2005, Ch. 4; SemEng-Methods-2009] |
+| Council-debate agent | Formalized abductive reasoning with multiple interpretive perspectives | [SemEng-2005, Ch. 2 on abduction] |
+| Pre/post-skill pipelines | Reflection in/on action -- structured reflection before and after every action | [SemEng-2005, Ch. 1, citing Schon 1983] |
+| Behavior-evolution reconstruction | Reflection on practice -- surfacing and criticizing tacit understandings | [SemEng-2005, Ch. 1, citing Schon 1983] |
+| Role families (BLD/SHP/GRD) + expertise levels (L1-L5) | Multi-audience metacommunication -- segmenting the "you" addressee | [SemEng-2005, Ch. 3 & 6] |
+| _output/ infrastructure (INDEX, briefs, plans) | SigniFYIng Traces -- capture & access infrastructure for interpretive processes | [SigniFYI-2016] |
+| Conventions.md (project signification system) | Signification systems -- conventionalized expression-content associations | [SemEng-2005, Ch. 2, citing Eco 1976] |
+| Communicability review questions (UX/DX perspectives) | CEM 13 communicability utterances -- precise taxonomy of communicative breakdowns | [SemEng-2005, Ch. 4 pp.123-138] |
+| Sign classification lens (UX perspective) | Three classes of interface signs (static, dynamic, metalinguistic) | [SemEng-2005, Ch. 4; SemEng-Methods-2009] |
+| CDN review questions (API/ARCH perspectives) | Cognitive Dimensions of Notations -- 14 dimensions for evaluating notations | [SigniFYI-2016, citing Green & Petre] |
+
+---
+
 ## Lifecycle Markers
 
 > Standard inline markers for tracking the lifecycle of to-be items across all registered
@@ -72,6 +101,14 @@ Three-value scheme applied to all reference files in `_references/` (principally
 
 ---
 
+## External Specifications
+
+| Spec | Description | SEJA Integration |
+|------|-------------|-----------------|
+| **agentskills.io** | Universal specification for portable AI agent skill definitions. Defines `name` (1-64 chars, lowercase alphanumeric + hyphens), `description` (1-1024 chars), optional `compatibility` (max 500 chars), and extensible `metadata`. | SKILL.md frontmatter follows the spec. SEJA-specific fields are namespaced under `metadata`. Validated by `check_skill_spec.py`. |
+
+---
+
 ## Generic Terminology
 
 | Term | Definition | Used In |
@@ -79,6 +116,7 @@ Three-value scheme applied to all reference files in `_references/` (principally
 | **Soft delete** | Records are marked as deleted (`deleted_at` timestamp) rather than physically removed. Queries must filter for non-deleted records. | project/backend-standards.md §6 |
 | **Double confirmation** | A destructive-action pattern requiring the user to type a confirmation word before the action is enabled. | project/frontend-standards.md §11 |
 | **Review perspective** | A domain-based evaluation lens (SEC, PERF, DB, etc.) applied to code, plans, or decisions per `general/review-perspectives.md`. | general/review-perspectives.md |
+| **Pinned anchor** | A reference file that must survive context compaction events and be re-injected verbatim after any summarization or truncation. The pinned anchors list is defined in `general/constraints.md` under "Pinned Anchors (Non-Compactable Context)". | general/constraints.md |
 
 ---
 
