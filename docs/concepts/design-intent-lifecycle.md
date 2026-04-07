@@ -51,6 +51,17 @@ stateDiagram-v2
     ToBe --> ToBe: Designer updates\n(evolving vision)
 ```
 
+<details>
+<summary>Text description of this diagram</summary>
+
+1. The lifecycle starts when the designer writes intent into the **To-Be** layer.
+2. From To-Be, the agent executes a plan and implementation, moving the item to the **As-Is** layer.
+3. From As-Is, the human validates the implementation and promotes the item to the **Established** layer.
+4. Established is the terminal state.
+5. Two feedback loops exist: if spec drift is detected in As-Is, the item returns to To-Be for intent refinement. The To-Be layer also loops back to itself as the designer updates the evolving vision.
+
+</details>
+
 ## Lifecycle markers
 
 SEJA uses inline markers to track where each item stands in this lifecycle:

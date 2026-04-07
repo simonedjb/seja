@@ -74,7 +74,7 @@
 
 ## Changelog
 
-### v1 -- {{YYYY-MM-DD}}
+### v1 -- {{YYYY-MM-DD HH:MM UTC}}
 
 - **Added/Changed/Removed**: {{description}}
 - **Source**: agent (post-skill)

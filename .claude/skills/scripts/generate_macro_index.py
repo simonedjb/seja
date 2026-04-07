@@ -185,7 +185,7 @@ def _find_date_from_mtime(filepath: Path) -> str | None:
     try:
         mtime = os.path.getmtime(filepath)
         return datetime.fromtimestamp(mtime, tz=timezone.utc).strftime(
-            "%Y-%m-%d %H:%M:%S UTC"
+            "%Y-%m-%d %H:%M UTC"
         )
     except OSError:
         return None

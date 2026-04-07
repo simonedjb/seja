@@ -24,7 +24,7 @@ description: "Architecture Decision Record format with status tracking, numberin
 # ADR-NNNN: {{Decision Title}}
 
 - **Status**: {{Proposed | Accepted | Deprecated | Superseded by ADR-MMMM}}
-- **Date**: {{YYYY-MM-DD}}
+- **Date**: {{YYYY-MM-DD HH:MM UTC}}
 - **Deciders**: {{who was involved in the decision}}
 
 ## Context
@@ -58,7 +58,7 @@ State it as an imperative: "We will use X for Y."}}
 
 | # | Title | Status | Date |
 |---|-------|--------|------|
-| [ADR-0001](adr-0001-<slug>.md) | {{title}} | Accepted | {{date}} |
+| [ADR-0001](adr-0001-<slug>.md) | {{title}} | Accepted | {{YYYY-MM-DD HH:MM UTC}} |
 ```
 
 ## Numbering Convention

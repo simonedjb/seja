@@ -4,7 +4,7 @@ description: "Upgrade SEJA framework files from the seed repo without touching p
 argument-hint: "[<seed-repo-path>] [--dry-run]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-03-31 16:30:00
+  last-updated: 2026-03-31 16:30 UTC
   version: 1.0.0
   category: utility
   context_budget: light

@@ -4,7 +4,7 @@ description: "Log the entire current Q&A session into a file for future referenc
 argument-hint: brief or topic
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-03-27 00:00:00
+  last-updated: 2026-03-27 00:00 UTC
   version: 1.0.0
   category: utility
   context_budget: light
@@ -61,8 +61,8 @@ When no overrides are provided, all defaults apply (standalone behavior).
 3. Capture the full Q&A session from the current conversation: all user prompts and all agent responses, in chronological order.
 
 4. Save to `<output_dir>/<filename>` (using overrides or defaults) with:
-   - **Header** (standalone mode): `# QA <id> | <current datetime> | <short title>` (datetime in `YYYY-MM-DD HH:mm:ss UTC` format)
-   - **Header** (with `filename` override): `# QA Log | <parent-type> <parent-id> | <current datetime> | <short title>` (datetime in `YYYY-MM-DD HH:mm:ss UTC` format). The `<parent-type>` and `<parent-id>` are derived from the filename (e.g., `advisory-000058-qa-...` means parent-type is "Advisory" and parent-id is "000058").
+   - **Header** (standalone mode): `# QA <id> | <current datetime> | <short title>` (datetime in `YYYY-MM-DD HH:MM UTC` format)
+   - **Header** (with `filename` override): `# QA Log | <parent-type> <parent-id> | <current datetime> | <short title>` (datetime in `YYYY-MM-DD HH:MM UTC` format). The `<parent-type>` and `<parent-id>` are derived from the filename (e.g., `advisory-000058-qa-...` means parent-type is "Advisory" and parent-id is "000058").
    - **Brief**: A one-line summary of what the session was about. If the user provided an argument, use that as the brief. If not, generate a brief based on the conversation topic and make the session title Brief Summary instead of Brief.
    - **Q&A Log**: Numbered exchanges using the format:
      ```

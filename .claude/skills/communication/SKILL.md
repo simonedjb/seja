@@ -4,7 +4,7 @@ description: "Generate tailored communication material for a specific audience s
 argument-hint: "<audience> [--format md|html|both] [--all] [--source <advisory-file>]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-03-30 00:00:00
+  last-updated: 2026-03-30 00:00 UTC
   version: 1.1.0
   category: utility
   context_budget: standard

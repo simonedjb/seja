@@ -15,14 +15,14 @@ The SEJA repository contains approximately 185 framework files organized in the 
 | Category | Count | Description |
 |----------|-------|-------------|
 | Skill definitions | 15 | Slash commands (13 user-facing + 2 internal lifecycle hooks): `/plan`, `/implement`, `/advise`, `/check`, `/explain`, `/document`, `/help`, etc. |
-| General references | 21 | Reusable standards (review perspectives index, coding standards, report conventions, onboarding index, communication index, skill graph, batch execution patterns, etc.) |
+| General references | 22 | Reusable standards (review perspectives index, coding standards, report conventions, onboarding index, communication index, skill graph, batch execution patterns, Figma Make integration, etc.) |
 | Per-perspective files | 16 | Individual review perspective files with Essential/Deep-dive tiers, priority-classified P0-P4 (in `general/review-perspectives/`) |
 | Per-onboarding files | 8 | Role families (builders, shapers, guardians) and expertise levels (L1-L5) for tailored onboarding plans (in `general/onboarding/`) |
 | Per-communication files | 5 | Audience segment profiles (evaluators, clients, end users, academics) and Diataxis mapping (in `general/communication/`) |
-| Template references | 51 | Templates for generating project-specific standards, rules, agents, specs, CI, documentation, and smoke-test scaffolding (in `_references/template/`) |
+| Template references | 50 | Templates for generating project-specific standards, rules, agents, specs, CI, documentation, and smoke-test scaffolding (in `_references/template/`) |
 | Agent definitions | 10 | Specialized sub-agents: 7 evaluators (code reviewer, plan reviewer, advisory reviewer, council debate, standards checker, test runner, migration validator) + 3 generators (communication, onboarding, documentation) |
 | Rule definitions | 7 | Path-scoped coding rules (backend, frontend, i18n, migrations, tests, e2e, framework-structure) |
-| Validation scripts | 39 | Python scripts for quality checks, analysis, smoke testing, and index generation (i18n, auth, migrations, secrets, coverage, briefs, etc.) |
+| Validation scripts | 43 | Python scripts for quality checks, analysis, smoke testing, and index generation (i18n, auth, migrations, secrets, coverage, briefs, etc.) |
 | Framework metadata | 4 | `CLAUDE.md`, `.claude/CHEATSHEET.md`, `.claude/CHANGELOG.md`, and `.claude/skills/VERSION` |
 
 ### 0.2 How to Get It
@@ -152,12 +152,12 @@ your-project/
 │   └── agents/                        <- Specialized sub-agents
 └── _output/                            <- Generated artifacts
     ├── briefs.md                      <- Execution log
-    ├── generated-plans/
-    ├── generated-roadmaps/
+    ├── plans/
+    ├── roadmaps/
     ├── advisory-logs/
     ├── qa-logs/
     ├── explained-behaviors/
-    ├── generated-user-tests/
+    ├── user-tests/
     └── ...
 ```
 
@@ -205,7 +205,7 @@ All reference files live in `_references/`:
 | `template/*` | Templates to generate `project/*` files for new projects | Yes -- used by `/design` |
 | `project/*` | Project-specific standards (your backend rules, frontend rules, conceptual design) | No -- generated per-project |
 
-**Key general references (21 top-level files + 3 subdirectories):**
+**Key general references (22 top-level files + 3 subdirectories):**
 
 - `general/review-perspectives.md` -- Index for 16 engineering and design perspectives, with conflict resolution rules and plan prefix shortcuts. Each perspective lives in its own file under `general/review-perspectives/` (e.g., `sec.md`, `perf.md`) with **Essential** questions (always evaluated) and **Deep-dive** questions (for thorough reviews).
 - `general/constraints.md` -- Universal rules (no invented data, no ANSI codes, etc.)
@@ -218,7 +218,7 @@ All reference files live in `_references/`:
 - `general/communication.md` -- Index for audience-tailored communication, with segment profiles (EVL/CLT/USR/ACD) and Diataxis mapping. Each segment lives in its own file under `general/communication/` (e.g., `evaluators.md`, `clients.md`).
 - `general/skill-graph.md` -- Skill dependency graph and invocation relationships.
 
-**Key template references (51 files):**
+**Key template references (50 files):**
 
 - `template/conventions.md` -- Project conventions template
 - `template/design-intent-to-be.md`, `template/design-intent-established.md`, `template/ux-research-new.md`, `template/journey-maps-as-is.md`, `template/backend-standards.md`, `template/frontend-standards.md`, `template/testing-standards.md`, `template/i18n-standards.md`, `template/security-checklists.md` -- Project-specific standard templates
@@ -450,7 +450,7 @@ You: /plan Add a user profile page with avatar upload
 
 Claude will:
 1. Research your codebase to understand existing patterns
-2. Create a detailed plan in `_output/generated-plans/plan-XXXX-user-profile-page.md`
+2. Create a detailed plan in `_output/plans/plan-XXXX-user-profile-page.md`
 3. Ask if you want to execute it
 
 You review the plan, then:
@@ -823,6 +823,8 @@ This gives you a timeline of all work done by Claude. Useful for:
 | `/check test-plan <brief>` | Generate manual test plan |
 | `/check health` | Framework self-diagnosis and integrity check |
 | `/check docs` | Documentation consistency check |
+| `/check telemetry` | Audit telemetry and tracking code |
+| `/check semiotic-inspection` | Semiotic quality inspection of interface messages |
 | `/seed <target>` | Copy framework files into a new project |
 | `/seed <target> --workspace` | Create a project workspace alongside an existing codebase |
 | `/seed <target> --demo` | Guided hello-world experience |
@@ -842,11 +844,11 @@ After `/seed` + `/design`, verify you have:
 - [ ] `CLAUDE.md` at project root
 - [ ] `.claude/settings.json` with appropriate permissions
 - [ ] `.claude/skills/` with all SKILL.md files
-- [ ] `_references/general/*.md` (20 reusable standards)
+- [ ] `_references/general/*.md` (21 reusable standards)
 - [ ] `_references/general/review-perspectives/` (16 per-perspective files)
 - [ ] `_references/general/onboarding/` (8 role/level profiles)
 - [ ] `_references/general/communication/` (5 audience segment profiles)
-- [ ] `_references/template/` (51 templates including agent/, ci/, demo/, docs/)
+- [ ] `_references/template/` (50 templates including agent/, ci/, demo/, docs/)
 - [ ] `_references/project/*.md` (customized)
 - [ ] `.claude/rules/` with path-scoped rules
 - [ ] `.claude/agents/` with specialized agents

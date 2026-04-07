@@ -20,6 +20,13 @@ You will receive one of:
 
 ## Process
 
+0. **Vulnerability Pattern Pre-Scan:**
+   - Read the "Generated Code Vulnerability Patterns" section in `_references/general/threat-model.md`.
+   - For each pattern category (Injection, XSS, Deserialization, Template Injection), grep the diff or files under review for every dangerous substring listed in that section.
+   - For each match, record it as a `[HIGH]` SEC finding in the Issues Found section, citing the pattern name, matched substring, file path, and line number.
+   - **Test file triage**: matches found in test files (`*_test.*`, `*_spec.*`, `test_*.*`, `tests/`, `__tests__/`) or in clearly intentional uses (e.g., security tooling, build scripts that legitimately invoke shell commands) should be triaged as `[MEDIUM]` instead, with a note explaining why the use is expected in that context.
+   - All findings from this pre-scan feed into the SEC perspective evaluation in step 3 — they should be cross-referenced and deduplicated during the full perspective pass.
+
 1. **Gather the code to review:**
    - If given "staged": run `git diff --cached` to get staged changes
    - If given a file/directory: read the relevant files

@@ -4,7 +4,7 @@ description: "Define or update project design — stack, conventions, domain mod
 argument-hint: "[--generate-spec] [--add-docs] [spec-file-path]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-03-31 16:30:00
+  last-updated: 2026-03-31 16:30 UTC
   version: 1.0.0
   category: planning
   context_budget: standard
@@ -135,13 +135,37 @@ If a spec file path is provided, go directly to Mode 2.
     - `smoke_test_api.py` — thin runner importing `smoke_test_core`
     - If E2E configured: `e2e/smoke.spec.ts`
 
-11. **Secrets check**: Run `python .claude/skills/scripts/check_secrets.py` to verify no secrets are staged.
+11. **Verification pass** (always runs after template instantiation):
 
-12. **Clean up**: Remove `specs/design-in-progress.md` if it exists.
+    > Status message to display: "Verifying design output..."
 
-13. **Summary**: Output a checklist of everything created and any manual steps needed.
+    1. Read the original spec input (questionnaire answers) and the 3 critical generated files:
+       - `project/design-intent-to-be.md` (Part II — sections 11-15)
+       - `project/constitution.md`
+       - `project/security-checklists.md`
 
-14. **Review & next steps**: Present the generated project specification files and offer review:
+    2. For each file, evaluate semantic fidelity:
+       - **design-intent-to-be Part II**: Compare the designer's metacommunication message (from questionnaire section 0.1 or Final Step) against the generated §11 Global Vision. Verify EMT guiding questions (§12) are populated from the spec answers, not left as template placeholders. Check per-feature intentions (§14) include all features mentioned in the spec.
+       - **constitution**: Verify all immutable principles from the spec are present and not contradicted.
+       - **security-checklists**: Verify all security constraints from the spec (validation constants, auth requirements) are present.
+
+    3. If gaps are found:
+       - Fix the gap by updating the generated file with the missing or corrected content
+       - Log what was fixed: "Verification: added missing [field] to [file]"
+       - Re-run the evaluation once more (bounded to 1 retry)
+       - If gaps persist after retry, log a warning: "Verification: [N] semantic gaps remain in [file] after 1 retry. Please review manually."
+
+    4. Output: "Design output verified. [N] files checked, [M] gaps found and fixed."
+
+    5. **Requirement ID assignment**: For each enumerable requirement in the generated `project/design-intent-to-be.md`, assign a sequential REQ ID using HTML comment markers. Use the naming convention `<!-- REQ-TYPE-NNN -->` where TYPE is derived from the section (ENT for section 2, PERM for section 4, VAL for section 10, UX for section 8, MC for section 14, JM for section 15, I18N for section 7, DELTA for sections 16-17) and NNN is a zero-padded 3-digit counter per type, starting at 001. Place each marker on the line immediately before the heading, table row, or bullet that defines the requirement. This enables downstream traceability via `check_plan_coverage.py`.
+
+12. **Secrets check**: Run `python .claude/skills/scripts/check_secrets.py` to verify no secrets are staged.
+
+13. **Clean up**: Remove `specs/design-in-progress.md` if it exists.
+
+14. **Summary**: Output a checklist of everything created and any manual steps needed.
+
+15. **Review & next steps**: Present the generated project specification files and offer review:
 
     | File | Controls |
     |------|----------|
@@ -197,11 +221,13 @@ If a spec file path is provided, go directly to Mode 2.
 
 8. **Generate CLAUDE.md, rules, smoke tests**: Same as Mode 1, steps 8-10.
 
-9. **Secrets check**: Same as Mode 1, step 11.
+9. **Verification pass**: Same as Mode 1, step 11.
 
-10. **Preserve spec**: Copy to `specs/project-spec-YYYY-MM-DD HH.MM UTC.md`.
+10. **Secrets check**: Same as Mode 1, step 12.
 
-11. **Summary + Review**: Same as Mode 1, steps 13-14.
+11. **Preserve spec**: Copy to `specs/project-spec-YYYY-MM-DD HH.MM UTC.md`.
+
+12. **Summary + Review**: Same as Mode 1, steps 14-15.
 
 ### Mode 3: Add Documentation Templates
 

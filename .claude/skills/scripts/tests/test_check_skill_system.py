@@ -17,7 +17,7 @@ def valid_skill(tmp_path):
         "description: A test skill for validation.\n"
         "argument-hint: <arg>\n"
         "metadata:\n"
-        "  last-updated: 2026-03-28 00:00:00\n"
+        "  last-updated: 2026-03-28 00:00 UTC\n"
         "  version: 1.0.0\n"
         "  category: utility\n"
         "  context_budget: light\n"

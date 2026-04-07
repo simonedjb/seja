@@ -86,7 +86,7 @@ def _find_date_from_git(filepath: Path) -> str | None:
             iso_date = result.stdout.strip().split("\n")[-1].strip()
             if iso_date:
                 dt = datetime.fromisoformat(iso_date)
-                return dt.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+                return dt.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     except (subprocess.TimeoutExpired, ValueError, OSError):
         pass
     return None
@@ -97,7 +97,7 @@ def _find_date_from_mtime(filepath: Path) -> str | None:
     try:
         mtime = os.path.getmtime(filepath)
         return datetime.fromtimestamp(mtime, tz=timezone.utc).strftime(
-            "%Y-%m-%d %H:%M:%S UTC"
+            "%Y-%m-%d %H:%M UTC"
         )
     except OSError:
         return None

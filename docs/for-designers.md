@@ -2,6 +2,11 @@
 
 You don't need to be a developer to use SEJA effectively. Your strongest contribution is user goals, communicative intent, and design vision -- SEJA translates those into structured plans and working code. This guide helps you find the right starting point.
 
+## Before you start
+
+- [How to Think About Working with SEJA](tutorials/designers-mental-model.md) -- essential concepts for your first session
+- [Your First Hour with SEJA](tutorials/designers-first-hour.md) -- guided 15-minute walkthrough
+
 ## Understand the concepts
 
 - [What Is SEJA and Why Does It Exist?](concepts/what-is-seja.md) -- the motivation and theory behind the framework
@@ -20,6 +25,8 @@ You don't need to be a developer to use SEJA effectively. Your strongest contrib
 - [Run Quality Gates](recipes/recipe-quality-gates.md)
 
 ## Go deeper
+
+- [Troubleshooting](tutorials/designers-troubleshooting.md) -- common issues and how to fix them
 
 See the [full onboarding guide](claude-onboarding-guide.md) for a comprehensive walkthrough.
 

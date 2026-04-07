@@ -4,7 +4,7 @@ description: "Copy the SEJA framework into a new or existing project, or create 
 argument-hint: "<target-directory> [--workspace | --demo]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-03-31 16:30:00
+  last-updated: 2026-03-31 16:30 UTC
   version: 1.0.0
   category: utility
   context_budget: light

@@ -32,7 +32,7 @@
   ENTRY PATTERN — copy this block for each plan's worth of processed intent
   =========================================================================
 
-  ## Entry: {{YYYY-MM-DD}} | Plan {{plan-id}} | Template v{{template-version}}
+  ## Entry: {{YYYY-MM-DD HH:MM UTC}} | Plan {{plan-id}} | Template v{{template-version}}
 
   > Summary of what design intent this entry captures and which plan implemented it.
 
@@ -149,7 +149,7 @@
 
 | Feature / Flow | Designer Intent | Priority | Plan ID | Date |
 |---|---|---|---|---|
-| {{feature}} | {{intent}} | {{P0 / P1 / P2}} | {{plan-id}} | {{YYYY-MM-DD}} |
+| {{feature}} | {{intent}} | {{P0 / P1 / P2}} | {{plan-id}} | {{YYYY-MM-DD HH:MM UTC}} |
 
 ---
 
@@ -170,4 +170,4 @@
 
 | Date | Plan ID | Summary | Sections moved |
 |------|---------|---------|----------------|
-| {{YYYY-MM-DD}} | {{plan-id}} | {{one-line summary of what design intent this entry captures}} | {{e.g., §1, §4, §11, §13, §14}} |
+| {{YYYY-MM-DD HH:MM UTC}} | {{plan-id}} | {{one-line summary of what design intent this entry captures}} | {{e.g., §1, §4, §11, §13, §14}} |

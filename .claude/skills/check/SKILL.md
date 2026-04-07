@@ -473,12 +473,14 @@ Compare messages X, Y, and Z. Apply the **5 scaffold questions** [SIM-2006, p.15
 4. Can classes of static and dynamic signs be drawn from the semiotic analysis? Which?
 5. Are there static or dynamic signs that are apparently misclassified according to the classes identified? Can this affect communication?
 
-Identify:
-- **Consistencies**: where all three sign classes reinforce the same message
-- **Inconsistencies**: where metalinguistic signs say one thing but static/dynamic signs say another
-- **Gaps**: where a sign class is silent on something another class communicates
-- **Ambiguities**: where signs could plausibly be interpreted in contradictory ways
-- **Redundancies** (positive or negative): where multiple sign classes reinforce or contradict each other
+Evaluate the metacommunication quality across sign classes using the four SigniFYIng Interaction dimensions [de Souza et al., 2016, Ch.3 pp.70-71]:
+
+1. **Consistency**: Do all three sign classes (metalinguistic, static, dynamic) convey the same message about each feature? Where they diverge, which class is authoritative and which is misleading?
+2. **Completeness**: Is every aspect of the designer's metacommunication message conveyed by at least one sign class? Are there fields in the metacommunication template that no sign class addresses?
+3. **Redundancy**: Are critical messages reinforced across multiple sign classes (positive redundancy)? Are there contradictory redundancies where sign classes actively conflict?
+4. **Distribution**: Is metacommunication over-reliant on one sign class? For example, if all meaning resides in metalinguistic signs (help text, documentation) but static signs (layout, labels) and dynamic signs (feedback, transitions) are silent, users who don't read help will miss the message entirely.
+
+For each dimension, record specific findings with sign evidence. Flag any dimension rated "poor" as a communicability risk.
 
 #### SIM Step 5: Final evaluation of communicability
 
@@ -498,7 +500,7 @@ Save the report to `${CHECK_LOGS_DIR}/check-<id>-semiotic-inspection-<scope-slug
 - *header*: `# Check <id> | CHORE-O | <current datetime> | Semiotic Inspection: <scope>`
 - *inspection context*: user profiles, goals, scenarios
 - *per-sign-class analysis*: metalinguistic (X), static (Y), dynamic (Z) -- each with relevant signs, sign classification, and reconstructed metacommunication message
-- *contrastive analysis*: consistencies, inconsistencies, gaps, ambiguities (with scaffold questions applied)
+- *contrastive analysis*: scaffold questions applied, then the 4 quality dimensions (consistency, completeness, redundancy, distribution) with per-dimension findings and risk flags
 - *communicability judgment*: substantiated assessment with specific recommendations
 - *sign inventory*: table of all significant signs identified, their class, and their communicative role
 

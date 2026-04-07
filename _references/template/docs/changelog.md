@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Security
 - {{Security vulnerability fix}}
 
-## [{{version}}] -- {{YYYY-MM-DD}}
+## [{{version}}] -- {{YYYY-MM-DD HH:MM UTC}}
 
 ### Added
 - {{Feature description}} (#{{issue-number}})

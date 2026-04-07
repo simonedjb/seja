@@ -61,6 +61,19 @@ flowchart LR
     C -.->|spec-drift feedback| B
 ```
 
+<details>
+<summary>Text description of this diagram</summary>
+
+1. The **Designer** writes **Design Intent** (to-be specs and metacommunication).
+2. Design Intent feeds into the **SEJA Pipeline** (plan, implement, review, check).
+3. The pipeline produces **Code** (the implementation).
+4. Code renders the **Interface** (signs, feedback, flows).
+5. The Interface communicates to the **User**.
+6. A feedback loop runs from the User back to the SEJA Pipeline: communicability review detects breakdowns in the interface.
+7. A second feedback loop runs from the SEJA Pipeline back to Design Intent: spec-drift detection identifies divergences between intent and implementation.
+
+</details>
+
 The solid arrows show the forward flow: the designer's intent enters the pipeline, becomes code, becomes an interface, and reaches the user. The dashed arrows show the feedback loops: communicability review detects where the user might misunderstand the interface, and spec-drift detection catches where the implementation diverges from the intent.
 
 SEJA's goal is to keep this chain intact -- so that when a user interacts with the finished product, they receive the message the designer intended to send.

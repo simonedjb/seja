@@ -241,3 +241,88 @@ Update the rule count in `.claude/rules/framework-structure.md`. The current cou
 - [ ] Define `paths:` glob pattern in frontmatter
 - [ ] Write focused, single-domain content
 - [ ] Update `framework-structure.md`
+
+---
+
+## Worked Example: Adding the `/qa-log` Skill
+
+This section walks through each step using the real `/qa-log` skill as a reference.
+
+### 1. Governance Gate Check
+
+Evaluate `/qa-log` against the four criteria:
+
+| Criterion | Met? | Rationale |
+|-----------|------|-----------|
+| **(a) Distinct user intent** | Yes | "Save this conversation" is a different mental model from any existing skill. |
+| **(b) Disjoint reference sets** | Yes | Loads zero references -- no overlap with any other skill. |
+| **(c) Incompatible execution topology** | No | Sequential execution, similar to other utility skills. |
+| **(d) Different output strategy** | Yes | Produces timestamped QA log files in a dedicated directory. |
+
+Result: 3 of 4 criteria met -- the skill justifies independent existence.
+
+### 2. Full SKILL.md Frontmatter
+
+Create `.claude/skills/qa-log/SKILL.md` with this frontmatter:
+
+```yaml
+---
+name: qa-log
+description: "Log the entire current Q&A session into a file for future reference."
+argument-hint: brief or topic
+compatibility: "Designed for Claude Code with SEJA framework"
+metadata:
+  last-updated: 2026-03-27 00:00 UTC
+  version: 1.0.0
+  category: utility
+  context_budget: light
+  references: []
+---
+```
+
+Key choices: `context_budget: light` because the skill needs no external references. The `references` list is empty, so the pre-skill pipeline skips reference loading entirely.
+
+### 3. Skill Body Structure (Abbreviated)
+
+After the frontmatter, write the skill instructions:
+
+```markdown
+## Quick Guide
+
+**What it does**: Saves the current conversation to a timestamped file.
+**Example**: `/qa-log Design decisions for the notification system`
+**When to use**: After a productive conversation with decisions worth preserving.
+
+## Arguments
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `[brief]` | No | Short title for the log file |
+
+## Skill-specific Instructions
+1. Reserve the next global ID ...
+2. Generate a short title slug ...
+3. Capture the full Q&A session ...
+4. Save to the output directory ...
+5. Output a link to the generated file.
+6. Stage and commit.
+```
+
+### 4. Validate
+
+Run the spec validator to confirm frontmatter correctness:
+
+```bash
+python .claude/skills/scripts/check_skill_spec.py
+```
+
+The script checks that `name` matches the parent directory, required fields are present, and metadata is well-formed. Fix any reported issues before proceeding.
+
+### 5. Register
+
+Regenerate the skills manifest to include the new skill:
+
+```bash
+python .claude/skills/scripts/generate_skills_manifest.py
+```
+
+Then update the skill count in `.claude/rules/framework-structure.md`.

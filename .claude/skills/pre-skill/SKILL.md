@@ -5,7 +5,7 @@ argument-hint: "<skill-name> <brief>"
 user-invocable: false
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-03-28 12:40:00
+  last-updated: 2026-03-28 12:40 UTC
   version: 1.0.0
   category: internal
   context_budget: standard
@@ -65,12 +65,12 @@ Before any other processing, check if the calling skill's arguments contain `--h
 
 ### Stage: brief-log
 
-First, obtain the current UTC time by running `date -u +"%Y-%m-%d %H:%M:%S UTC"` and capturing its output. Use this exact output as `<start-datetime UTC>` below — do not estimate or guess the time.
+First, obtain the current UTC time by running `date -u +"%Y-%m-%d %H:%M UTC"` and capturing its output. Use this exact output as `<start-datetime UTC>` below — do not estimate or guess the time.
 
 Without asking for authorization, insert into `${BRIEFS_FILE}` (see project/conventions.md) a new entry as the first entry after the `# Briefs Log` header and its following blank line (i.e., newest entries appear first). Format:
 - Format: `STARTED | <start-datetime UTC> | <skill-name> | <brief>`
-- Example: `STARTED | 2026-03-19 21:00:00 UTC | plan | Add user profile page`
-- The datetime must be in format `YYYY-MM-DD HH:mm:ss UTC` (obtained from the `date` command above)
+- Example: `STARTED | 2026-03-19 21:00 UTC | plan | Add user profile page`
+- The datetime must be in format `YYYY-MM-DD HH:MM UTC` (obtained from the `date` command above)
 - The brief should be exactly what the user wrote, except when it is an error log. In this case, summarize the error in one sentence and use that as the brief, prepended by `ERROR: ` (e.g., "ERROR: Database connection timeout error").
 - Ensure the briefs are separated by a blank line
 - When completed, post-skill prepends `DONE | <end-datetime UTC> |` and appends `| PLAN | <plan-id>` if applicable

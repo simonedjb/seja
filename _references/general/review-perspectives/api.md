@@ -25,4 +25,9 @@
 - [P2] **Error-proneness** (CDN): Does the API design invite mistakes -- e.g., easily confused parameter names, missing required field validation, or destructive operations without confirmation?
 - [P2] **Hidden dependencies** (CDN): Are relationships between API resources (ordering constraints, cascade effects, required sequences) visible in the API surface or documented, not hidden?
 - [P2] **Viscosity** (CDN): How many API calls or configuration changes are needed to make a single logical change? High viscosity discourages legitimate modifications.
+- [P2] **Abstraction level** (CDN): Do the API's abstractions match the consumer's mental model -- or must they learn an unfamiliar conceptual framework to use the API correctly?
+- [P2] **Closeness of mapping** (CDN): Does the API vocabulary use domain terminology that consumers recognize, or does it impose internal implementation jargon that requires translation?
+- [P2] **Intent clarity** (SigniFYIng APIs): Does the API's documentation, naming, and structure clearly communicate what it was designed to do, for whom, and in which contexts -- or must the consumer reverse-engineer design intent from observed behavior?
+- [P2] **Effect match** (SigniFYIng APIs): Could a consumer experience the API's behavior as *misused* (wrong assumptions about defaults or context), *misunderstood* (incompatible mental model), or *unexpected* (affordance differs from expectations) -- and would they notice?
+- [P2] **Unconscious failure risk** (SigniFYIng APIs): Could a consumer believe they succeeded when they haven't -- e.g., lenient parsing silently converts invalid input, default values are contextually wrong but produce no error, or side effects are invisible?
 - [P3] Do error messages, status codes, and pagination patterns feel intuitive and consistent enough that a new developer can integrate without reading supplementary guides?

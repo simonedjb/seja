@@ -4,7 +4,7 @@ description: "Answer questions about the codebase, architecture, or design decis
 argument-hint: "<question or topic> [--inventory <pattern>] [--deep]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-04-01 13:22:00
+  last-updated: 2026-04-01 13:22 UTC
   version: 1.2.0
   category: analysis
   context_budget: standard

@@ -89,6 +89,33 @@ the IMPLEMENTED marker is replaced with the ESTABLISHED stamp (or the entry is r
 
 ---
 
+## Requirement ID Convention
+
+Stable, machine-parseable identifiers for design-intent requirements, enabling traceability from spec to plan steps. Each marker is an HTML comment placed immediately before the heading, table row, or bullet that defines the requirement.
+
+**Format**: `<!-- REQ-TYPE-NNN -->`
+
+**Type prefix taxonomy**:
+
+| Type Prefix | Design-Intent Section | Classification | Enforcement |
+|------------|----------------------|---------------|-------------|
+| ENT | 2. Entity Hierarchy | technical | advisory |
+| PERM | 4. Permission Model | security | blocking at preflight |
+| VAL | 10. Validation Constants | security | blocking at preflight |
+| UX | 8. UX Patterns | ux | advisory |
+| MC | 14. Per-Feature Metacomm | ux | advisory |
+| JM | 15. Designed User Journeys | ux | advisory |
+| I18N | 7. Localization | cross-cutting | advisory |
+| DELTA | 16-17. Deltas | technical | advisory |
+
+**Classification rule**: Security-classified requirements (PERM, VAL) must be traced by a plan step in the same wave as their parent entity. Advisory-classified requirements produce warnings but do not block.
+
+**Plan step tracing**: Plan steps declare which requirements they satisfy via the `Traces` metadata field (e.g., `- **Traces**: REQ-ENT-001, REQ-PERM-003`). Coverage is verified by `check_plan_coverage.py`.
+
+**Auto-generation**: The `/design` skill auto-assigns REQ IDs during the verification pass. NNN is a zero-padded 3-digit counter per type, starting at 001.
+
+---
+
 ## File Maintainer Classification
 
 Three-value scheme applied to all reference files in `_references/` (principally the `project/` subdirectory, which varies by project). Used as the "Maintained by" column in `project/conventions.md` Key Files table, and summarized in `.claude/rules/framework-structure.md`.
@@ -106,6 +133,22 @@ Three-value scheme applied to all reference files in `_references/` (principally
 | Spec | Description | SEJA Integration |
 |------|-------------|-----------------|
 | **agentskills.io** | Universal specification for portable AI agent skill definitions. Defines `name` (1-64 chars, lowercase alphanumeric + hyphens), `description` (1-1024 chars), optional `compatibility` (max 500 chars), and extensible `metadata`. | SKILL.md frontmatter follows the spec. SEJA-specific fields are namespaced under `metadata`. Validated by `check_skill_spec.py`. |
+
+---
+
+## Versioning
+
+The SEJA framework uses three version-bearing files with distinct purposes:
+
+| File | Location | Purpose | Maintained by | When to update |
+|------|----------|---------|---------------|----------------|
+| `.claude/skills/VERSION` | Framework source | Authoritative framework version (semver) | Manual (developer) | Bump with every release |
+| `.claude/CHANGELOG.md` | Framework source | Human-readable release history | Manual (developer) | Add a `## [x.y.z]` heading matching VERSION for every release |
+| `.seja-version` | Project root | Per-project migration watermark | Automated (`run_migrations.py`, `/upgrade`) | Written automatically when migrations run; records the version a target project was last migrated to |
+
+**Key distinction**: `.claude/skills/VERSION` tracks what the framework IS. `.seja-version` tracks what a project has been UPGRADED TO. In the framework repo itself, `.seja-version` is dogfooded -- it should match VERSION after each release.
+
+**Validation**: `check_version_changelog_sync.py` validates that VERSION and CHANGELOG are in sync. It runs as part of `/check preflight`. Use `bump_version.py` to update all three files atomically.
 
 ---
 

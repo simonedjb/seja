@@ -135,6 +135,20 @@ sequenceDiagram
     Post-->>User: Done. Suggested next steps?
 ```
 
+<details>
+<summary>Text description of this diagram</summary>
+
+1. The **User** sends a command (e.g., `/plan Add user profile page`) to the **Pre-Skill Pipeline**.
+2. The Pre-Skill Pipeline runs 7 stages: help interception, brief logging (critical), orphaned-brief detection, budget evaluation (critical), compaction check, reference loading (critical), and constitution injection.
+3. The Pre-Skill Pipeline passes the loaded context to **Skill Execution**.
+4. Skill Execution delegates specialized work to an **Agent** (e.g., plan-reviewer) and receives review results back.
+5. Skill Execution passes control to the **Post-Skill Pipeline**.
+6. The Post-Skill Pipeline runs 12 steps: brief update (DONE), telemetry recording, as-is alignment, curation reminder and doc check, QA logging, git safety and scope and preflight checks, and index regeneration.
+7. Post-skill commits changes and flushes telemetry to the **Git Repository**.
+8. Post-skill suggests next steps to the **User**.
+
+</details>
+
 ## How it all connects
 
 The pipeline ensures that every skill invocation -- whether it is a quick `/advise` question or a multi-step `/implement` execution -- follows the same lifecycle:

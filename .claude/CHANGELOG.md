@@ -3,7 +3,36 @@
 All notable changes to the SEJA-Claude framework are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [2.6.0] -- 2026-04-02
+## [2.7.0] -- 2026-04-07 00:22 UTC
+
+### Added
+- `check_design_output.py` -- validates design output files (5 scanners: entity-permission alignment, section completeness, cross-file consistency, template conformance, variable resolution)
+- `test_check_design_output.py` -- unit tests for design output validation
+- `check_plan_coverage.py` -- verifies plan steps trace back to design-intent REQ markers; supports `advisory` (informational) and `blocking` (preflight gate) enforcement modes
+- `test_check_plan_coverage.py` -- unit tests for plan coverage check
+- `bump_version.py` -- atomic version-bump script updating `.claude/skills/VERSION`, `.seja-version`, and validating CHANGELOG heading; supports `--dry-run`
+- `figma-make-integration.md` -- guide for using Figma Make alongside SEJA (handoff protocol, intake checklist, MCP Server conventions, token sync)
+- Versioning section in `shared-definitions.md` -- documents the three version files (VERSION, CHANGELOG, .seja-version), their distinct purposes, and maintenance rules
+- Requirement ID Convention section in `shared-definitions.md` -- defines `REQ-TYPE-NNN` markers for design-intent traceability (ENT, PERM, VAL, UX, MC, JM, I18N, DELTA prefixes)
+- `Traces` field in plan step format -- links plan steps to design-intent requirements (`REQ-xxx` IDs)
+- Requirements extraction pass in `/plan --roadmap` workflow -- extracts REQ index from design-intent before decomposition
+- Coverage check integration in `/plan` (advisory after steps) and `/plan --roadmap` (aggregate after all plans)
+- Design output verification pass in `/design` skill -- runs `check_design_output.py` after file generation
+- `check_design_output` and `check_plan_coverage` added to `run_preflight_fast.py` preflight pipeline
+
+### Changed
+- Script count increased from 39 to 43 (4 new scripts: check_design_output.py, check_plan_coverage.py, bump_version.py, and their tests)
+- `check_version_changelog_sync.py` now validates all CHANGELOG `##` headings for `[x.y.z]` bracket format (warns on bare-date headings)
+- `.seja-version` dogfood policy: framework repo's `.seja-version` now tracks the current release version (updated from 2.0.0 to 2.7.0)
+- Backfilled bare-date CHANGELOG heading `## 2026-03-30 00:00 UTC` as `## [2.0.1] -- 2026-03-30 00:00 UTC`
+- `backend-standards.md` template restructured with improved section organization
+- `design-intent-to-be.md` template updated with REQ marker placeholders
+- `api.md` review perspective expanded with additional CDN questions
+- `getting-started.md` expanded with additional onboarding content
+- `recipes.md` expanded with new multi-skill workflow recipes
+- `/check` semiotic-inspection mode added -- SIM-based communicability evaluation (5-step analysis of metalinguistic, static, and dynamic signs)
+
+## [2.6.0] -- 2026-04-02 00:00 UTC
 
 ### Added
 - `compatibility` field in all 15 SKILL.md frontmatter files for agentskills.io spec alignment
@@ -24,7 +53,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - `generate_cheatsheet.py` now escapes pipe characters in description and argument_hint fields for correct markdown table rendering
 - `/check preflight` rewritten with parallel fan-out pattern and failure isolation
 
-## [2.5.0] -- 2026-04-02
+## [2.5.0] -- 2026-04-02 00:00 UTC
 
 ### Changed
 - Questionnaire sections renumbered sequentially by tier order: M->0, 0->1 (renamed "Basic Definitions", slug `quick-start`->`basic-definitions`), 2->2, 8->3, 9->4, 10->5, 1->6, 3->7, 4->8, 5->9, 6->10, 7->11. All question sub-numbers updated to match new section prefixes.
@@ -42,7 +71,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Framework files**: auto-updated by `/upgrade`. Running `/upgrade` will pull the renumbered questionnaire and slug-aware design skill.
 - **Existing plans/advisories referencing old section numbers**: numbers in historical documents remain valid as point-in-time records. Prefer slugs in new documents.
 
-## [2.4.0] -- 2026-04-02 13:04:48 UTC
+## [2.4.0] -- 2026-04-02 13:04 UTC
 
 ### Added
 - `## 5. Discovered User Journeys` section in `ux-research-established.md` and `ux-research-new.md` -- absorbs `journey-maps-established.md`; uses JM-E-NNN stable IDs, required research citation, Source column, Processing Log; agent-off-limits rule applies to whole file.
@@ -67,7 +96,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **To adopt**: Move `journey-maps.md` JM-TB-NNN entries to a new `## 15. Designed User Journeys` section in `project/design-intent-to-be.md`. Move `journey-maps-established.md` JM-E-NNN entries to a new `## 5. Discovered User Journeys` section in `project/ux-research-established.md`. Rename `project/user-research-*.md` files to `project/ux-research-*.md`. Update `project/conventions.md` variable names and registry.
 - **Upgrade path**: run `/upgrade` to pull updated templates; migrate project-specific files manually or via `/design` (update mode).
 
-## [2.3.0] -- 2026-04-02 11:48:20 UTC
+## [2.3.0] -- 2026-04-02 11:48 UTC
 
 ### Added
 
@@ -85,7 +114,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - `/explain spec-drift`: now reads the To-Be / As-Is Registry to iterate all registered file pairs instead of hardcoding the design-intent pair. Drift report now includes a "Pending Promotions" section. Step B menu includes "Promote IMPLEMENTED items" option.
 - `/design` Mode 1 step 7: now generates `journey-maps-established.md` and `user-research-established.md` during project setup; includes registry-awareness note.
 - post-skill step 2e (former `e`): renamed to `f` (include in commit scope); note extended to cover `journey-maps-established.md` as human-maintained.
-- CHANGELOG format: entries now include time component (`YYYY-MM-DD HH:MM:SS UTC`) in addition to date.
+- CHANGELOG format: entries now include time component (`YYYY-MM-DD HH:MM UTC`) in addition to date.
 
 ### Migration (for existing projects)
 
@@ -93,7 +122,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **To adopt the registry:** add the "To-Be / As-Is Registry" section to your `project/conventions.md` by running `/upgrade` or manually copying the section from `_references/template/conventions.md`.
 - **To adopt journey-maps-established.md:** run `/design` (update mode) to generate the new template, or manually copy from `_references/template/journey-maps-established.md`.
 
-## [2.2.0] -- 2026-04-02
+## [2.2.0] -- 2026-04-02 00:00 UTC
 
 ### Added
 - Questionnaire Section M (`metacomm-message`): optional early metacommunication message that seeds suggested defaults across subsequent questions (0.1, 0.2, 2.1, 2.10, 2.11)
@@ -111,7 +140,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Framework files** (`_references/template/`, `.claude/skills/`): auto-updated by `/upgrade`. Running `/upgrade` will pull the slug-aware questionnaire and design skill.
 - **Existing plans/advisories referencing "Section N"**: numbers remain valid aliases -- no action required. Prefer slugs in new documents.
 
-## [2.1.0] — 2026-04-01
+## [2.1.0] -- 2026-04-01 00:00 UTC
 
 ### Added
 - `project/design-intent-to-be.md` — merged single document combining conceptual design (Part I) and metacommunication intent (Part II), replacing the previous two-file model
@@ -133,7 +162,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - `project/metacomm-to-be.md` (merged into `design-intent-to-be.md`)
 - Legacy `template/conceptual-design.md` template
 
-## 2026-03-30
+## [2.0.1] -- 2026-03-30 00:00 UTC
 
 - Renamed `_references/` internal structure: files now organized into `general/`, `template/`, and `project/` subdirectories instead of flat files with `general-`, `template-`, `project-` prefixes. Metadata references, scripts, and documentation updated throughout.
 - `/implement` quality gate now runs all checks by default (validate, review, test-runner). Previous `--skip-preflight` flag replaced with `--skip-checks`. Roadmap-conclusion gate runs full checks when the last roadmap item completes.
@@ -146,7 +175,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - Removed `/seed --package` (zip packaging). The public repo is now the foundational framework itself. Use GitHub's "Download ZIP" for offline distribution.
 - Restructured seja-public/ as a complete foundational framework with docs/ folder.
 
-## [2.0.0] — 2026-03-29
+## [2.0.0] -- 2026-03-29 00:00 UTC
 
 ### Added
 - Framework upgrade system (`upgrade_framework.py`) for safe project upgrades
@@ -165,7 +194,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - Legacy `lightweight` boolean field validation in `check_skill_system.py`
 - Legacy plan format fallback in `implement/SKILL.md`
 
-## [1.0.0] — 2026-03-27 (retroactive)
+## [1.0.0] -- 2026-03-27 00:00 UTC (retroactive)
 
 ### Added
 - Initial SEJA-Claude framework: 19 skills, 24 scripts, 5 agents, 6 rules

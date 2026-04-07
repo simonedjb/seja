@@ -61,6 +61,20 @@ def read_changelog_version(root: Path) -> str | None:
     return match.group(1) if match else None
 
 
+def check_heading_format(root: Path) -> list[str]:
+    """Scan all ## headings in CHANGELOG.md and return warnings for non-conforming ones."""
+    changelog = root / ".claude" / "CHANGELOG.md"
+    if not changelog.is_file():
+        return []
+    warnings: list[str] = []
+    semver_re = re.compile(r"^## \[\d+\.\d+\.\d+\]")
+    heading_re = re.compile(r"^## ")
+    for i, line in enumerate(changelog.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+        if heading_re.match(line) and not semver_re.match(line):
+            warnings.append(f"  line {i}: {line.strip()}")
+    return warnings
+
+
 def main() -> int:
     root = _find_repo_root()
 
@@ -74,15 +88,23 @@ def main() -> int:
         print("ERROR: .claude/CHANGELOG.md not found or no [x.y.z] heading found")
         return 2
 
+    exit_code = 0
     if version == changelog_version:
         print(f"OK: VERSION ({version}) matches CHANGELOG ({changelog_version})")
-        return 0
+    else:
+        print(
+            f"FAIL: VERSION file says {version} but CHANGELOG latest is {changelog_version}. "
+            f"Update .claude/skills/VERSION to match."
+        )
+        exit_code = 1
 
-    print(
-        f"FAIL: VERSION file says {version} but CHANGELOG latest is {changelog_version}. "
-        f"Update .claude/skills/VERSION to match."
-    )
-    return 1
+    heading_warnings = check_heading_format(root)
+    if heading_warnings:
+        print(f"WARNING: {len(heading_warnings)} CHANGELOG heading(s) missing [x.y.z] format:")
+        for w in heading_warnings:
+            print(w)
+
+    return exit_code
 
 
 if __name__ == "__main__":

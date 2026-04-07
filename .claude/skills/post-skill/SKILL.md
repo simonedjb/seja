@@ -5,7 +5,7 @@ argument-hint: "<id>"
 user-invocable: false
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-04-01 12:59:00
+  last-updated: 2026-04-01 12:59 UTC
   version: 1.2.0
   category: internal
   context_budget: standard
@@ -18,9 +18,9 @@ metadata:
 
 0. **Checkpoint recovery**: Check if `${OUTPUT_DIR}/.post-skill-checkpoint` exists. If it does, read it. The format is `<step-number> | <datetime> | <skill-id>`. If the `<skill-id>` matches the current invocation's ID ($ARGUMENTS[0]), resume from the step AFTER the checkpoint step number (skip already-completed steps). If the skill-id does not match, delete the stale checkpoint file and proceed normally.
 
-1. Obtain the current UTC time by running `date -u +"%Y-%m-%d %H:%M:%S UTC"` and capturing its output. Use this exact output as `<datetime>` below — do not estimate or guess the time.
+1. Obtain the current UTC time by running `date -u +"%Y-%m-%d %H:%M UTC"` and capturing its output. Use this exact output as `<datetime>` below — do not estimate or guess the time.
 
-   Update the brief related to the execution, prepending it with `DONE | <datetime> | `, where <datetime> is the value obtained from the `date` command above, in the format YYYY-MM-DD hh:mm:ss UTC (keeping the start time intact). If a plan was generated, append the brief line with `PLAN | <plan id>`.
+   Update the brief related to the execution, prepending it with `DONE | <datetime> | `, where <datetime> is the value obtained from the `date` command above, in the format YYYY-MM-DD HH:MM UTC (keeping the start time intact). If a plan was generated, append the brief line with `PLAN | <plan id>`.
 
    Write checkpoint: `1 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
 

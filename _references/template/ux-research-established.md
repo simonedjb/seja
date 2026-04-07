@@ -81,7 +81,7 @@
 
 | Date | Artifacts Processed | Design Iteration | Notes |
 |------|-------------------|-----------------|-------|
-| {{YYYY-MM-DD}} | {{PS-001, PersonaName}} | {{plan-NNNNNN or design session}} | {{notes}} |
+| {{YYYY-MM-DD HH:MM UTC}} | {{PS-001, PersonaName}} | {{plan-NNNNNN or design session}} | {{notes}} |
 
 ---
 
@@ -153,4 +153,4 @@
 
 | Date | Research Session | Journeys Produced | Design Impact | Notes |
 |------|-----------------|------------------|--------------|-------|
-| {{YYYY-MM-DD}} | {{session description}} | {{JM-E-001, JM-E-002}} | {{plan-NNNNNN or design session}} | {{notes}} |
+| {{YYYY-MM-DD HH:MM UTC}} | {{session description}} | {{JM-E-001, JM-E-002}} | {{plan-NNNNNN or design session}} | {{notes}} |

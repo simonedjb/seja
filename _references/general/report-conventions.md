@@ -3,7 +3,7 @@
 When a skill produces a report file in `${OUTPUT_DIR}` (see project/conventions.md), apply these conventions for common sub-fields:
 
 - *id*: a unique, sequential number, zero-padded to 6 characters, globally unique across all artifact types, reserved atomically via `reserve_id.py`.
-- *current datetime*: in the format YYYY-MM-DD hh:mm:ss in the UTC timezone.
+- *current datetime*: in the format YYYY-MM-DD HH:MM in the UTC timezone.
 - *prefix* (when applicable): one of [FEATURE, REDESIGN, FIX, REFACTOR, DOCUMENT, TEST, CHORE], depending on the brief.
 - *scope* (when applicable): one of [-B for backend, -F for frontend, -X for cross-cutting, -O for other].
 - *short title*: a brief descriptive title.

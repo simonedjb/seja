@@ -6,6 +6,12 @@
 >
 > This file reflects the **target design** -- what the system should be and communicate. Updated by the designer (human) or via `/explain spec-drift`.
 >
+> **Requirement IDs:** Each enumerable requirement has an HTML comment marker
+> `<!-- REQ-TYPE-NNN -->` for traceability. Plans reference these via `Traces: REQ-TYPE-NNN`.
+> Type prefixes: ENT (entities), PERM (permissions), VAL (validation), UX (UX patterns),
+> MC (metacomm intentions), JM (journey maps), I18N (i18n), DELTA (deltas).
+> See `general/shared-definitions.md` for the full convention.
+>
 > **Related files:**
 > - `project/design-intent-established.md` -- processed design intent with preserved rationale (human-maintained, never agent-altered)
 > - `project/conceptual-design-as-is.md` -- what is currently implemented (domain model, auto-maintained)
@@ -73,6 +79,7 @@
         └── {{LeafEntity}}
 ```
 
+<!-- REQ-ENT-001 -->
 ### {{TopLevelEntity}}
 
 > For each entity, document:
@@ -116,6 +123,7 @@
 
 | Role | Level | Capabilities |
 |------|-------|-------------|
+<!-- REQ-PERM-001 -->
 | {{Role1}} | {{level}} | {{description}} |
 | {{Role2}} | {{level}} | {{description}} |
 | {{Role3}} | {{level}} | {{description}} |
@@ -174,6 +182,7 @@
 
 | Aspect | Primary | Secondary |
 |--------|---------|-----------|
+<!-- REQ-I18N-001 -->
 | UI default language | {{PRIMARY_LOCALE}} | {{SECONDARY_LOCALE}} |
 | Backend error default | {{BACKEND_DEFAULT}} | -- |
 
@@ -188,6 +197,8 @@
 > - What the user sees/does
 > - Why this pattern was chosen (domain rationale)
 > - Any metacommunication intent
+
+<!-- REQ-UX-001 -->
 
 ---
 
@@ -215,6 +226,7 @@
 
 | Constant | Value | Domain Rationale |
 |----------|-------|-----------------|
+<!-- REQ-VAL-001 -->
 | {{field}} length | {{min}}--{{max}} chars | {{why}} |
 
 > **Note:** These constants must be kept in sync between backend and frontend. See `project/security-checklists.md` Quick Reference for the technical mapping.
@@ -330,7 +342,8 @@
 
 | Feature / Flow | Designer Intent | Priority | Source | Last Synced |
 |---|---|---|---|---|
-| {{feature}} | {{intent}} | {{P0 / P1 / P2}} | {{human / agent (spec-drift) / agent (metacomm)}} | {{YYYY-MM-DD}} |
+<!-- REQ-MC-001 -->
+| {{feature}} | {{intent}} | {{P0 / P1 / P2}} | {{human / agent (spec-drift) / agent (metacomm)}} | {{YYYY-MM-DD HH:MM UTC}} |
 
 ---
 
@@ -355,6 +368,7 @@
 
 ---
 
+<!-- REQ-JM-001 -->
 ### JM-TB-001: {{Journey Title}}
 
 - **Persona:** {{PersonaName}} (from `project/ux-research-established.md §1`)
@@ -404,6 +418,7 @@ journey
 
 | Section | Element | Description |
 |---|---|---|
+<!-- REQ-DELTA-001 -->
 | {{section}} | {{element}} | {{description}} |
 
 ### Changed (differs between as-is and to-be)

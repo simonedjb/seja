@@ -90,5 +90,5 @@
 
 <!-- Record amendments here. The constitution should change rarely. -->
 
-### v1 -- {{YYYY-MM-DD}}
+### v1 -- {{YYYY-MM-DD HH:MM UTC}}
 - Initial constitution created via `/design`.

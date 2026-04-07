@@ -101,7 +101,7 @@
 
 | Feature / Flow | Designer Intent | Implementation Status | Source | Last Updated |
 |---|---|---|---|---|
-| {{feature}} | {{intent}} | {{Implemented / Partial / Planned}} | {{human / agent (metacomm) / agent (post-skill)}} | {{YYYY-MM-DD}} |
+| {{feature}} | {{intent}} | {{Implemented / Partial / Planned}} | {{human / agent (metacomm) / agent (post-skill)}} | {{YYYY-MM-DD HH:MM UTC}} |
 
 ---
 
@@ -109,6 +109,6 @@
 
 > Versioned entries tracking how the implemented metacommunication has evolved. Each entry is appended automatically by post-skill after plan execution.
 
-### v1 — {{YYYY-MM-DD}}
+### v1 — {{YYYY-MM-DD HH:MM UTC}}
 - **Initial**: Baseline metacommunication record created
 - **Source**: human (design)

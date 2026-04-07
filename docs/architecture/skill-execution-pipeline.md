@@ -53,6 +53,19 @@ sequenceDiagram
     Post-->>U: suggestions via AskUserQuestion
 ```
 
+<details>
+<summary>Text description of this diagram</summary>
+
+1. The user invokes a skill (e.g., `/skill-name arguments`).
+2. The skill invokes the **pre-skill** phase, which runs 7 stages in order: help interception, brief-log, orphan-check, budget-eval, compaction-check, ref-load, and constitution injection.
+3. Pre-skill returns the loaded context to the skill.
+4. The skill executes its body instructions (which may spawn subagents) and returns when complete.
+5. The skill invokes the **post-skill** phase, which runs steps sequentially: brief update (DONE marker), telemetry recording, as-is alignment, documentation check, design intent curation reminder, DONE marker proposal, QA log generation, commit preparation (steps 4-6), fast preflight gate, index regeneration, and git commit.
+6. Post-skill stages and commits to git, then amends the commit with telemetry data.
+7. Post-skill returns next-step suggestions to the user via AskUserQuestion.
+
+</details>
+
 ---
 
 ## Phase 1: Pre-Skill Pipeline (7 Stages)
@@ -77,9 +90,43 @@ The pre-skill pipeline prepares the execution context. It runs as a sequence of 
 
 **brief-log** -- Obtains the current UTC time via `date -u` and inserts a `STARTED | <datetime> | <skill-name> | <brief>` entry at the top of the briefs file. The file is saved immediately so the invocation is recorded even if the system crashes mid-execution.
 
+A complete brief lifecycle looks like this (the STARTED entry is written here in pre-skill; the DONE prefix is added later by post-skill step 1):
+
+```text
+STARTED | 2026-04-07 00:49 UTC | plan | Add user authentication
+
+DONE | 2026-04-07 01:05 UTC | STARTED | 2026-04-07 00:49 UTC | plan | Add user authentication | PLAN | 000048
+```
+
+The DONE prefix wraps the original STARTED line, preserving the original start time for duration calculation. The `PLAN | 000048` suffix links the brief to the generated plan, enabling cross-referencing between the briefs index and the plan output directory.
+
 **orphan-check** -- Reads the briefs index and scans for `STARTED` entries that have no matching `DONE`. These are likely from crashed or abandoned sessions. If orphans are found (excluding the entry just created), a warning lists the 5 most recent.
 
 **budget-eval** -- Reads the calling skill's `metadata.context_budget` from its YAML frontmatter and loads briefs accordingly. Three tiers exist: `light` (skip all briefs and reference loading), `standard` (load briefs index only), and `heavy` (load full briefs with recency windowing -- first 50 entries -- plus the plan index). See [Context Strategy](context-strategy.md) for details on each tier.
+
+The following simplified frontmatter from the `/plan` skill shows how budget, references, and skip behavior are declared:
+
+```yaml
+---
+name: plan
+description: "Make a plan to add a feature, fix a bug, or refactor code."
+metadata:
+  context_budget: heavy            # Loads full briefs + plan index
+  eager_references:                # Loaded upfront during ref-load
+    - project/conceptual-design-as-is.md
+    - project/design-intent-to-be.md
+    - general/report-conventions.md
+  references:                      # Lazy -- listed as available, loaded on demand
+    - project/conventions.md
+    - general/coding-standards.md
+    - project/frontend-standards.md
+    - project/backend-standards.md
+    - project/testing-standards.md
+  # skip_stages: []                # Not set -- all non-critical stages run
+---
+```
+
+The `eager_references` list determines which files are loaded upfront (demand-pull mode). Entries that appear only in `references` become lazy -- the skill body can request them on demand without paying the upfront context cost. The `skip_stages` field (omitted here) would list stage IDs to skip; only non-critical stages can be skipped.
 
 **compaction-check** -- Counts STARTED entries from the last 2 hours. If the count exceeds 8, emits an advisory warning suggesting the user start a fresh conversation or persist key decisions to the session scratchpad. This stage is advisory-only and does not block execution.
 
@@ -114,6 +161,14 @@ The post-skill pipeline handles cleanup, recording, and git commit. It executes 
 
 Checks for an existing checkpoint file. If one exists and matches the current invocation ID, resumes from the step after the checkpoint. If the IDs do not match, deletes the stale checkpoint and starts fresh.
 
+A checkpoint file contains a single line with three pipe-delimited fields:
+
+```text
+7 | 2026-04-07 00:55 UTC | 000048
+```
+
+The fields are: last completed step number, timestamp of the checkpoint write, and the invocation ID. The invocation ID guards against stale checkpoints -- if a new post-skill run finds a checkpoint with a different ID, it discards it and starts from step 0.
+
 ### Step 1: Brief Update
 
 Obtains the current UTC time and prepends `DONE | <datetime> |` to the matching STARTED entry in the briefs file. If a plan was generated, appends `| PLAN | <plan-id>` to the entry.
@@ -121,6 +176,29 @@ Obtains the current UTC time and prepends `DONE | <datetime> |` to the matching 
 ### Step 1b: Telemetry Recording
 
 Prepares a telemetry record in memory with 11 fields: timestamp, skill name, invocation ID, duration in seconds, outcome (success/partial/failed), brief text, prefix scope, plan ID, error type, output file path, and context budget tier. This record is held in context until Step 8b writes it to disk with additional commit metadata.
+
+A complete 14-field telemetry record (after enrichment in step 8b) looks like this:
+
+```json
+{
+  "timestamp": "2026-04-07T01:05:00Z",   // ISO 8601 UTC time of completion
+  "skill": "plan",                        // Skill that was invoked
+  "id": "000048",                         // Unique invocation ID
+  "duration_seconds": 960,                // Elapsed time from STARTED to DONE
+  "outcome": "success",                   // success | partial | failed
+  "brief": "Add user authentication",     // One-line brief text (max 200 chars)
+  "prefix_scope": "FEATURE-B",            // Report prefix-scope, or null
+  "plan_id": "000048",                    // Generated plan ID, or null
+  "error_type": null,                     // Error classification when not success
+  "output_file": "_output/plans/plan-000048-add-user-authentication.md",
+  "context_budget": "heavy",              // light | standard | heavy
+  "git_commit_sha": "a1b2c3d4e5f6...",   // Added in step 8b after commit
+  "files_changed": 12,                    // File count from the commit
+  "parent_skill": "plan"                  // Skill that invoked post-skill
+}
+```
+
+The first 11 fields are prepared in this step. The final 3 fields (`git_commit_sha`, `files_changed`, `parent_skill`) are added in step 8b after the git commit completes. The record is appended as a single JSON line to `telemetry.jsonl`. Fields that cannot be determined are set to `null`.
 
 ### Step 2: As-Is Alignment
 

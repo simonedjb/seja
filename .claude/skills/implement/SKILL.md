@@ -4,7 +4,7 @@ description: Execute a previously generated plan to add a feature, fix a bug, or
 argument-hint: "<planned-item-id> [--manual] [--max-iterations N] [--dry-run] [--skip-checks]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-03-27 12:00:00
+  last-updated: 2026-03-27 12:00 UTC
   version: 1.0.0
   plan_format_version: 1
   category: planning
@@ -136,7 +136,7 @@ If `--manual` is passed, use manual mode. Otherwise, use auto mode.
 
 8. Run the [Quality Gate](#quality-gate) (skipped if `--skip-checks` was passed).
 
-9. Mark the resolved issue in the plan file preceding the issue id with `# DONE | <datetime> |`, where <datetime> is the date and time the execution finished in the format YYYY-MM-DD hh:mm:ss in the UTC timezone. Update the to do list in the plan file when this step is done and save it to make it persistent in case the plan is interrupted. Rename the plan file to reflect the completion of the planned item, changing the prefix from `plan-<id>-` to `plan-<id>-done-` and keeping the rest of the filename unchanged.
+9. Mark the resolved issue in the plan file preceding the issue id with `# DONE | <datetime> |`, where <datetime> is the date and time the execution finished in the format YYYY-MM-DD HH:MM UTC. Update the to do list in the plan file when this step is done and save it to make it persistent in case the plan is interrupted. Rename the plan file to reflect the completion of the planned item, changing the prefix from `plan-<id>-` to `plan-<id>-done-` and keeping the rest of the filename unchanged.
 
 10. Append a summary of all changes made to the plan file.
 

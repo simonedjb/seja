@@ -153,7 +153,7 @@ def main() -> None:
     venv_python = _find_venv_python()
     npx = _find_npx()
 
-    ts = datetime.now().strftime("%Y-%m-%d %H.%S")
+    ts = datetime.now().strftime("%Y-%m-%d %H.%M")
 
     out_dir = Path(args.out_dir) if args.out_dir else _OUTPUT_DIR / "test-results"
     out_dir.mkdir(parents=True, exist_ok=True)

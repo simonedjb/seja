@@ -10,7 +10,7 @@
 
 ## Changelog
 
-### v1 -- {{YYYY-MM-DD}}
+### v1 -- {{YYYY-MM-DD HH:MM UTC}}
 - **Initial**: Baseline conceptual design record created
 - **Source**: human (design)
 - **Plan**: N/A

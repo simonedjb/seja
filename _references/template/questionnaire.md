@@ -1,7 +1,7 @@
 # TEMPLATE - PROJECT INSTANTIATION QUESTIONNAIRE
 
 > **Questionnaire version:** 6
-> **Last updated:** 2026-04-02
+> **Last updated:** 2026-04-02 00:00 UTC
 >
 > **Purpose:** Answer these questions to generate all 9 `project/` reference files from the `template/` templates. An agent can read your completed answers and produce the full set of project-specific references.
 >
@@ -880,9 +880,9 @@ After completing all sections:
 
 | Version | Date       | Changes                                                                                                                      |
 |---------|------------|------------------------------------------------------------------------------------------------------------------------------|
-| 1       | 2026-03-25 | Initial versioned release. Sections 0-7 with all fields. Companion spec file format (template/design-spec.md) introduced |
-| 2       | 2026-03-29 | Added Knowledge Tiers preamble (T1/T2/T3). Added questions 0.3 (project mode, moved early for directory-structure routing) and 0.10 (team composition) to Section 0. Renumbered 0.3-0.8 to 0.4-0.9. Added brownfield-only questions 2.13-2.17 to Section 2. Added Section 8 (UX Design Standards, 9 questions). Added Section 9 (Graphic/UI Design Standards, 9 questions). Updated post-questionnaire checklist. Total project files generated: 7 to 9. |
-| 3       | 2026-04-01 | Added Section 10 (Documentation Templates, 3 questions) to T1 tier. Documentation templates in `template/docs/` can now be instantiated during project setup. Updated post-questionnaire checklist. |
-| 4       | 2026-04-02 | Added Section M (Metacommunication Message) as first T1 section. Added Section Reference Table with slugs. Annotated all section headers with slug identifiers and tier tags. Reordered sections by tier (T1: M, 0, 2, 8, 9, 10; T2: 1, 3, 4; T3: 5, 6, 7). Added HTML tier block dividers. Updated How to use block. T1 tier now includes section M. |
-| 5       | 2026-04-02 | Moved metacommunication message fallback from question 2.10 to a new "Final Step" section after all questionnaire sections. When the user did not provide a message in Section M, the agent now generates a recommended metacommunication message inferred from previous answers, allowing the user to accept, edit, or reject-and-skip. Accepted generated messages are annotated with a generation note. Renumbered 2.11-2.17 to 2.10-2.16. |
-| 6       | 2026-04-02 | Renumbered all sections sequentially by tier order: M->0, 0->1 (renamed "Basic Definitions", slug `quick-start`->`basic-definitions`), 2->2, 8->3, 9->4, 10->5, 1->6, 3->7, 4->8, 5->9, 6->10, 7->11. All question sub-numbers updated to match new section prefixes. Post-Questionnaire Checklist now uses slug-based references. External references (SKILL.md) migrated from section numbers to slugs. |
+| 1       | 2026-03-25 00:00 UTC | Initial versioned release. Sections 0-7 with all fields. Companion spec file format (template/design-spec.md) introduced |
+| 2       | 2026-03-29 00:00 UTC | Added Knowledge Tiers preamble (T1/T2/T3). Added questions 0.3 (project mode, moved early for directory-structure routing) and 0.10 (team composition) to Section 0. Renumbered 0.3-0.8 to 0.4-0.9. Added brownfield-only questions 2.13-2.17 to Section 2. Added Section 8 (UX Design Standards, 9 questions). Added Section 9 (Graphic/UI Design Standards, 9 questions). Updated post-questionnaire checklist. Total project files generated: 7 to 9. |
+| 3       | 2026-04-01 00:00 UTC | Added Section 10 (Documentation Templates, 3 questions) to T1 tier. Documentation templates in `template/docs/` can now be instantiated during project setup. Updated post-questionnaire checklist. |
+| 4       | 2026-04-02 00:00 UTC | Added Section M (Metacommunication Message) as first T1 section. Added Section Reference Table with slugs. Annotated all section headers with slug identifiers and tier tags. Reordered sections by tier (T1: M, 0, 2, 8, 9, 10; T2: 1, 3, 4; T3: 5, 6, 7). Added HTML tier block dividers. Updated How to use block. T1 tier now includes section M. |
+| 5       | 2026-04-02 00:00 UTC | Moved metacommunication message fallback from question 2.10 to a new "Final Step" section after all questionnaire sections. When the user did not provide a message in Section M, the agent now generates a recommended metacommunication message inferred from previous answers, allowing the user to accept, edit, or reject-and-skip. Accepted generated messages are annotated with a generation note. Renumbered 2.11-2.17 to 2.10-2.16. |
+| 6       | 2026-04-02 00:00 UTC | Renumbered all sections sequentially by tier order: M->0, 0->1 (renamed "Basic Definitions", slug `quick-start`->`basic-definitions`), 2->2, 8->3, 9->4, 10->5, 1->6, 3->7, 4->8, 5->9, 6->10, 7->11. All question sub-numbers updated to match new section prefixes. Post-Questionnaire Checklist now uses slug-based references. External references (SKILL.md) migrated from section numbers to slugs. |

@@ -2,11 +2,17 @@
 
 You are comfortable with agentic tools and want to understand how SEJA works under the hood -- the execution pipeline, context management, and how to extend the framework with custom skills, perspectives, or agents.
 
+## Start here
+
+- [SEJA Internals Walkthrough](tutorials/developers-internals-walkthrough.md) -- trace one complete skill invocation from command to git commit
+
 ## Architecture
 
 - [Framework File Map](architecture/framework-file-map.md) -- what each directory and file category does
 - [Skill Execution Pipeline](architecture/skill-execution-pipeline.md) -- the full pre-skill -> skill -> post-skill lifecycle
 - [Context Strategy](architecture/context-strategy.md) -- how the framework manages LLM context constraints
+- [Design Rationale](architecture/design-rationale.md) -- why key architectural decisions were made
+- [Troubleshooting](architecture/troubleshooting.md) -- diagnosing and fixing framework issues
 
 ## Extend the framework
 

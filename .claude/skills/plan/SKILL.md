@@ -4,7 +4,7 @@ description: "Make a plan to add a feature, fix a bug, or refactor code. Support
 argument-hint: "<brief> [--review <light|standard|deep>] [--framing metacomm] [--light] [--plan | --roadmap [--from-spec <path>] [--auto]]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-03-29 00:15:00
+  last-updated: 2026-03-29 00:15 UTC
   version: 1.0.0
   plan_format_version: 1
   category: planning
@@ -196,6 +196,7 @@ When using the metacomm framing:
    - **Verify**: <how to know this step succeeded — e.g., "tests pass", "migration runs forward and backward", "endpoint returns 200">
    - **Tests**: <what tests to create or update — e.g., "Add unit tests for new service method", "Update existing API tests for changed response format"> | N/A (no testable code changes)
    - **Docs**: <what documentation to create or update — e.g., "Update API reference for new endpoint", "Add contextual help page for new screen"> | N/A (no documentation impact)
+   - **Traces**: REQ-xxx, REQ-yyy | N/A (no design-intent requirements)
    - [ ] Done
    ```
 
@@ -208,15 +209,18 @@ When using the metacomm framing:
    - **Verify**: a concrete, testable condition. Prefer automated checks ("tests pass", "linter clean") over subjective ones ("looks right").
    - **Tests**: required for steps with prefix FEATURE, FIX, or REFACTOR that create or modify source code files. Set to `N/A` for steps that only modify documentation, configuration, framework files, or other non-testable artifacts. Steps with prefix CHORE, DOCUMENT, or TEST may use N/A. Each step that modifies source code should declare what tests are needed. If the step is too small to warrant its own tests, indicate which step's tests will cover it.
    - **Docs**: required for steps with prefix FEATURE or REDESIGN that create or modify user-facing code or public APIs. Specify what documentation should be created or updated. Set to `N/A` for steps with no documentation impact (internal refactors, test-only changes, configuration). When a step adds a new API endpoint, note "Update API reference"; when adding a new UI screen, note "Add contextual help page".
+   - **Traces**: optional field linking the step to design-intent requirements. List comma-separated REQ IDs from `design-intent-to-be.md` that this step implements (e.g., `REQ-ENT-001, REQ-PERM-003`). Set to `N/A` if no REQ markers exist in the project's design-intent file or if the step does not directly implement a design requirement (e.g., test-only steps, infrastructure). When REQ markers exist in the spec, the planning agent should map each plan step to the requirement(s) it satisfies. See `general/shared-definitions.md` for the REQ ID convention.
    - Steps should be ordered so that dependencies flow forward (Step 2 depends on Step 1, not the reverse).
 
 4. Save the plan to the plan file. If not overwriting a file, proceed without asking for authorization.
+
+4b. **Coverage check (advisory)**: If `_references/project/design-intent-to-be.md` exists and contains REQ markers (`<!-- REQ-*-NNN -->`), run `python .claude/skills/scripts/check_plan_coverage.py --mode advisory` and include the coverage summary in the plan file as an informational section after the steps. This helps identify uncovered requirements early. If no REQ markers exist, skip silently.
 
 5. **Review the plan** using a complexity-gated, two-phase process. Use `general/review-log-template.md` for the review log format.
 
    **Step metadata validation (before perspective review):**
    Before starting the perspective review, validate each step's metadata:
-   - Every step has all required fields (Files, References, Depends on, Verify, Tests, Docs, checkbox)
+   - Every step has all required fields (Files, References, Depends on, Verify, Tests, Docs, checkbox) and optional fields where applicable (Traces -- required when project has REQ markers)
    - File paths for existing files are verified (the file exists on disk)
    - Dependencies flow forward (no circular dependencies, no backwards references)
    - No step touches >5 files (split if so)
@@ -379,6 +383,22 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
    - `project/i18n-standards.md` (locales, translation scope)
    - `project/security-checklists.md` (validation, auth requirements)
 
+2b. **Requirements extraction pass**: If `_references/project/design-intent-to-be.md` contains REQ markers (`<!-- REQ-*-NNN -->`), launch a `general-purpose` agent (Agent tool) with a fresh context to extract a requirements index. The agent should:
+
+   1. Read `_references/project/design-intent-to-be.md` in full
+   2. For each REQ marker found, extract: ID, section number, heading/title, classification (derived from type prefix per `general/shared-definitions.md` -- PERM/VAL -> security, UX/MC/JM -> ux, ENT/DELTA -> technical, I18N -> cross-cutting)
+   3. Output a flat markdown table:
+      ```
+      | ID | Section | Title | Classification |
+      |---|---|---|---|
+      | REQ-ENT-001 | 2 | User entity | technical |
+      | REQ-PERM-001 | 4 | Admin role | security |
+      ```
+
+   Use this requirements index as the primary input for the decomposition step (step 3), cross-referencing against the index rather than re-reading the full prose. Each generated work item should note which REQ IDs it covers.
+
+   If no REQ markers are found, skip this step and proceed with the existing decomposition approach (step 3 reads the full prose directly).
+
 3. **Decompose into work items**: Compare the as-is and to-be conceptual designs to identify work items from the **delta** between them. Use this decomposition strategy:
 
    **Delta analysis:**
@@ -433,6 +453,8 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
    - If classified as **technical**: invoke the standard plan workflow with the item's description
    - If classified as **design**: invoke the plan skill with `--framing metacomm` and the item's description phrased as a metacommunication message using I/you (e.g., "When you open the home page, I want you to see...")
    - Record the generated plan ID next to each work item
+
+8b. **Coverage check (advisory)**: After all plans are generated, if `_references/project/design-intent-to-be.md` exists and contains REQ markers, run `python .claude/skills/scripts/check_plan_coverage.py --mode advisory` and include the coverage summary in the roadmap file. This provides an aggregate view of which requirements are covered across all generated plans.
 
 9. **Save roadmap summary**: Save to `${ROADMAP_DIR}/roadmap-<id>-<slug>.md` with:
    - Header: `# Roadmap <id> | <current datetime> | <short title>`

@@ -4,7 +4,7 @@ description: "Generate or update project documentation based on plan Docs: field
 argument-hint: "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|adr|help-center|changelog>]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-04-01 16:42:22
+  last-updated: 2026-04-01 16:42 UTC
   version: 1.0.0
   category: utility
   context_budget: standard

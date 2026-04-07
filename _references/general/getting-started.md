@@ -63,3 +63,31 @@ After completing any path:
 - Run `/plan` to create your first implementation plan.
 - Run `/explain` to understand architecture, data models, or spec drift.
 - See `general/skill-graph.md` for how skills connect and common multi-skill workflows.
+
+---
+
+## Theoretical Foundations
+
+SEJA's design and review perspectives draw on Semiotic Engineering (SemEng), a theory of Human-Computer Interaction that views software as computer-mediated human communication between designers and users.
+
+### Component-to-Source Mapping
+
+| SEJA Component | Theoretical Source | Reference |
+|---|---|---|
+| Metacommunication template (`metacomm-as-is.md`, `metacomm-to-be.md`) | Metacommunication Template + Extended Metacommunication Template | de Souza (2005), Ch. 3; SigniFYIng Message in de Souza et al. (2016), Ch. 3 ss3.1 |
+| CEM taxonomy in UX/DX review perspectives | Communicability Evaluation Method (CEM) | de Souza (2005), Ch. 4 pp.123-138; de Souza & Leitao (2009) |
+| `/check semiotic-inspection` mode | Semiotic Inspection Method (SIM) | de Souza et al. (2010); SigniFYIng Interaction in de Souza et al. (2016), Ch. 3 ss3.2 |
+| Sign classification (static, dynamic, metalinguistic) in UX perspective | SemEng sign classes | de Souza (2005), Ch. 3; de Souza & Leitao (2009) |
+| CDN dimensions in API perspective | Cognitive Dimensions of Notations (CDN) Framework | Blackwell & Green (2003); adapted for APIs in SigniFYIng APIs, de Souza et al. (2016), Ch. 3 ss3.4 |
+| Intent-effect-failure items in API perspective | SigniFYIng APIs communicability analysis | de Souza et al. (2016), Ch. 3 ss3.4; Afonso (2015) |
+| Cross-sign-class quality checks in semiotic-inspection | SigniFYIng Interaction quality dimensions | de Souza et al. (2016), Ch. 3 ss3.2 pp.70-71 |
+| Design intent / as-is / established artifact model | Reflective practice (forward/backward SigniFYI usage) | Schon (1983); de Souza et al. (2016), Ch. 3 p.50 |
+
+### Key References
+
+- de Souza, C. S. (2005). *The Semiotic Engineering of Human-Computer Interaction*. MIT Press.
+- de Souza, C. S. & Leitao, C. F. (2009). *Semiotic Engineering Methods for Scientific Research in HCI*. Morgan & Claypool.
+- de Souza, C. S., Leitao, C. F., Prates, R. O., Bim, S. A. & da Silva, E. J. (2010). Can inspection methods generate valid new knowledge in HCI? *IJHCS*, 68(1-2), 22-40.
+- de Souza, C. S., Cerqueira, R. F. G., Afonso, L. M., Brandao, R. R. M. & Ferreira, J. S. J. (2016). *Software Developers as Users: Semiotic Investigations in Human-Centered Software Development*. Springer.
+- Blackwell, A. & Green, T. (2003). Notational systems -- the Cognitive Dimensions of Notations framework. In Carroll (Ed.), *HCI Models, Theories, and Frameworks*, pp.103-133.
+- Schon, D. A. (1983). *The Reflective Practitioner: How Professionals Think in Action*. Basic Books.

@@ -1,12 +1,19 @@
 # TEMPLATE - BACKEND STANDARDS REFERENCE
 
 > **How to use this template:** Copy this file to `project/backend-standards.md` and customize for your project. Replace `{{placeholders}}` with your project's actual values. Remove sections that don't apply to your stack.
+>
+> **Section markers:**
+> - **`[Core]`** -- implement from day one in every project
+> - **`[Extended]`** -- add when the project requires it
+> - **`> Applies to: Flask`** / **`> Applies to: FastAPI`** -- framework-specific content; sections without this marker are framework-agnostic
 
 ---
 
-## 1. Project Structure
+## 1. [Core] Project Structure
 
 > Adapt this tree to your project. The key principle is **layered architecture**: API, services, and models are separated.
+>
+> **See also:** Section 4 (Three-Layer Architecture) for the architectural principles behind this structure; Section 19 (Service Layer Contract) for boundary rules.
 
 ```
 {{BACKEND_DIR}}/
@@ -64,9 +71,9 @@
 
 ---
 
-## 2. Application Factory
+## 2. [Core] Application Factory
 
-> If stack includes Flask:
+> **Applies to: Flask**
 
 **Pattern:** App factory via `create_app(config_name)`.
 
@@ -97,7 +104,7 @@ def create_app(config_name=None):
 
 ---
 
-## 3. Configuration
+## 3. [Core] Configuration
 
 **Pattern:** Class-based configuration with environment override.
 
@@ -115,7 +122,9 @@ def create_app(config_name=None):
 
 ---
 
-## 4. Three-Layer Architecture
+## 4. [Core] Three-Layer Architecture
+
+> **See also:** Section 1 (Project Structure) for the directory layout implementing these layers; Section 19 (Service Layer Contract) for detailed boundary rules.
 
 ```
 ┌─────────────────────────────┐
@@ -160,10 +169,12 @@ Responsibilities: ORM mapping, relationships, `to_dict()` serialization.
 
 ---
 
-## 5. Exception Hierarchy
+## 5. [Core] Exception Hierarchy
+
+> **See also:** Section 8 (API Response Patterns) for how exceptions map to HTTP responses.
 
 ```python
-class ServiceError(ValueError):       # Base — maps to 400
+class ServiceError(Exception):        # Base — maps to 400
 class NotFoundError(ServiceError):     # Maps to 404
 class PermissionError(ServiceError):   # Maps to 403
 class ValidationError(ServiceError):   # Maps to 400
@@ -177,9 +188,11 @@ class AuthenticationError(ServiceError): # Maps to 401
 
 ---
 
-## 6. Models & ORM Patterns
+## 6. [Core] Models & ORM Patterns
 
-> If stack includes SQLAlchemy:
+> **See also:** Section 10 (Database Access Patterns) for query style conventions.
+
+> **Applies to: SQLAlchemy**
 
 ### Mixins
 
@@ -200,8 +213,11 @@ class AuthenticationError(ServiceError): # Maps to 401
 ### Soft Deletes
 
 ```python
-# Query active records
-entities = Entity.query.filter(Entity.deleted_at.is_(None))
+from sqlalchemy import select
+
+# Query active records (SQLAlchemy 2.0 style)
+stmt = select(Entity).where(Entity.deleted_at.is_(None))
+entities = db.session.execute(stmt).scalars().all()
 
 # Soft-delete a record
 entity.soft_delete()  # sets deleted_at = utcnow()
@@ -215,7 +231,7 @@ db.session.commit()
 
 ---
 
-## 7. Authentication & Authorization
+## 7. [Core] Authentication & Authorization
 
 ### JWT Authentication
 
@@ -276,7 +292,49 @@ PermissionEvaluator.can_edit_entity(user, entity, resource)
 
 ---
 
-## 8. API Response Patterns
+## 7b. [Core] Object-Level Authorization (BOLA Prevention)
+
+> **See also:** Section 7 (Authentication & Authorization) for role-level checks and route decorators.
+
+> OWASP API Security #1: Broken Object-Level Authorization (BOLA). Every service method that accesses a resource must verify that the requesting user is authorized to access **that specific resource instance**, not just that they have the correct role.
+
+### Pattern
+
+Every service method that retrieves, updates, or deletes a resource should include an ownership or authorization check as its **first operation** after fetching the resource:
+
+```python
+def get_entity(entity_id: int, current_user_id: int) -> Entity:
+    entity = db.session.get(Entity, entity_id)
+    if entity is None:
+        raise NotFoundError(f"Entity {entity_id} not found")
+
+    # Object-level authorization — MUST come before any business logic
+    if not PermissionEvaluator.can_access_entity(current_user_id, entity):
+        raise PermissionError("Not authorized to access this resource")
+
+    return entity
+```
+
+### When to Apply
+
+| Check Type | When to Use |
+|-----------|-------------|
+| **Role-level** (system permissions) | Operations not tied to a specific resource (e.g., "can create entities", "can view admin dashboard") |
+| **Object-level** (resource ownership) | Any read, update, or delete of a specific resource instance (e.g., "can edit *this* entity") |
+| **Both** | Most mutating operations: first check role, then check object-level ownership |
+
+### Rules
+
+- Never assume that a valid JWT or role check implies access to a specific resource.
+- Object-level checks belong in the **service layer**, not in route decorators (decorators handle role-level checks).
+- Test both positive and negative authorization paths: a user who owns resource A must NOT be able to access resource B.
+- For list endpoints, apply filtering in the query (e.g., `WHERE owner_id = :current_user_id`) rather than post-fetch filtering.
+
+---
+
+## 8. [Core] API Response Patterns
+
+> **See also:** Section 5 (Exception Hierarchy) for the error types these responses map to.
 
 ### Response Builder
 
@@ -297,9 +355,9 @@ PermissionEvaluator.can_edit_entity(user, entity, resource)
 
 ---
 
-## 9. Internationalization (i18n)
+## 9. [Extended] Internationalization (i18n)
 
-> If stack includes Flask-Babel:
+> **Applies to: Flask-Babel**
 
 ### Setup
 
@@ -323,33 +381,42 @@ Priority: query string (`?lang=...`) -> `Accept-Language` header -> default.
 
 ---
 
-## 10. Database Access Patterns
+## 10. [Core] Database Access Patterns
+
+> **See also:** Section 6 (Models & ORM Patterns) for model definitions and mixins.
 
 ### Query Patterns
 
 ```python
+from sqlalchemy import select
+
 # Get by primary key (SQLAlchemy 2.0+)
 entity = db.session.get(Entity, entity_id)
 
-# Filter queries
-entities = Entity.query.filter_by(status=0).all()
+# Filter queries (SQLAlchemy 2.0 style)
+stmt = select(Entity).where(Entity.status == 0)
+entities = db.session.execute(stmt).scalars().all()
 
 # Soft-delete aware queries
-entities = Entity.query.filter(Entity.deleted_at.is_(None))
+stmt = select(Entity).where(Entity.deleted_at.is_(None))
+entities = db.session.execute(stmt).scalars().all()
 
 # Paginated queries
-page = Entity.query.paginate(page=1, per_page=20, error_out=False)
+stmt = select(Entity).where(Entity.deleted_at.is_(None)).limit(per_page).offset((page - 1) * per_page)
+items = db.session.execute(stmt).scalars().all()
+total = db.session.execute(select(func.count()).select_from(Entity).where(Entity.deleted_at.is_(None))).scalar()
 ```
 
 **Rules:**
-- Prefer `db.session.get(Model, pk)` (SQLAlchemy 2.0+ style).
+- Use SQLAlchemy 2.0 `select()` statement style for all queries. Avoid the legacy `Model.query` interface.
+- Use `db.session.get(Model, pk)` for primary key lookups.
 - Always filter soft-deleted records.
 
 ---
 
-## 11. Migrations
+## 11. [Core] Migrations
 
-> If stack includes Alembic:
+> **Applies to: Alembic**
 
 **Rules:**
 - All migrations must be **idempotent** — use `IF NOT EXISTS`, `IF EXISTS`, etc.
@@ -360,7 +427,7 @@ page = Entity.query.paginate(page=1, per_page=20, error_out=False)
 
 ---
 
-## 12. Security
+## 12. [Core] Security
 
 ### Security Headers
 
@@ -394,9 +461,23 @@ Applied via `after_request`:
 - CORS restricted to `/api/*` routes with explicit origin allowlist.
 - Secure cookies in production.
 
+### Dependency Vulnerability Scanning
+
+Regularly scan dependencies for known vulnerabilities:
+
+| Tool | Command | Use Case |
+|------|---------|----------|
+| `pip-audit` | `pip-audit` | Audit installed packages against PyPI advisory database |
+| `safety` | `safety check` | Check requirements against Safety DB |
+
+**Rules:**
+- Run dependency scanning in CI on every pull request.
+- Block merges when critical or high-severity vulnerabilities are found.
+- Reference: [OWASP API Security Top 10](https://owasp.org/API-Security/) for comprehensive API threat coverage.
+
 ---
 
-## 13. Activity Logging
+## 13. [Core] Activity Logging
 
 ### Automatic Logging
 
@@ -410,9 +491,9 @@ Applied via `after_request`:
 
 ---
 
-## 14. Testing
+## 14. [Core] Testing
 
-> If stack includes pytest:
+> **Applies to: pytest**
 
 ### Key Fixtures
 
@@ -443,7 +524,7 @@ def test_create_entity(client, admin_token):
 
 ---
 
-## 15. Extensions & Libraries
+## 15. [Extended] Extensions & Libraries
 
 > Document your extensions and their singleton names:
 
@@ -457,7 +538,7 @@ def test_create_entity(client, admin_token):
 
 ---
 
-## 16. Naming Conventions
+## 16. [Core] Naming Conventions
 
 | Category | Convention | Examples |
 |----------|-----------|---------|
@@ -474,7 +555,7 @@ def test_create_entity(client, admin_token):
 
 ---
 
-## 17. File & Media Handling
+## 17. [Extended] File & Media Handling
 
 ### Upload Flow
 
@@ -488,7 +569,7 @@ def test_create_entity(client, admin_token):
 
 ---
 
-## 18. Import/Export
+## 18. [Extended] Import/Export
 
 > If applicable, document your import/export architecture:
 
@@ -505,7 +586,9 @@ def test_create_entity(client, admin_token):
 
 ---
 
-## 19. Service Layer Contract
+## 19. [Core] Service Layer Contract
+
+> **See also:** Section 4 (Three-Layer Architecture) for the overall layer model; Section 1 (Project Structure) for file organization.
 
 ### Boundary Rules
 
@@ -543,17 +626,45 @@ class ServiceConfig:
         return cls(some_setting=cfg.get('SOME_SETTING', 'default'))
 ```
 
+### Caching Strategy
+
+Caching is a service-layer concern. Apply caching within services, not in route handlers or models.
+
+| Level | When to Use | Implementation |
+|-------|-------------|----------------|
+| **Application cache** | Expensive computations, repeated lookups | Redis or in-memory cache (e.g., `cachetools`, `functools.lru_cache`) |
+| **HTTP cache headers** | Responses that are safe to cache at the client or CDN | `Cache-Control`, `ETag`, `Last-Modified` headers in the API layer |
+| **Query result cache** | Frequently accessed, rarely changed data | Cache at the service layer with TTL-based invalidation |
+
+**Rules:**
+- Cache at the service layer — never at the model or route layer.
+- Use TTL-based expiration as the default invalidation strategy.
+- Invalidate caches explicitly on write operations (create, update, delete) that affect cached data.
+- Never cache user-specific or permission-dependent data without including the user/role in the cache key.
+- Log cache hit/miss ratios for observability.
+
 ---
 
-## 20. Schema Validation Policy
+## 20. [Core] Schema Validation Policy
 
-> If stack includes Marshmallow:
+> **See also:** Section 19 (Service Layer Contract) for how validated data flows into services.
 
 ### Mandatory Schema Usage
 
 Every endpoint accepting JSON **must** validate through a schema. Raw `json_data.get()` without schema validation is prohibited.
 
-### Schema Pattern
+### Library Choice
+
+| Library | Best For | Decision Criteria |
+|---------|----------|-------------------|
+| **Pydantic** | FastAPI projects, data parsing/coercion, settings management, JSON Schema generation | Native FastAPI integration; automatic type coercion; excellent for request/response models and configuration. Preferred for new projects. |
+| **Marshmallow** | Flask projects, complex nested schemas, custom field-level validation, serialization/deserialization asymmetry | Mature Flask ecosystem support; fine-grained control over load vs. dump behavior; better for complex validation pipelines. |
+
+Choose one library per project and use it consistently. Do not mix Pydantic and Marshmallow in the same codebase.
+
+### Marshmallow Schema Pattern
+
+> **Applies to: Marshmallow**
 
 ```python
 class CreateEntitySchema(Schema):
@@ -565,15 +676,31 @@ class UpdateEntitySchema(Schema):
     description = fields.String()
 ```
 
+### Pydantic Schema Pattern
+
+> **Applies to: Pydantic**
+
+```python
+from pydantic import BaseModel, Field
+
+class CreateEntityRequest(BaseModel):
+    title: str = Field(..., min_length=1, max_length=200)
+    description: str = ""
+
+class UpdateEntityRequest(BaseModel):
+    title: str | None = Field(None, min_length=1, max_length=200)
+    description: str | None = None
+```
+
 ### Schema File Naming
 
 - One schema file per entity: `<entity>_schemas.py`
 - Shared schemas: `common_schemas.py`
-- Classes: `Create<Entity>Schema`, `Update<Entity>Schema`
+- Classes: `Create<Entity>Schema`, `Update<Entity>Schema` (Marshmallow) or `Create<Entity>Request`, `Update<Entity>Request` (Pydantic)
 
 ---
 
-## 21. Logging Standards
+## 21. [Core] Logging Standards
 
 ### Module-Level Logger
 
@@ -613,9 +740,37 @@ All log output JSON-formatted with request context enrichment:
 
 ---
 
-## 22. Dependency Management
+## 22. [Core] Dependency Management
 
-### File Structure
+### Recommended: `pyproject.toml` + Lock File
+
+Use `pyproject.toml` as the single source of truth for project metadata and dependencies. Use a lock file for reproducible installs.
+
+| Tool | Lock File | Install Command |
+|------|-----------|-----------------|
+| `uv` | `uv.lock` | `uv sync` |
+| `pip-tools` | `requirements.lock` | `pip install -r requirements.lock` |
+
+```toml
+# pyproject.toml (example)
+[project]
+name = "{{PROJECT_NAME}}"
+requires-python = ">=3.11"
+dependencies = [
+    "flask>=3.0",
+    # ... production dependencies
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    # ... dev/test dependencies
+]
+```
+
+### Legacy Alternative: `requirements.txt`
+
+For simpler projects or legacy codebases:
 
 | File | Contents | Used By |
 |------|----------|---------|
@@ -624,14 +779,14 @@ All log output JSON-formatted with request context enrichment:
 
 ### Rules
 
-- **Pin all versions** with `==`.
-- **Production deps** only in `requirements.txt`.
-- **Dev deps** in `requirements-dev.txt`.
+- **Pin all versions** in lock files for reproducible builds.
+- **Use ranges** in `pyproject.toml` (e.g., `>=3.0,<4.0`) to allow compatible updates.
+- **Production deps** separated from dev deps (via `[project.optional-dependencies]` or separate files).
 - Review and update dependencies periodically; run tests after each upgrade.
 
 ---
 
-## 23. Test Data Factories
+## 23. [Extended] Test Data Factories
 
 ### Factory Fixtures
 
@@ -655,7 +810,7 @@ def create_entity(db_session):
 
 ---
 
-## 24. OpenAPI / Swagger Documentation
+## 24. [Extended] OpenAPI / Swagger Documentation
 
 > If applicable:
 
@@ -673,7 +828,7 @@ Auto-generated OpenAPI spec via `apispec` with schema plugin.
 
 ---
 
-## 25. Module-Level README Convention
+## 25. [Extended] Module-Level README Convention
 
 Every backend sub-package directory should contain a `README.md` with a module index table and update instructions.
 
@@ -689,3 +844,133 @@ Every backend sub-package directory should contain a `README.md` with a module i
 - Update the README when adding, removing, or renaming files in the directory.
 - Keep descriptions to one line per file.
 - Include a "Design Conventions" subsection if the module follows specific patterns (e.g., "all services accept and return dicts, not model instances").
+
+---
+
+## 26. [Core] Operational Readiness
+
+### Health Check Endpoints
+
+Every deployed backend must expose health check endpoints for orchestrator probes:
+
+| Endpoint | Purpose | Response |
+|----------|---------|----------|
+| `GET /health/live` | Liveness probe -- process is running | `200 {"status": "ok"}` |
+| `GET /health/ready` | Readiness probe -- dependencies are reachable | `200 {"status": "ready"}` or `503 {"status": "not_ready", "checks": {...}}` |
+
+**Readiness checks** should verify critical dependencies:
+- Database connection (execute a lightweight query like `SELECT 1`)
+- Cache connectivity (Redis ping, if applicable)
+- External service availability (if critical to request handling)
+
+**Rules:**
+- Health endpoints must not require authentication.
+- Liveness probes must not check external dependencies (they only confirm the process is alive).
+- Readiness probes must have timeouts to avoid blocking the orchestrator.
+
+### Graceful Shutdown
+
+- Handle `SIGTERM` by stopping acceptance of new requests and completing in-flight requests within a configurable timeout.
+- Close database connections and flush logs before exiting.
+- If using background workers (Celery, task queues), allow active tasks to complete or re-queue them.
+
+### Container Security
+
+When deploying via Docker (referenced in section 1 project structure):
+
+```dockerfile
+# Use multi-stage builds to minimize image size
+FROM python:{{python_version}}-slim AS builder
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+RUN pip install uv && uv sync --frozen --no-dev
+
+FROM python:{{python_version}}-slim
+# Run as non-root user
+RUN useradd --create-home appuser
+USER appuser
+WORKDIR /app
+COPY --from=builder /app/.venv /app/.venv
+COPY . .
+CMD [".venv/bin/python", "run.py"]
+```
+
+**Rules:**
+- **Run as non-root**: always set a `USER` directive in production Dockerfiles.
+- **Pin base image digests**: use `python:3.12-slim@sha256:...` for reproducible builds.
+- **Multi-stage builds**: separate build dependencies from runtime image.
+- **No secrets in images**: use environment variables or secret managers, never bake secrets into layers.
+- **Minimize attack surface**: use slim/distroless base images; remove build tools from the runtime stage.
+
+---
+
+## 27. [Extended] Async Patterns
+
+### When to Use Async
+
+| Pattern | Best For | Framework |
+|---------|----------|-----------|
+| **Sync (WSGI)** | CPU-bound work, simple CRUD, projects using Flask/Django | Flask, Django |
+| **Async (ASGI)** | I/O-bound work, high-concurrency APIs, WebSockets, streaming | FastAPI, Starlette |
+
+Choose one paradigm per service and use it consistently. Do not mix sync and async handlers in the same application unless the framework explicitly supports it.
+
+### Async Database Access
+
+> **Applies to: FastAPI / ASGI**
+
+```python
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy import select
+
+async def get_entity(session: AsyncSession, entity_id: int) -> Entity:
+    result = await session.execute(select(Entity).where(Entity.id == entity_id))
+    return result.scalar_one_or_none()
+```
+
+**Rules:**
+- Use `create_async_engine` with an async-compatible driver (e.g., `asyncpg` for PostgreSQL).
+- Use `AsyncSession` for all database operations in async code.
+- Never call sync database operations inside `async def` functions -- use `run_in_executor` if wrapping legacy sync code.
+
+### Background Task Processing
+
+| Tool | When to Use |
+|------|-------------|
+| **Celery** | Long-running tasks, scheduled jobs, distributed task queues across multiple workers |
+| **asyncio tasks** | Short-lived I/O-bound tasks within the same process (e.g., sending an email after responding) |
+| **arq / dramatiq** | Lightweight async-native alternatives to Celery |
+
+**Rules:**
+- Offload any operation that takes >500ms to a background task.
+- Background tasks must be idempotent -- they may be retried on failure.
+- Use a dead-letter queue for tasks that fail repeatedly.
+- Log task start, completion, and failure for observability.
+
+---
+
+## 28. [Extended] API Versioning
+
+### Strategy
+
+Choose a versioning strategy and apply it consistently:
+
+| Strategy | Format | Pros | Cons |
+|----------|--------|------|------|
+| **URL path** (recommended) | `/api/v1/entities` | Explicit, easy to route, cacheable | URL proliferation |
+| **Header** | `Accept: application/vnd.api+json; version=2` | Clean URLs | Harder to test, not cacheable by default |
+| **Query parameter** | `/api/entities?version=1` | Simple to implement | Pollutes query string, caching issues |
+
+### Deprecation Policy
+
+When retiring an API version:
+
+1. **Announce**: add a `Sunset` header to responses from the deprecated version: `Sunset: Sat, 01 Mar 2025 00:00:00 GMT`
+2. **Warn**: add a `Deprecation` header: `Deprecation: true`
+3. **Grace period**: maintain the deprecated version for at least {{deprecation_grace_period}} after the announcement
+4. **Remove**: return `410 Gone` after the sunset date
+
+**Rules:**
+- Never break an existing API version -- breaking changes require a new version.
+- Document version differences in the OpenAPI spec (section 24).
+- Default to the latest stable version when no version is specified.

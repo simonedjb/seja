@@ -66,7 +66,7 @@ def _format_id(n: int) -> str:
 
 def _build_reserved_row(reserved_id: str, artifact_type: str, title: str) -> str:
     """Build a RESERVED table row."""
-    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     return f"| {now_utc} | RESERVED | {reserved_id} | {artifact_type}: {title} | RESERVED | |"
 
 

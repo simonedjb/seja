@@ -4,7 +4,7 @@ description: "Explains behavior, code, data model, architecture, or spec drift w
 argument-hint: "<architecture|behavior|behavior-evolution|code|data-model|spec-drift> [brief]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-03-28 12:40:00
+  last-updated: 2026-03-28 12:40 UTC
   version: 1.1.0
   category: analysis
   context_budget: standard
@@ -338,7 +338,7 @@ If the user chooses to sync (from Step B), perform the following based on the ch
 
 Every entry created or modified by this workflow must carry:
 - `source`: one of `human`, `agent (explain)`, `agent (post-skill)`, `agent (plan)`
-- `last-synced`: datetime of this sync run (format: `YYYY-MM-DD HH:mm:ss UTC`)
+- `last-synced`: datetime of this sync run (format: `YYYY-MM-DD HH:MM UTC`)
 
 ##### Sync Directions
 

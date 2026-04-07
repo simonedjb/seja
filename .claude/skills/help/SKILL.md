@@ -4,7 +4,7 @@ description: "Show contextual help, browse skills by category, or get details on
 argument-hint: "[skill-name | --browse]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-03-29 00:15:00
+  last-updated: 2026-03-29 00:15 UTC
   version: 1.0.0
   category: utility
   context_budget: light

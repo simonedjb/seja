@@ -38,6 +38,25 @@ Use `heavy` for skills that need deep project awareness -- for example, `/plan` 
 
 Skills declare their reference dependencies in YAML frontmatter. Two loading modes are available, determined by whether the skill declares `metadata.eager_references`.
 
+The two YAML blocks below show the same skill configured in each mode. In the eager-only block every reference is loaded upfront. In the demand-pull block only `conceptual-design-as-is.md` is loaded eagerly; the remaining two entries stay lazy until the agent requests them.
+
+```yaml
+# Eager-only (legacy): all references loaded upfront
+metadata:
+  references:
+    - project/backend-standards.md
+    - general/coding-standards.md
+
+# Demand-pull: eager + lazy tiers
+metadata:
+  eager_references:
+    - project/conceptual-design-as-is.md
+  references:
+    - project/conceptual-design-as-is.md
+    - project/design-intent-to-be.md  # lazy -- loaded on demand
+    - general/review-perspectives.md   # lazy
+```
+
 ### Eager-Only (Legacy)
 
 When a skill declares `metadata.references` but no `metadata.eager_references`, all listed references are loaded upfront during the `ref-load` stage. This is the simpler, original behavior.
@@ -56,13 +75,15 @@ Both files above would be read and injected into context immediately. An empty l
 When a skill declares `metadata.eager_references`, the loading splits into two tiers:
 
 1. **Eager tier** -- files listed in `eager_references` are loaded upfront alongside the mandatory refs (conventions, permissions, constraints). These are references the skill always needs.
-2. **Lazy tier** -- the remaining entries in `references` that are not in `eager_references` become available on demand. Pre-skill emits an "Available references" block listing each lazy ref with a trigger hint derived from the filename:
+2. **Lazy tier** -- the remaining entries in `references` that are not in `eager_references` become available on demand. Pre-skill emits an "Available references" block listing each lazy ref with a trigger hint derived from the filename.
 
-```
+The following block shows the exact output that pre-skill injects into the context window. Each line pairs a reference path with a plain-language trigger hint so the agent knows *when* to load it without having to inspect the file first.
+
+```text
 --- Available references (load when needed) ---
-1. project/security-checklists.md -- load before reviewing security concerns
+1. project/design-intent-to-be.md -- load before comparing current vs. target design
 2. project/frontend-standards.md -- load before writing frontend code
-...
+3. general/review-perspectives.md -- load before evaluating from multiple perspectives
 To load: read and inject the file from _references/<path>.
 ---
 ```
@@ -89,6 +110,36 @@ Only the selected perspective files (`general/review-perspectives/<tag>.md`) are
 
 - **Essential** -- 3-7 P0 (critical/blocking) questions that must always be evaluated.
 - **Deep-dive** -- 8-12 P1-P4 questions for thorough reviews, loaded for heavy context budget or explicit deep-dive requests.
+
+The following trace shows the two stages in action for a `FEATURE-X` plan that adds a cross-stack user notifications feature. The agent first consults the index, then narrows to 8 perspectives using the prefix shortlist table, and finally loads only those files.
+
+```text
+── Stage 1: Load index ──────────────────────────────────────────
+Read: general/review-perspectives-index.md          (~550 tokens)
+Result: 16 perspectives available (11 engineering, 5 design)
+
+── Stage 2: Select and load ─────────────────────────────────────
+Plan prefix: FEATURE-X
+Default shortlist: SEC, DB, API, ARCH, UX, A11Y, I18N, TEST
+
+Content scan: plan mentions WebSocket push and notification
+  preferences UI → add OPS (deployment of push service)
+Final shortlist (8 + 1 = 9 perspectives):
+  SEC  DB  API  ARCH  UX  A11Y  I18N  TEST  OPS
+
+Load: review-perspectives/sec.md    (Essential tier, ~320 tokens)
+Load: review-perspectives/db.md     (Essential tier, ~280 tokens)
+Load: review-perspectives/api.md    (Essential tier, ~300 tokens)
+Load: review-perspectives/arch.md   (Essential tier, ~310 tokens)
+Load: review-perspectives/ux.md     (Essential tier, ~290 tokens)
+Load: review-perspectives/a11y.md   (Essential tier, ~270 tokens)
+Load: review-perspectives/i18n.md   (Essential tier, ~260 tokens)
+Load: review-perspectives/test.md   (Essential tier, ~300 tokens)
+Load: review-perspectives/ops.md    (Essential tier, ~280 tokens)
+
+Skipped 7 perspectives: PERF, DX, COMPAT, DATA, VIS, RESP, MICRO
+Total context cost: ~3,160 tokens (vs ~5,600 for all 16)
+```
 
 ### Conflict Resolution
 
