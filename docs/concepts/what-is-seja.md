@@ -4,7 +4,7 @@
 
 Most development tools treat software as a technical artifact -- something to build, test, and deploy. SEJA starts from a different premise, borrowed from a theory of human-computer interaction called **semiotic engineering**: software is a message from its designers to its users.
 
-Every interface element, every workflow, every error message is part of a conversation. The designer is saying: "I designed this for you because I understand who you are, what you need to do, and why. Here is how I think you should do it." This ongoing message -- delivered not in words but through the system itself -- is called **metacommunication**.
+Every interface element, every workflow, every error message is part of a conversation. The designer is saying: "I designed this for you because of what I've learned about who you are, what you need to do, and why. Here is, therefore, how I think you should use it." This ongoing message -- delivered not in words but through the system itself -- is called **metacommunication**.
 
 When you tap a button, read a label, or recover from an error, you are interpreting the designer's intent. Good software makes that intent clear. Bad software leaves you guessing -- "Where is it?", "What happened?", "Why doesn't it work?" These are not just usability problems. They are communication breakdowns between a designer (who is absent) and a user (who is present).
 
@@ -16,7 +16,7 @@ This is not anyone's fault. It is a structural problem. Design intent lives in d
 
 SEJA bridges that gap. It provides a structured pipeline -- running inside Claude Code -- that:
 
-1. **Captures design intent explicitly**, using first-person metacommunication ("I designed this search filter for you because I know you manage hundreds of items and need to narrow results quickly").
+1. **Captures design intent explicitly**, using first-person metacommunication ("I designed this search filter for you because I've learned you manage hundreds of items and need to narrow results quickly").
 2. **Carries that intent through planning and implementation**, so every plan step and code change can be traced back to the designer's reasoning.
 3. **Verifies alignment after implementation**, by comparing what the designer intended (the "to-be" state) with what the code actually delivers (the "as-is" state) and flagging drift.
 4. **Reviews from multiple perspectives**, applying 16 specialized lenses -- from security to accessibility to user experience -- to check whether the metacommunication survives the pipeline.
@@ -25,7 +25,7 @@ SEJA bridges that gap. It provides a structured pipeline -- running inside Claud
 
 In SEJA, metacommunication is not abstract theory. It is a concrete artifact: a document written in first person, addressed to the user in second person.
 
-Instead of writing "The system provides a postpone shortcut," a designer using SEJA writes: "I designed a postpone shortcut for you because I know you tend to over-schedule, and I want to give you a low-friction way to push tasks without losing your planning momentum."
+Instead of writing "The system provides a postpone shortcut," a designer using SEJA writes: "I designed a postpone shortcut for you because I've learned you tend to over-schedule, and I want to give you a low-friction way to push tasks without losing your planning momentum."
 
 This phrasing rule is non-negotiable in the framework. It forces the designer to articulate not just *what* they built, but *who* they built it for and *why*. That reasoning then travels through the entire pipeline -- from design intent documents, through plans, into implementation, and back into post-implementation alignment checks.
 

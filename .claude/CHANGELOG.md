@@ -3,6 +3,12 @@
 All notable changes to the SEJA-Claude framework are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.7.1] -- 2026-04-07 11:01 UTC
+
+### Changed
+
+- Adjusted `what-is-seja.md` to reduce the "absolute self-confidence" poorly expressed when the agent refers to the metacommunication message (from `I know that you` to `I've learned that you`).
+
 ## [2.7.0] -- 2026-04-07 00:22 UTC
 
 ### Added
