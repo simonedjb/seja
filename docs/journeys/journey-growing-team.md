@@ -4,6 +4,14 @@
 
 A medium-sized team (5-15 people) with specialized roles (frontend, backend, QA, PM, designer) working on an established product that needs continued evolution.
 
+## Why this journey
+
+As teams grow, the gap between design intent and implementation widens. New members join without the context of earlier design decisions, and the original designers may not review every change. SEJA's design-intent lifecycle tracks this gap explicitly: the to-be files capture the vision, the as-is files reflect reality, and spec-drift detection highlights where they diverge.
+
+The context budget system becomes important at scale -- with more reference files, standards, and conventions, managing what the agent loads into its context window prevents degradation. The three-tier budget system (light/standard/heavy) ensures skills load only what they need.
+
+For the concepts behind this workflow, see [The Design-Intent Lifecycle](../concepts/design-intent-lifecycle.md) and [Context Budget and References](../concepts/context-budget-and-references.md).
+
 ## What you'll accomplish
 
 A shared framework with role-based onboarding, documented architecture, spec-drift detection, and consistent quality across the team.

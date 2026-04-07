@@ -4,6 +4,14 @@
 
 An educator teaching software engineering, HCI, or semiotic engineering, or a researcher studying design processes and AI-assisted development.
 
+## Why this journey
+
+SEJA is grounded in semiotic engineering, a theory of human-computer interaction that treats software as designer-to-user communication. This theoretical foundation makes the framework itself a research instrument -- the review perspectives, metacommunication templates, and sign classification lens are directly derived from published HCI methods (CEM, SIM, CDN).
+
+For educators, the multi-perspective review process models structured decision-making. For researchers, the design-intent lifecycle and spec-drift detection provide observable data about how design decisions evolve during implementation.
+
+For the concepts behind this workflow, see [What Is SEJA](../concepts/what-is-seja.md) and [Review Perspectives and Communicability](../concepts/review-perspectives-and-communicability.md).
+
 ## What you'll accomplish
 
 A framework setup that serves as both a pedagogical tool and a research instrument, with the ability to explain system behavior, analyze design decisions, and generate research-oriented material.

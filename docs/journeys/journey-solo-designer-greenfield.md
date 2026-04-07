@@ -4,6 +4,14 @@
 
 A product designer (not necessarily technical) starting a brand-new product, working solo with an AI agent as the development partner.
 
+## Why this journey
+
+Starting a new product from scratch is the ideal time to establish clear design intent. When there is no existing code, you shape the metacommunication -- the message your interface sends to users -- from day one, without the constraints of legacy decisions.
+
+SEJA helps you capture that intent in structured files (`design-intent-to-be.md`) before any code is written. This means your vision is documented, reviewable, and directly used by the agent when planning and implementing features. The result is code that reflects your design decisions rather than ad-hoc technical choices.
+
+For the concepts behind this workflow, see [What Is SEJA](../concepts/what-is-seja.md) and [The Design-Intent Lifecycle](../concepts/design-intent-lifecycle.md).
+
 ## What you'll accomplish
 
 A bootstrapped project with conventions, conceptual design, and your first feature planned and executed.

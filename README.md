@@ -8,6 +8,8 @@ Our goal is to design a human-centered computing methodology based on semiotic e
 
 ## Start here
 
+- **Product designer?** Start with the [designer's guide](docs/for-designers.md) -- concepts, journeys, and workflows for design-driven development
+- **Developer?** Start with the [developer's guide](docs/for-developers.md) -- architecture, internals, and extension points
 - **New to the framework?** Start with the [onboarding guide](docs/claude-onboarding-guide.md) -- an end-to-end walkthrough for product designers new to AI-assisted development
 - Clone this repository or download it as ZIP from GitHub to get started
 - [Journeys](docs/journeys/) -- scenario-based starting points for solo work, teams, agencies, and regulated environments
@@ -35,8 +37,8 @@ The framework lives in `.claude/` and is configured via `CLAUDE.md` and `/slash`
 - **15 skills** (13 user-facing + 2 internal lifecycle hooks): `/plan`, `/implement`, `/advise`, `/check`, `/explain`, `/document`, and more
 - **10 specialized agents** for code review, plan review, testing, migrations, communication, onboarding, and documentation
 - **7 path-scoped rules** that activate automatically when editing matching files
-- **39 validation scripts** for quality checks, analysis, and smoke testing
-- **51 reference templates** in `_references/` for generating project-specific standards
+- **42 validation scripts** for quality checks, analysis, and smoke testing
+- **50 reference templates** in `_references/` for generating project-specific standards
 
 ---
 

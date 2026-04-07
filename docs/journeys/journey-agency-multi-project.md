@@ -4,6 +4,14 @@
 
 An agency, consultancy, or freelancer managing multiple client projects, who wants consistent quality across all projects while keeping the foundational framework, each client's codebase, and output artifacts physically separated.
 
+## Why this journey
+
+Agencies need consistent quality across client projects while keeping each project's design history and configuration independent. The workspace pattern -- where the framework lives in a separate git repo pointing at the client codebase -- solves this by giving each project its own conventions, design specs, and output artifacts without modifying the client's code.
+
+When the foundational framework is updated, `/upgrade` pulls changes into each workspace independently. The context budget system supports absolute paths, so workspaces can point at codebases anywhere on disk.
+
+For the concepts behind this workflow, see [Context Budget and References](../concepts/context-budget-and-references.md) and [Extending the Framework](../concepts/extending-the-framework.md).
+
 ## What you'll accomplish
 
 A single foundational SEJA framework and independent *ClientName* workspaces per client codebase, with consistent conventions and the ability to upgrade all workspaces when the foundational framework evolves.

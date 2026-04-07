@@ -134,3 +134,19 @@
 3. `/check validate` -- confirm fixes did not introduce new issues
 
 **Tip**: Run this recipe after major refactors that rename files or move modules.
+
+---
+
+### 11. Figma Make to Production Code
+
+**When to use**: You have a Figma Make prototype and want to bring it into SEJA-managed production code.
+
+**Steps**:
+
+1. Prototype in Figma Make (design-intent-to-be phase)
+2. `/advise` -- evaluate the prototype against project standards and identify decomposition needs
+3. `/plan` -- plan the architectural decomposition and integration
+4. `/implement` -- execute the plan (includes decomposing monolithic output into modular components)
+5. `/check validate` -- verify the integrated code meets all quality standards
+
+**Tip**: Attach SEJA coding standards and frontend standards to your Figma Make prompts via Make Attachments to improve initial code quality and reduce the decomposition burden. See `general/figma-make-integration.md` for the full intake checklist.

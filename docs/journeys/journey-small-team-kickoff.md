@@ -4,6 +4,14 @@
 
 A small cross-functional team (2-5 people: designer + developers, possibly a PM) starting a new project together.
 
+## Why this journey
+
+When multiple people work on the same product, design intent can fragment -- each person builds with slightly different assumptions about what the interface should communicate and how. SEJA provides shared conventions and a shared design-intent file that align the team around a single metacommunication vision.
+
+The onboarding system (role families and expertise levels) ensures each team member gets guidance tailored to their background. The review perspectives provide a common vocabulary for discussing trade-offs in code reviews and planning sessions.
+
+For the concepts behind this workflow, see [What Is SEJA](../concepts/what-is-seja.md) and [Extending the Framework](../concepts/extending-the-framework.md).
+
 ## What you'll accomplish
 
 A shared project with conventions aligned across the team, role-based onboarding plans for each member, and a roadmap of features organized into execution waves.

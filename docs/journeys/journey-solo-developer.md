@@ -4,6 +4,14 @@
 
 An experienced developer using the framework to accelerate a personal project, with emphasis on code quality and architecture rather than design documentation.
 
+## Why this journey
+
+Side projects benefit from the same architecture rigor as team projects -- but without a team to enforce it. SEJA's review perspectives give you 16 structured lenses (security, performance, accessibility, and more) that catch concerns you might skip when working alone.
+
+The planning pipeline (`/plan` then `/implement`) adds a review step between intent and execution, which is especially valuable when there is no one else to review your work. Each plan is evaluated against relevant perspectives before execution begins.
+
+For the concepts behind this workflow, see [Skills, Agents, and the Pipeline](../concepts/skills-agents-pipeline.md) and [Review Perspectives and Communicability](../concepts/review-perspectives-and-communicability.md).
+
 ## What you'll accomplish
 
 A well-structured project with conventions, architecture decisions documented, tests in place, and quality gates configured.

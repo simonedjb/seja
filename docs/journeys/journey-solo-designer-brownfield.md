@@ -4,6 +4,14 @@
 
 A product designer working on an existing product that needs evolution, working solo with an AI agent. The product already has a codebase (the *ProjectName* codebase), possibly built by someone else or by a previous team.
 
+## Why this journey
+
+Existing systems carry implicit design decisions -- patterns that were chosen for reasons that may no longer be documented or even remembered. Before you can improve the product, you need to surface what the current system communicates to users (the as-is state) and articulate what it should communicate instead (the to-be state).
+
+SEJA's three-layer design-intent model (to-be, as-is, established) gives you a structured way to document this gap. The `/explain` skill helps you understand the existing system, while spec-drift detection shows you exactly where implementation has diverged from intent.
+
+For the concepts behind this workflow, see [The Design-Intent Lifecycle](../concepts/design-intent-lifecycle.md) and [Review Perspectives and Communicability](../concepts/review-perspectives-and-communicability.md).
+
 ## What you'll accomplish
 
 A documented understanding of the current system (as-is), a clear vision for where it should go (to-be), and a plan for the first improvement.

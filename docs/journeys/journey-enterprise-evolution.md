@@ -4,6 +4,14 @@
 
 A team working in a regulated domain (healthcare, finance, education) where compliance, security, and audit trails are critical. The system already exists and needs careful evolution.
 
+## Why this journey
+
+Regulated environments need traceability -- every design decision, every plan, and every code change must be auditable. SEJA's output artifacts (advisories, plans, briefs, QA logs) are timestamped, sequentially numbered, and version-controlled, providing a compliance-ready audit trail.
+
+The lifecycle markers (IMPLEMENTED, ESTABLISHED) track when design-intent items were realized and when they were promoted to validated history. The review perspectives enforce security (SEC) and data integrity (DATA) evaluation on every plan.
+
+For the concepts behind this workflow, see [The Design-Intent Lifecycle](../concepts/design-intent-lifecycle.md) and [Review Perspectives and Communicability](../concepts/review-perspectives-and-communicability.md).
+
 ## What you'll accomplish
 
 A framework setup that provides audit trails for design decisions, enforces security and compliance perspectives on every change, and documents the evolution from as-is to to-be.

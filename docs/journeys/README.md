@@ -1,5 +1,7 @@
 # Journeys
 
+Each journey is a scenario-based starting point that guides you through SEJA adoption for your specific situation. Before diving into a journey, you may want to read the [Concepts](../concepts/) section to understand the key ideas behind the framework -- especially [What Is SEJA](../concepts/what-is-seja.md) and [The Design-Intent Lifecycle](../concepts/design-intent-lifecycle.md).
+
 Scenario-based starting points for adopting the SEJA framework. Each journey describes the context, recommended workflow, and key skills for a specific team shape or project situation.
 
 ## Solo
