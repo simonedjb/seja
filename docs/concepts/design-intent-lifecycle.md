@@ -41,14 +41,27 @@ The lifecycle follows a clear progression:
 4. **Human promotes to established.** The designer reviews the implementation, confirms it matches their intent, and promotes the validated items. The IMPLEMENTED marker in the to-be file is replaced with an ESTABLISHED stamp, and the corresponding entry is added to the established file.
 
 ```mermaid
-stateDiagram-v2
-    [*] --> ToBe: Designer writes intent
-    ToBe --> AsIs: Plan + Implement\n(agent executes)
-    AsIs --> Established: Promote\n(human validates)
-    Established --> [*]
+%%{
+  init: {
+    "theme": "neutral",
+    {'themeVariables': {'fontSize': '12px'}}}
+    "fontFamily": "monospace",
+    "htmlLabels": true,
+    "flowchart": {
+      "curve": "linear"
+    },
+  }
+}%%
 
-    AsIs --> ToBe: Spec-drift detected\n(refine intent)
-    ToBe --> ToBe: Designer updates\n(evolving vision)
+flowchart TD
+  start((" ")) --> |"fa:fa-user human: designer writes intent"| ToBe[ToBe]
+  style start stroke:#ffffff00, fill:#000000
+  subgraph  "" 
+    direction LR
+    ToBe --> |"fa:fa-gears agent: plan / implement"| AsIs[AsIs]
+    AsIs --> |"fa:fa-user human: promote"| Established[Established]
+    Established --> |"fa:fa-gears agent: detect spec-drift<br>fa:fa-user human: refine intent"| ToBe
+  end
 ```
 
 <details>
