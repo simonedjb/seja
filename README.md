@@ -1,96 +1,66 @@
 # SEJA -- Semiotic Engineering Journeys with Agents
 
-A public framework for agentic design and development.
+SEJA is a human-centered methodology and file-based framework for designing
+and building software with AI coding agents. It gives an agent-driven project
+a shared memory of intent, conventions, and implementation state, so that
+people and agents can reflect on what the system is communicating, decide
+together what to change, and keep that decision trail durable. It is for
+designers, developers, and small teams who want agent assistance without
+losing craft, context, or accountability.
 
-This project began with explorations conducted by Clarisse Sieckenius de Souza (PUC-Rio), Gabriel DJ Barbosa (PUC-Rio and Datamint), and Simone DJ Barbosa (PUC-Rio) on redesigning and redeveloping the academic discussion forum Dialogos.
+*We (SEJA creators and Claude Code) built this framework to make the communication between people and agents explicit, reviewable, and accountable.*
 
-Our goal is to design a human-centered computing methodology based on semiotic engineering for agentic software design and development in a way that supports Schön's concepts of reflection-in-action, reflection-on-action, and reflection-on-practice.
+The framework grew out of work by Clarisse Sieckenius de Souza, Gabriel DJ
+Barbosa, and Simone DJ Barbosa on redesigning an academic discussion forum
+with agentic tooling. It is grounded in semiotic engineering and in Schon's
+concepts of reflection-in-action, reflection-on-action, and reflection-on-
+practice.
 
-## Start here
+What you get once SEJA is installed in a project:
 
-- **Product designer?** Start with the [designer's guide](docs/for-designers.md) -- concepts, journeys, and workflows for design-driven development
-- **Developer?** Start with the [developer's guide](docs/for-developers.md) -- architecture, internals, and extension points
-- **New to the framework?** Start with the [onboarding guide](docs/claude-onboarding-guide.md) -- an end-to-end walkthrough for product designers new to AI-assisted development
-- Clone this repository or download it as ZIP from GitHub to get started
-- [Journeys](docs/journeys/) -- scenario-based starting points for solo work, teams, agencies, and regulated environments
-- [Recipes](docs/recipes/) -- short task-focused how-to guides
-- [Changelog](.claude/CHANGELOG.md) -- version history and migration notes
+- A small set of human-authored design artifacts that capture intent,
+  conventions, and the current state of the system.
+- Agent-authored artifacts that track implementation state and decisions,
+  kept in sync with source through lifecycle markers and quality gates.
+- A planning and review loop that turns vague requests into reviewable
+  plans, executes them against project conventions, and records the result.
 
----
+## Pick your path
 
-## Key concepts
+Two questions decide how you adopt SEJA: are you starting a new product or
+working inside an existing one, and do you want the framework files to live
+next to the source code or in a separate workspace repo? The matrix below
+maps each combination to the right how-to guide.
 
-| Term | Meaning |
-|------|---------|
-| **Foundational SEJA framework** | The reusable source of truth for skills, scripts, templates, agents, and guidance files. |
-| ***ProjectName* workspace** | A standalone git repository that holds the framework files (`.claude/` plus `_references/`), project guidance, and generated artifacts under `_output/`. |
-| ***ProjectName* codebase** | The product source code itself. In the workspace pattern, the framework points at this codebase without copying framework files into it. |
+|                | Collocated                                                                                 | Workspace                                                                                              |
+|----------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| **Greenfield** | New product, framework lives next to source. [Guide](docs/how-to/greenfield-collocated.md) | New product, framework lives in a separate workspace repo. [Guide](docs/how-to/greenfield-workspace.md) |
+| **Brownfield** | Existing codebase, framework added in place. [Guide](docs/how-to/brownfield-collocated.md) | Existing codebase, framework kept in a side workspace. [Guide](docs/how-to/brownfield-workspace.md)    |
 
-The workspace pattern is best when you want to keep framework artifacts and design history separate from product source code. The collocated pattern is best for solo or greenfield work when you want everything in one repository.
+If you are unsure, skim the quickstart first, then re-read this table. The
+collocated pattern is the simplest starting point for solo and small-team
+work; the workspace pattern keeps design history in its own repo and is a
+better fit for teams who want to add SEJA alongside an existing product
+without touching its source tree.
 
----
+## Read the docs
 
-## Toolkit
+Three entry points cover everything most readers need. Start at the top and
+move down as your questions get more detailed.
 
-The framework lives in `.claude/` and is configured via `CLAUDE.md` and `/slash` commands. It includes:
+- [docs/quickstart.md](docs/quickstart.md) -- 20-minute worked example, read this first. Walks through a tiny project end to end so you can see the framework in motion before committing to a pattern.
+- [docs/concepts.md](docs/concepts.md) -- sign system, profile x pattern matrix, and the Framework lifecycle chapter. Read this once the quickstart makes sense and you want to know why each artifact exists.
+- [docs/foundations.md](docs/foundations.md) -- theoretical primer on semiotic engineering and reflective practice, the two research traditions SEJA draws on.
+- [docs/foundations-assessment.md](docs/foundations-assessment.md) -- correspondence assessment mapping semiotic engineering constructs onto SEJA artifacts and workflows.
+- [docs/how-to/](docs/how-to/) -- full how-to set covering the four profile x pattern entry points plus cross-cutting tasks like planning, quality gates, team handoffs, and framework upgrades.
+- [docs/troubleshooting.md](docs/troubleshooting.md) -- symptom lookup table for diagnosing common issues when running the framework.
 
-- **15 skills** (13 user-facing + 2 internal lifecycle hooks): `/plan`, `/implement`, `/advise`, `/check`, `/explain`, `/document`, and more
-- **10 specialized agents** for code review, plan review, testing, migrations, communication, onboarding, and documentation
-- **7 path-scoped rules** that activate automatically when editing matching files
-- **43 validation scripts** for quality checks, analysis, and smoke testing
-- **50 reference templates** in `_references/` for generating project-specific standards
+### Advanced / complete framework file list
 
----
-
-## Recommendations
-
-1. Run `/seed` to copy the framework, then `/design` to configure project-specific files early, so the project guidance exists before implementation work starts.
-2. Treat the conceptual design and project conventions as first-class artifacts, not setup boilerplate.
-3. Always review the plan before running `/implement` until the codebase and workflow feel familiar.
-4. Use `/check` (validate, review, preflight) as routine safety rails.
-5. Keep `CLAUDE.md` and the `project/*.md` files current as the product evolves.
-6. Break larger work into small, reviewable steps.
-7. Never defer security (SEC) or accessibility (A11Y) findings without an explicit decision.
-8. Use metacommunication framing when the main challenge is what the interface should communicate.
-9. Review plans and diffs before accepting changes.
-10. Capture longer-term reasoning with roadmap, advisory, and Q&A artifacts.
-
----
-
-## Choose a path
-
-### Solo
-
-- [Product designer, new product](docs/journeys/journey-solo-designer-greenfield.md)
-- [Product designer, existing product](docs/journeys/journey-solo-designer-brownfield.md)
-- [Developer, side project](docs/journeys/journey-solo-developer.md)
-
-### Team
-
-- [Small team kickoff](docs/journeys/journey-small-team-kickoff.md)
-- [Growing team, existing product](docs/journeys/journey-growing-team.md)
-
-### Multi-project / special contexts
-
-- [Agency or consultancy](docs/journeys/journey-agency-multi-project.md)
-- [Enterprise / regulated system](docs/journeys/journey-enterprise-evolution.md)
-- [Teaching or research](docs/journeys/journey-teaching-research.md)
-
----
-
-## Core recipes
-
-- [Bootstrap a greenfield project](docs/recipes/recipe-bootstrap-greenfield.md)
-- [Map an existing codebase](docs/recipes/recipe-map-existing-codebase.md)
-- [Plan and execute a feature](docs/recipes/recipe-plan-and-execute.md)
-- [Set up a project workspace](docs/recipes/recipe-workspace-setup.md)
-- [Onboard a team member](docs/recipes/recipe-onboard-team-member.md)
-- [Run quality gates](docs/recipes/recipe-quality-gates.md)
-- [Generate project documentation](docs/recipes/recipe-generate-documentation.md)
-- [Generate stakeholder material](docs/recipes/recipe-stakeholder-material.md)
-- [Upgrade the foundational framework](docs/recipes/recipe-upgrade-framework.md)
-
----
+- [docs/reference/framework-reference.md](docs/reference/framework-reference.md) -- complete inventory of every skill, agent, rule, script, and reference file in the framework. This file is auto-generated from the framework source and is intended as a lookup table, not a tutorial.
+- [docs/reference/glossary.md](docs/reference/glossary.md) -- canonical SEJA terminology lookup.
+- [docs/reference/perspectives.md](docs/reference/perspectives.md) -- 16 review perspectives catalog.
+- [docs/reference/skills.md](docs/reference/skills.md) -- skills catalog organized by category.
 
 ## License
 
