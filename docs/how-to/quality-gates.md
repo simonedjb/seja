@@ -69,5 +69,6 @@ Whenever a `/check validate` run touches `project/product-design-as-coded.md`, `
 ## What to read next
 
 - [plan-and-execute.md](plan-and-execute.md) -- context on when in the plan/implement flow each gate fits.
+- [ci-integration.md](ci-integration.md) -- how to wire SEJA checks into CI/CD pipelines (git hooks, GitHub Actions, GitLab CI).
 - [upgrade.md](upgrade.md) -- `/check health` is the natural follow-up after an upgrade.
 - [concepts.md -- Framework lifecycle](../concepts.md#framework-lifecycle) -- the canonical definitions the callouts above link back to.

@@ -8,7 +8,7 @@ Do not edit by hand. To regenerate:
 
 # SEJA framework reference
 
-Generated 2026-04-11T23:23:36Z from seja-priv framework state.
+Generated 2026-04-12T02:36:33Z from seja-priv framework state.
 
 ## Skills
 
@@ -28,7 +28,7 @@ Generated 2026-04-11T23:23:36Z from seja-priv framework state.
 | /post-skill | [Internal] Lifecycle hook invoked by other skills for briefs update, QA logging, and git commit. Not intended for direct user invocation. | `.claude/skills/post-skill/SKILL.md` | `concepts.md`, `reference/framework-reference.md`, `reference/glossary.md` |
 | /pre-skill | [Internal] Lifecycle hook invoked by other skills to load references and log briefs. Not intended for direct user invocation. | `.claude/skills/pre-skill/SKILL.md` | `concepts.md`, `reference/framework-reference.md`, `reference/glossary.md` |
 | /qa-log | Log the entire current Q&A session into a file for future reference. | `.claude/skills/qa-log/SKILL.md` | `concepts.md`, `reference/framework-reference.md`, `reference/glossary.md` |
-| /reflect | Surface descriptive patterns across weeks of telemetry — sequences, durations, revisions, stuck loops, decision reversals. Strictly non-prescriptive; /advise is the follow-up for prescription. | `.claude/skills/reflect/SKILL.md` | `concepts.md`, `reference/framework-reference.md`, `reference/glossary.md` |
+| /reflect | On-demand reflection anchored on specific plans, advisories, or other artifacts. I summarize the artifacts you choose, ask what stands out, and record your reflection. | `.claude/skills/reflect/SKILL.md` | `concepts.md`, `reference/framework-reference.md`, `reference/glossary.md` |
 | /seed | Copy the SEJA framework into a new or existing project, or create a workspace alongside an existing codebase. | `.claude/skills/seed/SKILL.md` | `concepts.md`, `reference/framework-reference.md`, `reference/glossary.md` |
 | /upgrade | Upgrade SEJA framework files from the seed repo without touching project-specific files. Use when user mentions 'upgrade', 'upgrade framework', 'update framework', or 'pull framework updates'. | `.claude/skills/upgrade/SKILL.md` | `concepts.md`, `reference/framework-reference.md`, `reference/glossary.md` |
 
@@ -63,65 +63,66 @@ Generated 2026-04-11T23:23:36Z from seja-priv framework state.
 
 | Name | Purpose | Path | Mentioned in |
 |---|---|---|---|
-| apply_marker.py |  | `.claude/skills/scripts/apply_marker.py` | `concepts.md`, `foundations.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/plan-and-execute.md`, `reference/framework-reference.md`, `reference/glossary.md`, `troubleshooting.md` |
-| backfill_qa_dates.py |  | `.claude/skills/scripts/backfill_qa_dates.py` | `reference/framework-reference.md` |
-| bump_version.py |  | `.claude/skills/scripts/bump_version.py` | `reference/framework-reference.md` |
-| check_api_auth_decorators.py |  | `.claude/skills/scripts/check_api_auth_decorators.py` | `reference/framework-reference.md` |
+| apply_marker.py | Sole write path for Human (markers) files. | `.claude/skills/scripts/apply_marker.py` | `concepts.md`, `foundations.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/recipes.md`, `reference/framework-reference.md`, `reference/glossary.md`, `troubleshooting.md` |
+| backfill_qa_dates.py | One-time script to add dates to existing QA log headers. | `.claude/skills/scripts/backfill_qa_dates.py` | `reference/framework-reference.md` |
+| bump_version.py | Update all SEJA version files atomically. | `.claude/skills/scripts/bump_version.py` | `reference/framework-reference.md` |
+| check_api_auth_decorators.py | Verify API endpoint auth coverage in dialogos. | `.claude/skills/scripts/check_api_auth_decorators.py` | `reference/framework-reference.md` |
 | check_api_contract_sync.py | Check frontend/backend API contract synchronization. | `.claude/skills/scripts/check_api_contract_sync.py` | `reference/framework-reference.md` |
-| check_backend_test_coverage.py |  | `.claude/skills/scripts/check_backend_test_coverage.py` | `reference/framework-reference.md` |
-| check_changelog_append_only.py |  | `.claude/skills/scripts/check_changelog_append_only.py` | `reference/framework-reference.md` |
-| check_conventions.py |  | `.claude/skills/scripts/check_conventions.py` | `reference/framework-reference.md` |
-| check_design_output.py |  | `.claude/skills/scripts/check_design_output.py` | `reference/framework-reference.md` |
-| check_docs.py |  | `.claude/skills/scripts/check_docs.py` | `how-to/quality-gates.md`, `reference/framework-reference.md` |
-| check_frontend_test_coverage.py |  | `.claude/skills/scripts/check_frontend_test_coverage.py` | `reference/framework-reference.md` |
-| check_human_markers_only.py |  | `.claude/skills/scripts/check_human_markers_only.py` | `concepts.md`, `foundations.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/quality-gates.md`, `reference/framework-reference.md` |
-| check_i18n_keys.py |  | `.claude/skills/scripts/check_i18n_keys.py` | `reference/framework-reference.md` |
-| check_migration_chain.py |  | `.claude/skills/scripts/check_migration_chain.py` | `reference/framework-reference.md` |
-| check_plan_coverage.py |  | `.claude/skills/scripts/check_plan_coverage.py` | `reference/framework-reference.md` |
-| check_po_parity.py |  | `.claude/skills/scripts/check_po_parity.py` | `reference/framework-reference.md` |
+| check_backend_test_coverage.py | Analyse backend test coverage. | `.claude/skills/scripts/check_backend_test_coverage.py` | `reference/framework-reference.md` |
+| check_changelog_append_only.py | Enforce append-only discipline on designated | `.claude/skills/scripts/check_changelog_append_only.py` | `how-to/recipes.md`, `reference/framework-reference.md` |
+| check_conventions.py | Validate conventions variables against skill and reference files. | `.claude/skills/scripts/check_conventions.py` | `how-to/ci-integration.md`, `reference/framework-reference.md` |
+| check_design_output.py | Design output validation with plugin-based scanners. | `.claude/skills/scripts/check_design_output.py` | `reference/framework-reference.md` |
+| check_docs.py | Documentation consistency checker with plugin-based scanners. | `.claude/skills/scripts/check_docs.py` | `how-to/quality-gates.md`, `reference/framework-reference.md` |
+| check_frontend_test_coverage.py | Analyse frontend test coverage. | `.claude/skills/scripts/check_frontend_test_coverage.py` | `reference/framework-reference.md` |
+| check_human_markers_only.py | Verify that diffs to Human (markers) files | `.claude/skills/scripts/check_human_markers_only.py` | `concepts.md`, `foundations.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/quality-gates.md`, `how-to/recipes.md`, `reference/framework-reference.md` |
+| check_i18n_keys.py | Detect undefined / mismatched i18n keys. | `.claude/skills/scripts/check_i18n_keys.py` | `reference/framework-reference.md` |
+| check_migration_chain.py | Validate Alembic migration revision chain in dialogos. | `.claude/skills/scripts/check_migration_chain.py` | `reference/framework-reference.md` |
+| check_plan_coverage.py | Plan coverage verification against design-intent requirements. | `.claude/skills/scripts/check_plan_coverage.py` | `reference/framework-reference.md` |
+| check_po_parity.py | Verify Flask-Babel .po catalog parity. | `.claude/skills/scripts/check_po_parity.py` | `reference/framework-reference.md` |
 | check_route_coverage.py | Check that backend API routes have corresponding frontend API methods and vice versa. | `.claude/skills/scripts/check_route_coverage.py` | `reference/framework-reference.md` |
-| check_secrets.py |  | `.claude/skills/scripts/check_secrets.py` | `reference/framework-reference.md` |
-| check_section_boundary_writes.py |  | `.claude/skills/scripts/check_section_boundary_writes.py` | `concepts.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/quality-gates.md`, `reference/framework-reference.md`, `reference/glossary.md` |
-| check_skill_spec.py |  | `.claude/skills/scripts/check_skill_spec.py` | `reference/framework-reference.md` |
-| check_skill_system.py |  | `.claude/skills/scripts/check_skill_system.py` | `reference/framework-reference.md` |
-| check_spec_conformance.py |  | `.claude/skills/scripts/check_spec_conformance.py` | `reference/framework-reference.md` |
-| check_telemetry.py |  | `.claude/skills/scripts/check_telemetry.py` | `reference/framework-reference.md` |
+| check_secrets.py | Scan files for accidentally committed secrets. | `.claude/skills/scripts/check_secrets.py` | `how-to/ci-integration.md`, `reference/framework-reference.md` |
+| check_section_boundary_writes.py | Reject contiguous write regions that cross | `.claude/skills/scripts/check_section_boundary_writes.py` | `concepts.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/quality-gates.md`, `reference/framework-reference.md`, `reference/glossary.md` |
+| check_skill_spec.py | Validate SKILL.md files against the agentskills.io spec. | `.claude/skills/scripts/check_skill_spec.py` | `reference/framework-reference.md` |
+| check_skill_system.py | Validate .claude skill system integrity. | `.claude/skills/scripts/check_skill_system.py` | `how-to/ci-integration.md`, `reference/framework-reference.md` |
+| check_spec_conformance.py | Validate codebase against structured spec checks. | `.claude/skills/scripts/check_spec_conformance.py` | `how-to/ci-integration.md`, `reference/framework-reference.md` |
+| check_telemetry.py | Validate telemetry.jsonl schema and field constraints. | `.claude/skills/scripts/check_telemetry.py` | `reference/framework-reference.md` |
 | check_unused_files.py | Detect orphaned source files not imported or referenced anywhere. | `.claude/skills/scripts/check_unused_files.py` | `reference/framework-reference.md` |
-| check_validation_constants_sync.py |  | `.claude/skills/scripts/check_validation_constants_sync.py` | `reference/framework-reference.md` |
-| check_version_changelog_sync.py |  | `.claude/skills/scripts/check_version_changelog_sync.py` | `reference/framework-reference.md` |
-| check_vuln_patterns.py |  | `.claude/skills/scripts/check_vuln_patterns.py` | `reference/framework-reference.md` |
-| count_loc.py |  | `.claude/skills/scripts/count_loc.py` | `reference/framework-reference.md` |
-| create_workspace.py |  | `.claude/skills/scripts/create_workspace.py` | `how-to/brownfield-workspace.md`, `reference/framework-reference.md` |
-| generate_briefs_index.py |  | `.claude/skills/scripts/generate_briefs_index.py` | `reference/framework-reference.md` |
-| generate_cheatsheet.py |  | `.claude/skills/scripts/generate_cheatsheet.py` | `reference/framework-reference.md` |
-| generate_essential_perspectives_summary.py |  | `.claude/skills/scripts/generate_essential_perspectives_summary.py` | `reference/framework-reference.md` |
-| generate_framework_reference.py |  | `.claude/skills/scripts/generate_framework_reference.py` | `how-to/upgrade.md`, `reference/framework-reference.md` |
-| generate_macro_index.py |  | `.claude/skills/scripts/generate_macro_index.py` | `reference/framework-reference.md` |
-| generate_perspectives_reference.py |  | `.claude/skills/scripts/generate_perspectives_reference.py` | `reference/framework-reference.md`, `reference/perspectives.md` |
-| generate_reflection_report.py |  | `.claude/skills/scripts/generate_reflection_report.py` | `reference/framework-reference.md` |
-| generate_skill_graph.py |  | `.claude/skills/scripts/generate_skill_graph.py` | `reference/framework-reference.md` |
-| generate_skill_map.py |  | `.claude/skills/scripts/generate_skill_map.py` | `reference/framework-reference.md` |
-| generate_skills_manifest.py |  | `.claude/skills/scripts/generate_skills_manifest.py` | `reference/framework-reference.md` |
-| generate_skills_reference.py |  | `.claude/skills/scripts/generate_skills_reference.py` | `reference/framework-reference.md`, `reference/skills.md` |
-| generate_telemetry_report.py |  | `.claude/skills/scripts/generate_telemetry_report.py` | `reference/framework-reference.md` |
-| human_markers_registry.py |  | `.claude/skills/scripts/human_markers_registry.py` | `reference/framework-reference.md` |
-| md_to_html.py |  | `.claude/skills/scripts/md_to_html.py` | `reference/framework-reference.md` |
-| migrate_to_global_ids.py |  | `.claude/skills/scripts/migrate_to_global_ids.py` | `reference/framework-reference.md` |
-| pending.py |  | `.claude/skills/scripts/pending.py` | `reference/framework-reference.md` |
-| project_config.py |  | `.claude/skills/scripts/project_config.py` | `reference/framework-reference.md` |
-| reflect_decision_reversals.py |  | `.claude/skills/scripts/reflect_decision_reversals.py` | `reference/framework-reference.md` |
-| reflect_duration_anomalies.py |  | `.claude/skills/scripts/reflect_duration_anomalies.py` | `reference/framework-reference.md` |
-| reflect_revision_rate.py |  | `.claude/skills/scripts/reflect_revision_rate.py` | `reference/framework-reference.md` |
-| reflect_sequence_mining.py |  | `.claude/skills/scripts/reflect_sequence_mining.py` | `reference/framework-reference.md` |
-| reflect_stuck_loops.py |  | `.claude/skills/scripts/reflect_stuck_loops.py` | `reference/framework-reference.md` |
-| reserve_id.py |  | `.claude/skills/scripts/reserve_id.py` | `reference/framework-reference.md` |
-| run_all_checks.py |  | `.claude/skills/scripts/run_all_checks.py` | `how-to/quality-gates.md`, `reference/framework-reference.md` |
-| run_all_tests.py |  | `.claude/skills/scripts/run_all_tests.py` | `reference/framework-reference.md` |
-| run_migrations.py |  | `.claude/skills/scripts/run_migrations.py` | `reference/framework-reference.md` |
-| run_preflight_fast.py |  | `.claude/skills/scripts/run_preflight_fast.py` | `reference/framework-reference.md` |
-| scan_public_docs_for_filenames.py |  | `.claude/skills/scripts/scan_public_docs_for_filenames.py` | `reference/framework-reference.md` |
-| smoke_test_core.py |  | `.claude/skills/scripts/smoke_test_core.py` | `reference/framework-reference.md` |
-| upgrade_framework.py |  | `.claude/skills/scripts/upgrade_framework.py` | `how-to/brownfield-workspace.md`, `how-to/upgrade.md`, `reference/framework-reference.md` |
+| check_validation_constants_sync.py | Detect drift between backend and frontend | `.claude/skills/scripts/check_validation_constants_sync.py` | `reference/framework-reference.md` |
+| check_version_changelog_sync.py | Verify VERSION file matches latest CHANGELOG heading. | `.claude/skills/scripts/check_version_changelog_sync.py` | `reference/framework-reference.md` |
+| check_vuln_patterns.py | Scan files for generated code vulnerability patterns. | `.claude/skills/scripts/check_vuln_patterns.py` | `reference/framework-reference.md` |
+| count_loc.py | Local source line counter for this workspace. | `.claude/skills/scripts/count_loc.py` | `reference/framework-reference.md` |
+| create_workspace.py | Create a project workspace from the foundational SEJA | `.claude/skills/scripts/create_workspace.py` | `how-to/brownfield-workspace.md`, `reference/framework-reference.md` |
+| generate_briefs_index.py | Generate a lightweight briefs index for fast scanning. | `.claude/skills/scripts/generate_briefs_index.py` | `reference/framework-reference.md` |
+| generate_cheatsheet.py | Generate a skill quick reference from SKILL.md frontmatter. | `.claude/skills/scripts/generate_cheatsheet.py` | `reference/framework-reference.md` |
+| generate_essential_perspectives_summary.py | Extract Essential (P0) questions | `.claude/skills/scripts/generate_essential_perspectives_summary.py` | `reference/framework-reference.md` |
+| generate_framework_reference.py | Generate the SEJA framework reference Markdown. | `.claude/skills/scripts/generate_framework_reference.py` | `how-to/upgrade.md`, `reference/framework-reference.md` |
+| generate_macro_index.py | Unified artifact index generator. | `.claude/skills/scripts/generate_macro_index.py` | `reference/framework-reference.md` |
+| generate_perspectives_reference.py | Generate the review-perspectives catalog. | `.claude/skills/scripts/generate_perspectives_reference.py` | `reference/framework-reference.md`, `reference/perspectives.md` |
+| generate_reflection_report.py | orchestrator for the /reflect skill. | `.claude/skills/scripts/generate_reflection_report.py` | `reference/framework-reference.md` |
+| generate_skill_graph.py | Generate skill-graph.json from skill-graph.md. | `.claude/skills/scripts/generate_skill_graph.py` | `reference/framework-reference.md` |
+| generate_skill_map.py | Generate a Mermaid flowchart from skill-graph.md. | `.claude/skills/scripts/generate_skill_map.py` | `reference/framework-reference.md` |
+| generate_skills_manifest.py | Generate L1 metadata manifest from SKILL.md files. | `.claude/skills/scripts/generate_skills_manifest.py` | `reference/framework-reference.md` |
+| generate_skills_reference.py | Generate the public-facing SEJA skills catalog. | `.claude/skills/scripts/generate_skills_reference.py` | `reference/framework-reference.md`, `reference/skills.md` |
+| generate_telemetry_report.py | Aggregate telemetry.jsonl and print a markdown report. | `.claude/skills/scripts/generate_telemetry_report.py` | `reference/framework-reference.md` |
+| human_markers_registry.py | Shared registry for Human (markers) files and allowed marker patterns. | `.claude/skills/scripts/human_markers_registry.py` | `reference/framework-reference.md` |
+| md_to_html.py | Convert a markdown file to styled standalone HTML. | `.claude/skills/scripts/md_to_html.py` | `reference/framework-reference.md` |
+| migrate_to_global_ids.py | One-time migration from mixed 4/6-digit per-type IDs | `.claude/skills/scripts/migrate_to_global_ids.py` | `reference/framework-reference.md` |
+| pending.py | Pending actions ledger for SEJA. | `.claude/skills/scripts/pending.py` | `how-to/recipes.md`, `reference/framework-reference.md` |
+| project_config.py | Central configuration for SEJA helper scripts. | `.claude/skills/scripts/project_config.py` | `reference/framework-reference.md` |
+| reflect_decision_reversals.py | surface accepted decisions that were later undone. | `.claude/skills/scripts/reflect_decision_reversals.py` | `reference/framework-reference.md` |
+| reflect_duration_anomalies.py | surface skill runs whose duration is anomalously long. | `.claude/skills/scripts/reflect_duration_anomalies.py` | `reference/framework-reference.md` |
+| reflect_revision_rate.py | per-skill rate of user-revised outputs. | `.claude/skills/scripts/reflect_revision_rate.py` | `reference/framework-reference.md` |
+| reflect_sequence_mining.py | first-order and second-order skill transition frequencies. | `.claude/skills/scripts/reflect_sequence_mining.py` | `reference/framework-reference.md` |
+| reflect_stuck_loops.py | detect sessions where the same skill runs repeatedly on similar briefs. | `.claude/skills/scripts/reflect_stuck_loops.py` | `reference/framework-reference.md` |
+| reserve_id.py | ID reservation for SEJA artifacts (single-writer assumed). | `.claude/skills/scripts/reserve_id.py` | `reference/framework-reference.md` |
+| run_all_checks.py | CI-independent validation orchestrator for SEJA checks. | `.claude/skills/scripts/run_all_checks.py` | `how-to/quality-gates.md`, `reference/framework-reference.md` |
+| run_all_tests.py | Run backend, frontend and Playwright tests, saving results. | `.claude/skills/scripts/run_all_tests.py` | `reference/framework-reference.md` |
+| run_migrations.py | Run pending SEJA framework migrations. | `.claude/skills/scripts/run_migrations.py` | `reference/framework-reference.md` |
+| run_preflight_fast.py | Fast preflight checks for git hooks and CI. | `.claude/skills/scripts/run_preflight_fast.py` | `how-to/ci-integration.md`, `reference/framework-reference.md` |
+| scan_public_docs_for_filenames.py | Map framework files to public-docs mentions. | `.claude/skills/scripts/scan_public_docs_for_filenames.py` | `reference/framework-reference.md` |
+| smoke_test_core.py | Smoke Test Core — generic framework for registry-driven API smoke testing. | `.claude/skills/scripts/smoke_test_core.py` | `reference/framework-reference.md` |
+| summarize_artifacts.py | Summarize SEJA artifacts by ID or path for embedding in reflection reports. | `.claude/skills/scripts/summarize_artifacts.py` | `reference/framework-reference.md` |
+| upgrade_framework.py | Upgrade a project using the SEJA-Claude framework to a | `.claude/skills/scripts/upgrade_framework.py` | `how-to/brownfield-workspace.md`, `how-to/upgrade.md`, `reference/framework-reference.md` |
 
 ## Migrations
 
@@ -143,25 +144,22 @@ Generated 2026-04-11T23:23:36Z from seja-priv framework state.
 | Name | Purpose | Path | Mentioned in |
 |---|---|---|---|
 | batch-execution-pattern | FRAMEWORK -- BATCH EXECUTION PATTERN -- Skills that generate multiple independent outputs (e.g., one per audience seg... | `_references/general/batch-execution-pattern.md` | `reference/framework-reference.md` |
-| ci-integration | GENERAL - CI/CD INTEGRATION -- --- | `_references/general/ci-integration.md` | `reference/framework-reference.md` |
-| coding-standards | GENERAL - CODING STANDARDS -- - **Small, focused functions**: prefer functions of ~20 lines or fewer. | `_references/general/coding-standards.md` | `reference/framework-reference.md` |
+| ci-integration | GENERAL - CI/CD INTEGRATION -- --- | `_references/general/ci-integration.md` | `how-to/quality-gates.md`, `reference/framework-reference.md` |
+| coding-standards | GENERAL - CODING STANDARDS -- - **Small, focused functions**: prefer functions of ~20 lines or fewer. | `_references/general/coding-standards.md` | `how-to/recipes.md`, `reference/framework-reference.md` |
 | communication | FRAMEWORK - COMMUNICATION -- --- | `_references/general/communication.md` | `reference/framework-reference.md` |
 | constraints | GENERAL - CONSTRAINTS -- - All files must be UTF-8 encoded. | `_references/general/constraints.md` | `reference/framework-reference.md` |
 | documentation-quality | FRAMEWORK -- DOCUMENTATION QUALITY GUIDE -- Five measurable attributes that define documentation quality: | `_references/general/documentation-quality.md` | `reference/framework-reference.md` |
 | figma-make-integration | FRAMEWORK - FIGMA MAKE INTEGRATION -- --- | `_references/general/figma-make-integration.md` | `reference/framework-reference.md` |
-| getting-started | Getting Started with SEJA -- Three onboarding paths depending on your situation. | `_references/general/getting-started.md` | `reference/framework-reference.md` |
 | onboarding | FRAMEWORK - ONBOARDING -- --- | `_references/general/onboarding.md` | `reference/framework-reference.md` |
 | permissions | FRAMEWORK - PERMISSIONS -- - Don't ask for confirmation before reading any folder or file in the project. | `_references/general/permissions.md` | `reference/framework-reference.md` |
 | progress-file-pattern | Progress File Pattern -- Cross-iteration learnings file for subagent communication during multi-step plan execution. | `_references/general/progress-file-pattern.md` | `reference/framework-reference.md` |
-| recipes | FRAMEWORK - WORKFLOW RECIPES -- --- | `_references/general/recipes.md` | `reference/framework-reference.md` |
 | report-conventions | FRAMEWORK - REPORT CONVENTIONS -- When a skill produces a report file in `${OUTPUT_DIR}` (see project/conventions.md)... | `_references/general/report-conventions.md` | `reference/framework-reference.md` |
 | review-log-template | FRAMEWORK - REVIEW LOG TEMPLATE -- --- | `_references/general/review-log-template.md` | `reference/framework-reference.md` |
 | review-perspectives | FRAMEWORK - REVIEW PERSPECTIVES -- --- | `_references/general/review-perspectives.md` | `reference/framework-reference.md` |
 | review-perspectives-essential-summary | FRAMEWORK - ESSENTIAL REVIEW PERSPECTIVES SUMMARY -- --- | `_references/general/review-perspectives-essential-summary.md` | `reference/framework-reference.md` |
 | review-perspectives-index | Review Perspectives Index -- Compact index for two-stage perspective loading. | `_references/general/review-perspectives-index.md` | `how-to/plan-and-execute.md`, `reference/framework-reference.md` |
-| script-manifest | FRAMEWORK -- SCRIPT MANIFEST | `_references/general/script-manifest.md` | `reference/framework-reference.md` |
 | shared-definitions | GENERAL - SHARED DEFINITIONS -- The **metacommunication message** is a designer-to-user message that is conveyed by t... | `_references/general/shared-definitions.md` | `foundations-assessment.md`, `foundations.md`, `reference/framework-reference.md` |
-| skill-graph | FRAMEWORK - SKILL RELATIONSHIP GRAPH -- After a skill completes, `/post-skill` reads this file and looks up the compl... | `_references/general/skill-graph.md` | `reference/framework-reference.md` |
+| skill-graph | FRAMEWORK - SKILL RELATIONSHIP GRAPH -- After a skill completes, `/post-skill` reads this file and looks up the compl... | `_references/general/skill-graph.md` | `how-to/recipes.md`, `reference/framework-reference.md` |
 | threat-model | SEJA Framework Threat Model -- Lightweight threat model for the SEJA agent framework. | `_references/general/threat-model.md` | `reference/framework-reference.md` |
 
 ## Perspectives
@@ -220,11 +218,11 @@ Generated 2026-04-11T23:23:36Z from seja-priv framework state.
 | claude-md | Template: CLAUDE.md -- --- | `_references/template/claude-md.md` | `reference/framework-reference.md` |
 | communication-style | TEMPLATE - COMMUNICATION STYLE -- --- | `_references/template/communication-style.md` | `reference/framework-reference.md` |
 | constitution | TEMPLATE - PROJECT CONSTITUTION -- --- | `_references/template/constitution.md` | `concepts.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/upgrade.md`, `quickstart.md`, `reference/framework-reference.md`, `reference/glossary.md` |
-| conventions | TEMPLATE - PROJECT CONVENTIONS -- --- | `_references/template/conventions.md` | `concepts.md`, `foundations-assessment.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/upgrade.md`, `quickstart.md`, `reference/framework-reference.md` |
+| conventions | TEMPLATE - PROJECT CONVENTIONS -- --- | `_references/template/conventions.md` | `concepts.md`, `foundations-assessment.md`, `how-to/brownfield-workspace.md`, `how-to/ci-integration.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/upgrade.md`, `quickstart.md`, `reference/framework-reference.md` |
 | demo/WALKTHROUGH | TaskFlow Demo Walkthrough -- This walkthrough guides you through the core SEJA skills using the pre-configured TaskFl... | `_references/template/demo/WALKTHROUGH.md` | `reference/framework-reference.md` |
 | demo/constitution | PROJECT CONSTITUTION -- TaskFlow Demo -- --- | `_references/template/demo/constitution.md` | `concepts.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/upgrade.md`, `quickstart.md`, `reference/framework-reference.md`, `reference/glossary.md` |
-| demo/conventions | PROJECT CONVENTIONS -- TaskFlow Demo -- --- | `_references/template/demo/conventions.md` | `concepts.md`, `foundations-assessment.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/upgrade.md`, `quickstart.md`, `reference/framework-reference.md` |
-| demo/product-design-as-intended | DESIGN INTENT -- TaskFlow Demo -- <!-- maintained-by: human (designer); Human (markers) classification since SEJA 2.8... | `_references/template/demo/product-design-as-intended.md` | `concepts.md`, `foundations-assessment.md`, `foundations.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/upgrade.md`, `quickstart.md`, `reference/framework-reference.md`, `reference/glossary.md`, `troubleshooting.md` |
+| demo/conventions | PROJECT CONVENTIONS -- TaskFlow Demo -- --- | `_references/template/demo/conventions.md` | `concepts.md`, `foundations-assessment.md`, `how-to/brownfield-workspace.md`, `how-to/ci-integration.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/upgrade.md`, `quickstart.md`, `reference/framework-reference.md` |
+| demo/product-design-as-intended | DESIGN INTENT -- TaskFlow Demo -- <!-- maintained-by: human (designer); Human (markers) classification since SEJA 2.8... | `_references/template/demo/product-design-as-intended.md` | `concepts.md`, `foundations-assessment.md`, `foundations.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/recipes.md`, `how-to/upgrade.md`, `quickstart.md`, `reference/framework-reference.md`, `reference/glossary.md`, `troubleshooting.md` |
 | design-standards | TEMPLATE - DESIGN STANDARDS REFERENCE -- --- | `_references/template/design-standards.md` | `reference/framework-reference.md` |
 | docs/adr | TEMPLATE -- ARCHITECTURE DECISION RECORDS (ADRs) -- ```markdown | `_references/template/docs/adr.md` | `reference/framework-reference.md` |
 | docs/api-reference | TEMPLATE -- API REFERENCE DOCUMENTATION -- ```markdown | `_references/template/docs/api-reference.md` | `reference/framework-reference.md` |
@@ -232,12 +230,12 @@ Generated 2026-04-11T23:23:36Z from seja-priv framework state.
 | docs/contextual-help | TEMPLATE -- CONTEXTUAL HELP CONTENT MODEL -- Every contextual help page follows this structure: | `_references/template/docs/contextual-help.md` | `reference/framework-reference.md` |
 | docs/help-center | TEMPLATE -- HELP CENTER / USER MANUAL -- Organize by role and capability, not by feature. | `_references/template/docs/help-center.md` | `reference/framework-reference.md` |
 | docs/readme | TEMPLATE -- PROJECT README -- <!-- Replace with your actual commands --> | `_references/template/docs/readme.md` | `reference/framework-reference.md` |
-| product-design-as-coded | TEMPLATE -- AS-CODED -- <!-- maintained-by: Agent (post-skill); Agent classification since SEJA 2.8.4 --> | `_references/template/product-design-as-coded.md` | `concepts.md`, `foundations-assessment.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/plan-and-execute.md`, `how-to/quality-gates.md`, `how-to/upgrade.md`, `reference/framework-reference.md`, `reference/glossary.md`, `troubleshooting.md` |
-| product-design-as-intended | TEMPLATE -- DESIGN INTENT -- <!-- maintained-by: human (designer); Human (markers) classification since SEJA 2.8.3 --> | `_references/template/product-design-as-intended.md` | `concepts.md`, `foundations-assessment.md`, `foundations.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/upgrade.md`, `quickstart.md`, `reference/framework-reference.md`, `reference/glossary.md`, `troubleshooting.md` |
+| product-design-as-coded | TEMPLATE -- AS-CODED -- <!-- maintained-by: Agent (post-skill); Agent classification since SEJA 2.8.4 --> | `_references/template/product-design-as-coded.md` | `concepts.md`, `foundations-assessment.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/plan-and-execute.md`, `how-to/quality-gates.md`, `how-to/recipes.md`, `how-to/upgrade.md`, `reference/framework-reference.md`, `reference/glossary.md`, `troubleshooting.md` |
+| product-design-as-intended | TEMPLATE -- DESIGN INTENT -- <!-- maintained-by: human (designer); Human (markers) classification since SEJA 2.8.3 --> | `_references/template/product-design-as-intended.md` | `concepts.md`, `foundations-assessment.md`, `foundations.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/recipes.md`, `how-to/upgrade.md`, `quickstart.md`, `reference/framework-reference.md`, `reference/glossary.md`, `troubleshooting.md` |
 | product-design-changelog | TEMPLATE -- PRODUCT DESIGN CHANGELOG -- <!-- maintained-by: agent (post-skill) --> | `_references/template/product-design-changelog.md` | `reference/framework-reference.md` |
-| project-spec |  | `_references/template/project-spec.md` | `reference/framework-reference.md` |
+| project-spec | Quickstart Spec v2 -- Generated {datetime} | `_references/template/project-spec.md` | `reference/framework-reference.md` |
 | questionnaire | TEMPLATE - PROJECT INSTANTIATION QUESTIONNAIRE -- --- | `_references/template/questionnaire.md` | `reference/framework-reference.md` |
-| roadmap-spec |  | `_references/template/roadmap-spec.md` | `reference/framework-reference.md` |
+| roadmap-spec | Roadmap Spec v1 -- Generated {datetime} | `_references/template/roadmap-spec.md` | `reference/framework-reference.md` |
 | rules-backend | Template: .claude/rules/backend.md -- ```yaml --- paths: - "${BACKEND_DIR}/**" --- ``` | `_references/template/rules-backend.md` | `reference/framework-reference.md` |
 | rules-e2e | Template: .claude/rules/e2e.md -- ```yaml --- paths: - "e2e/**" --- ``` | `_references/template/rules-e2e.md` | `reference/framework-reference.md` |
 | rules-frontend | Template: .claude/rules/frontend.md -- ```yaml --- paths: - "${FRONTEND_DIR}/src/**" --- ``` | `_references/template/rules-frontend.md` | `reference/framework-reference.md` |
@@ -245,7 +243,7 @@ Generated 2026-04-11T23:23:36Z from seja-priv framework state.
 | rules-migrations | Template: .claude/rules/migrations.md -- ```yaml --- paths: - "${MIGRATIONS_DIR}/**" --- ``` | `_references/template/rules-migrations.md` | `reference/framework-reference.md` |
 | rules-tests | Template: .claude/rules/tests.md -- ```yaml --- paths: - "**/*.test.*" - "${BACKEND_DIR}/tests/**" --- ``` | `_references/template/rules-tests.md` | `reference/framework-reference.md` |
 | security-checklists | TEMPLATE - SECURITY CHECKLISTS -- --- | `_references/template/security-checklists.md` | `reference/framework-reference.md` |
-| standards | TEMPLATE - ENGINEERING STANDARDS REFERENCE -- --- | `_references/template/standards.md` | `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `quickstart.md`, `reference/framework-reference.md` |
+| standards | TEMPLATE - ENGINEERING STANDARDS REFERENCE -- --- | `_references/template/standards.md` | `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/recipes.md`, `quickstart.md`, `reference/framework-reference.md` |
 | ux-research-results | TEMPLATE -- UX RESEARCH -- <!-- maintained-by: human (designer/researcher); Human (markers) classification since SEJA... | `_references/template/ux-research-results.md` | `reference/framework-reference.md` |
 
 ## User-facing surface
@@ -292,8 +290,8 @@ Framework artifacts mentioned at least once in `D:/git/labs/seja-priv/seja-publi
 | check_api_auth_decorators.py | Scripts | `.claude/skills/scripts/check_api_auth_decorators.py` | `reference/framework-reference.md` |
 | check_api_contract_sync.py | Scripts | `.claude/skills/scripts/check_api_contract_sync.py` | `reference/framework-reference.md` |
 | check_backend_test_coverage.py | Scripts | `.claude/skills/scripts/check_backend_test_coverage.py` | `reference/framework-reference.md` |
-| check_changelog_append_only.py | Scripts | `.claude/skills/scripts/check_changelog_append_only.py` | `reference/framework-reference.md` |
-| check_conventions.py | Scripts | `.claude/skills/scripts/check_conventions.py` | `reference/framework-reference.md` |
+| check_changelog_append_only.py | Scripts | `.claude/skills/scripts/check_changelog_append_only.py` | `how-to/recipes.md` |
+| check_conventions.py | Scripts | `.claude/skills/scripts/check_conventions.py` | `how-to/ci-integration.md` |
 | check_design_output.py | Scripts | `.claude/skills/scripts/check_design_output.py` | `reference/framework-reference.md` |
 | check_docs.py | Scripts | `.claude/skills/scripts/check_docs.py` | `how-to/quality-gates.md` |
 | check_frontend_test_coverage.py | Scripts | `.claude/skills/scripts/check_frontend_test_coverage.py` | `reference/framework-reference.md` |
@@ -304,21 +302,21 @@ Framework artifacts mentioned at least once in `D:/git/labs/seja-priv/seja-publi
 | check_plugin_registry.json | Configs | `.claude/skills/scripts/check_plugin_registry.json` | `how-to/quality-gates.md` |
 | check_po_parity.py | Scripts | `.claude/skills/scripts/check_po_parity.py` | `reference/framework-reference.md` |
 | check_route_coverage.py | Scripts | `.claude/skills/scripts/check_route_coverage.py` | `reference/framework-reference.md` |
-| check_secrets.py | Scripts | `.claude/skills/scripts/check_secrets.py` | `reference/framework-reference.md` |
+| check_secrets.py | Scripts | `.claude/skills/scripts/check_secrets.py` | `how-to/ci-integration.md` |
 | check_section_boundary_writes.py | Scripts | `.claude/skills/scripts/check_section_boundary_writes.py` | `concepts.md` |
 | check_skill_spec.py | Scripts | `.claude/skills/scripts/check_skill_spec.py` | `reference/framework-reference.md` |
-| check_skill_system.py | Scripts | `.claude/skills/scripts/check_skill_system.py` | `reference/framework-reference.md` |
-| check_spec_conformance.py | Scripts | `.claude/skills/scripts/check_spec_conformance.py` | `reference/framework-reference.md` |
+| check_skill_system.py | Scripts | `.claude/skills/scripts/check_skill_system.py` | `how-to/ci-integration.md` |
+| check_spec_conformance.py | Scripts | `.claude/skills/scripts/check_spec_conformance.py` | `how-to/ci-integration.md` |
 | check_telemetry.py | Scripts | `.claude/skills/scripts/check_telemetry.py` | `reference/framework-reference.md` |
 | check_unused_files.py | Scripts | `.claude/skills/scripts/check_unused_files.py` | `reference/framework-reference.md` |
 | check_validation_constants_sync.py | Scripts | `.claude/skills/scripts/check_validation_constants_sync.py` | `reference/framework-reference.md` |
 | check_version_changelog_sync.py | Scripts | `.claude/skills/scripts/check_version_changelog_sync.py` | `reference/framework-reference.md` |
 | check_vuln_patterns.py | Scripts | `.claude/skills/scripts/check_vuln_patterns.py` | `reference/framework-reference.md` |
-| ci-integration | General references | `_references/general/ci-integration.md` | `reference/framework-reference.md` |
+| ci-integration | General references | `_references/general/ci-integration.md` | `how-to/quality-gates.md` |
 | claude-md | Templates | `_references/template/claude-md.md` | `reference/framework-reference.md` |
 | clients | Communication | `_references/general/communication/clients.md` | `reference/framework-reference.md` |
 | code-reviewer | Agents | `.claude/agents/code-reviewer.md` | `reference/framework-reference.md` |
-| coding-standards | General references | `_references/general/coding-standards.md` | `reference/framework-reference.md` |
+| coding-standards | General references | `_references/general/coding-standards.md` | `how-to/recipes.md` |
 | communication | General references | `_references/general/communication.md` | `reference/framework-reference.md` |
 | communication-generator | Agents | `.claude/agents/communication-generator.md` | `reference/framework-reference.md` |
 | communication-style | Templates | `_references/template/communication-style.md` | `reference/framework-reference.md` |
@@ -364,7 +362,6 @@ Framework artifacts mentioned at least once in `D:/git/labs/seja-priv/seja-publi
 | generate_skills_manifest.py | Scripts | `.claude/skills/scripts/generate_skills_manifest.py` | `reference/framework-reference.md` |
 | generate_skills_reference.py | Scripts | `.claude/skills/scripts/generate_skills_reference.py` | `reference/framework-reference.md` |
 | generate_telemetry_report.py | Scripts | `.claude/skills/scripts/generate_telemetry_report.py` | `reference/framework-reference.md` |
-| getting-started | General references | `_references/general/getting-started.md` | `reference/framework-reference.md` |
 | guardians | Onboarding | `_references/general/onboarding/guardians.md` | `reference/framework-reference.md` |
 | human_markers_registry.py | Scripts | `.claude/skills/scripts/human_markers_registry.py` | `reference/framework-reference.md` |
 | i18n | Rules | `.claude/rules/i18n.md` | `reference/framework-reference.md` |
@@ -382,7 +379,7 @@ Framework artifacts mentioned at least once in `D:/git/labs/seja-priv/seja-publi
 | onboarding | General references | `_references/general/onboarding.md` | `reference/framework-reference.md` |
 | onboarding-generator | Agents | `.claude/agents/onboarding-generator.md` | `reference/framework-reference.md` |
 | ops | Perspectives | `_references/general/review-perspectives/ops.md` | `reference/framework-reference.md` |
-| pending.py | Scripts | `.claude/skills/scripts/pending.py` | `reference/framework-reference.md` |
+| pending.py | Scripts | `.claude/skills/scripts/pending.py` | `how-to/recipes.md` |
 | perf | Perspectives | `_references/general/review-perspectives/perf.md` | `reference/framework-reference.md` |
 | permissions | General references | `_references/general/permissions.md` | `reference/framework-reference.md` |
 | plan-reviewer | Agents | `.claude/agents/plan-reviewer.md` | `reference/framework-reference.md` |
@@ -393,7 +390,6 @@ Framework artifacts mentioned at least once in `D:/git/labs/seja-priv/seja-publi
 | project-spec | Templates | `_references/template/project-spec.md` | `reference/framework-reference.md` |
 | project_config.py | Scripts | `.claude/skills/scripts/project_config.py` | `reference/framework-reference.md` |
 | questionnaire | Templates | `_references/template/questionnaire.md` | `reference/framework-reference.md` |
-| recipes | General references | `_references/general/recipes.md` | `reference/framework-reference.md` |
 | reflect_decision_reversals.py | Scripts | `.claude/skills/scripts/reflect_decision_reversals.py` | `reference/framework-reference.md` |
 | reflect_duration_anomalies.py | Scripts | `.claude/skills/scripts/reflect_duration_anomalies.py` | `reference/framework-reference.md` |
 | reflect_revision_rate.py | Scripts | `.claude/skills/scripts/reflect_revision_rate.py` | `reference/framework-reference.md` |
@@ -416,19 +412,19 @@ Framework artifacts mentioned at least once in `D:/git/labs/seja-priv/seja-publi
 | run_all_checks.py | Scripts | `.claude/skills/scripts/run_all_checks.py` | `how-to/quality-gates.md` |
 | run_all_tests.py | Scripts | `.claude/skills/scripts/run_all_tests.py` | `reference/framework-reference.md` |
 | run_migrations.py | Scripts | `.claude/skills/scripts/run_migrations.py` | `reference/framework-reference.md` |
-| run_preflight_fast.py | Scripts | `.claude/skills/scripts/run_preflight_fast.py` | `reference/framework-reference.md` |
+| run_preflight_fast.py | Scripts | `.claude/skills/scripts/run_preflight_fast.py` | `how-to/ci-integration.md` |
 | scan_public_docs_for_filenames.py | Scripts | `.claude/skills/scripts/scan_public_docs_for_filenames.py` | `reference/framework-reference.md` |
-| script-manifest | General references | `_references/general/script-manifest.md` | `reference/framework-reference.md` |
 | sec | Perspectives | `_references/general/review-perspectives/sec.md` | `reference/framework-reference.md` |
 | security-checklists | Templates | `_references/template/security-checklists.md` | `reference/framework-reference.md` |
 | settings.json | Configs | `.claude/settings.json` | `reference/framework-reference.md` |
 | shapers | Onboarding | `_references/general/onboarding/shapers.md` | `reference/framework-reference.md` |
 | shared-definitions | General references | `_references/general/shared-definitions.md` | `foundations-assessment.md` |
-| skill-graph | General references | `_references/general/skill-graph.md` | `reference/framework-reference.md` |
+| skill-graph | General references | `_references/general/skill-graph.md` | `how-to/recipes.md` |
 | skills-manifest.json | Configs | `.claude/skills/skills-manifest.json` | `reference/framework-reference.md` |
 | smoke_test_core.py | Scripts | `.claude/skills/scripts/smoke_test_core.py` | `reference/framework-reference.md` |
 | standards | Templates | `_references/template/standards.md` | `how-to/greenfield-collocated.md` |
 | standards-checker | Agents | `.claude/agents/standards-checker.md` | `reference/framework-reference.md` |
+| summarize_artifacts.py | Scripts | `.claude/skills/scripts/summarize_artifacts.py` | `reference/framework-reference.md` |
 | test | Perspectives | `_references/general/review-perspectives/test.md` | `reference/framework-reference.md` |
 | test-runner | Agents | `.claude/agents/test-runner.md` | `reference/framework-reference.md` |
 | tests | Rules | `.claude/rules/tests.md` | `reference/framework-reference.md` |

@@ -1,23 +1,24 @@
 {
   "version": "1.0",
-  "generated": "2026-04-02T17:50:28Z",
+  "generated": "2026-04-12T02:12:08Z",
   "categories": [
     "planning-execution",
     "analysis-review",
     "code-tests",
+    "framework-maintenance",
     "utilities"
   ],
   "edges": [
     {
       "after": "/plan",
       "suggest": "/implement",
-      "reason": "Ready to execute this plan?",
+      "reason": "Ready to implement this plan?",
       "category": "planning-execution"
     },
     {
       "after": "/plan --light",
       "suggest": "/implement",
-      "reason": "Ready to execute this proposal?",
+      "reason": "Ready to implement this proposal?",
       "category": "planning-execution"
     },
     {
@@ -45,15 +46,57 @@
       "category": "planning-execution"
     },
     {
+      "after": "/implement",
+      "suggest": "/pending",
+      "reason": "Review pending actions created by this implementation",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/implement",
+      "suggest": "/reflect",
+      "reason": "Surface patterns across recent skill runs (non-prescriptive)",
+      "category": "planning-execution"
+    },
+    {
       "after": "/plan --roadmap",
       "suggest": "/implement",
-      "reason": "Ready to execute items from the roadmap?",
+      "reason": "Ready to implement items from the roadmap?",
       "category": "planning-execution"
     },
     {
       "after": "/explain spec-drift",
       "suggest": "/plan",
-      "reason": "Specs analyzed — ready to plan next steps?",
+      "reason": "Specs analyzed -- ready to plan next steps?",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/explain spec-drift",
+      "suggest": "/design",
+      "reason": "Drift indicates intent has evolved -- update the project design",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/explain spec-drift",
+      "suggest": "/pending",
+      "reason": "Address pending actions surfaced by the drift check",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/pending",
+      "suggest": "/explain spec-drift --promote",
+      "reason": "Next logical step after addressing pending curation items (Phase 3a generates Decision proposal)",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/explain spec-drift --promote",
+      "suggest": "/explain spec-drift --promote --apply-markers plan-<id>",
+      "reason": "Phase 3a done — after you apply the prose, flip the STATUS markers (Phase 3b)",
+      "category": "planning-execution"
+    },
+    {
+      "after": "/pending",
+      "suggest": "/implement",
+      "reason": "Next logical step after reviewing pending review items",
       "category": "planning-execution"
     },
     {
@@ -93,6 +136,18 @@
       "category": "analysis-review"
     },
     {
+      "after": "/check validate",
+      "suggest": "/pending",
+      "reason": "Check and address outstanding pending actions",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/check validate",
+      "suggest": "/reflect",
+      "reason": "After quality checks, surface patterns across recent runs",
+      "category": "analysis-review"
+    },
+    {
       "after": "/check smoke",
       "suggest": "/plan",
       "reason": "Found failures? Plan and fix them.",
@@ -123,10 +178,40 @@
       "category": "analysis-review"
     },
     {
+      "after": "/check telemetry",
+      "suggest": "/reflect",
+      "reason": "Surface descriptive patterns over the last 30 days?",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/reflect",
+      "suggest": "/advise",
+      "reason": "Want a prescriptive take on any pattern surfaced here?",
+      "category": "analysis-review"
+    },
+    {
+      "after": "/reflect",
+      "suggest": "/plan",
+      "reason": "Want to turn a surfaced pattern into new work?",
+      "category": "analysis-review"
+    },
+    {
       "after": "/check test-plan",
       "suggest": "/communication",
       "reason": "Share the test plan with stakeholders?",
       "category": "code-tests"
+    },
+    {
+      "after": "/upgrade",
+      "suggest": "/check health",
+      "reason": "Verify framework health after upgrading",
+      "category": "framework-maintenance"
+    },
+    {
+      "after": "/upgrade",
+      "suggest": "/explain spec-drift",
+      "reason": "Re-run spec drift after framework upgrade to catch changed conventions",
+      "category": "framework-maintenance"
     },
     {
       "after": "/document",
@@ -154,8 +239,14 @@
     },
     {
       "after": "/help --browse",
-      "suggest": "general/recipes.md",
+      "suggest": "docs/how-to/recipes.md",
       "reason": "See common multi-skill workflow recipes",
+      "category": "utilities"
+    },
+    {
+      "after": "/seed",
+      "suggest": "/design",
+      "reason": "New project: configure project design (stack, conventions, domain model) after seeding",
       "category": "utilities"
     },
     {
@@ -167,7 +258,19 @@
     {
       "after": "/design",
       "suggest": "/plan --roadmap",
-      "reason": "Project configured — generate a development roadmap?",
+      "reason": "Project configured -- generate a development roadmap",
+      "category": "utilities"
+    },
+    {
+      "after": "/design",
+      "suggest": "/plan",
+      "reason": "Plan your first feature against the new project design",
+      "category": "utilities"
+    },
+    {
+      "after": "/design",
+      "suggest": "/pending",
+      "reason": "Baseline periodic triggers for the new project",
       "category": "utilities"
     },
     {
