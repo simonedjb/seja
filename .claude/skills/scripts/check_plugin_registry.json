@@ -157,6 +157,16 @@
       "frontend": ["any"]
     },
     "scope": "docs",
-    "critical": false
+    "critical": false,
+    "sub_plugins": [
+      "framework-integrity",
+      "path-liveness",
+      "env-vars",
+      "command-refs",
+      "terminology",
+      "structural-completeness",
+      "framework-reference-coverage",
+      "lifecycle-fact-uniqueness"
+    ]
   }
 ]

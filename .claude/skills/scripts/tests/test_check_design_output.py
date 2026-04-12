@@ -92,9 +92,9 @@ class TestPhrasingRuleScanner:
         assert any("Imperative mood" in f.message for f in findings)
 
     def test_part_i_content_skipped(self, tmp_path):
-        """Only Part II of design-intent-to-be.md is scanned."""
+        """Only Part II of product-design-as-intended.md is scanned."""
         project_dir = _make_project_dir(tmp_path)
-        ditb = project_dir / "design-intent-to-be.md"
+        ditb = project_dir / "product-design-as-intended.md"
         ditb.write_text(
             "# Part I -- System Design\n"
             "The designer provides a grid layout.\n"
@@ -185,22 +185,60 @@ class TestFieldPresenceScanner:
 class TestValuePropagationScanner:
 
     def test_matching_backend_framework_passes(self, tmp_path):
+        """Unified standards.md: backend framework mentioned in Backend section passes."""
         project_dir = _make_project_dir(tmp_path)
         (project_dir / "conventions.md").write_text(
             "| `BACKEND_FRAMEWORK` | `Django` | FW |\n", encoding="utf-8"
         )
-        (project_dir / "backend-standards.md").write_text(
-            "# Backend Standards\nUse Django REST framework.\n", encoding="utf-8"
+        (project_dir / "standards.md").write_text(
+            "# Engineering Standards\n\n## Backend\n\nUse Django REST framework.\n\n## Frontend\n\nReact.\n",
+            encoding="utf-8",
         )
         with patch.dict("sys.modules", {"project_config": type("M", (), {"get": staticmethod(lambda k: {"BACKEND_FRAMEWORK": "Django", "FRONTEND_FRAMEWORK": None}.get(k))})}):
             findings = plugin_value_propagation(tmp_path, verbose=False)
         assert findings == []
 
     def test_mismatching_backend_framework_warns(self, tmp_path):
+        """Unified standards.md: backend framework missing from Backend section produces a warning."""
         project_dir = _make_project_dir(tmp_path)
         (project_dir / "conventions.md").write_text(
             "| `BACKEND_FRAMEWORK` | `Django` | FW |\n", encoding="utf-8"
         )
+        (project_dir / "standards.md").write_text(
+            "# Engineering Standards\n\n## Backend\n\nUse Flask for APIs.\n\n## Frontend\n\nReact.\n",
+            encoding="utf-8",
+        )
+        with patch.dict("sys.modules", {"project_config": type("M", (), {"get": staticmethod(lambda k: {"BACKEND_FRAMEWORK": "Django", "FRONTEND_FRAMEWORK": None}.get(k))})}):
+            findings = plugin_value_propagation(tmp_path, verbose=False)
+        assert len(findings) == 1
+        assert findings[0].severity == "warning"
+        assert "Django" in findings[0].message
+
+    def test_backend_framework_in_wrong_section_still_warns(self, tmp_path):
+        """Cross-section contamination: Django mentioned only in Frontend section must still warn."""
+        project_dir = _make_project_dir(tmp_path)
+        (project_dir / "conventions.md").write_text(
+            "| `BACKEND_FRAMEWORK` | `Django` | FW |\n", encoding="utf-8"
+        )
+        (project_dir / "standards.md").write_text(
+            "# Engineering Standards\n\n## Backend\n\nNo framework named here.\n\n"
+            "## Frontend\n\nDjango REST endpoints are consumed by React via fetch().\n",
+            encoding="utf-8",
+        )
+        with patch.dict("sys.modules", {"project_config": type("M", (), {"get": staticmethod(lambda k: {"BACKEND_FRAMEWORK": "Django", "FRONTEND_FRAMEWORK": None}.get(k))})}):
+            findings = plugin_value_propagation(tmp_path, verbose=False)
+        assert len(findings) == 1, f"expected 1 warning, got {findings}"
+        assert findings[0].severity == "warning"
+        assert "Django" in findings[0].message
+        assert "Backend" in findings[0].message
+
+    def test_legacy_backend_standards_file_fallback(self, tmp_path):
+        """When standards.md is absent, the scanner falls back to legacy backend-standards.md."""
+        project_dir = _make_project_dir(tmp_path)
+        (project_dir / "conventions.md").write_text(
+            "| `BACKEND_FRAMEWORK` | `Django` | FW |\n", encoding="utf-8"
+        )
+        # Only legacy file present
         (project_dir / "backend-standards.md").write_text(
             "# Backend Standards\nUse Flask for APIs.\n", encoding="utf-8"
         )
@@ -209,3 +247,22 @@ class TestValuePropagationScanner:
         assert len(findings) == 1
         assert findings[0].severity == "warning"
         assert "Django" in findings[0].message
+        assert "backend-standards.md" in findings[0].message
+
+    def test_neither_standards_file_present_skips_silently(self, tmp_path):
+        """When neither standards.md nor backend-standards.md exists, non-verbose returns no findings."""
+        project_dir = _make_project_dir(tmp_path)
+        (project_dir / "conventions.md").write_text(
+            "| `BACKEND_FRAMEWORK` | `Django` | FW |\n"
+            "| `FRONTEND_FRAMEWORK` | `React` | FW |\n",
+            encoding="utf-8",
+        )
+        # No standards files at all
+        with patch.dict("sys.modules", {"project_config": type("M", (), {"get": staticmethod(lambda k: {"BACKEND_FRAMEWORK": "Django", "FRONTEND_FRAMEWORK": "React"}.get(k))})}):
+            findings = plugin_value_propagation(tmp_path, verbose=False)
+        assert findings == []
+        # Verbose mode produces one info per framework
+        with patch.dict("sys.modules", {"project_config": type("M", (), {"get": staticmethod(lambda k: {"BACKEND_FRAMEWORK": "Django", "FRONTEND_FRAMEWORK": "React"}.get(k))})}):
+            findings = plugin_value_propagation(tmp_path, verbose=True)
+        info_findings = [f for f in findings if f.severity == "info"]
+        assert len(info_findings) >= 2

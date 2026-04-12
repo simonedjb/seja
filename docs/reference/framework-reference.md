@@ -8,7 +8,7 @@ Do not edit by hand. To regenerate:
 
 # SEJA framework reference
 
-Generated 2026-04-12T12:09:58Z from seja-priv framework state.
+Generated 2026-04-12T17:13:07Z from seja-priv framework state.
 
 ## Skills
 
@@ -64,7 +64,7 @@ Generated 2026-04-12T12:09:58Z from seja-priv framework state.
 | Name | Purpose | Path | Mentioned in |
 |---|---|---|---|
 | apply_marker.py | Sole write path for Human (markers) files. | `.claude/skills/scripts/apply_marker.py` | `concepts.md`, `foundations.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/recipes.md`, `reference/framework-reference.md`, `reference/glossary.md`, `troubleshooting.md` |
-| backfill_decision_digest.py | One-time backfill of decision-digest.jsonl from existing advisory logs. | `.claude/skills/scripts/backfill_decision_digest.py` |  |
+| backfill_decision_digest.py | One-time backfill of decision-digest.jsonl from existing advisory logs. | `.claude/skills/scripts/backfill_decision_digest.py` | `reference/framework-reference.md` |
 | backfill_qa_dates.py | One-time script to add dates to existing QA log headers. | `.claude/skills/scripts/backfill_qa_dates.py` | `reference/framework-reference.md` |
 | bump_version.py | Update all SEJA version files atomically. | `.claude/skills/scripts/bump_version.py` | `reference/framework-reference.md` |
 | check_api_auth_decorators.py | Verify API endpoint auth coverage in dialogos. | `.claude/skills/scripts/check_api_auth_decorators.py` | `reference/framework-reference.md` |
@@ -78,6 +78,7 @@ Generated 2026-04-12T12:09:58Z from seja-priv framework state.
 | check_human_markers_only.py | Verify that diffs to Human (markers) files | `.claude/skills/scripts/check_human_markers_only.py` | `concepts.md`, `foundations.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/quality-gates.md`, `how-to/recipes.md`, `reference/framework-reference.md` |
 | check_i18n_keys.py | Detect undefined / mismatched i18n keys. | `.claude/skills/scripts/check_i18n_keys.py` | `reference/framework-reference.md` |
 | check_migration_chain.py | Validate Alembic migration revision chain in dialogos. | `.claude/skills/scripts/check_migration_chain.py` | `reference/framework-reference.md` |
+| check_no_private_leaks.py | Verify seja-public/ contains no private content. | `.claude/skills/scripts/check_no_private_leaks.py` | `reference/framework-reference.md` |
 | check_plan_coverage.py | Plan coverage verification against design-intent requirements. | `.claude/skills/scripts/check_plan_coverage.py` | `reference/framework-reference.md` |
 | check_po_parity.py | Verify Flask-Babel .po catalog parity. | `.claude/skills/scripts/check_po_parity.py` | `reference/framework-reference.md` |
 | check_route_coverage.py | Check that backend API routes have corresponding frontend API methods and vice versa. | `.claude/skills/scripts/check_route_coverage.py` | `reference/framework-reference.md` |
@@ -95,7 +96,7 @@ Generated 2026-04-12T12:09:58Z from seja-priv framework state.
 | create_workspace.py | Create a project workspace from the foundational SEJA | `.claude/skills/scripts/create_workspace.py` | `how-to/brownfield-workspace.md`, `reference/framework-reference.md` |
 | generate_briefs_index.py | Generate a lightweight briefs index for fast scanning. | `.claude/skills/scripts/generate_briefs_index.py` | `reference/framework-reference.md` |
 | generate_cheatsheet.py | Generate a skill quick reference from SKILL.md frontmatter. | `.claude/skills/scripts/generate_cheatsheet.py` | `reference/framework-reference.md` |
-| generate_decision_digest.py | Generate a machine-readable decision digest. | `.claude/skills/scripts/generate_decision_digest.py` |  |
+| generate_decision_digest.py | Generate a machine-readable decision digest. | `.claude/skills/scripts/generate_decision_digest.py` | `reference/framework-reference.md` |
 | generate_essential_perspectives_summary.py | Extract Essential (P0) questions | `.claude/skills/scripts/generate_essential_perspectives_summary.py` | `reference/framework-reference.md` |
 | generate_framework_reference.py | Generate the SEJA framework reference Markdown. | `.claude/skills/scripts/generate_framework_reference.py` | `how-to/upgrade.md`, `reference/framework-reference.md` |
 | generate_macro_index.py | Unified artifact index generator. | `.claude/skills/scripts/generate_macro_index.py` | `reference/framework-reference.md` |
@@ -283,6 +284,7 @@ Framework artifacts mentioned at least once in `D:/git/labs/seja-priv/seja-publi
 | apply_marker.py | Scripts | `.claude/skills/scripts/apply_marker.py` | `concepts.md` |
 | arch | Perspectives | `_references/general/review-perspectives/arch.md` | `reference/framework-reference.md` |
 | backend | Rules | `.claude/rules/backend.md` | `reference/framework-reference.md` |
+| backfill_decision_digest.py | Scripts | `.claude/skills/scripts/backfill_decision_digest.py` | `reference/framework-reference.md` |
 | backfill_qa_dates.py | Scripts | `.claude/skills/scripts/backfill_qa_dates.py` | `reference/framework-reference.md` |
 | batch-execution-pattern | General references | `_references/general/batch-execution-pattern.md` | `reference/framework-reference.md` |
 | builders | Onboarding | `_references/general/onboarding/builders.md` | `reference/framework-reference.md` |
@@ -298,6 +300,7 @@ Framework artifacts mentioned at least once in `D:/git/labs/seja-priv/seja-publi
 | check_human_markers_only.py | Scripts | `.claude/skills/scripts/check_human_markers_only.py` | `concepts.md` |
 | check_i18n_keys.py | Scripts | `.claude/skills/scripts/check_i18n_keys.py` | `reference/framework-reference.md` |
 | check_migration_chain.py | Scripts | `.claude/skills/scripts/check_migration_chain.py` | `reference/framework-reference.md` |
+| check_no_private_leaks.py | Scripts | `.claude/skills/scripts/check_no_private_leaks.py` | `reference/framework-reference.md` |
 | check_plan_coverage.py | Scripts | `.claude/skills/scripts/check_plan_coverage.py` | `reference/framework-reference.md` |
 | check_plugin_registry.json | Configs | `.claude/skills/scripts/check_plugin_registry.json` | `how-to/quality-gates.md` |
 | check_po_parity.py | Scripts | `.claude/skills/scripts/check_po_parity.py` | `reference/framework-reference.md` |
@@ -352,6 +355,7 @@ Framework artifacts mentioned at least once in `D:/git/labs/seja-priv/seja-publi
 | frontend | Rules | `.claude/rules/frontend.md` | `reference/framework-reference.md` |
 | generate_briefs_index.py | Scripts | `.claude/skills/scripts/generate_briefs_index.py` | `reference/framework-reference.md` |
 | generate_cheatsheet.py | Scripts | `.claude/skills/scripts/generate_cheatsheet.py` | `reference/framework-reference.md` |
+| generate_decision_digest.py | Scripts | `.claude/skills/scripts/generate_decision_digest.py` | `reference/framework-reference.md` |
 | generate_essential_perspectives_summary.py | Scripts | `.claude/skills/scripts/generate_essential_perspectives_summary.py` | `reference/framework-reference.md` |
 | generate_framework_reference.py | Scripts | `.claude/skills/scripts/generate_framework_reference.py` | `how-to/upgrade.md` |
 | generate_macro_index.py | Scripts | `.claude/skills/scripts/generate_macro_index.py` | `reference/framework-reference.md` |

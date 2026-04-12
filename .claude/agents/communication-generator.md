@@ -32,7 +32,7 @@ You will receive:
    - Read the Diataxis mapping file
 
 2. **Load project state:**
-   - Read `_references/project/conceptual-design-as-is.md` for current system overview, mission, value proposition. If it does not exist, use available project information.
+   - Read `_references/project/product-design-as-coded.md` (the `## Conceptual Design` and `## Metacommunication` H2 sections) for current system overview, mission, value proposition. If it does not exist, use available project information.
    - Read `_references/project/conventions.md` (or `_references/template/conventions.md` as fallback) for project identity.
    - If available, read `_references/project/communication-style.md` for tone/depth overrides. If not, use defaults from `_references/template/communication-style.md`.
 

@@ -22,9 +22,10 @@ Map the Figma Make handoff onto SEJA's existing design-intent lifecycle:
 
 | Lifecycle stage | Figma Make role | SEJA role |
 |----------------|-----------------|-----------|
-| `design-intent-to-be` | Prototypes live here. Exploratory, disposable, not production artifacts. | Records the design intent that the prototype validates. |
-| `design-intent-established` | Handoff trigger. Prototype is approved for implementation. | `/plan` creates an implementation plan. Generated code is decomposed into modular components. |
-| `conceptual-design-as-is` | No role. Figma Make output no longer exists. | Production code managed entirely by SEJA. |
+| `design-intent` (working, `STATUS: proposed`) | Prototypes live here. Exploratory, disposable, not production artifacts. | Records the design intent that the prototype validates in `project/product-design-as-intended.md`. |
+| `design-intent` (handoff, `STATUS: implemented`) | Handoff trigger. Prototype is approved for implementation. | `/plan` creates an implementation plan. Generated code is decomposed into modular components. |
+| `design-intent § Decisions` (`STATUS: established`) | No role. Prototype is superseded by production code. | Decision entries capture the rationale after `/explain spec-drift --promote` Phase 3a/3b. |
+| `as-coded § Conceptual Design` | No role. Figma Make output no longer exists. | Production code managed entirely by SEJA. |
 
 ### MCP Server for stakeholder review
 
@@ -52,7 +53,7 @@ Use Figma Make's Attachments feature to attach SEJA reference files to your prom
 
 Recommended attachments:
 - `_references/general/coding-standards.md` -- general coding conventions
-- `_references/project/frontend-standards.md` -- project-specific frontend patterns
+- `_references/project/standards.md` -- project-specific engineering standards (Backend, Frontend, Testing, i18n); attach the file and focus on the Frontend section
 - Project component templates -- existing component files as examples for Figma Make to follow
 
 Figma Make supports these attachment types: PDF, Markdown, TSX, JS, CSS, CSV, JSON, images, and SVGs.

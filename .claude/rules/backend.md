@@ -9,7 +9,7 @@ paths:
 - **Marshmallow validation**: all JSON endpoints validate through schemas — no raw `json_data.get()`.
 - **Service layer** never imports Flask `request`/`response` — accepts plain arguments, raises `ServiceError` subtypes.
 
-See `project/backend-standards.md` for full conventions.
+See `project/standards.md § Backend` for full conventions.
 
 ## Perspective Alignment
 

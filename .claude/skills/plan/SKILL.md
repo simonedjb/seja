@@ -10,24 +10,20 @@ metadata:
   category: planning
   context_budget: heavy
   eager_references:
-    - project/conceptual-design-as-is.md
-    - project/design-intent-to-be.md
+    - project/product-design-as-coded.md
+    - project/product-design-as-intended.md
     - general/report-conventions.md
     - general/coding-standards.md
     - general/review-perspectives-index.md
   references:
-    - project/conceptual-design-as-is.md
-    - project/design-intent-to-be.md
+    - project/product-design-as-coded.md
+    - project/product-design-as-intended.md
     - project/conventions.md
     - general/report-conventions.md
     - general/coding-standards.md
-    - project/frontend-standards.md
-    - project/backend-standards.md
-    - project/testing-standards.md
-    - project/i18n-standards.md
+    - project/standards.md
     - project/security-checklists.md
-    - project/ux-design-standards.md
-    - project/graphic-ui-design-standards.md
+    - project/design-standards.md
     - general/review-perspectives.md
     - general/review-perspectives-index.md
     - general/review-log-template.md
@@ -128,9 +124,9 @@ The maximum (deepest) depth from all three sources always wins, using the orderi
 
 When using the metacomm framing:
 
-1. **Read existing metacomm intentions**: If `_references/project/design-intent-to-be.md` exists, read it before generating the plan. This file contains per-feature metacommunication intentions that describe how the designer intends the system to communicate with users.
+1. **Read existing metacomm intentions**: If `_references/project/product-design-as-intended.md` exists, read it before generating the plan. This file contains per-feature metacommunication intentions that describe how the designer intends the system to communicate with users.
 
-2. **Contradiction detection**: Compare the new brief against the existing intentions in `project/design-intent-to-be.md`. If the new brief contradicts an existing intention (e.g., the brief says "remove the tagging flow" but an existing intention describes tagging behavior), emit a **⚠ Metacomm contradiction** warning in the plan output, listing:
+2. **Contradiction detection**: Compare the new brief against the existing intentions in `project/product-design-as-intended.md`. If the new brief contradicts an existing intention (e.g., the brief says "remove the tagging flow" but an existing intention describes tagging behavior), emit a **⚠ Metacomm contradiction** warning in the plan output, listing:
    - The new brief's directive
    - The conflicting existing intention (quote the relevant line)
    - A recommendation: update the existing intention, or confirm the new brief supersedes it
@@ -141,21 +137,17 @@ When using the metacomm framing:
    - **Summary**: <one-sentence summary of the metacommunication message this plan implements>
    - **Source**: agent (metacomm)
    ```
-   This note is consumed downstream by `/explain spec-drift` or `/post-skill` to keep `project/design-intent-to-be.md` in sync.
+   This note is consumed downstream by `/explain spec-drift` or `/post-skill` to keep `project/product-design-as-intended.md` in sync.
 
 ## Skill-specific Instructions
 
 1. Run the /pre-skill "plan" $ARGUMENTS[0] to add general instructions to the context window.
 
 2. **Load references on demand**: Load lazy references from the "Available references" list as needed during planning:
-   - Load `project/design-intent-to-be.md` when using `--framing metacomm`
-   - Load `project/frontend-standards.md` when plan steps touch frontend files
-   - Load `project/backend-standards.md` when plan steps touch backend files
-   - Load `project/testing-standards.md` when defining test strategy
-   - Load `project/i18n-standards.md` when plan involves i18n changes
+   - Load `project/product-design-as-intended.md` when using `--framing metacomm`
+   - Load `project/standards.md` when plan steps touch backend, frontend, testing, or i18n files
    - Load `project/security-checklists.md` when plan involves auth, validation, or sensitive data
-   - Load `project/ux-design-standards.md` when plan involves UX flows or page layouts
-   - Load `project/graphic-ui-design-standards.md` when plan involves visual/UI design
+   - Load `project/design-standards.md` when plan steps involve UX flows or visual design
    - Load `general/review-perspectives.md` before the review phase (Phase 1)
    - Load `general/review-log-template.md` before writing the review log
 
@@ -179,6 +171,7 @@ When using the metacomm framing:
 - *review log*: a log of the review iterations, if applicable
 - *outcomes*: expected outcomes
 - *smoke*: `true` if any step creates or modifies API route files or frontend page/component files; `false` otherwise. This flag is consumed by `/implement` to decide whether to run `/check smoke api` during the quality gate.
+- *reflection* (optional, appended post-execution): a `## Reflection` section holding dated bullets appended by post-skill's post-action reflection loop (step 11b) when the user selects "Write a one-line reflection note". Absent by default; the section may be created on first use. Plans without reflection notes are fully valid. See `_references/general/constraints.md` § Decision-point rationale convention and `.claude/skills/post-skill/SKILL.md` step 11b for the reflection loop behavior.
   
    **Step format:**
 
@@ -204,17 +197,17 @@ When using the metacomm framing:
    - Each step should be completable in one subagent context window (rule of thumb: touches ≤5 files)
    - If a step would touch >5 files, split it into smaller steps
    - **Files**: list all files the step reads, creates, modifies, or deletes. For new files, the path is a planned location. For existing files, verify they exist during planning.
-   - **References**: list only the `_references/` reference files relevant to this step (e.g., `project/backend-standards` for a Python step, `project/frontend-standards` for a React step). Omit irrelevant ones.
+   - **References**: list only the `_references/` reference files relevant to this step (e.g., `project/standards.md § Backend` for a Python step, `project/standards.md § Frontend` for a React step). Omit irrelevant ones.
    - **Depends on**: list step numbers whose output this step requires. Use `none` if the step is independent. The orchestrator uses this to avoid executing steps before their dependencies complete.
    - **Verify**: a concrete, testable condition. Prefer automated checks ("tests pass", "linter clean") over subjective ones ("looks right").
    - **Tests**: required for steps with prefix FEATURE, FIX, or REFACTOR that create or modify source code files. Set to `N/A` for steps that only modify documentation, configuration, framework files, or other non-testable artifacts. Steps with prefix CHORE, DOCUMENT, or TEST may use N/A. Each step that modifies source code should declare what tests are needed. If the step is too small to warrant its own tests, indicate which step's tests will cover it.
    - **Docs**: required for steps with prefix FEATURE or REDESIGN that create or modify user-facing code or public APIs. Specify what documentation should be created or updated. Set to `N/A` for steps with no documentation impact (internal refactors, test-only changes, configuration). When a step adds a new API endpoint, note "Update API reference"; when adding a new UI screen, note "Add contextual help page".
-   - **Traces**: optional field linking the step to design-intent requirements. List comma-separated REQ IDs from `design-intent-to-be.md` that this step implements (e.g., `REQ-ENT-001, REQ-PERM-003`). Set to `N/A` if no REQ markers exist in the project's design-intent file or if the step does not directly implement a design requirement (e.g., test-only steps, infrastructure). When REQ markers exist in the spec, the planning agent should map each plan step to the requirement(s) it satisfies. See `general/shared-definitions.md` for the REQ ID convention.
+   - **Traces**: optional field linking the step to design-intent requirements. List comma-separated REQ IDs from `product-design-as-intended.md` that this step implements (e.g., `REQ-ENT-001, REQ-PERM-003`). Set to `N/A` if no REQ markers exist in the project's design-intent file or if the step does not directly implement a design requirement (e.g., test-only steps, infrastructure). When REQ markers exist in the spec, the planning agent should map each plan step to the requirement(s) it satisfies. See `general/shared-definitions.md` for the REQ ID convention.
    - Steps should be ordered so that dependencies flow forward (Step 2 depends on Step 1, not the reverse).
 
 4. Save the plan to the plan file. If not overwriting a file, proceed without asking for authorization.
 
-4b. **Coverage check (advisory)**: If `_references/project/design-intent-to-be.md` exists and contains REQ markers (`<!-- REQ-*-NNN -->`), run `python .claude/skills/scripts/check_plan_coverage.py --mode advisory` and include the coverage summary in the plan file as an informational section after the steps. This helps identify uncovered requirements early. If no REQ markers exist, skip silently.
+4b. **Coverage check (advisory)**: If `_references/project/product-design-as-intended.md` exists and contains REQ markers (`<!-- REQ-*-NNN -->`), run `python .claude/skills/scripts/check_plan_coverage.py --mode advisory` and include the coverage summary in the plan file as an informational section after the steps. This helps identify uncovered requirements early. If no REQ markers exist, skip silently.
 
 5. **Review the plan** using a complexity-gated, two-phase process. Use `general/review-log-template.md` for the review log format.
 
@@ -364,10 +357,11 @@ Reserve the next global ID by running `python .claude/skills/scripts/reserve_id.
 
 ## Mode Selection
 
-If no sub-argument or mode flag is provided beyond `--roadmap`, use the AskUserQuestion tool to ask which mode (if AskUserQuestion is not available, present as a numbered text list), with these options:
-- "1. Auto-generate -- read project reference files and decompose into work items (best after /design)"
-- "2. From spec file -- provide a pre-filled roadmap-spec.md (best for existing projects or manual control)"
-- "3. Generate blank spec -- create a roadmap-spec skeleton to fill out offline"
+If no sub-argument or mode flag is provided beyond `--roadmap`, use the AskUserQuestion tool to ask which mode (if AskUserQuestion is not available, present as a numbered text list). Each option carries rationale per the Decision-point rationale convention in `_references/general/constraints.md`:
+
+- **1. Auto-generate** -- I read the project reference files (`product-design-as-intended.md`, `product-design-as-coded.md`, conventions, standards) and decompose the work into dependency-aware waves. Recommended when `/design` has already populated the project references and the roadmap should reflect them. NOT recommended when the references are stale or missing, in which case the roadmap would inherit the gaps.
+- **2. From spec file** -- I read a pre-filled `roadmap-spec.md` you provide and compile it into the roadmap structure. Recommended when you already have a manual draft or are working on an existing project where the refs are not yet canonical. NOT recommended when no spec file exists yet -- in that case use option 3 first.
+- **3. Generate blank spec** -- I create a `roadmap-spec` skeleton for you to fill out offline, then invoke option 2 on it later. Recommended when you want human-authored control before auto-decomposition. NOT recommended when the project references are already authoritative -- option 1 is faster in that case.
 
 If the argument includes `--auto`, skip the menu and go directly to Mode 1.
 If the argument includes `--from-spec <path>`, skip the menu and go directly to Mode 2.
@@ -380,18 +374,18 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
 
 1. **Run /pre-skill "plan"** to load general instructions.
 
-2. **Read project references**: Verify the following files exist in the current project's `_references`. If `project/design-intent-to-be.md` is missing, abort with a message suggesting the user run `/design` first. `project/conceptual-design-as-is.md` is required for brownfield projects but optional for greenfield. Other files are optional (warn but continue). Read:
-   - `project/conceptual-design-as-is.md` (current-state entities, hierarchy, permissions, UX patterns -- empty or absent for greenfield)
-   - `project/design-intent-to-be.md` (target-state entities, hierarchy, permissions, UX patterns, metacommunication intentions)
+2. **Read project references**: Verify the following files exist in the current project's `_references`. If `project/product-design-as-intended.md` is missing, abort with a message suggesting the user run `/design` first. `project/product-design-as-coded.md` is required for brownfield projects but optional for greenfield. Other files are optional (warn but continue). Read:
+   - `project/product-design-as-coded.md` (unified implementation state with three H2 domain sections: `## Conceptual Design`, `## Metacommunication`, `## Journey Maps` -- empty or absent for greenfield)
+   - `project/product-design-as-intended.md` (target-state entities, hierarchy, permissions, UX patterns, metacommunication intentions)
    - `project/conventions.md` (directory structure, source paths)
-   - `project/backend-standards.md` (API patterns, service layer)
-   - `project/frontend-standards.md` (pages, components, routing)
-   - `project/i18n-standards.md` (locales, translation scope)
+   - `project/standards.md § Backend` (API patterns, service layer)
+   - `project/standards.md § Frontend` (pages, components, routing)
+   - `project/standards.md § i18n` (locales, translation scope)
    - `project/security-checklists.md` (validation, auth requirements)
 
-2b. **Requirements extraction pass**: If `_references/project/design-intent-to-be.md` contains REQ markers (`<!-- REQ-*-NNN -->`), launch a `general-purpose` agent (Agent tool) with a fresh context to extract a requirements index. The agent should:
+2b. **Requirements extraction pass**: If `_references/project/product-design-as-intended.md` contains REQ markers (`<!-- REQ-*-NNN -->`), launch a `general-purpose` agent (Agent tool) with a fresh context to extract a requirements index. The agent should:
 
-   1. Read `_references/project/design-intent-to-be.md` in full
+   1. Read `_references/project/product-design-as-intended.md` in full
    2. For each REQ marker found, extract: ID, section number, heading/title, classification (derived from type prefix per `general/shared-definitions.md` -- PERM/VAL -> security, UX/MC/JM -> ux, ENT/DELTA -> technical, I18N -> cross-cutting)
    3. Output a flat markdown table:
       ```
@@ -581,8 +575,8 @@ Design items are phrased as metacommunication messages using I/you: "When you [c
 # Roadmap <id> | <datetime> | <title>
 
 ## Source
-- project/conceptual-design-as-is.md (read)
-- project/design-intent-to-be.md (read)
+- project/product-design-as-coded.md (read)
+- project/product-design-as-intended.md (read)
 - project/conventions.md (read)
 - ... (list all files read)
 
@@ -591,19 +585,21 @@ Design items are phrased as metacommunication messages using I/you: "When you [c
 ### Wave 0 -- Foundation (sequential)
 | # | ID | Title | Scope | Type | Plan | Status |
 |---|-----|-------|-------|------|------|--------|
-| 1 | user-model | User entity + migration | backend | technical | plan-XXXX | pending |
-| 2 | group-model | Group entity + migration | backend | technical | plan-XXXX | pending |
+| 1 | user-model | User entity + migration | backend | technical | plan-TBD | pending |
+| 2 | group-model | Group entity + migration | backend | technical | plan-TBD | pending |
 
 ### Wave 1 -- Services/API (parallel)
 | # | ID | Title | Scope | Type | Plan | Depends on | Status |
 |---|-----|-------|-------|------|------|-----------|--------|
-| 3 | user-api | User CRUD API | backend | technical | plan-XXXX | user-model | pending |
-| 4 | group-api | Group CRUD API | backend | technical | plan-XXXX | group-model | pending |
+| 3 | user-api | User CRUD API | backend | technical | plan-TBD | user-model | pending |
+| 4 | group-api | Group CRUD API | backend | technical | plan-TBD | group-model | pending |
 
 ### Wave 2 -- Frontend (parallel)
 | # | ID | Title | Scope | Type | Plan | Depends on | Status |
 |---|-----|-------|-------|------|------|-----------|--------|
-| 5 | home-page | Home page UX flow | frontend | design | plan-XXXX | user-api | pending |
+| 5 | home-page | Home page UX flow | frontend | design | plan-TBD | user-api | pending |
+
+> The `Plan` column starts as `plan-TBD` for every row. Fill in the real ID (e.g., `plan-000042`) **only after** `/plan` has been invoked for that work item and has returned the ID it reserved. Do not pre-reserve IDs up front -- see the anti-pattern note in Mode 1 step 8.
 
 ## Execution Instructions
 

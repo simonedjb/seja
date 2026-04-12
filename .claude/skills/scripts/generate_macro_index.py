@@ -158,6 +158,12 @@ _CHECK_LOG_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Reflection: # Reflection <id> | datetime | title
+_REFLECTION_RE = re.compile(
+    r"^#\s+Reflection\s+(\d+)\s*\|\s*([\d\-: UTC]+)\s*\|\s*(.+)",
+    re.IGNORECASE,
+)
+
 
 def _find_date_in_text(text: str) -> str | None:
     """Try to find a date in the first 10 lines of text."""
@@ -395,6 +401,18 @@ def extract_artifact(filepath: Path) -> dict | None:
             "id": m.group(1).strip().zfill(6),
             "title": truncate(m.group(4).strip().rstrip("|").strip()),
             "status": "DONE",
+            "file": str(rel_path),
+        }
+
+    # Reflection
+    m = _REFLECTION_RE.match(header_line)
+    if m:
+        return {
+            "date": _normalize_date(m.group(2).strip()),
+            "type": "Reflection",
+            "id": m.group(1).strip().zfill(6),
+            "title": truncate(m.group(3).strip().rstrip("|").strip()),
+            "status": "",
             "file": str(rel_path),
         }
 

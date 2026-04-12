@@ -14,7 +14,7 @@ metadata:
 
 ## Stage Catalog
 
-Pre-skill executes as a pipeline of 7 composable stages. Each stage is independently skippable (if non-critical) and error-isolated (if non-critical).
+Pre-skill executes as a pipeline of 8 composable stages. Each stage is independently skippable (if non-critical) and error-isolated (if non-critical).
 
 | Stage ID | Name | Critical | Description |
 |----------|------|----------|-------------|
@@ -23,6 +23,7 @@ Pre-skill executes as a pipeline of 7 composable stages. Each stage is independe
 | `orphan-check` | Orphaned-brief detection | No | Detects orphaned STARTED entries |
 | `budget-eval` | Context budget evaluation | Yes | Determines context budget tier and loads briefs |
 | `compaction-check` | Context compaction warning | No | Warns when session has many skill invocations |
+| `pending-check` | Pending actions check | No | Surfaces count of outstanding human actions and runs lazy periodic triggers |
 | `ref-load` | Reference file loading | Yes | Loads constitution, conventions, permissions, constraints, and skill-specific references |
 | `constitution` | Constitution injection | No | Injects project constitution if it exists |
 
@@ -33,7 +34,7 @@ Any skill's SKILL.md frontmatter may include `skip_stages` under the `metadata` 
 - **Field**: `metadata.skip_stages`
 - **Format**: YAML list of stage IDs -- `skip_stages: [stage-id, ...]`
 - **Default**: empty list `[]` (all stages run)
-- **Allowed values**: only non-critical stage IDs may be listed: `help`, `orphan-check`, `compaction-check`, `constitution`
+- **Allowed values**: only non-critical stage IDs may be listed: `help`, `orphan-check`, `compaction-check`, `pending-check`, `constitution`
 - **Critical stage protection**: if a critical stage ID (`brief-log`, `budget-eval`, `ref-load`) appears in `skip_stages`, it is silently ignored -- critical stages always run
 
 Example frontmatter usage:
@@ -115,6 +116,25 @@ Check for context bloat by counting recent skill invocations in the current sess
 
 This stage is advisory-only -- it warns but does not block or auto-compact. Future phases may add automatic compaction.
 
+### Stage: pending-check
+
+**Skip guard**: If `pending-check` is in the calling skill's `metadata.skip_stages`, skip this stage.
+
+**Error isolation**: If this stage encounters an error, log a one-line warning: "Warning: pending-check stage failed: `<reason>`" and continue to the next stage. Do not abort pre-skill.
+
+Surface outstanding human actions from the pending ledger and run lazy periodic triggers. Single subprocess call (per plan-000265 amendment A8 -- collapsed from three invocations to one to stay under the <150ms per-skill budget).
+
+1. Run `python .claude/skills/scripts/pending.py status --overdue-days 14 --json` once. The `status` subcommand internally performs conditional cleanup (throttled by a 24h stamp in `${OUTPUT_DIR}/.pending-cleanup-stamp`), conditional periodic-check (throttled by a 1h stamp in `${OUTPUT_DIR}/.pending-periodic-stamp`), and a list reduction. It always exits 0 unless a cleanup or periodic-check write fails (in which case the JSON `warnings` field is populated but exit is still 0).
+
+2. Parse the JSON output: `{"count": N, "overdue_count": M, "top_3": [{"type": ..., "source": ..., "age_days": ..., "description": ...}, ...], "warnings": [...]}`.
+
+3. Emit based on the counts:
+   - `count == 0`: silent.
+   - `1 <= count <= 5 and overdue_count == 0`: one-line notice `You have N pending actions (run /pending to view).`
+   - `count > 5 or overdue_count > 0`: warning block with header `You have N pending actions (M overdue). Top 3 by age:` followed by three indented lines from `top_3`, each showing action type, source artifact, age in days, and description truncated to 80 chars.
+
+4. Never block the skill invocation; this stage is purely informational.
+
 ### Stage: ref-load
 
 Load reference files (applies to standard and heavy tiers only):
@@ -151,7 +171,7 @@ To load: read and inject the file from _references/<path>.
 ---
 ```
 
-Trigger hints are short phrases describing when the reference is useful (e.g., "reviewing security concerns", "writing frontend code"). Derive the hint from the filename and subdirectory (e.g., `project/security-checklists.md` -> "reviewing security concerns", `project/frontend-standards.md` -> "writing frontend code").
+Trigger hints are short phrases describing when the reference is useful (e.g., "reviewing security concerns", "writing frontend code"). Derive the hint from the filename and subdirectory (e.g., `project/security-checklists.md` -> "reviewing security concerns", `project/standards.md` -> "writing backend, frontend, testing, or i18n code").
 
 If the calling skill's SKILL.md **does not** contain a `metadata.references` field at all, log a warning: "Skill <name> has no metadata.references -- cannot load skill-specific references." All skills are expected to declare their references in frontmatter.
 

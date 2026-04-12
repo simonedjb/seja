@@ -3,6 +3,282 @@
 All notable changes to the SEJA-Claude framework are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.10.0] -- 2026-04-12 15:22 UTC
+
+### Added
+
+- `/document --type changelog --framework` workflow (plan-000339) -- framework changelog generation mode that runs `generate_changelog_data.py` for structured git history extraction, composes a Keep a Changelog entry inline, and auto-syncs to `seja-public/.claude/CHANGELOG.md`. The script returns commit groups, file diffs, and count metrics as JSON for prose composition.
+- Private-only content convention (plan-000346) -- two mechanisms for keeping `seja-priv`-exclusive content out of the public distribution:
+  - Paired HTML comment markers (`priv-only-start` / `priv-only-end`) for private content embedded within shared `.md` files. The `sync_to_public.py` `strip_private_sections()` function removes all content between markers (inclusive) when copying to `seja-public/`.
+  - `scripts/priv/` directory for entirely private scripts, excluded from sync (`EXCLUDE_DIRS`) and from `collect_source_files()` in `upgrade_framework.py`.
+- `check_no_private_leaks.py` validation script (plan-000346) -- scans `seja-public/` for remaining priv-only markers, known private file patterns, and private directory leaks. Registered in `run_preflight_fast.py`. Enhanced with content-fingerprint patterns (plan-000349) to detect private content leaking without markers.
+- Artifact-link convention for decision points (plan-000341) -- skills that present `AskUserQuestion` referencing generated artifacts now output a compact "Files for review" block immediately before the question, so users can open and review artifacts before answering. Convention documented in `constraints.md`.
+- `/seed` now creates a git commit of the initial framework files before handoff (plan-000340), ensuring the user starts with a clean working tree.
+- `tools/README.md` documenting the sync and leak-detection tooling (plan-000349).
+- SEJA slide tutorial production roadmap (roadmap-000337) and wave plans (plan-000342/343/344). Marked PRIVATE -- not synced to `seja-public/`.
+- 3 new test files with 22 new unit tests: `test_generate_changelog_data.py` (plan-000339), plus expanded coverage in existing test files for fenced code block handling and content-fingerprint patterns. Unit test count: 251 → 273.
+
+### Changed
+
+- `generate_changelog_data.py` moved from `scripts/` to `scripts/priv/` (plan-000346) -- framework changelog generation is a priv-exclusive capability.
+- `sync_to_public.py` `strip_private_sections()` now handles fenced code block awareness (46aba9c) -- markers inside fenced code blocks (triple-backtick regions) are preserved as documentation examples, not stripped.
+- `check_no_private_leaks.py` enhanced with content-fingerprint detection (plan-000349) -- beyond marker scanning, now detects known private content patterns (file paths, script names) that may leak without markers.
+- `/document` SKILL.md updated with `--framework` flag documentation inside priv-only markers (plan-000339, plan-000346).
+- Script count: 61 → 64. Preflight fast-check count: 12 → 13 (added `no-private-leaks`).
+
+### Removed
+
+- `generate_changelog_data.py` from public `scripts/` directory (moved to `scripts/priv/`; removed from `seja-public/` by sync exclusion).
+- `_references/template/demo/conceptual-design-to-be.md` and `metacomm-to-be.md` (demo file cleanup).
+
+## [2.9.0] -- 2026-04-12 13:00 UTC
+
+### Added
+
+- `/reflect` skill (plan-000295) -- on-demand reflection anchored on specific plans, advisories, or other artifacts. The user picks artifacts from `_output/`, the agent summarizes them, asks an open-ended question, and records the reflection as `_output/reflections/reflection-<id>-<slug>.md`. Includes a `--telemetry` mode for statistical pattern analysis across usage data. 5 reflection analysis primitives: `reflect_decision_reversals.py`, `reflect_duration_anomalies.py`, `reflect_revision_rate.py`, `reflect_sequence_mining.py`, `reflect_stuck_loops.py`. Orchestrated by `generate_reflection_report.py`. Skill count: 16 → 17.
+- `generate_decision_digest.py` and `backfill_decision_digest.py` (plan-000323+000324) -- decision digest index (`_output/decision-digest.jsonl`) scanning D-NNN entries in `product-design-as-intended.md` and HIGH/MEDIUM recommendations in advisory logs. The backfill script is idempotent with `--dry-run` support.
+- `DECISION_APPEND` marker type in `apply_marker.py` (plan-000322) -- appends new `### D-NNN:` ADR-shaped decision entries to the `## Decisions` section of `product-design-as-intended.md` with auto-assigned IDs. The `/advise` skill step 9b decision-extract proposal flow uses this marker type.
+- `/implement --roadmap <id>` wave-runner mode (plan-000332) -- executes all plans in a roadmap wave-by-wave without manual per-plan invocation. Each plan runs via auto mode in a fresh subagent. Pauses between waves for user review (configurable via `--checkpoint wave|plan|none`). Resumable: re-running picks up from the first incomplete item.
+- `/onboarding --all`, `--all-levels`, `--all-roles` batch flags (plan-000326) -- generate onboarding plans for all role×level combinations, all levels for one role, or all roles for one level in a single invocation via parallel subagents.
+- `--format md|html|both` flag for `/onboarding` skill (plan-000304).
+- `/seed` companion workspace option (plan-000310) -- when seeding an existing codebase, the user can now choose between embedding the framework inline or creating a separate companion workspace alongside the codebase. Interactive flow in step 0b asks "Embedded or Companion workspace?" and sets `--workspace` internally.
+- SEJA public docs restructuring (roadmap-000276) -- 21 new documentation files in `seja-public/docs/`: `concepts.md` (sign system, profile×pattern, role families, review perspectives, skills overview, decision matrix, framework lifecycle, epistemic stance chapters), `quickstart.md`, `troubleshooting.md`, `foundations.md` + `foundations-assessment.md` (semiotic engineering primer), 4 reference files (`framework-reference.md`, `glossary.md`, `perspectives.md`, `skills.md`), 9 how-to guides (`brownfield-collocated.md`, `brownfield-workspace.md`, `ci-integration.md`, `greenfield-collocated.md`, `greenfield-workspace.md`, `plan-and-execute.md`, `quality-gates.md`, `recipes.md`, `team-and-stakeholders.md`, `upgrade.md`), and `skill-map.md` + `skill-map.svg`.
+- `generate_framework_reference.py`, `generate_skills_reference.py`, `generate_perspectives_reference.py` (plan-000281, plan-000289) -- automated reference file generators for SEJA public docs.
+- `scan_public_docs_for_filenames.py` (plan-000280) -- docs filename scanner for framework reference generator, used by `check_docs.py`.
+- `summarize_artifacts.py` -- artifact summarization utility.
+- `upgrade_framework.py` -- script for upgrading a project's SEJA framework files while preserving project-specific data. Supports directory or .zip source, `--dry-run`, idempotent.
+- `check_docs.py` plugin-based documentation consistency checker with 6 scanners (plan-000283): framework integrity, path liveness, env vars, command refs, terminology, structural-completeness. Plugin registry in `check_plugin_registry.json`.
+- Advisory tags and `advisory_decisions` telemetry field (plan-000320+000321) -- the `/advise` skill now tags advisories; post-skill records `advisory_decisions` in telemetry. Telemetry schema expanded from 14 to 18 fields (14→17 via plan-000295, 17→18 via plan-000321): `qa_type`, `user_revised_output`, `decision_points`, `advisory_decisions`.
+- Plan-generation decision point in `/plan --roadmap` workflow (plan-000329) -- after generating a roadmap, offers to create all plans immediately.
+- 11 new test files with 120 new unit tests across reflection primitives, framework reference generators, check-docs plugins, telemetry schema, scan-public-docs, macro-index generation, and upgrade-framework. Unit test count: 131 → 251.
+
+### Changed
+
+- Template file renames (plan-000271): `_references/template/design-intent.md` → `product-design-as-intended.md`, `_references/template/ux-research.md` → `ux-research-results.md`, `_references/template/as-coded.md` → `product-design-as-coded.md`. Corresponding project file paths updated everywhere. All skills, agents, scripts, and cross-references updated to use the new names.
+- Template file rename (plan-000272): `_references/template/cd-as-is-changelog.md` → `product-design-changelog.md`. Same propagation across all references.
+- `apply_marker.py` UX polish (proposal-000270): `--value` now optional at the argparse layer (ESTABLISHED and INCORPORATED are stamp-kind markers that ignore it); `--plan` accepts bare 6-digit ID (e.g., `000267`) and auto-prefixes `plan-`. 6 new tests.
+- Onboarding levels consolidated from 5 to 3 (plan-000325): L1 Newcomer + L2 Practitioner → L1 Contributor, L3 Competent stays as L2 Expert, L4 Strategist + L5 Leader → L3 Leader. Reference files renamed accordingly in `_references/general/onboarding/`.
+- `/plan` step 7 now uses `AskUserQuestion` tool for the next-step decision point instead of plain text (plan-000330).
+- Post-skill as-is alignment condition narrowed (plan-000330) -- only triggers when the plan actually touched implementation files.
+- Decision-point rationale phrasing standardized (plan-000335) -- all decision-point options across plan, implement, and advise skills now use "Recommended when / NOT recommended when" instead of "Right when / Wrong when" per the project-wide convention in `constraints.md`.
+- `.claude/rules/tests.md` scope expanded (plan-000334) -- added `**/test_*.py` glob to match pytest-convention test files alongside the existing `**/*.test.*` pattern.
+- SEJA public docs legacy deletion sweep (plan-000290) -- 42 legacy documentation files removed from `seja-public/docs/` (old architecture/, concepts/, tutorials/, for-designers, for-developers, journeys/, recipes/ batch files) and replaced by the 21 new Diataxis-structured files.
+- Internal development references cleaned from `seja-public/` docs (plan-000317) -- removed `_output/` framework references and internal-only pointers.
+- Framework `_output` references relocated from public docs (plan-000309).
+- Stamp-based interval gating fixed for periodic triggers (0af9bc4) -- content-based staleness check replaces mtime-based check for `skills-manifest.json`.
+- `framework-structure.md` reference file maintainer summary updated to reflect all renames and count changes.
+- Script count: 45 → 61 (+16 new scripts). Preflight check count: 12 → 16.
+
+### Removed
+
+- `_references/template/design-intent.md` (renamed to `product-design-as-intended.md`).
+- `_references/template/ux-research.md` (renamed to `ux-research-results.md`).
+- `_references/template/as-coded.md` (renamed to `product-design-as-coded.md`).
+- `_references/template/cd-as-is-changelog.md` (renamed to `product-design-changelog.md`).
+- 42 legacy documentation files in `seja-public/docs/` superseded by the Diataxis restructuring.
+- 4 legacy onboarding level files (`l1-newcomer.md`, `l2-practitioner.md`, `l4-strategist.md`, `l5-leader.md`) replaced by consolidated `l1-contributor.md`, `l2-expert.md`, `l3-leader.md`.
+
+## [2.8.4] -- 2026-04-11 12:00 UTC
+
+### Added
+
+- `_references/template/as-coded.md` -- unified as-is template with three H2 domain sections (`## Conceptual Design`, `## Metacommunication`, `## Journey Maps`). Replaces the three separate as-is files (`conceptual-design-as-is.md`, `metacomm-as-is.md`, `journey-maps-as-is.md`). Classified `Agent` (post-skill writes it after plan execution; designers read-only). Source H2 sections from the three merged files become H3 subsections under the appropriate domain H2; `### 5. Changelog` under `## Metacommunication` is the new home of the metacomm changelog.
+- `.claude/skills/scripts/check_section_boundary_writes.py` -- new preflight validator that rejects any single contiguous write region spanning two or more H2 sections in registered files. Catches the class of bug where a buggy post-skill Edit accidentally modifies an adjacent section. Uses **change-run semantics** (Amendment A): walks each diff hunk body line-by-line and groups consecutive `+`/`-` lines into maximal change runs (context lines terminate a run). Each change run is checked independently against the section map, preventing false-positives where a hunk's context lines span an H2 boundary while the actual edits stay within one section. Extracts H2 sections from BOTH prior and current file versions (Amendment B) to detect cross-section rewrites via H2 deletion. Treats the pre-first-H2 region as an implicit "preamble" section (Amendment C). Silently skips first-write scenarios (new file in diff — Amendment D). Dual-path registry (`SECTION_BOUNDARY_FILES`) with both template and project entries, following plan-000267's pattern.
+- 13 new unit tests in `test_check_section_boundary_writes.py` covering: empty-registry warning, within-section edits, cross-section rejection, separate-hunk independence, new-file-in-diff silent pass, non-registered-file skip, append-at-EOF, preamble-only edits allowed (Amendment C), cross-preamble-to-H2 rejection (Amendment C), hunk with two disjoint change runs in one section, hunk with context crossing boundary but edits in one section, pure H2 header insertion allowed (Amendment B), and rewrite deleting an H2 boundary rejected (Amendment B).
+
+### Changed
+
+- `/design` skill now copies one unified `as-coded.md` for brownfield projects instead of three separate as-is files. Step 5c (As-Is Pre-population) populates the `## Conceptual Design` H2 section of the merged file with `### 2. Entity Hierarchy`, `### 4. Permission Model`, and `### 10. Validation Constants` H3 subsections populated from codebase scan results. The other two H2 sections remain as template placeholders; post-skill populates them on first plan execution.
+- Post-skill step 2 as-is alignment logic rewritten to target H2 sections within the merged file with a **three-branch discriminator** at the top of step 2b (Amendment F):
+    1. **File exists**: incremental edits to the `## Conceptual Design` H2 section via anchor-based `Edit` with `old_string` containing H3 heading text.
+    2. **File absent AND no legacy files present**: greenfield / fresh brownfield path, instantiate from `template/as-coded.md`.
+    3. **File absent AND any legacy file present**: option-3 migration path, emit a loud warning `legacy as-is layout detected ... Skipping as-is alignment for this plan` and skip as-is alignment entirely (no writes to `as-coded.md`, no writes to legacy files). This matches the CHANGELOG Migration Option 3 promise.
+  Steps 2c (Metacommunication) and 2d (Journey Maps) inherit the branch decision from 2b. A new Section boundary discipline note at the end of step 2d documents that writes must stay within one H2 section per `Edit` call and references `check_section_boundary_writes.py`.
+- `/explain spec-drift` drift analysis reads the unified `as-coded.md` and extracts `## Conceptual Design` and `## Metacommunication` H2 sections by heading rather than reading three separate files.
+- `_references/template/conventions.md` Key Files table: three rows (`CONCEPTUAL_DESIGN_AS_IS`, `METACOMM_AS_IS`, `JOURNEY_MAPS_AS_IS`) collapsed into a single `AS_CODED` row classified `Agent`. To-Be / As-Is Registry two rows updated: `${DESIGN_INTENT}` row as-coded column replaced with `${AS_CODED}`; `${DESIGN_INTENT}` §15 row as-coded column replaced with `${AS_CODED} § Journey Maps` (Amendment G).
+- `.claude/rules/framework-structure.md` Group A table: three as-is rows collapsed into one `project/as-coded.md | Agent | Auto-updated by post-skill. Three H2 sections...` row. Narrative paragraph updated to reflect the merge and to introduce the section-boundary enforcement model.
+- `check_design_output.py` phrasing-rule scanner now scans the `## Metacommunication` H2 section of `as-coded.md` instead of reading `metacomm-as-is.md` as a whole file. The scanner extracts only the metacomm H2 section so the phrasing rule does not false-positive on the conceptual-design or journey-map sections, which may legitimately use "the user" language.
+- Preflight check count: 11 → 12 (added `section-boundary-writes`).
+- Unit test count: 118 (plan-000268 baseline) → 131 (+13 new tests).
+- Cross-reference updates: `post-skill/SKILL.md`, `explain/SKILL.md`, `implement/SKILL.md`, `check/SKILL.md`, `design/SKILL.md`, `plan/SKILL.md`, `advise/SKILL.md`, `communication/SKILL.md`, `document/SKILL.md`, `onboarding/SKILL.md`, `.claude/agents/communication-generator.md`, `.claude/agents/document-generator.md`, `.claude/agents/onboarding-generator.md`, `_references/general/communication.md`, `_references/general/figma-make-integration.md`, `_references/general/getting-started.md`, `_references/general/onboarding/builders.md`, `_references/general/onboarding/shapers.md`, `_references/template/standards.md`, `_references/template/project-spec.md`, `_references/template/questionnaire.md`, `_references/template/cd-as-is-changelog.md`, `_references/template/agent/entities.yaml`, `_references/template/agent/permissions.yaml`.
+
+### Removed
+
+- `_references/template/conceptual-design-as-is.md` (content moved to `as-coded.md § Conceptual Design`).
+- `_references/template/metacomm-as-is.md` (content moved to `as-coded.md § Metacommunication`).
+- `_references/template/journey-maps-as-is.md` (content moved to `as-coded.md § Journey Maps`).
+
+### Not Removed
+
+- `_references/template/cd-as-is-changelog.md` -- kept as a separate file. Phase 3 F from advisory-000264 will conditionally embed it into `as-coded.md` in a future release, gated on Phase 1 C (plan-000267) and Phase 2 E (this plan) operating without incidents for one release cycle. Its preamble was updated to reference `as-coded.md § Conceptual Design` as the current-state snapshot.
+
+### Known Limitations
+
+- `_references/template/design-intent.md` and `_references/template/ux-research.md` retain stale prose references to `conceptual-design-as-is.md`, `metacomm-as-is.md`, and `journey-maps-as-is.md` in blockquotes around lines 317, 370, 395 and 106 respectively. Both files are classified `Human (markers)`, so prose edits are rejected by `check_human_markers_only.py`. A follow-up proposal should decide whether template-path entries in `HUMAN_MARKERS_FILES` should be relaxed for framework maintainers (who intentionally update template prose) or whether these specific prose lines should be rewritten via a dedicated escape hatch. The stale references are documentation-only and do not affect runtime behavior, but users who read these blockquotes in a newly-instantiated project will see references to files that no longer exist.
+- `.claude/CHANGELOG.md` retains historical references to the three legacy file names in entries from plan-000265, plan-000267, and plan-000268. These are frozen historical records and are intentionally left unchanged.
+
+### Migration
+
+For existing projects that already ran `/design` before 2.8.4, three options are available:
+
+1. **Manual concatenation**: manually concatenate `project/conceptual-design-as-is.md`, `project/metacomm-as-is.md`, and `project/journey-maps-as-is.md` into a single `project/as-coded.md` using the new template's section structure (three H2 domain sections; each source file's content becomes H3+ subsections under the corresponding domain H2).
+2. **Back up and re-run /design**: back up the old files and re-run `/design` to regenerate the unified file from the new template. This overwrites any project-specific as-coded content; only use if the implementation state is captured elsewhere.
+3. **Continue with the old layout**: post-skill 2.8.4 detects the legacy layout via the three-branch discriminator (Amendment F) and emits a loud warning `legacy as-is layout detected ... Skipping as-is alignment for this plan` on every plan execution, then skips the as-is alignment step entirely (no writes to `as-coded.md`, no writes to the legacy files). The warning repeats until migration. Designers should migrate promptly via Option 1 or Option 2. The framework does not silently write to a fresh `as-coded.md` alongside the legacy files.
+
+## [2.8.3] -- 2026-04-10 23:55 UTC
+
+### Added
+
+- `_references/template/design-intent.md` -- unified design-intent template merging the former `design-intent-to-be.md` (working intent) and `design-intent-established.md` (validated archive) into a single file. 446 lines, 20 H2 sections (§0 Planned Changes through §17 plus `## Decisions` ADR section and `## CHANGELOG`). Preserves all 8 REQ markers from the source files and seeds a `D-001` Decision template entry demonstrating the Nygard shape (Context / Decision / Consequences / optional Supersedes) with a `STATUS: proposed` marker. Classified `Human (markers)` -- prose (working intent, entity hierarchies, metacomm intentions, designed user journeys, Decision rationale) is strictly human-authored; agents write only `STATUS`, `ESTABLISHED`, and `CHANGELOG_APPEND` markers via `apply_marker.py`.
+- `_references/template/design-intent.md` AND `_references/project/design-intent.md` both registered in `HUMAN_MARKERS_FILES` and `APPEND_ONLY_SECTIONS` per plan-000268 Step 2. Dual-path pattern mirrors the plan-000267 ux-research registration.
+- `### Decision entries (ADR)` subsection in `general/shared-definitions.md` documenting the `D-NNN` namespace (orthogonal to `REQ-TYPE-NNN`), the Nygard shape, and the Phase 3a/3b promote workflow. REQ taxonomy table gets a footnote making the orthogonality explicit.
+- Phase 3a / Phase 3b promote workflow in `/explain spec-drift --promote`: Phase 3a (`/explain spec-drift --promote`) drafts ADR-shaped Decision entries from plan metadata, writes them to `_output/promote-proposals/promote-proposal-plan-<id>.md`, and queues paired `apply-promote-proposal` + `apply-promote-markers` pending actions (deduped against existing pending pairs for the same plan). Phase 3b (`/explain spec-drift --promote --apply-markers plan-NNNNNN`) heading-only greps `design-intent.md § Decisions` for each proposed D-NNN (`^###\s+D-NNN(?::|\s*$)`, never matching prose), runs per-item `AskUserQuestion` confirmation, invokes `apply_marker.py` on confirmed items to flip STATUS from `implemented` to `established`, and applies precise lifecycle updates (marks `apply-promote-proposal` done only when all proposed entries are present; marks `apply-promote-markers` done only when every present item was flipped successfully). Partial completion leaves `apply-promote-proposal` pending with a "N of M applied" message.
+- `test_explain_promote_phase3a_phase3b.py` -- 8 integration tests covering Phase 3a proposal generation, paired pending-action creation, heading-only grep verification, marker flip on present entries, partial-completion lifecycle (Amendment A3), legacy uppercase marker replacement (Amendment A1 + A5), duplicate Phase 3a invocation idempotency (Amendment A3), and non-colon heading form rejection (Amendment A4).
+- `test_status_flip_replaces_legacy_uppercase_marker` in `test_apply_marker.py` -- regression test for Amendment A1 widening of `_STATUS_MARKER_RE` to accept legacy uppercase `IMPLEMENTED` so that a Phase 3b flip REPLACES the legacy marker instead of stacking a new lowercase marker above it.
+- `test_extract_requirements_ignores_d_nnn_headings` in `test_check_plan_coverage.py` -- regression test for Amendment A2 locking in REQ / D-NNN namespace orthogonality.
+
+### Changed
+
+- `/design` skill: two `design-intent-to-be.md` + `design-intent-established.md` copy directives collapsed into a single `template/design-intent.md` -> `project/design-intent.md` copy with the `Human (markers)` classification note. Key Files table updated. All references to the old split file names replaced with `design-intent.md`.
+- `/explain spec-drift --promote`: the legacy single-phase "promote IMPLEMENTED items to established files" workflow replaced by the Phase 3a / Phase 3b split described above. Step B menu option 4 renamed "Promote implemented items" and routed to Phase 3a.
+- `/post-skill` step 2c (Design intent curation reminder): output text updated to point designers at `/explain spec-drift --promote` (Phase 3a generates a draft Decision entry proposal; Phase 3b flips the STATUS markers after you apply the prose) instead of the old "move entries from to-be to established" instructions.
+- `/post-skill` step 2e (DONE marker proposal): marker format changed from legacy `<!-- STATUS: IMPLEMENTED | plan-NNNNNN | YYYY-MM-DD -->` to the current lowercase scheme `<!-- STATUS: implemented | plan-NNNNNN | YYYY-MM-DD -->`. The "Apply now" branch no longer hedges with "until follow-up plans reclassify real files"; it always routes through `apply_marker.py` for files in `HUMAN_MARKERS_FILES`. Cross-reference note updated to list both `project/ux-research.md` and `project/design-intent.md` as Human (markers).
+- `/pending` skill dispatch text for `apply-promote-proposal` and `apply-promote-markers` rewritten to reference the actual Phase 3b command (`/explain spec-drift --promote --apply-markers <source>`) instead of the plan-000265 forward-declaration hedge.
+- `apply_marker.py` `_STATUS_MARKER_RE` widened from `[a-z]+` to `[A-Za-z]+` so legacy `STATUS: IMPLEMENTED` markers are detected. `_apply_status` normalizes `IMPLEMENTED` to `implemented` before the transition-allowed lookup, so a flip `implemented -> established` against a legacy marker REPLACES it (not stacks). (Amendment A1)
+- `check_plan_coverage.py` now reads the `DESIGN_INTENT` variable from conventions.md with a silent backward-compat fallback to `DESIGN_INTENT_TO_BE` for workspace-mode deployments. Error messages updated to reference `design-intent.md`. (Amendment A2 + A6)
+- `check_design_output.py` phrasing-rule scanner now reads `_references/project/design-intent.md` with a backward-compat fallback to the legacy path.
+- `_references/template/conventions.md` Key Files table: `DESIGN_INTENT_TO_BE` and `DESIGN_INTENT_ESTABLISHED` rows replaced with a single `DESIGN_INTENT` row pointing at `project/design-intent.md` classified `Human (markers)`. `DESIGN_INTENT_TO_BE` retained as a legacy alias row for workspace-mode compatibility (Amendment A6). To-Be / As-Is Registry two design-intent rows collapsed to two `${DESIGN_INTENT}` rows (one for §0-§17 + Decisions + CHANGELOG, one for §15 designed journeys).
+- `framework-structure.md`: Group A table two design-intent rows collapsed to one `project/design-intent.md | Human (markers)` row. Narrative paragraph updated to reflect the merge. The "Human (markers) is carried by ux-research.md" note now lists both ux-research.md (since 2.8.2) and design-intent.md (since 2.8.3).
+- `shared-definitions.md` Lifecycle Markers: existing "legacy + lowercase STATUS coexistence" paragraph extended to document the widened regex and the design-intent.md lowercase-primary convention.
+- `general/getting-started.md`, `general/recipes.md` (Recipe 13 Periodic Curation Sweep), `general/skill-graph.md`, `general/figma-make-integration.md`, `general/onboarding/shapers.md`: all references to `design-intent-to-be.md` / `design-intent-established.md` updated to `design-intent.md`. Recipe 13 rewritten to show the actual Phase 3a + Phase 3b 2026 workflow (replaces the forward-declaration text from plan-000265). Skill graph gains a `/explain spec-drift --promote` -> `/explain spec-drift --promote --apply-markers` edge.
+- Unit test count: 108 -> 118 (added 2 regression tests in plan-000268 Steps 3-4 for Amendments A1 and A2, plus 8 Phase 3a/3b integration tests in Step 11 for Amendments A3, A4, A5).
+
+### Removed
+
+- `_references/template/design-intent-to-be.md` (content merged into `design-intent.md` §0-§17).
+- `_references/template/design-intent-established.md` (content merged into `design-intent.md § Decisions` ADR section; the `D-001` template entry demonstrates the Nygard shape).
+
+### Migration
+
+For existing projects that already ran `/design` before 2.8.3, three options are available:
+
+1. Manually concatenate the old `design-intent-to-be.md` and `design-intent-established.md` into a single `project/design-intent.md` using the new template's section structure. For any entries already promoted to `established` in the old archive file, add a `### D-NNN:` Decision heading under `## Decisions` and add an `<!-- ESTABLISHED: plan-NNNNNN | YYYY-MM-DD -->` stamp above it. Preserve the designer-authored rationale verbatim.
+2. Back up the old files and re-run `/design` to regenerate the unified file from the new template. This overwrites any project-specific working intent and Decision content; only use if your design intent is captured elsewhere.
+3. Continue using the two-file layout. `check_changelog_append_only.py` is a no-op for projects that do not have `project/design-intent.md` in the touched set. Existing workflows that read the two old files continue to work: the merged file is not a runtime prerequisite for any skill. Note that new framework features added after 2.8.3 (including the Phase 3a/3b promote workflow) assume the unified layout, so this option is a stopgap.
+
+**Workspace-mode deployments**: projects created via `/seed --workspace` that use the `DESIGN_INTENT_TO_BE` variable in their workspace-owned `project/conventions.md` continue to work transparently via the `check_plan_coverage.py` backward-compat fallback. No stderr deprecation warning is emitted (the fallback is silent by design). The fallback will be removed in a future major release (SEJA 3.0); until then, workspace projects may migrate to `DESIGN_INTENT` at their own pace by editing their `project/conventions.md`.
+
+Manual integration check performed during implementation: the already-committed `_references/template/design-intent.md` was modified via `apply_marker.py --file _references/template/design-intent.md --id D-001 --marker STATUS --value implemented --plan plan-000268 --date 2026-04-10`, the change was staged, and both `check_changelog_append_only.py --staged` and `check_human_markers_only.py --staged` exited 0. This exercises the append-only validator's non-empty-prior-body path (not the new-in-diff bypass). The flip was then reverted.
+
+## [2.8.2] -- 2026-04-10 16:35 UTC
+
+### Added
+
+- `_references/template/ux-research.md` -- unified UX research template with stable paragraph IDs (R-P-NNN personas, R-PS-NNN problem scenarios, existing JM-E-NNN discovered journeys) and an embedded `## CHANGELOG` section. Replaces two separate ux-research-new.md and ux-research-established.md files. 161 lines, 6 H2 sections. First real file classified as `Human (markers)` (plan-000265's test fixture is still registered but is not a real framework artifact).
+- `.claude/skills/scripts/check_changelog_append_only.py` -- post-skill validator that enforces append-only discipline on designated sections. Two-rule system per plan-000267 Amendment 2: CHANGELOG sections use strict line-level prefix-preserving extension (no middle insertion allowed); §5 Discovered User Journeys uses prose-only prefix-preserving extension (lines matching ALLOWED_MARKERS are filtered out before comparison so apply_marker.py may legally insert INCORPORATED markers above existing JM-E-NNN headings). Registered as the `changelog-append-only` FAST_CHECKS entry in run_preflight_fast.py. 8 unit tests cover the happy path, historical-line modification/removal/middle-insertion rejection, new-file-in-diff silent pass, empty-registry loud warning, marker-line inserted mid-section (prose-only rule), and prose-line inserted mid-section (rejected).
+- `_references/template/ux-research.md` AND `_references/project/ux-research.md` both registered in `HUMAN_MARKERS_FILES` per plan-000267 Amendment 1. Dual-path pattern: the template path is what `/design` seeds (and framework-level tests touch); the project path is what designer commits exercise via post-skill step 2e. `apply_marker.py` and `check_human_markers_only.py` perform exact-string repo-relative path matching, so both forms must be present. Same dual-path pattern applied to `APPEND_ONLY_SECTIONS` in the new validator.
+
+### Changed
+
+- `/design` skill now copies one unified `ux-research.md` file instead of two during project setup. Copy directive updated with the `Human (markers)` classification note.
+- Post-skill step 2e's "Do NOT apply markers to ux-research files" rule is relaxed: agents may now write `INCORPORATED` markers and `CHANGELOG_APPEND` entries to `ux-research.md` via `apply_marker.py` after AskUserQuestion confirmation. Prose content remains human-authored.
+- `/explain` skill updated: JM-E-NNN journey references now point at `project/ux-research.md §5` instead of the old `project/ux-research-established.md §5`.
+- `framework-structure.md` File Maintainer Summary table: two ux-research rows collapsed to one `project/ux-research.md` row classified `Human (markers)`. The "Human (markers) classification exists but no files currently carry it" note from plan-000265 replaced with a reference to `project/ux-research.md` as the first real consumer.
+- `_references/template/conventions.md` Key Files table: `UX_RESEARCH_NEW` and `UX_RESEARCH_ESTABLISHED` rows replaced with a single `UX_RESEARCH` row pointing at `project/ux-research.md` classified `Human (markers)`. To-Be / As-Is Registry ux-research row collapsed to the unified form.
+- `_references/template/design-intent-to-be.md` and `_references/template/journey-maps-as-is.md` updated their cross-references to the merged ux-research file.
+- Preflight check count: 10 -> 11 (added `changelog-append-only`).
+- Unit test count: 100 -> 108 (added 8 tests for the new validator).
+- `post-skill/SKILL.md` line 77 (the journey-maps-as-is updater) now cross-references `project/ux-research.md §5` instead of the old established file.
+
+### Removed
+
+- `_references/template/ux-research-new.md` (content moved to `ux-research.md` §1-§4 with stable IDs R-P-NNN, R-PS-NNN).
+- `_references/template/ux-research-established.md` (content moved to `ux-research.md §5` with append-only enforcement and Processing Log replaced by per-entry INCORPORATED markers plus the embedded CHANGELOG section).
+
+### Migration
+
+For existing projects that already ran `/design` before 2.8.2, three options are available:
+
+1. Manually concatenate the old `ux-research-new.md` and `ux-research-established.md` into a single `project/ux-research.md` using the new template's section structure (H2 sections 1-5 + CHANGELOG). Assign stable IDs (`R-P-001`, `R-PS-001`, etc.) to existing entries and add a CHANGELOG entry for each.
+2. Back up the old files and re-run `/design` to regenerate the unified file from the new template. This overwrites any project-specific research content; only use if your research is captured elsewhere.
+3. Continue using the two-file layout. `check_changelog_append_only.py` is a no-op for projects that do not have `project/ux-research.md` in the touched set. Existing workflows that read the two old files continue to work because no skill's runtime path depends on the merged file (the skills that were updated in this plan reference the new path, but they do not crash or fail when the file is absent). Note: new framework features added after 2.8.2 may assume the unified layout, so this option is a stopgap.
+
+The `INCORPORATED` marker scheme is new and only applies to projects that migrate to the unified layout. Projects on the two-file layout continue to use the manual "move entries from new to established" workflow (or no workflow).
+
+Manual integration check performed during implementation: created a scratch `_references/project/ux-research.md` with two JM-E-NNN entries in §5, committed the baseline, invoked `apply_marker.py --file _references/project/ux-research.md --id JM-E-001 --marker INCORPORATED --value stamp --plan plan-000267 --date 2026-04-10` to insert a marker in the middle of §5, and confirmed both `check_human_markers_only.py --staged` and `check_changelog_append_only.py --staged` exit 0. The scratch file was then reverted. The end-to-end path validates Amendment 1 (dual-path registry) and Amendment 2 (prose-only §5 rule) on live content.
+
+## [2.8.1] -- 2026-04-10 14:50 UTC
+
+### Added
+
+- `_references/template/standards.md` -- unified engineering standards template with H2 sections `## Backend`, `## Frontend`, `## Testing`, `## i18n`. Replaces four separate standards template files. 2445 lines, 70 H3 subsections.
+- `_references/template/design-standards.md` -- unified design standards template with H2 sections `## UX patterns` and `## Graphic / visual design`. Replaces two separate design standards template files.
+- `_extract_h2_section` helper in `check_design_output.py` and a `Standards section notation` definition in `_references/general/shared-definitions.md` documenting the `§ <Domain> > N` cross-reference convention.
+- Three regression tests in `test_check_design_output.py`: `test_backend_framework_in_wrong_section_still_warns` (cross-section contamination), `test_legacy_backend_standards_file_fallback` (backward-compat), `test_neither_standards_file_present_skips_silently` (graceful degradation).
+
+### Changed
+
+- `/design` skill now copies two unified standards files (`standards.md` and `design-standards.md`) instead of six individual files during project setup.
+- All skill, rule, and reference documentation cross-references to the old standards files have been updated to point at the new unified files with `§ <Domain>` section notation (e.g., `standards.md § Backend > 6` replaces `backend-standards.md §6`).
+- `_references/template/conventions.md` Key Files table replaces `UX_DESIGN_STANDARDS` and `GRAPHIC_UI_DESIGN_STANDARDS` with a single `DESIGN_STANDARDS`, and adds a new `STANDARDS` entry for the merged engineering standards.
+- `check_design_output.py` reads the merged `standards.md` and filters by H2 section for backend-vs-frontend-specific framework-propagation checks. Falls back to legacy `backend-standards.md` and `frontend-standards.md` files when the merged file is absent (preserves the value-propagation guardrail for existing projects).
+- `check_human_markers_only.py` subprocess call now uses explicit `encoding="utf-8", errors="replace"` to prevent a Windows cp1252 UnicodeDecodeError when the staged diff contains UTF-8 bytes.
+- `_references/template/questionnaire.md` section `Fills:` targets updated to point at the merged-file H2 sections; section slugs kept as stable questionnaire identifiers decoupled from file names.
+
+### Removed
+
+- `_references/template/backend-standards.md` (content moved to `standards.md § Backend`)
+- `_references/template/frontend-standards.md` (content moved to `standards.md § Frontend`)
+- `_references/template/testing-standards.md` (content moved to `standards.md § Testing`)
+- `_references/template/i18n-standards.md` (content moved to `standards.md § i18n`)
+- `_references/template/ux-design-standards.md` (content moved to `design-standards.md § UX patterns`)
+- `_references/template/graphic-ui-design-standards.md` (content moved to `design-standards.md § Graphic / visual design`)
+
+### Migration
+
+For existing projects that already ran `/design` before 2.8.1, three options are available:
+
+1. Manually concatenate the old files into `project/standards.md` and `project/design-standards.md` using the same H2 section structure as the new templates.
+2. Back up the old files and re-run `/design` to regenerate the unified files from the new templates (this overwrites any project-specific standards content -- only use if customizations are captured elsewhere).
+3. Continue using the old layout -- skills that load standards read template values, so projects that keep `backend-standards.md`, `frontend-standards.md`, etc., continue to work. `check_design_output.py` has been updated to fall back to the legacy filenames if `standards.md` is not present, so the value-propagation guardrails remain active. Note: new framework features added after 2.8.1 may assume the unified layout, so this option is a stopgap, not a long-term path.
+
+Cross-reference notation in existing advisory logs and QA logs will not be rewritten -- a reader following `backend-standards §6` should read it as `standards.md § Backend > 6` under the 2.8.1 layout. See `_references/general/shared-definitions.md` § Notation Conventions for the translation rule.
+
+## [2.8.0] -- 2026-04-10 10:00 UTC
+
+### Added
+
+- New `Human (markers)` classification in the File Maintainer Classification table in `_references/general/shared-definitions.md` and referenced by `.claude/rules/framework-structure.md`. Agent may write fixed-format structured markers only, via `apply_marker.py`, after explicit `AskUserQuestion` confirmation. Enforced by `check_human_markers_only.py`.
+- New script `.claude/skills/scripts/human_markers_registry.py` -- shared registry module with `HUMAN_MARKERS_FILES`, `ALLOWED_MARKERS` (STATUS, ESTABLISHED, INCORPORATED, CHANGELOG_APPEND), and path helpers. Initial allowlist contains only a synthetic test fixture; follow-up consolidation plans will reclassify real files.
+- New script `.claude/skills/scripts/apply_marker.py` -- sole write path for Human (markers) files. Resolves paths via `Path.resolve(strict=True)` (blocks symlinks and `..`-traversal); validates marker kind, value, STATUS transitions; supports `--dry-run`.
+- New script `.claude/skills/scripts/check_human_markers_only.py` -- post-skill verifier that diffs staged or range changes against Human (markers) files and fails on any non-marker hunk. Registered in `run_preflight_fast.py` as the `human-markers` check. Supports `--staged`, `--range`, `--diff-from-file` (the last requires `SEJA_ALLOW_TEST_DIFF_INPUT=1` env var to prevent production misuse).
+- New script `.claude/skills/scripts/pending.py` -- pending-actions ledger helper with subcommands `add`, `done`, `snooze`, `dismiss`, `list`, `due`, `cleanup`, `periodic-check`, `status`. First script in the repo to use argparse subparsers. The `status` subcommand (per plan-000265 amendment A8) is a composite call for pre-skill that runs conditional cleanup (24h throttle) and conditional periodic-check (1h throttle) in a single Python process to stay under the per-skill latency budget.
+- New pre-skill stage `pending-check` between `compaction-check` and `ref-load`. Runs `pending.py status` once per skill invocation; emits silent / one-line notice / warning block based on pending count and overdue flag. Added to the `skip_stages` allowlist.
+- New skill `/pending` at `.claude/skills/pending/SKILL.md` -- interactive management of the pending ledger. Forwards `add|done|snooze|dismiss` subcommands to `pending.py`; for interactive list mode, dispatches items via `AskUserQuestion` based on their `type` field (mark-implemented routes to `apply_marker.py` for STATUS flips; verify/test/update/promote types print guidance and await `/pending done <id>`). Declares `skip_stages: [pending-check, ...]` to prevent recursion.
+- New conventions section `## Periodic Triggers` in `_references/template/conventions.md` with configurable intervals: `periodic-curation` (30 days), `spec-drift-check` (14 days), `verify-as-coded file threshold` (5), `pending age escalation` (14 days), `pending auto-dismiss` (90 days).
+- New fixture `.claude/skills/scripts/tests/fixtures/marker_fixture.md` -- synthetic Human (markers) file with three entries (R-P-001, R-P-002, D-001) and a `## CHANGELOG` section. Seeded into `HUMAN_MARKERS_FILES` from day one to prevent the empty-allowlist dormant bug and to give the test suite something non-empty to exercise against.
+- New permissions.md rule: "Do not use Edit or Write on files classified as Human (markers); use apply_marker.py instead."
+- New unit tests: `test_apply_marker.py` (14 cases), `test_check_human_markers_only.py` (10 cases), `test_pending.py` (17 cases), `test_pending_integration.py` (5 cases). Total new tests: 46. All pass (1 skipped for Windows symlink admin requirement).
+- Recipe 12 (Deferred Review Workflow) and Recipe 13 (Periodic Curation Sweep) in `_references/general/recipes.md`.
+- "Managing deferred work" section in `_references/general/getting-started.md`.
+- Skill graph entries linking `/implement`, `/explain spec-drift`, `/design`, `/check validate` to `/pending`, plus reverse edges from `/pending` to `/explain spec-drift --promote` and `/implement`.
+- `get_pending_file()` helper in `project_config.py` (lazy function, not module-level constant, to avoid import-time crash when `get_path` returns None).
+
+### Changed
+
+- Pre-skill stage count: 7 -> 8 (added `pending-check`).
+- Skill count: 15 -> 16 (14 user-facing + 2 internal hooks). Added `/pending`.
+- `_references/general/shared-definitions.md` File Maintainer Classification table now has four values (was three); `Human (markers)` inserted between `Human` and `Human / Agent`.
+- Post-skill sub-step `e. DONE marker proposal` AskUserQuestion gains a "Defer for later review" option alongside "Apply now" and "Skip". Choosing defer appends a `mark-implemented` pending action via `pending.py add` instead of applying markers inline.
+- Post-skill gains new nested sub-step `g. Pending action creation from plan metadata` under step 2 that auto-creates `verify-as-coded` (for plans with >= 5 files), `test-implementation` (for plans with a Test plan section), and `update-documentation` (for plans whose documentation prompt was skipped) pending actions based on plan metadata.
+- Post-skill gains new flush-left sub-step `6c. Human markers verifier` after `6b` that invokes `check_human_markers_only.py --staged` as a pre-commit gate.
+- `skip_stages` allowlist extended to include `pending-check`.
+- `.claude/rules/framework-structure.md` counts updated to reflect the new stage and skill; "Pre/post-skill monolithic pipelines" ADR paragraph updated.
+
+### Migration
+
+No existing files are reclassified as `Human (markers)` in this release. `HUMAN_MARKERS_FILES` contains only a synthetic test fixture. Follow-up plans (design-intent merge, ux-research merge) will reclassify real files one at a time with confidence, now that the enforcement infrastructure is tested in isolation. See advisory-000264 for the file-consolidation roadmap.
+
 ## [2.7.1] -- 2026-04-07 11:01 UTC
 
 ### Changed

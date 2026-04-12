@@ -1,4 +1,4 @@
-<!-- Roadmap Spec v1 — Generated {datetime} -->
+<!-- Roadmap Spec v1 -- Generated {datetime} -->
 <!-- Fill in your choices below. Delete sections that don't apply. -->
 <!-- After filling, run /plan --roadmap --from-spec <this-file> to generate plans. -->
 <!-- Independent items can then be executed in parallel via the implement skill. -->

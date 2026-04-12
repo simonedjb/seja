@@ -6,7 +6,7 @@ The **metacommunication message** is a designer-to-user message that is conveyed
 
 **Phrasing rule (non-negotiable)**: All metacommunication messages — in templates, project files, plans, briefs, per-feature logs, and EMT answers — **must** use first-person "I" for the designer and second-person "you" for the user. Never use "the designer", "the system", "the user" (third-person), passive voice, or imperative mood. This applies to all sections of `project/metacomm-*.md` files: the global summary/vision, every EMT answer, and every per-feature intent. Example: write "I designed a postpone shortcut for you because I know you tend to over-schedule" — not "The designer provides a postpone shortcut" or "Enforce privacy with minimal friction."
 
-**Verbatim rule**: When a user provides a metacommunication message as input — during /design, in a spec, in `project/design-intent-to-be.md`, or as a `--framing metacomm` brief — the agent must record it **exactly as written**, without summarization, editing, or any textual manipulation. The designer's precise wording carries intentional nuance; paraphrasing risks distorting the design intent.
+**Verbatim rule**: When a user provides a metacommunication message as input — during /design, in a spec, in `project/product-design-as-intended.md`, or as a `--framing metacomm` brief — the agent must record it **exactly as written**, without summarization, editing, or any textual manipulation. The designer's precise wording carries intentional nuance; paraphrasing risks distorting the design intent.
 
 ---
 
@@ -20,7 +20,7 @@ The **metacommunication message** is a designer-to-user message that is conveyed
 
 | SEJA Concept | SemEng Origin | Source |
 |---|---|---|
-| Metacommunication files (metacomm-to-be/as-is) | Metacommunication template -- the abstract message every system delivers from designers to users | [SemEng-2005, Ch. 1 & 3] |
+| Metacommunication files (product-design-as-intended § Metacommunication / product-design-as-coded § Metacommunication) | Metacommunication template -- the abstract message every system delivers from designers to users | [SemEng-2005, Ch. 1 & 3] |
 | First-person "I/you" phrasing rule | Designer's personal engagement -- designers are communicators, not anonymous producers | [SemEng-2005, Ch. 3 p.84] |
 | Extended Metacommunication Template (EMT) | EMT with guiding questions aligned to lifecycle stages (Analysis, Design, Prototype, Evaluation) | [EMT-Ethics-2021, pp.365-368] |
 | Spec-drift detection (as-is vs. to-be) | Communicability monitoring -- tracking whether design intent is being communicated | [SemEng-2005, Ch. 4; SemEng-Methods-2009] |
@@ -39,6 +39,14 @@ The **metacommunication message** is a designer-to-user message that is conveyed
 
 ---
 
+## Notation Conventions
+
+### Standards section notation
+
+Cross-references to the unified standards files use the form `standards.md § Backend > 6`, where `§ <Domain>` identifies the H2 section (Backend, Frontend, Testing, i18n for `standards.md`; UX patterns, Graphic / visual design for `design-standards.md`) and `> N` identifies the H3 subsection whose heading begins with `N.`. The original section numbers from the pre-2.8.1 single-topic files are preserved so that legacy citations of the form `backend-standards §6` map to `standards.md § Backend > 6` by direct substitution.
+
+---
+
 ## Lifecycle Markers
 
 > Standard inline markers for tracking the lifecycle of to-be items across all registered
@@ -49,18 +57,80 @@ The **metacommunication message** is a designer-to-user message that is conveyed
 > AskUserQuestion in post-skill). Agents must NEVER remove or alter any existing
 > IMPLEMENTED or ESTABLISHED marker -- these are audit records.
 
-### IMPLEMENTED marker (prose sections)
+### STATUS marker (prose sections)
 
 Applied as an inline HTML comment immediately before the section heading -- invisible in
-rendered markdown, machine-parseable by agent tooling:
+rendered markdown, machine-parseable by agent tooling.
+
+**Legacy scheme (pre-2.8.0, still supported for existing files):** a single uppercase
+value `IMPLEMENTED` used as a one-shot marker, typically paired with a separate
+`ESTABLISHED` stamp (see below) when the item is later promoted:
 
 ```markdown
 <!-- STATUS: IMPLEMENTED | plan-NNNNNN | YYYY-MM-DD -->
 ### Section Title
 ```
 
-A marker without a plan ID is valid for items implemented outside the plan workflow:
-`<!-- STATUS: IMPLEMENTED | manual | YYYY-MM-DD -->`
+A legacy marker without a plan ID is valid for items implemented outside the plan
+workflow: `<!-- STATUS: IMPLEMENTED | manual | YYYY-MM-DD -->`.
+
+**Current scheme (2.8.0+, used by `apply_marker.py` and the middle-path enforcement):**
+a lowercase multi-value marker with a documented state machine `proposed -> implemented
+-> established -> superseded`. Introduced by advisory-000264 Q3 (middle-path
+classification) and enforced by `check_human_markers_only.py` for files classified
+`Human (markers)`:
+
+```markdown
+<!-- STATUS: proposed | plan-NNNNNN | YYYY-MM-DD -->
+### Section Title
+```
+
+The plan ID and date fields are optional for `proposed` (the initial state written by
+the designer) and required once the item has moved past `proposed`. Transitions are
+validated by `apply_marker.py` via `human_markers_registry.ALLOWED_MARKERS["STATUS"]
+["allowed_transitions"]`: `proposed -> implemented`, `implemented -> established`,
+`established -> superseded`. Regression (e.g., `established -> implemented`) is
+rejected.
+
+Both schemes coexist on disk: existing files carrying uppercase `STATUS: IMPLEMENTED`
+markers remain valid and match the verifier's allowlist. The widened `_STATUS_MARKER_RE`
+in `apply_marker.py` (since SEJA 2.8.3, plan-000268 Amendment A1) detects legacy
+uppercase markers so a Phase 3b flip `implemented -> established` REPLACES the legacy
+marker (rather than stacking a new lowercase marker above the old one). Files created
+or consolidated by follow-up plans use the lowercase multi-value scheme as the primary
+form; `project/product-design-as-intended.md` (since SEJA 2.8.3) is the canonical lowercase-primary
+Human (markers) file.
+
+### Decision entries (ADR)
+
+Design intent decision entries live in `project/product-design-as-intended.md § Decisions` under
+`### D-NNN: Title` headings (ADR shape: Context / Decision / Consequences / optional
+Supersedes, per Michael Nygard's Architecture Decision Records). The `D-NNN` namespace
+is **orthogonal to the REQ-TYPE-NNN namespace**: they are separate taxonomies, never
+intermixed. REQ markers trace individual requirements (entities, permissions, validation
+constants, etc.); Decision entries capture the rationale and trade-offs behind larger
+architectural choices.
+
+Decision entries carry their own `STATUS` marker (lowercase multi-value scheme) above
+the heading:
+
+```markdown
+<!-- STATUS: proposed | plan-NNNNNN | YYYY-MM-DD -->
+### D-001: Use PostgreSQL as primary datastore
+
+**Context**: ...
+**Decision**: ...
+**Consequences**: ...
+```
+
+The `/explain spec-drift --promote` workflow (Phase 3a) drafts ADR-shaped Decision
+entries from plan metadata for items marked `STATUS: implemented`, writing them to
+`_output/promote-proposals/promote-proposal-plan-<id>.md`. The designer reviews, edits
+to their voice, and copies the entries into `product-design-as-intended.md § Decisions`. Phase 3b
+(`/explain spec-drift --promote --apply-markers plan-<id>`) then flips the STATUS
+markers from `implemented` to `established` via `apply_marker.py`, using a
+heading-only grep (`^###\s+D-NNN(?::|\s*$)`) to verify presence without matching prose
+(designer-voice preservation per advisory-000264 Q4).
 
 ### IMPLEMENTED marker (table rows)
 
@@ -114,15 +184,18 @@ Stable, machine-parseable identifiers for design-intent requirements, enabling t
 
 **Auto-generation**: The `/design` skill auto-assigns REQ IDs during the verification pass. NNN is a zero-padded 3-digit counter per type, starting at 001.
 
+> **Footnote**: The `D-NNN` Decision-entry namespace (see `### Decision entries (ADR)` above) is **orthogonal** to `REQ-TYPE-NNN`. Never interpolate D-NNN into the REQ taxonomy table and never write `REQ-D-NNN` collisions. REQ markers trace requirements; D-NNN entries capture ADR-shaped architectural decisions.
+
 ---
 
 ## File Maintainer Classification
 
-Three-value scheme applied to all reference files in `_references/` (principally the `project/` subdirectory, which varies by project). Used as the "Maintained by" column in `project/conventions.md` Key Files table, and summarized in `.claude/rules/framework-structure.md`.
+Four-value scheme applied to all reference files in `_references/` (principally the `project/` subdirectory, which varies by project). Used as the "Maintained by" column in `project/conventions.md` Key Files table, and summarized in `.claude/rules/framework-structure.md`.
 
 | Value | Meaning | Agent rule |
 |-------|---------|-----------|
 | **Human** | Authored and updated exclusively by humans. | Agents must NOT write to this file. Agents may read it and propose changes via `AskUserQuestion`. |
+| **Human (markers)** | Human-authored prose; the agent may write fixed-format structured markers only (e.g., STATUS flags, INCORPORATED stamps, CHANGELOG append lines in a fixed format). | Agents may write only via `apply_marker.py`, and only after explicit `AskUserQuestion` confirmation in the same turn. Agents must never write prose content or modify text outside the allowed marker patterns, even after confirmation. Enforced by `check_human_markers_only.py` during post-skill step 6c. |
 | **Agent** | Auto-maintained by agents and skills (e.g., via post-skill). | Agents may read and write. Humans typically do not edit directly. |
 | **Human / Agent** | Seeded by an agent (e.g., via /design), then human-owned; both may update. Also applies to framework source files (`general/`, `template/`) maintained by both framework authors and framework tooling. | Agents may write, following the file's own update rules. Humans are the primary curators after initial generation. |
 
@@ -156,8 +229,8 @@ The SEJA framework uses three version-bearing files with distinct purposes:
 
 | Term | Definition | Used In |
 |------|-----------|---------|
-| **Soft delete** | Records are marked as deleted (`deleted_at` timestamp) rather than physically removed. Queries must filter for non-deleted records. | project/backend-standards.md §6 |
-| **Double confirmation** | A destructive-action pattern requiring the user to type a confirmation word before the action is enabled. | project/frontend-standards.md §11 |
+| **Soft delete** | Records are marked as deleted (`deleted_at` timestamp) rather than physically removed. Queries must filter for non-deleted records. | project/standards.md § Backend > 6 |
+| **Double confirmation** | A destructive-action pattern requiring the user to type a confirmation word before the action is enabled. | project/standards.md § Frontend > 11 |
 | **Review perspective** | A domain-based evaluation lens (SEC, PERF, DB, etc.) applied to code, plans, or decisions per `general/review-perspectives.md`. | general/review-perspectives.md |
 | **Pinned anchor** | A reference file that must survive context compaction events and be re-injected verbatim after any summarization or truncation. The pinned anchors list is defined in `general/constraints.md` under "Pinned Anchors (Non-Compactable Context)". | general/constraints.md |
 
@@ -167,25 +240,25 @@ The SEJA framework uses three version-bearing files with distinct purposes:
 
 | Term | Definition | Used In |
 |------|-----------|---------|
-| **Orchestrator page** | A page-level component that owns state, effects, and business logic, delegating rendering to sub-components in `features/<domain>/`. | project/frontend-standards.md §1, §2 |
-| **Feature co-location** | The practice of placing feature-specific hooks, forms, sub-components, and utils together in `features/<domain>/` rather than scattering them across `hooks/`, `components/`, etc. | project/frontend-standards.md §1, §20 |
+| **Orchestrator page** | A page-level component that owns state, effects, and business logic, delegating rendering to sub-components in `features/<domain>/`. | project/standards.md § Frontend > 1, > 2 |
+| **Feature co-location** | The practice of placing feature-specific hooks, forms, sub-components, and utils together in `features/<domain>/` rather than scattering them across `hooks/`, `components/`, etc. | project/standards.md § Frontend > 1, > 20 |
 
 ## If stack includes Flask/Python
 
 | Term | Definition | Used In |
 |------|-----------|---------|
-| **Three-layer architecture** | The backend pattern separating API (HTTP), Services (business logic), and Models (data). Services are HTTP-agnostic. | project/backend-standards.md §4 |
-| **Service layer contract** | The rule that services accept plain arguments, raise error subtypes, and never import framework request/response objects. | project/backend-standards.md §19 |
-| **Response builder** | Utility functions that produce consistent JSON response envelopes (success, error, paginated). | project/backend-standards.md §8 |
+| **Three-layer architecture** | The backend pattern separating API (HTTP), Services (business logic), and Models (data). Services are HTTP-agnostic. | project/standards.md § Backend > 4 |
+| **Service layer contract** | The rule that services accept plain arguments, raise error subtypes, and never import framework request/response objects. | project/standards.md § Backend > 19 |
+| **Response builder** | Utility functions that produce consistent JSON response envelopes (success, error, paginated). | project/standards.md § Backend > 8 |
 
 ## If stack includes CSS/HTML
 
 | Term | Definition | Used In |
 |------|-----------|---------|
-| **BEM** | Block Element Modifier — the CSS class naming convention used for custom component classes (`block__element--modifier`). | project/frontend-standards.md §5 |
+| **BEM** | Block Element Modifier - the CSS class naming convention used for custom component classes (`block__element--modifier`). | project/standards.md § Frontend > 5 |
 
 ## If stack includes a frontend
 
 | Term | Definition | Used In |
 |------|-----------|---------|
-| **Design tokens** | Centralized style primitives (colors, fonts) consumed by both the CSS framework config and app code. | project/frontend-standards.md §5 |
+| **Design tokens** | Centralized style primitives (colors, fonts) consumed by both the CSS framework config and app code. | project/standards.md § Frontend > 5 |

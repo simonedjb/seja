@@ -35,8 +35,20 @@
 | `BRIEFS_FILE` | `${OUTPUT_DIR}/briefs.md` | Execution log of all skill invocations |
 | `ARTIFACT_INDEX_FILE` | `${OUTPUT_DIR}/INDEX.md` | Single global artifact index |
 | `CONSTITUTION_FILE` | `project/constitution.md` | Project constitution (in `_references/`) |
-| `DESIGN_INTENT_TO_BE` | `project/design-intent-to-be.md` | Target design intent -- conceptual design + metacommunication (in `_references/`) |
-| `DESIGN_INTENT_ESTABLISHED` | `project/design-intent-established.md` | Processed design intent with preserved rationale (human-maintained, never agent-altered) (in `_references/`) |
+| `DESIGN_INTENT` | `project/product-design-as-intended.md` | Unified working intent + Decisions + CHANGELOG (in `_references/`) |
+| `UX_RESEARCH` | `project/ux-research-results.md` | UX research: personas, problem scenarios, journeys, CHANGELOG (in `_references/`) |
+| `AS_CODED` | `project/product-design-as-coded.md` | Unified implementation state: Conceptual Design, Metacommunication, Journey Maps (in `_references/`) |
+
+---
+
+## To-Be / As-Is Registry
+
+> Registered to-be/as-is file pairs for the TaskFlow demo.
+
+| To-be file | Section | Established counterpart | Section | As-is counterpart |
+| ---------- | ------- | ---------------------- | ------- | ----------------- |
+| `${DESIGN_INTENT}` | §0-§17 design intent + Decisions + CHANGELOG | `-` | `-` | `${AS_CODED}` |
+| `${DESIGN_INTENT}` | §15 designed journeys | `-` | `-` | `${AS_CODED} § Journey Maps` |
 
 ---
 

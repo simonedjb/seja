@@ -12,6 +12,7 @@
 |----------|-------|-------------|
 | `PROJECT_NAME` | {{PROJECT_NAME}} | Project display name |
 | `PROJECT_DESCRIPTION` | {{PROJECT_DESCRIPTION}} | One-line project description |
+| `PROJECT_MODE` | {{PROJECT_MODE}} | Project mode: greenfield (new project) or brownfield (existing codebase) |
 
 ---
 
@@ -35,12 +36,14 @@
 | `EXPLAINED_DATA_MODEL_DIR` | `${OUTPUT_DIR}/explained-data-model` | Data model explanation output folder |
 | `EXPLAINED_ARCHITECTURE_DIR` | `${OUTPUT_DIR}/explained-architecture` | Architecture explanation output folder |
 | `BEHAVIOR_EVOLUTION_DIR` | `${OUTPUT_DIR}/behavior-evolution` | Behavior evolution explanation output folder |
+| `REFLECTIONS_DIR` | `${OUTPUT_DIR}/reflections` | Reflection report output folder |
 | `ONBOARDING_PLANS_DIR` | `${OUTPUT_DIR}/onboarding-plans` | Onboarding plan output folder |
 | `COMMUNICATION_DIR` | `${OUTPUT_DIR}/communication` | Communication material output folder |
 | `ROADMAP_DIR` | `${OUTPUT_DIR}/roadmaps` | Roadmap output folder |
 | `QA_LOGS_DIR` | `${OUTPUT_DIR}/qa-logs` | QA session log output folder |
 | `CHECK_LOGS_DIR` | `${OUTPUT_DIR}/check-logs` | Check/preflight/review output folder |
 | `TMP_DIR` | `${OUTPUT_DIR}/tmp` | Temporary/helper scripts |
+| `CODEBASE_DIR` | {{CODEBASE_DIR}} | Root directory of the project codebase (`.` for embedded, absolute path for workspace mode) |
 
 ---
 
@@ -52,17 +55,15 @@
 | `BRIEFS_INDEX_FILE` | `${OUTPUT_DIR}/briefs-index.md` | Lightweight briefs index (one-line summaries) | Agent |
 | `ARTIFACT_INDEX_FILE` | `${OUTPUT_DIR}/INDEX.md` | Single global artifact index (no per-folder INDEX.md files) | Agent |
 | `CONSTITUTION_FILE` | `project/constitution.md` | Project constitution -- immutable principles (in `_references/`) | Human |
-| `CONCEPTUAL_DESIGN_AS_IS` | `project/conceptual-design-as-is.md` | As-built conceptual design (in `_references/`) | Agent |
-| `CD_AS_IS_CHANGELOG` | `project/cd-as-is-changelog.md` | As-built conceptual design changelog (in `_references/`) | Agent |
-| `DESIGN_INTENT_TO_BE` | `project/design-intent-to-be.md` | Target design intent -- conceptual design + metacommunication (in `_references/`) | Human |
-| `DESIGN_INTENT_ESTABLISHED` | `project/design-intent-established.md` | Processed design intent with preserved rationale (in `_references/`) | Human |
-| `METACOMM_AS_IS` | `project/metacomm-as-is.md` | As-built metacommunication record (in `_references/`) | Agent |
-| `UX_RESEARCH_NEW` | `project/ux-research-new.md` | UX research -- fresh insights not yet processed into design (includes §5 Discovered User Journeys) (in `_references/`) | Human |
-| `UX_RESEARCH_ESTABLISHED` | `project/ux-research-established.md` | UX research -- processed into current design, including §5 Discovered User Journeys (in `_references/`) | Human |
-| `JOURNEY_MAPS_AS_IS` | `project/journey-maps-as-is.md` | Journey maps -- implemented user journeys (as-is) (in `_references/`) | Agent |
-| `UX_DESIGN_STANDARDS` | `project/ux-design-standards.md` | UX design standards (in `_references/`) | Human / Agent |
-| `GRAPHIC_UI_DESIGN_STANDARDS` | `project/graphic-ui-design-standards.md` | Graphic/UI design standards (in `_references/`) | Human / Agent |
+| `AS_CODED` | `project/product-design-as-coded.md` | Unified implementation state: Conceptual Design, Metacommunication, Journey Maps (in `_references/`) | Agent |
+| `CD_AS_IS_CHANGELOG` | `project/product-design-changelog.md` | As-built conceptual design changelog (in `_references/`) | Agent |
+| `DESIGN_INTENT` | `project/product-design-as-intended.md` | Unified working intent (§0-§17) + ADR Decision log (## Decisions) + CHANGELOG (in `_references/`) | Human (markers) |
+| `DESIGN_INTENT_TO_BE` | `project/product-design-as-intended.md` | Legacy alias for `DESIGN_INTENT` (workspace-mode backward compat; see plan-000268 Amendment A6) | Human (markers) |
+| `UX_RESEARCH` | `project/ux-research-results.md` | UX research: personas, problem scenarios, journeys, processing status, CHANGELOG (in `_references/`) | Human (markers) |
+| `STANDARDS` | `project/standards.md` | Unified engineering standards: Backend, Frontend, Testing, i18n (in `_references/`) | Human / Agent |
+| `DESIGN_STANDARDS` | `project/design-standards.md` | Unified design standards: UX patterns and graphic/visual design (in `_references/`) | Human / Agent |
 | `SESSION_NOTES_FILE` | `${TMP_DIR}/session-notes.md` | Session-scoped working memory for structured note-taking | Agent |
+| `DECISION_DIGEST_FILE` | `${OUTPUT_DIR}/decision-digest.jsonl` | Machine-readable decision index (one JSON line per design decision) | Agent |
 
 ---
 
@@ -76,9 +77,9 @@
 
 | To-be file | Section | Established counterpart | Section | As-is counterpart |
 | ---------- | ------- | ---------------------- | ------- | ----------------- |
-| `${DESIGN_INTENT_TO_BE}` | §1-§14 design intent | `${DESIGN_INTENT_ESTABLISHED}` | §1-§14 | `${CONCEPTUAL_DESIGN_AS_IS}`, `${METACOMM_AS_IS}` |
-| `${DESIGN_INTENT_TO_BE}` | §15 designed journeys | `${DESIGN_INTENT_ESTABLISHED}` | §15 | `${JOURNEY_MAPS_AS_IS}` |
-| `${UX_RESEARCH_NEW}` | all (incl. §5 discovered journeys) | `${UX_RESEARCH_ESTABLISHED}` | all | `-` |
+| `${DESIGN_INTENT}` | §0-§17 design intent + Decisions + CHANGELOG | `-` | `-` | `${AS_CODED}` |
+| `${DESIGN_INTENT}` | §15 designed journeys | `-` | `-` | `${AS_CODED} § Journey Maps` |
+| `${UX_RESEARCH}` | all (personas, scenarios, journeys, CHANGELOG) | `-` | `-` | `-` |
 
 ---
 
@@ -87,6 +88,23 @@
 | Variable | Value | Description |
 |----------|-------|-------------|
 | `MINIMUM_REVIEW_DEPTH` | `{{MINIMUM_REVIEW_DEPTH}}` | Minimum review depth floor. Valid values: `light`, `standard`, `deep`. The automatic complexity gate and per-call flags can only raise the depth above this floor, never lower it. Depth ordering: light < standard < deep. Default: `light`. |
+
+---
+
+## Periodic Triggers
+
+> Configurable intervals for the `pending-check` pre-skill stage's lazy periodic-action creation. Read by `pending.py periodic-check` at skill invocation time. Empty or missing intervals disable the corresponding trigger.
+
+| Trigger | Interval (days) | Action type | Description |
+|---------|-----------------|-------------|-------------|
+| Periodic curation | 30 | `periodic-curation` | Review `product-design-as-intended.md` for items ready to promote from `implemented` to `established` |
+| Spec-drift check | 14 | `spec-drift-check` | Run `/explain spec-drift` to surface drift between design intent and as-coded state |
+
+| Threshold | Value | Description |
+|-----------|-------|-------------|
+| Verify-as-coded file threshold | 5 | Minimum number of files changed by a plan before post-skill auto-creates a `verify-as-coded` pending action |
+| Pending age escalation | 14 | Days before a pending action is flagged "overdue" in pre-skill notices |
+| Pending auto-dismiss | 90 | Days after which unaddressed pending actions are auto-dismissed by `pending.py cleanup` |
 
 ---
 

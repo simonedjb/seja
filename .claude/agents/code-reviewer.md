@@ -35,9 +35,9 @@ You will receive one of:
 2. **Read the project standards** (scope-aware — only load what is relevant):
    - Always read: `_references/general/review-perspectives.md` for the perspective index, conflict resolution rules, and plan prefix shortcuts
    - For each applicable perspective, read its file from `_references/general/review-perspectives/` (e.g., `sec.md`, `perf.md`). Load the **Essential** section always; load the **Deep-dive** section when the perspective is the primary focus of the review or when thorough coverage is requested.
-   - Always read: `_references/project/testing-standards.md` for testing conventions
-   - If files under `backend/`: read `_references/project/backend-standards.md` and `_references/project/security-checklists.md`
-   - If files under `frontend/src/`: read `_references/project/frontend-standards.md` and `_references/project/i18n-standards.md`
+   - Always read: `_references/project/standards.md § Testing` for testing conventions
+   - If files under `backend/`: read `_references/project/standards.md § Backend` and `_references/project/security-checklists.md`
+   - If files under `frontend/src/`: read `_references/project/standards.md §§ Frontend and i18n`
    - If files span both backend and frontend: read all of the above
 
 3. **Evaluate each perspective:**

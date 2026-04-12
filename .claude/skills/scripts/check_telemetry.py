@@ -54,6 +54,15 @@ VALID_ERROR_TYPES = {
 
 VALID_CONTEXT_BUDGETS = {"light", "standard", "heavy"}
 
+VALID_QA_TYPES = {
+    "single-prompt",
+    "multi-turn",
+    "advisory-follow-up",
+    "decision-point-accept",
+    "decision-point-revise",
+    "decision-point-reject",
+}
+
 GIT_SHA_RE = re.compile(r"^[0-9a-f]{7,40}$")
 
 # All recognized fields (required + optional)
@@ -67,6 +76,9 @@ ALL_FIELDS = REQUIRED_FIELDS | {
     "git_commit_sha",
     "files_changed",
     "parent_skill",
+    "qa_type",
+    "user_revised_output",
+    "decision_points",
 }
 
 
@@ -190,6 +202,62 @@ def validate_record(record: dict) -> list[str]:
                 )
             elif val < 0:
                 errors.append(f"'files_changed' must be >= 0, got {val}")
+
+    if "qa_type" in record:
+        val = record["qa_type"]
+        if val is not None:
+            if not isinstance(val, str):
+                errors.append(
+                    f"'qa_type' must be string or null, got {type(val).__name__}"
+                )
+            elif val not in VALID_QA_TYPES:
+                errors.append(
+                    f"'qa_type' must be one of {sorted(VALID_QA_TYPES)}, got {val!r}"
+                )
+
+    if "user_revised_output" in record:
+        val = record["user_revised_output"]
+        if val is not None and not isinstance(val, bool):
+            errors.append(
+                f"'user_revised_output' must be bool or null, got {type(val).__name__}"
+            )
+
+    if "decision_points" in record:
+        val = record["decision_points"]
+        if val is not None:
+            if not isinstance(val, list):
+                errors.append(
+                    f"'decision_points' must be list or null, got {type(val).__name__}"
+                )
+            else:
+                for idx, entry in enumerate(val):
+                    if not isinstance(entry, dict):
+                        errors.append(
+                            f"'decision_points[{idx}]' must be a dict, got {type(entry).__name__}"
+                        )
+                        continue
+                    for key, expected_type, type_name in (
+                        ("prompt", str, "string"),
+                        ("chosen_option", str, "string"),
+                        ("rationale_presented", bool, "bool"),
+                    ):
+                        if key not in entry:
+                            errors.append(
+                                f"'decision_points[{idx}]' missing required key '{key}'"
+                            )
+                        else:
+                            entry_val = entry[key]
+                            # isinstance(True, int) is True, so guard bool explicitly
+                            if expected_type is bool:
+                                if not isinstance(entry_val, bool):
+                                    errors.append(
+                                        f"'decision_points[{idx}].{key}' must be {type_name}, got {type(entry_val).__name__}"
+                                    )
+                            else:
+                                if not isinstance(entry_val, expected_type) or isinstance(entry_val, bool):
+                                    errors.append(
+                                        f"'decision_points[{idx}].{key}' must be {type_name}, got {type(entry_val).__name__}"
+                                    )
 
     return errors, warnings
 

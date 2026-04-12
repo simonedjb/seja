@@ -1,6 +1,6 @@
 {
-  "generated": "2026-04-06T23:22:24Z",
-  "count": 13,
+  "generated": "2026-04-12T14:36:19Z",
+  "count": 15,
   "skills": [
     {
       "name": "advise",
@@ -54,14 +54,21 @@
     {
       "name": "implement",
       "description": "Execute a previously generated plan to add a feature, fix a bug, or refactor code. Use when user mentions \"implement\", \"execute plan\", or \"run plan\".",
-      "argument_hint": "<planned-item-id> [--manual] [--max-iterations N] [--dry-run] [--skip-checks]",
+      "argument_hint": "<planned-item-id> [--manual] [--roadmap <roadmap-id>] [--checkpoint wave|plan|none] [--max-iterations N] [--dry-run] [--skip-checks]",
       "category": "planning",
       "version": "1.0.0"
     },
     {
       "name": "onboarding",
       "description": "Generate a tailored onboarding plan for a new team member based on their role and expertise level.",
-      "argument_hint": "<role-family> <expertise-level> [name] [--area <focus-area>] [--batch <spec-list>]",
+      "argument_hint": "<role-family> <expertise-level> [name] [--area <focus-area>] [--format md|html|both] [--all] [--all-levels <role>] [--all-roles <level>] [--batch <spec-list>]",
+      "category": "utility",
+      "version": "1.0.0"
+    },
+    {
+      "name": "pending",
+      "description": "List and address outstanding human actions from the pending ledger: verify implementations, flip status markers, run periodic curation, manage deferred work.",
+      "argument_hint": "[list|add|done|snooze|dismiss] [args]",
       "category": "utility",
       "version": "1.0.0"
     },
@@ -78,6 +85,13 @@
       "argument_hint": "brief or topic",
       "category": "utility",
       "version": "1.0.0"
+    },
+    {
+      "name": "reflect",
+      "description": "On-demand reflection anchored on specific plans, advisories, or other artifacts. I summarize the artifacts you choose, ask what stands out, and record your reflection.",
+      "argument_hint": "[--telemetry [--since 30d] [--skill <name>] [--dry-run]]",
+      "category": "analysis",
+      "version": "2.0.0"
     },
     {
       "name": "seed",

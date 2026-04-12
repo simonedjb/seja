@@ -26,15 +26,8 @@ from project_config import REPO_ROOT, get_path
 BRIEFS_FILE = get_path("BRIEFS_FILE") or REPO_ROOT / "_output" / "briefs.md"
 INDEX_FILE = BRIEFS_FILE.parent / "briefs-index.md"
 
-# Match DONE entries: DONE | datetime | STARTED | datetime | skill | brief [| PLAN | id]
-_DONE_RE = re.compile(
-    r"^DONE\s*\|\s*([\d\-: UTC]+)\s*\|\s*STARTED\s*\|\s*([\d\-: UTC]+)\s*\|\s*(\S+)\s*\|\s*(.+?)(?:\s*\|\s*PLAN\s*\|\s*(\S+))?\s*$"
-)
-
-# Match orphaned STARTED entries: STARTED | datetime | skill | brief
-_STARTED_RE = re.compile(
-    r"^STARTED\s*\|\s*([\d\-: UTC]+)\s*\|\s*(\S+)\s*\|\s*(.+?)\s*$"
-)
+# Match the optional PLAN suffix at the end of a brief line
+_PLAN_SUFFIX_RE = re.compile(r"\s*\|\s*PLAN\s*\|\s*(\S+)\s*$")
 
 
 def truncate(text: str, max_len: int = 80) -> str:
@@ -45,6 +38,78 @@ def truncate(text: str, max_len: int = 80) -> str:
     return text[: max_len - 1] + "\u2026"
 
 
+def _split_fields(line: str) -> list[str]:
+    """Split a briefs line on ' | ' delimiters, returning stripped fields."""
+    return [f.strip() for f in line.split(" | ")]
+
+
+def _extract_skill(raw_skill: str) -> str:
+    """Extract just the skill name from a field that may contain flags.
+
+    E.g., 'advise --deep' -> 'advise', 'plan' -> 'plan'.
+    """
+    return raw_skill.split()[0] if raw_skill else raw_skill
+
+
+def _extract_plan_id(text: str) -> tuple[str, str]:
+    """Strip a trailing '| PLAN | <id>' suffix from text.
+
+    Returns (text_without_suffix, plan_id). If no suffix, plan_id is ''.
+    """
+    m = _PLAN_SUFFIX_RE.search(text)
+    if m:
+        return text[: m.start()].strip(), m.group(1).strip()
+    return text.strip(), ""
+
+
+def _parse_done_line(fields: list[str]) -> dict | None:
+    """Parse a DONE entry from split fields.
+
+    Expected structure (minimum 6 fields):
+      DONE | done_datetime | STARTED | start_datetime | skill [flags] | brief... [| PLAN | id]
+
+    The brief may contain ' | ' so we rejoin fields[5:] and then strip the
+    optional PLAN suffix from the end.
+    """
+    if len(fields) < 6:
+        return None
+    if fields[2] != "STARTED":
+        return None
+
+    raw_brief = " | ".join(fields[5:])
+    brief, plan_id = _extract_plan_id(raw_brief)
+
+    return {
+        "date": fields[3],
+        "skill": _extract_skill(fields[4]),
+        "brief": brief,
+        "status": "DONE",
+        "plan_id": plan_id,
+    }
+
+
+def _parse_started_line(fields: list[str]) -> dict | None:
+    """Parse a STARTED entry from split fields.
+
+    Expected structure (minimum 4 fields):
+      STARTED | datetime | skill [flags] | brief...
+
+    The brief may contain ' | ' so we rejoin fields[3:].
+    """
+    if len(fields) < 4:
+        return None
+
+    raw_brief = " | ".join(fields[3:])
+
+    return {
+        "date": fields[1],
+        "skill": _extract_skill(fields[2]),
+        "brief": raw_brief.strip(),
+        "status": "STARTED",
+        "plan_id": "",
+    }
+
+
 def parse_briefs(verbose: bool = False) -> list[dict]:
     """Parse briefs.md and return a list of entry dicts."""
     if not BRIEFS_FILE.is_file():
@@ -53,40 +118,31 @@ def parse_briefs(verbose: bool = False) -> list[dict]:
 
     text = BRIEFS_FILE.read_text(encoding="utf-8", errors="replace")
     entries = []
+    unparsed_count = 0
 
-    for line in text.split("\n"):
+    for line_num, line in enumerate(text.split("\n"), start=1):
         line = line.strip()
         if not line or line.startswith("#"):
             continue
 
-        # Try DONE format first
-        m = _DONE_RE.match(line)
-        if m:
-            entries.append({
-                "date": m.group(2).strip(),
-                "skill": m.group(3).strip(),
-                "brief": m.group(4).strip(),
-                "status": "DONE",
-                "plan_id": m.group(5).strip() if m.group(5) else "",
-            })
-            if verbose:
-                print(f"  DONE: {m.group(3).strip()} — {truncate(m.group(4).strip(), 50)}")
-            continue
+        fields = _split_fields(line)
 
-        # Try orphaned STARTED format
-        m = _STARTED_RE.match(line)
-        if m:
-            entries.append({
-                "date": m.group(1).strip(),
-                "skill": m.group(2).strip(),
-                "brief": m.group(3).strip(),
-                "status": "STARTED",
-                "plan_id": "",
-            })
-            if verbose:
-                print(f"  STARTED: {m.group(2).strip()} — {truncate(m.group(3).strip(), 50)}")
-            continue
+        entry = None
+        if fields[0] == "DONE":
+            entry = _parse_done_line(fields)
+        elif fields[0] == "STARTED":
+            entry = _parse_started_line(fields)
 
+        if entry:
+            entries.append(entry)
+            if verbose:
+                print(f"  {entry['status']}: {entry['skill']} — {truncate(entry['brief'], 50)}")
+        else:
+            unparsed_count += 1
+            print(f"WARNING: Unparseable line {line_num}: {line[:80]}")
+
+    if unparsed_count > 0:
+        print(f"{unparsed_count} unparseable line(s) found")
 
     return entries
 

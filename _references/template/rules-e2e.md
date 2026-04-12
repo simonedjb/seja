@@ -16,4 +16,4 @@ paths:
 - **Selectors**: prefer `data-testid` attributes over CSS class selectors for stability.
 - **Sequential execution**: tests share database state — order matters. Use `workers: 1`.
 
-See `project/testing-standards.md` for full conventions.
+See `project/standards.md § Testing` for full conventions.

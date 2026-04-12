@@ -10,9 +10,8 @@ metadata:
   context_budget: heavy
   references:
     - general/report-conventions.md
-    - project/frontend-standards.md
-    - project/backend-standards.md
-    - project/i18n-standards.md
+    - project/standards.md
+    - project/design-standards.md
     - project/security-checklists.md
     - general/review-perspectives.md
     - general/review-perspectives-index.md
@@ -415,10 +414,10 @@ SIM evaluates the **emission** of metacommunication (what the designer's deputy 
 #### Preparation
 
 1. **Identify inspection context**: Read the project's metacommunication files to establish the designer's intended message:
-   - `project/metacomm-as-is.md` or `project/design-intent-to-be.md` (who the users are, what they need, the design vision)
-   - `project/conceptual-design-as-is.md` (entities, permissions, UX patterns)
-   - `project/journey-maps-as-is.md` or `project/design-intent-to-be.md §15` (user flows and journeys)
-   - `project/ux-design-standards.md` (if it exists)
+   - `project/product-design-as-coded.md § Metacommunication` or `project/product-design-as-intended.md` (who the users are, what they need, the design vision)
+   - `project/product-design-as-coded.md § Conceptual Design` (entities, permissions, UX patterns)
+   - `project/product-design-as-coded.md § Journey Maps` or `project/product-design-as-intended.md §15` (user flows and journeys)
+   - `project/design-standards.md § UX patterns` (if it exists)
 
 2. **Establish focus of analysis**: Based on the scope argument, identify:
    - (i) Who are the intended users of the system (from metacomm files, user profiles, role families)

@@ -51,6 +51,22 @@ def _find_repo_root(start: Path | None = None) -> Path:
 
 
 # ---------------------------------------------------------------------------
+# project_config loader (mirrors check_plan_coverage.py pattern)
+# ---------------------------------------------------------------------------
+
+def _load_project_config_get(root: Path):
+    """Load project_config.get without polluting sys.path permanently."""
+    scripts_dir = str(root / ".claude" / "skills" / "scripts")
+    try:
+        if scripts_dir not in sys.path:
+            sys.path.insert(0, scripts_dir)
+        mod = importlib.import_module("project_config")
+        return mod.get
+    except Exception:
+        return None
+
+
+# ---------------------------------------------------------------------------
 # Finding data structure
 # ---------------------------------------------------------------------------
 
@@ -151,11 +167,29 @@ def plugin_placeholder(root: Path, verbose: bool) -> list[Finding]:
 def plugin_phrasing_rule(root: Path, verbose: bool) -> list[Finding]:
     findings: list[Finding] = []
 
-    # --- Scan design-intent-to-be.md (Part II, sections 11-15 only) ---
-    ditb = root / "_references" / "project" / "design-intent-to-be.md"
-    if ditb.is_file():
+    # Resolve DESIGN_INTENT and AS_CODED paths via project_config. Mirrors the
+    # fallback chain in check_plan_coverage.py: prefer DESIGN_INTENT (SEJA 2.8.3+),
+    # fall back to DESIGN_INTENT_TO_BE (workspace-mode legacy alias), then to the
+    # hardcoded framework-current name if project_config is unavailable entirely.
+    cfg_get = _load_project_config_get(root)
+    if cfg_get:
+        design_intent_var = cfg_get("DESIGN_INTENT") or cfg_get("DESIGN_INTENT_TO_BE") or "project/product-design-as-intended.md"
+        as_coded_var = cfg_get("AS_CODED") or "project/product-design-as-coded.md"
+    else:
+        design_intent_var = "project/product-design-as-intended.md"
+        as_coded_var = "project/product-design-as-coded.md"
+
+    # --- Scan design intent (Part II, sections 11-15 only) ---
+    di = root / "_references" / design_intent_var
+    if not di.is_file():
+        # Backward-compat: pre-2.8.3 projects may still carry the old split file.
+        legacy = root / "_references" / "project" / "design-intent-to-be.md"
+        if legacy.is_file():
+            di = legacy
+
+    if di.is_file():
         try:
-            text = ditb.read_text(encoding="utf-8", errors="replace")
+            text = di.read_text(encoding="utf-8", errors="replace")
         except OSError:
             text = None
 
@@ -165,36 +199,48 @@ def plugin_phrasing_rule(root: Path, verbose: bool) -> list[Finding]:
             part_ii_re = re.compile(r"^#{1,3}\s+.*\b(Part\s+II|Metacommunication)\b", re.IGNORECASE)
 
             for line_no, line in enumerate(text.splitlines(), 1):
-                # Detect Part II or sections 11-15
                 if part_ii_re.search(line) or section_heading_re.search(line):
                     in_part_ii = True
 
                 if not in_part_ii:
                     continue
 
-                _check_phrasing_line(findings, line, line_no, str(ditb))
+                _check_phrasing_line(findings, line, line_no, str(di))
     elif verbose:
         findings.append(Finding(
             "", 0, "info",
-            "Skipped phrasing-rule for design-intent-to-be.md: file not found",
+            "Skipped phrasing-rule for product-design-as-intended.md: file not found",
             "phrasing-rule",
         ))
 
-    # --- Scan metacomm-as-is.md (entire file) ---
-    metacomm = root / "_references" / "project" / "metacomm-as-is.md"
-    if metacomm.is_file():
+    # --- Scan as-coded § Metacommunication (SEJA 2.8.4 unified file) ---
+    as_coded = root / "_references" / as_coded_var
+    if as_coded.is_file():
         try:
-            text = metacomm.read_text(encoding="utf-8", errors="replace")
+            text = as_coded.read_text(encoding="utf-8", errors="replace")
         except OSError:
             text = None
 
         if text is not None:
+            # Extract the `## Metacommunication` H2 section only; phrasing rule
+            # applies only to metacomm content, not to conceptual-design or
+            # journey-map prose.
+            in_metacomm = False
             for line_no, line in enumerate(text.splitlines(), 1):
-                _check_phrasing_line(findings, line, line_no, str(metacomm))
+                if line.startswith("## "):
+                    if in_metacomm:
+                        break
+                    if line.strip() == "## Metacommunication":
+                        in_metacomm = True
+                        continue
+                if in_metacomm:
+                    _check_phrasing_line(
+                        findings, line, line_no, str(as_coded)
+                    )
     elif verbose:
         findings.append(Finding(
             "", 0, "info",
-            "Skipped phrasing-rule for metacomm-as-is.md: file not found",
+            "Skipped phrasing-rule for product-design-as-coded.md: file not found",
             "phrasing-rule",
         ))
 
@@ -415,6 +461,22 @@ def plugin_field_presence(root: Path, verbose: bool) -> list[Finding]:
 # Plugin 5: Value propagation scanner
 # ---------------------------------------------------------------------------
 
+def _extract_h2_section(text: str, heading: str) -> str:
+    """Return the body of an H2 section identified by its exact heading text.
+
+    Splits on '^## <heading>\\s*$' (start) through the next '^## ' or EOF.
+    Returns empty string if the heading is not found. Used to filter the
+    unified standards.md by its H2 domain sections (Backend, Frontend, etc.)
+    so that framework-token checks operate on the relevant section only.
+    """
+    pattern = re.compile(
+        rf"^##\s+{re.escape(heading)}\s*$(.*?)(?=^##\s|\Z)",
+        re.MULTILINE | re.DOTALL,
+    )
+    m = pattern.search(text)
+    return m.group(1) if m else ""
+
+
 @register_plugin("value-propagation", "Cross-check conventions.md values against standards files")
 def plugin_value_propagation(root: Path, verbose: bool) -> list[Finding]:
     findings: list[Finding] = []
@@ -438,45 +500,76 @@ def plugin_value_propagation(root: Path, verbose: bool) -> list[Finding]:
         backend_fw = cfg_get("BACKEND_FRAMEWORK")
         frontend_fw = cfg_get("FRONTEND_FRAMEWORK")
 
+    # Standards file paths. Since SEJA 2.8.1 the merged standards.md is preferred;
+    # the legacy per-domain files are read as a fallback for projects that have not
+    # migrated to the unified layout yet.
+    standards_file = root / "_references" / "project" / "standards.md"
+    legacy_backend_standards = root / "_references" / "project" / "backend-standards.md"
+    legacy_frontend_standards = root / "_references" / "project" / "frontend-standards.md"
+
     # Check backend framework propagation
     if backend_fw and "{{" not in backend_fw:
-        backend_standards = root / "_references" / "project" / "backend-standards.md"
-        if backend_standards.is_file():
+        section_text = None
+        source_path: Path | None = None
+        if standards_file.is_file():
             try:
-                text = backend_standards.read_text(encoding="utf-8", errors="replace")
-                if backend_fw.lower() not in text.lower():
-                    findings.append(Finding(
-                        str(backend_standards), 0, "warning",
-                        f"Backend framework '{backend_fw}' from conventions.md not mentioned in backend-standards.md",
-                        "value-propagation",
-                    ))
+                full = standards_file.read_text(encoding="utf-8", errors="replace")
+                section_text = _extract_h2_section(full, "Backend")
+                source_path = standards_file
             except OSError:
                 pass
+        elif legacy_backend_standards.is_file():
+            try:
+                section_text = legacy_backend_standards.read_text(encoding="utf-8", errors="replace")
+                source_path = legacy_backend_standards
+            except OSError:
+                pass
+        if section_text is not None and source_path is not None:
+            if backend_fw.lower() not in section_text.lower():
+                msg = (
+                    f"Backend framework '{backend_fw}' from conventions.md not mentioned in "
+                    f"standards.md - Backend"
+                    if source_path == standards_file
+                    else f"Backend framework '{backend_fw}' from conventions.md not mentioned in backend-standards.md"
+                )
+                findings.append(Finding(str(source_path), 0, "warning", msg, "value-propagation"))
         elif verbose:
             findings.append(Finding(
                 "", 0, "info",
-                "Skipped backend framework propagation check: backend-standards.md not found",
+                "Skipped backend framework propagation check: neither standards.md nor backend-standards.md found",
                 "value-propagation",
             ))
 
     # Check frontend framework propagation
     if frontend_fw and "{{" not in frontend_fw:
-        frontend_standards = root / "_references" / "project" / "frontend-standards.md"
-        if frontend_standards.is_file():
+        section_text = None
+        source_path = None
+        if standards_file.is_file():
             try:
-                text = frontend_standards.read_text(encoding="utf-8", errors="replace")
-                if frontend_fw.lower() not in text.lower():
-                    findings.append(Finding(
-                        str(frontend_standards), 0, "warning",
-                        f"Frontend framework '{frontend_fw}' from conventions.md not mentioned in frontend-standards.md",
-                        "value-propagation",
-                    ))
+                full = standards_file.read_text(encoding="utf-8", errors="replace")
+                section_text = _extract_h2_section(full, "Frontend")
+                source_path = standards_file
             except OSError:
                 pass
+        elif legacy_frontend_standards.is_file():
+            try:
+                section_text = legacy_frontend_standards.read_text(encoding="utf-8", errors="replace")
+                source_path = legacy_frontend_standards
+            except OSError:
+                pass
+        if section_text is not None and source_path is not None:
+            if frontend_fw.lower() not in section_text.lower():
+                msg = (
+                    f"Frontend framework '{frontend_fw}' from conventions.md not mentioned in "
+                    f"standards.md - Frontend"
+                    if source_path == standards_file
+                    else f"Frontend framework '{frontend_fw}' from conventions.md not mentioned in frontend-standards.md"
+                )
+                findings.append(Finding(str(source_path), 0, "warning", msg, "value-propagation"))
         elif verbose:
             findings.append(Finding(
                 "", 0, "info",
-                "Skipped frontend framework propagation check: frontend-standards.md not found",
+                "Skipped frontend framework propagation check: neither standards.md nor frontend-standards.md found",
                 "value-propagation",
             ))
 

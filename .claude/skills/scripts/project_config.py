@@ -204,6 +204,17 @@ def diff_conventions(project_path: str | Path, template_path: str | Path) -> dic
     }
 
 
+def get_pending_file() -> Path | None:
+    """Return the pending ledger path, or None if OUTPUT_DIR is unresolvable.
+
+    Lazy evaluation (not a module-level constant) because get_path() may return
+    None on a misconfigured repo, and a None at import time would break every
+    script that imports project_config. Callers should handle None explicitly.
+    """
+    output_dir = get_path("OUTPUT_DIR")
+    return (output_dir / "pending.jsonl") if output_dir is not None else None
+
+
 # ---------------------------------------------------------------------------
 # Standalone mode
 # ---------------------------------------------------------------------------

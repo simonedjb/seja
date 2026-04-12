@@ -47,7 +47,7 @@ Material is organized in 3 progressive layers. Each layer adds specificity to th
 
 | Layer | Name | Source | Purpose |
 |-------|------|--------|---------|
-| **0** | Universal Foundation | `project/conceptual-design-as-is.md`, `project/conventions.md` | Project identity, value proposition, key differentiators — shared across all audiences |
+| **0** | Universal Foundation | `project/product-design-as-coded.md`, `project/conventions.md` | Project identity, value proposition, key differentiators — shared across all audiences |
 | **1** | Audience-Specific Content | `general/communication/<audience>.md` | Tone guidance, content sections (Essential + Deep-dive), Diataxis mapping — tailored per audience segment |
 | **2** | Format-Specific Presentation | `project/communication-style.md` | CSS styling, header/footer templates, per-audience tone overrides, HTML conversion settings |
 
@@ -104,7 +104,7 @@ For a given invocation, the skill loads files in this order:
 
 1. `general/communication.md` — this file (framework overview, audience resolution)
 2. `general/communication/evaluators.md` — audience-specific content template and tone
-3. `project/conceptual-design-as-is.md` — project identity and context (Layer 0)
+3. `project/product-design-as-coded.md` — project identity and context (Layer 0; reads `## Conceptual Design` and `## Metacommunication` H2 sections)
 4. `project/communication-style.md` — style and tone overrides (Layer 2, if `--format html` or if the file exists)
 5. `general/report-conventions.md` — output file naming and encoding rules
 
@@ -149,7 +149,7 @@ ${COMMUNICATION_DIR}/
 - **Onboarding** (`general/onboarding.md`, `/onboarding`): The A2 Adopters audience segment is entirely served by the onboarding framework. Communication material may cross-reference onboarding plans when addressing adopter needs.
 - **Advisory** (`/advise`): Advisory reports can be reformatted for specific audiences using `--source <advisory-file>`. This transforms technical advisory content into audience-appropriate communication.
 - **Review perspectives** (`general/review-perspectives.md`): The UX perspective's focus on audience-appropriate communication is directly addressed by this framework's per-audience tone guidance.
-- **Conceptual design** (`project/conceptual-design-as-is.md`): Layer 0 universal content draws project identity and value proposition from the conceptual design files.
-- **Metacommunication** (`project/metacomm-as-is.md`): The designer's intent documented in metacommunication files informs how the project's story is told to each audience.
+- **Conceptual design** (`project/product-design-as-coded.md § Conceptual Design`): Layer 0 universal content draws project identity and value proposition from the `## Conceptual Design` H2 section of `product-design-as-coded.md`.
+- **Metacommunication** (`project/product-design-as-coded.md § Metacommunication`): The designer's intent documented in the `## Metacommunication` H2 section of `product-design-as-coded.md` informs how the project's story is told to each audience.
 - **Style template** (`template/communication-style.md` / `project/communication-style.md`): Controls visual presentation and tone overrides. Instantiated per-project by `/design`.
 - **Skills system** (`.claude/skills/communication/SKILL.md`): The communication skill orchestrates all of the above.

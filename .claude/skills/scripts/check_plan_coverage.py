@@ -2,7 +2,7 @@
 """
 check_plan_coverage.py -- Plan coverage verification against design-intent requirements.
 
-Extracts requirement IDs (REQ-TYPE-NNN markers) from design-intent-to-be.md,
+Extracts requirement IDs (REQ-TYPE-NNN markers) from product-design-as-intended.md,
 scans plan files for Traces: metadata, and computes the coverage gap. Reports
 uncovered requirements grouped by section and classification.
 
@@ -240,11 +240,15 @@ def compute_coverage(
     # Resolve paths via project_config
     cfg_get = _load_project_config_get(root)
 
+    # Prefer the new DESIGN_INTENT variable (SEJA 2.8.3+); fall back to the
+    # legacy DESIGN_INTENT_TO_BE name for workspace-mode projects still on the
+    # two-file layout (plan-000268 Amendment F / workspace migration note).
+    # The fallback is silent by design -- no deprecation warning is emitted.
     if cfg_get:
-        design_intent_var = cfg_get("DESIGN_INTENT_TO_BE")
+        design_intent_var = cfg_get("DESIGN_INTENT") or cfg_get("DESIGN_INTENT_TO_BE")
         plans_dir_var = cfg_get("PLANS_DIR")
     else:
-        design_intent_var = "project/design-intent-to-be.md"
+        design_intent_var = "project/product-design-as-intended.md"
         plans_dir_var = "_output/plans"
 
     # Resolve design-intent path
@@ -253,7 +257,7 @@ def compute_coverage(
         if verbose:
             findings.append(Finding(
                 "", 0, "info",
-                "No design-intent-to-be.md found -- skipping plan coverage check",
+                "No product-design-as-intended.md found -- skipping plan coverage check",
                 "plan-coverage",
             ))
         return findings
@@ -265,7 +269,7 @@ def compute_coverage(
         if verbose:
             findings.append(Finding(
                 str(spec_path), 0, "info",
-                "No REQ markers found in design-intent-to-be.md -- skipping coverage check",
+                "No REQ markers found in product-design-as-intended.md -- skipping coverage check",
                 "plan-coverage",
             ))
         return findings

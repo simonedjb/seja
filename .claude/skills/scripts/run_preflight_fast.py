@@ -44,6 +44,19 @@ FAST_CHECKS: list[tuple[str, list[str]]] = [
     ("version-changelog-sync", [sys.executable, str(SCRIPTS_DIR / "check_version_changelog_sync.py")]),
     ("design-output", [sys.executable, str(SCRIPTS_DIR / "check_design_output.py")]),
     ("plan-coverage", [sys.executable, str(SCRIPTS_DIR / "check_plan_coverage.py"), "--mode", "blocking"]),
+    ("human-markers", [sys.executable, str(SCRIPTS_DIR / "check_human_markers_only.py"), "--staged"]),
+    ("changelog-append-only", [sys.executable, str(SCRIPTS_DIR / "check_changelog_append_only.py"), "--staged"]),
+    ("section-boundary-writes", [sys.executable, str(SCRIPTS_DIR / "check_section_boundary_writes.py"), "--staged"]),
+    # lifecycle-fact-uniqueness is intentionally excluded from the hot path:
+    # its O(N^2) comparison and 60% threshold can produce false positives
+    # during transitional doc states. It still runs under /check docs and
+    # run_all_checks.py.
+    ("framework-reference-coverage",
+     [sys.executable, str(SCRIPTS_DIR / "check_docs.py"),
+      "--plugins", "framework-reference-coverage",
+      "--filter", "warning"]),
+    ("no-private-leaks",
+     [sys.executable, str(SCRIPTS_DIR / "check_no_private_leaks.py")]),
 ]
 
 SPEC_CHECKS_LOCATIONS = [

@@ -26,7 +26,7 @@
 
 **Concern:** Bulk export may trigger N+1 queries for large datasets.
 **Step ref:** Step 5 (bulk export query)
-**Files read:** `backend/app/services/export_service.py`, `project/backend-standards.md`
+**Files read:** `backend/app/services/export_service.py`, `project/standards.md § Backend`
 **Finding:** [analysis of the referenced source files]
 **Recommendation:** [specific change or confirmation that no change is needed]
 **Resolution:** [Plan amended — see Plan Amendment (iteration 1) / No change needed — status changed to Adopted]

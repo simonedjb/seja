@@ -15,4 +15,4 @@ paths:
 - **Database syntax**: use the production database's SQL dialect — avoid SQLite or other database-specific syntax.
 - **Chain integrity**: `down_revision` must reference an existing revision. Run the migration chain validation script after creating migrations.
 
-See `project/backend-standards.md` for full conventions.
+See `project/standards.md § Backend` for full conventions.

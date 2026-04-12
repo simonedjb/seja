@@ -33,7 +33,7 @@
 
 ## Section Reference Table
 
-> Stable slug identifiers for all sections. Slugs match template filenames (e.g., `ux-design-standards` -> `template/ux-design-standards.md`). Use slugs for stable cross-references in plans and documentation.
+> Stable slug identifiers for all sections. Slugs are stable identifiers for questionnaire sections; since SEJA 2.8.1 the standards targets are H2 sections within unified files (e.g., `ux-design-standards` populates `template/design-standards.md § UX patterns`, `backend-standards` populates `template/standards.md § Backend`). Use slugs for stable cross-references in plans and documentation; they are decoupled from file names.
 
 | Slug | # | Title | Tier |
 |------|---|-------|------|
@@ -92,11 +92,13 @@ Answer:
 | 1.9 | Name your backend and frontend source directories (e.g., `backend`, `frontend`) | `{{BACKEND_DIR}}`, `{{FRONTEND_DIR}}` | |
 | 1.10 | Who is available on your team? (check all that apply: just me / + architect / + engineer(s) / + UX designer / + graphic/UI designer / + data engineer / + tester(s)) | Team composition | |
 
+> *Agent hint: If the codebase directory contains existing source files (beyond framework files like `.claude/`, `_references/`, `_output/`), suggest "brownfield" as the default answer for question 1.3.*
+
 ---
 
 ## Section 2 -- Conceptual Design (`conceptual-design`) [T1]
 
-> Fills: `project/design-intent-to-be.md` (always) and `project/conceptual-design-as-is.md` (brownfield only) -- describes WHAT your system is (target state, and current state for evolving products), not HOW it's built.
+> Fills: `project/product-design-as-intended.md` (always) and `project/product-design-as-coded.md § Conceptual Design` (brownfield only) -- describes WHAT your system is (target state, and current state for evolving products), not HOW it's built.
 
 **2.1** What does your platform do? Who is it for? What problem does it solve? (2--3 paragraphs)
 
@@ -192,7 +194,7 @@ Answer: (yes + link / no)
 
 ## Section 3 -- UX Design Standards (`ux-design-standards`) [T1]
 
-> Fills: `project/ux-design-standards.md` -- interaction patterns, usability, accessibility workflow, and responsive strategy. This is a **T1 (Product & Design)** section -- product designers should complete this directly.
+> Fills: `project/design-standards.md § UX patterns` -- interaction patterns, usability, accessibility workflow, and responsive strategy. This is a **T1 (Product & Design)** section -- product designers should complete this directly.
 
 ### App Type
 
@@ -306,7 +308,7 @@ Answer:
 
 ## Section 4 -- Graphic / UI Design Standards (`graphic-ui-design-standards`) [T1]
 
-> Fills: `project/graphic-ui-design-standards.md` -- visual identity, color system, typography, spacing, iconography, and motion. This is a **T1 (Product & Design)** section -- product designers should complete this directly.
+> Fills: `project/design-standards.md § Graphic / visual design` -- visual identity, color system, typography, spacing, iconography, and motion. This is a **T1 (Product & Design)** section -- product designers should complete this directly.
 >
 > **Minimal viable path:** Answer only 4.1-4.3 (two colors + one font). All other values will be generated using established design scales.
 
@@ -485,7 +487,7 @@ Answer:
 
 ## Section 7 -- Frontend Standards (`frontend-standards`) [T2]
 
-> Fills: `project/frontend-standards.md` -- architectural and design conventions for the frontend.
+> Fills: `project/standards.md § Frontend` -- architectural and design conventions for the frontend.
 
 ### Framework Choices
 
@@ -622,7 +624,7 @@ Answer:
 
 ## Section 8 -- Backend Standards (`backend-standards`) [T2]
 
-> Fills: `project/backend-standards.md` -- architectural conventions for the backend.
+> Fills: `project/standards.md § Backend` -- architectural conventions for the backend.
 
 ### Framework Choices
 
@@ -726,7 +728,7 @@ Answer:
 
 ## Section 9 -- Testing Standards (`testing-standards`) [T3]
 
-> Fills: `project/testing-standards.md` -- testing conventions across all layers.
+> Fills: `project/standards.md § Testing` -- testing conventions across all layers.
 
 **9.1** Which backend test framework?
 
@@ -770,7 +772,7 @@ Answer: (e.g., `http://localhost:3000`)
 
 ## Section 10 -- i18n Standards (`i18n-standards`) [T3]
 
-> Fills: `project/i18n-standards.md` -- internationalization conventions.
+> Fills: `project/standards.md § i18n` -- internationalization conventions.
 
 **10.1** How many languages will your application support at launch?
 > *List RFC 5646 codes (e.g., `en-US`, `pt-BR`, `fr-FR`, `de-DE`).*
@@ -848,7 +850,7 @@ Answer:
 > - **Edit** -- the user modifies the message; the agent records the edited version verbatim (per the verbatim rule in `general/shared-definitions.md`). No generation note is appended.
 > - **Reject and skip** -- no metacommunication message is recorded; the field is left blank.
 >
-> *Feeds `project/design-intent-to-be.md`. Must follow the phrasing rule in `general/shared-definitions.md` -- always "I" (designer) and "you" (user), never third-person.*
+> *Feeds `project/product-design-as-intended.md`. Must follow the phrasing rule in `general/shared-definitions.md` -- always "I" (designer) and "you" (user), never third-person.*
 
 ---
 

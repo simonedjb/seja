@@ -9,4 +9,5 @@
 - Don't ask for confirmation before any read-only operation.
 - Don't ask for confirmation before running backend or frontend tests.
 - Don't ask for confirmation before creating, reading, or writing the session scratchpad file (`${SESSION_NOTES_FILE}`).
+- Do not use `Edit` or `Write` on files classified as `Human (markers)` in the File Maintainer Classification table (see `_references/general/shared-definitions.md`). Use `python .claude/skills/scripts/apply_marker.py` instead. The `check_human_markers_only.py` verifier will reject non-marker hunks during post-skill commit.
 - Ask for clarifications whenever appropriate.

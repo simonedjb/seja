@@ -49,9 +49,25 @@ SEJA follows a **copy-and-continue** (seed repo) model:
 - **After seeding, the user continues working from the target project**, not from this repo. All skills (`/design`, `/plan`, `/implement`, `/advise`, etc.) operate on the project they live in.
 - **Return to this repo only** to develop framework improvements. To bootstrap a new project, clone the repo and run `/seed`. To upgrade an existing project, use `/upgrade` from the target project or re-seed with "overwrite framework only".
 
+## No-Arguments Flow
+
+When `/seed` is invoked with **no arguments** (no target directory, no flags), present a guided setup menu using AskUserQuestion:
+
+> "How would you like to set up your project?"
+
+Options:
+1. **"I have a target directory"** — "Provide a path and I'll detect the best setup" — Then ask for the target path and proceed to step 1 (Accept target directory) with the provided path.
+2. **"Guide me through setup"** — "I'll ask a few questions to determine the best configuration" — Then ask the following questions sequentially:
+   a. "Is this a new project (greenfield) or an existing project with code already written (brownfield)?" (options: Greenfield, Brownfield)
+   b. "Do you want the SEJA framework embedded in your codebase or in a separate companion workspace?" (options: Embedded, Companion workspace)
+   c. Ask for the target directory path (and workspace directory path if companion workspace was chosen)
+   Then proceed to step 1 with the collected answers, setting `--workspace` internally if companion workspace was chosen.
+
+When arguments ARE provided (target directory and/or flags), skip this section entirely and proceed to step 1 as before. All existing behavior is preserved.
+
 ## Steps
 
-1. **Accept target directory**: If not provided as an argument, ask the user for the target path.
+1. **Accept target directory**: If not provided as an argument AND not collected via the no-arguments flow, ask the user for the target path.
 
 2. **Detect scenario**: Inspect the target path to determine the starting point:
 
@@ -105,6 +121,12 @@ SEJA follows a **copy-and-continue** (seed repo) model:
 
 7. **Summary**: Report what was copied (file count by category).
 
+7b. **Initial commit**: Create an initial git commit in each created repo so the user opens a clean working tree:
+   - Run `git add .` followed by `git commit -m "chore: seed SEJA framework"` in the target directory (or workspace directory if separated).
+   - For workspace mode with greenfield (step 2b created both workspace and codebase directories): commit in both directories.
+   - For demo mode: this step runs after step 10 (demo files copied), not after step 7, so the initial commit includes the demo design files.
+   - If `git commit` fails (e.g., git not configured with user.name/email), warn the user and continue to the handoff step -- do not abort the seed process.
+
 8. **Handoff** (standard mode):
    > Your project has been seeded at `<target>`. Next steps:
    >
@@ -118,14 +140,16 @@ SEJA follows a **copy-and-continue** (seed repo) model:
 
 > **Incompatible with `--workspace`.** If both flags are provided, reject with an error message.
 
-When `--demo` is passed, the seed process runs the standard steps 1-7 above and then performs these additional actions:
+When `--demo` is passed, the seed process runs the standard steps 1-7 above (skipping step 7b -- the initial commit is deferred to after step 10) and then performs these additional actions:
 
 9. **Copy demo design files into project/**: Copy every file from `_references/template/demo/` (except `WALKTHROUGH.md`) into `_references/project/`, giving the target project pre-filled design files:
    - `conventions.md` -- TypeScript + React conventions (TaskFlow)
    - `constitution.md` -- accessibility, simplicity, test coverage principles
-   - `design-intent-to-be.md` -- Task and Category entities, task creation and category filtering intents
+   - `product-design-as-intended.md` -- Task and Category entities, task creation and category filtering intents
 
 10. **Copy walkthrough**: Copy `_references/template/demo/WALKTHROUGH.md` into the target project root as `WALKTHROUGH.md`.
+
+10b. **Initial commit (demo)**: Run step 7b now (after demo files are copied), so the initial commit includes the demo design files and walkthrough.
 
 11. **Print walkthrough message**:
     > Your demo project "TaskFlow" has been seeded at `<target>` with pre-filled design files.

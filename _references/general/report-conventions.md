@@ -13,6 +13,18 @@ When a skill produces a report file in `${OUTPUT_DIR}` (see project/conventions.
 - *spawned* (optional): `spawned: <type>-<id>[, ...]` -- artifacts created from this one (updated by post-skill).
 - *files*: files relevant to the skill output.
 
+### Advisory tags (optional)
+
+Advisory reports may include an optional `tags:` metadata line after the header and any `source:` or `spawned:` lines. Tags are lowercase kebab-case slugs, comma-separated. They enable topic-based discovery of past advisories (e.g., `grep "tags:.*notification-system" _output/advisory-logs/`). Example:
+
+```
+tags: notification-system, ux-patterns, modal-vs-page
+```
+
+Derive 2-5 tags from: (a) the question's topic, (b) affected components or project areas, (c) review perspective tags evaluated (e.g., `security`, `architecture`, `ux`). Tags are freeform -- no controlled vocabulary. Existing advisory logs are not retroactively modified.
+
+---
+
 Truncate sluggified short titles as needed. If not overwriting a file, proceed without asking for authorization.
 
 Reserve the id by calling `python .claude/skills/scripts/reserve_id.py --type <type> --title '<title>'` before writing any content.

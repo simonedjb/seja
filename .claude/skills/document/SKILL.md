@@ -19,13 +19,17 @@ metadata:
 
 **Examples**:
 > You: /document --plan 000130
+> 
 > Agent: Reads the plan's Docs: fields and generates the appropriate documentation for each identified need.
 
 > You: /document --auto-detect
+>
 > Agent: Analyzes recent git changes, determines which documentation types are needed, and generates them.
 
 > You: /document --type changelog
+>
 > Agent: Generates a changelog entry from recent changes using the changelog template.
+
 
 **When to use**: After implementing a feature or fix that affects user-facing behavior, API contracts, or architectural decisions. Automatically suggested by post-skill for FEATURE and REDESIGN plans.
 
@@ -69,7 +73,7 @@ If there are no arguments, ask the user what they need documented.
    - `scope`: the scope from arguments or auto-detection
    - `template_path`: the resolved template file path
    - `quality_guide_path`: `_references/general/documentation-quality.md`
-   - `project_context`: paths to `_references/project/conventions.md` (or template fallback), `_references/project/conceptual-design-as-is.md`
+   - `project_context`: paths to `_references/project/conventions.md` (or template fallback), `_references/project/product-design-as-coded.md`
    - `output_path`: the appropriate project location for this doc type
 
    **Multiple doc types** (--plan with multiple non-N/A Docs: fields, or --auto-detect with multiple results):
@@ -78,6 +82,7 @@ If there are no arguments, ask the user what they need documented.
    After agents return, verify that expected output files exist. Display a result summary (doc types generated, output paths).
 
 4. Run `/post-skill` to log the brief, commit, and suggest next steps.
+
 
 ---
 

@@ -9,7 +9,7 @@ paths:
 - **Pre-authenticated fixtures**: use `adminPage`, `memberPage`, `adminToken` — never log in during each test.
 - **Selectors**: prefer `data-testid` attributes over CSS class selectors for stability.
 
-See `project/testing-standards.md` §3 for full conventions.
+See `project/standards.md § Testing > 3` for full conventions.
 
 ## Perspective Alignment
 

@@ -24,7 +24,7 @@ Cross-functional roles (e.g., a tech lead who also codes) should load both appli
 
 ### Determining Expertise Level
 
-Each team member maps to one of three expertise levels. These levels consolidate the original 5-level Dreyfus-aligned taxonomy into three actionable bands: guided contributor, independent expert, and organizational leader.
+Each team member maps to one of three expertise levels. These levels consolidate the original 5-level Dreyfus-aligned taxonomy into three actionable bands (advisory-000314): guided contributor, independent expert, and organizational leader.
 
 | Tag | Name | File | Characteristics |
 |-----|------|------|-----------------|

@@ -10,7 +10,7 @@ metadata:
   context_budget: standard
   references:
     - general/communication.md
-    - project/conceptual-design-as-is.md
+    - project/product-design-as-coded.md
     - general/shared-definitions.md
     - general/report-conventions.md
 ---
@@ -24,6 +24,8 @@ metadata:
 > Agent: Reads your project's design vision and produces client-oriented material highlighting value proposition, ROI, and project outcomes. Generates both Markdown and HTML.
 
 **When to use**: You need to present the project to a specific audience and want material that speaks their language — whether it is a technical evaluator or a product client.
+
+**References**: Audience templates (`evaluators`, `clients`, `end-users`, `academics`) and the Diataxis mapping live in [_references/general/communication/](../../../_references/general/communication/). Edit those files to update per-audience tone, sections, or content strategy.
 
 # Communication
 
@@ -129,7 +131,7 @@ This mode follows the [Batch Execution Pattern](../../../_references/general/bat
    - `audience_tag`: the resolved canonical tag (EVL/CLT/USR/ACD)
    - `audience_file_path`: `_references/general/communication/<audience>.md`
    - `diataxis_mapping_path`: `_references/general/communication/diataxis-mapping.md`
-   - `project_context`: paths to `_references/project/conceptual-design-as-is.md`, `_references/project/conventions.md` (or template fallback), `_references/project/communication-style.md` (or template fallback)
+   - `project_context`: paths to `_references/project/product-design-as-coded.md`, `_references/project/conventions.md` (or template fallback), `_references/project/communication-style.md` (or template fallback)
    - `output_path`: the full path computed in step 3
    - `output_id`: the reserved ID from step 3
    - `format`: the `--format` flag value (default: `both`)

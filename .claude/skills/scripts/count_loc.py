@@ -1,7 +1,8 @@
-﻿"""Local source line counter for this workspace.
+"""Local source line counter for this workspace.
 
 Purpose
 - Count source files and line totals across frontend/backend.
+- Count SEJA framework files (.claude/, _references/).
 - Exclude tests by directory and filename pattern.
 - Report both:
   - physical lines (includes blank + comment-only)
@@ -10,6 +11,8 @@ Purpose
 Usage:
 - Default project scan (backend + frontend):
   - `python .claude/skills/scripts/count_loc.py`
+- Framework scan (SEJA framework files):
+  - `python .claude/skills/scripts/count_loc.py --framework`
 - JSON output (machine-readable):
   - `python .claude/skills/scripts/count_loc.py --json`
 - Include per-file details:
@@ -56,6 +59,24 @@ DEFAULT_SOURCE_EXTENSIONS = {
     ".sql",
     ".sh",
 }
+
+FRAMEWORK_SOURCE_EXTENSIONS = {
+    ".md",
+    ".py",
+    ".sh",
+    ".json",
+    ".yaml",
+    ".yml",
+}
+
+# Framework component directories scanned by --framework, relative to REPO_ROOT.
+FRAMEWORK_DIRS = [
+    ".claude/skills",
+    ".claude/agents",
+    ".claude/rules",
+    "_references/general",
+    "_references/template",
+]
 
 # Directories skipped during recursive scans. Includes test locations and common generated folders.
 EXCLUDED_DIR_NAMES = {
@@ -157,13 +178,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "paths",
         nargs="*",
-        default=[str(REPO_ROOT / backend_dir), str(REPO_ROOT / frontend_dir)],
-        help="Paths to scan (defaults to backend and frontend).",
+        default=None,
+        help="Paths to scan (defaults to backend and frontend, or framework dirs with --framework).",
+    )
+    parser.add_argument(
+        "--framework",
+        action="store_true",
+        help="Count SEJA framework files (skills, agents, rules, references) instead of project source.",
     )
     parser.add_argument(
         "--ext",
         nargs="*",
-        default=sorted(DEFAULT_SOURCE_EXTENSIONS),
+        default=None,
         help="Extensions to include (e.g. --ext .py .js .jsx).",
     )
     parser.add_argument(
@@ -409,11 +435,23 @@ def print_text(summary: dict, results: list[FileResult], list_files: bool) -> No
             )
 
 
+def resolve_defaults(args: argparse.Namespace) -> tuple[list[Path], set[str]]:
+    """Apply framework-aware defaults for paths and extensions."""
+    if args.framework:
+        paths = args.paths or [str(REPO_ROOT / d) for d in FRAMEWORK_DIRS]
+        exts = args.ext or sorted(FRAMEWORK_SOURCE_EXTENSIONS)
+    else:
+        backend_dir = get("BACKEND_DIR", "backend")
+        frontend_dir = get("FRONTEND_DIR", "frontend")
+        paths = args.paths or [str(REPO_ROOT / backend_dir), str(REPO_ROOT / frontend_dir)]
+        exts = args.ext or sorted(DEFAULT_SOURCE_EXTENSIONS)
+    return [Path(p).resolve() for p in paths], normalize_extensions(exts)
+
+
 def main() -> int:
     """CLI entrypoint."""
     args = parse_args()
-    roots = [Path(p).resolve() for p in args.paths]
-    allowed_exts = normalize_extensions(args.ext)
+    roots, allowed_exts = resolve_defaults(args)
 
     results: list[FileResult] = []
     for path in iter_source_files(roots, allowed_exts):

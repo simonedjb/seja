@@ -10,19 +10,16 @@ metadata:
   category: planning
   context_budget: heavy
   eager_references:
-    - project/conceptual-design-as-is.md
-    - project/design-intent-to-be.md
+    - project/product-design-as-coded.md
+    - project/product-design-as-intended.md
     - general/report-conventions.md
     - general/coding-standards.md
   references:
-    - project/conceptual-design-as-is.md
-    - project/design-intent-to-be.md
+    - project/product-design-as-coded.md
+    - project/product-design-as-intended.md
     - general/report-conventions.md
     - general/coding-standards.md
-    - project/frontend-standards.md
-    - project/backend-standards.md
-    - project/testing-standards.md
-    - project/i18n-standards.md
+    - project/standards.md
     - project/security-checklists.md
     - general/review-perspectives.md
 ---
@@ -125,10 +122,7 @@ If `--roadmap` is passed, use roadmap mode. If `--manual` is passed, use manual 
 2. Read the planned item from the plan file.
 
 3. **Load references on demand**: As you execute each step, load lazy references from the "Available references" list based on the step's References field:
-   - Load `project/frontend-standards.md` when executing steps that touch frontend files
-   - Load `project/backend-standards.md` when executing steps that touch backend files
-   - Load `project/testing-standards.md` when writing or updating tests
-   - Load `project/i18n-standards.md` when executing i18n-related steps
+   - Load `project/standards.md` when executing steps that touch backend, frontend, testing, or i18n files
    - Load `project/security-checklists.md` when executing auth or validation steps
    - Load `general/review-perspectives.md` when running the post-execution quality gate
 
@@ -138,7 +132,7 @@ If `--roadmap` is passed, use roadmap mode. If `--manual` is passed, use manual 
 
 6. Document every file, constant, class, method, and relevant key code fragments you create or modify. Update the to do list in the plan file when this step is done and save it to make it persistent in case the plan is interrupted.
 
-7. **Test generation** (skipped if `--skip-checks` was passed): For each completed step that has a non-N/A `Tests` field, write or update tests following `project/testing-standards.md`. If the step has no `Tests` field (pre-format plans), infer test needs from the modified files. If a bug is found, make and record a new plan to fix it, don't execute it yet, and alert the user when concluding the execution of this skill. Revise or eliminate obsolete tests.
+7. **Test generation** (skipped if `--skip-checks` was passed): For each completed step that has a non-N/A `Tests` field, write or update tests following `project/standards.md § Testing`. If the step has no `Tests` field (pre-format plans), infer test needs from the modified files. If a bug is found, make and record a new plan to fix it, don't execute it yet, and alert the user when concluding the execution of this skill. Revise or eliminate obsolete tests.
 
 8. Run the [Quality Gate](#quality-gate) (skipped if `--skip-checks` was passed).
 
@@ -192,7 +186,7 @@ For each step in the execution queue, up to `--max-iterations` (default 20):
    - The step's **Verify** condition — how the subagent knows it succeeded
    - The content of the progress file (cross-iteration learnings from prior steps)
    - Project conventions: instruct the subagent to read `_references/project/conventions.md` and `_references/general/coding-standards.md`
-   - The step's **References**: instruct the subagent to read only these specific `_references/` files (e.g., `project/backend-standards.md`). Do not load all 9 references.
+   - The step's **References**: instruct the subagent to read only these specific `_references/` files (e.g., `project/standards.md § Backend`). Do not load all 9 references.
    - The step's **Tests** field — what tests to create or update (if non-N/A). If the field is absent (pre-format plans), infer test needs from the modified files.
    - Explicit instructions:
      - Implement the step as described

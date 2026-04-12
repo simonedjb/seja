@@ -9,9 +9,8 @@ metadata:
   category: analysis
   context_budget: standard
   references:
-    - project/conceptual-design-as-is.md
-    - project/design-intent-to-be.md
-    - project/metacomm-as-is.md
+    - project/product-design-as-coded.md
+    - project/product-design-as-intended.md
     - general/shared-definitions.md
     - general/report-conventions.md
 ---
@@ -100,7 +99,7 @@ If the explanation type (architecture, behavior, behavior-evolution, code, data-
 - Filename pattern: `advisory-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 - Reserve ID: `python .claude/skills/scripts/reserve_id.py --type advisory --title '<short title>'`
 - Header pattern: `# Advisory <id> | <prefix><scope> | <current datetime> | <short title>`
-- General instructions: This type combines drift analysis and optional sync. It replaces the former `/spec` skill. The scope can be `all` (default), `conceptual-design`, `metacomm`, or `--promote` (promotion-only mode that promotes IMPLEMENTED items to established files -- see Step C below).
+- General instructions: This type combines drift analysis and optional sync. It replaces the former `/spec` skill. The scope can be `all` (default), `conceptual-design`, `metacomm`, `--promote` (Phase 3a -- generate a draft Decision proposal for items marked `STATUS: implemented`), or `--promote --apply-markers plan-NNNNNN` (Phase 3b -- flip the STATUS markers after the designer has applied the prose). See Step C below for the two-phase promote workflow.
 
 ## Skill-specific Instructions
 
@@ -232,14 +231,14 @@ If `--promote` is the scope argument, skip Steps A and B entirely and go directl
 2. Read the to-be/as-is registry from `project/conventions.md` (or `template/conventions.md` if the project file is absent). The registry lists all registered to-be/established/as-is file triples (see "To-Be / As-Is Registry" section). The registry includes a Section column indicating which section of the file holds the relevant entries -- use the Section column to narrow scans to the correct heading rather than searching the entire file. For each triple, determine whether it falls within the requested scope. If either the to-be or as-is file in a pair does not exist, report it and skip that pair.
 
    Key registry entries for journey-related IDs:
-   - JM-TB-NNN entries live in `project/design-intent-to-be.md §15 (Designed User Journeys)`.
-   - JM-E-NNN entries live in `project/ux-research-established.md §5 (Discovered User Journeys)`.
+   - JM-TB-NNN entries live in `project/product-design-as-intended.md §15 (Designed User Journeys)`.
+   - JM-E-NNN entries live in `project/ux-research-results.md §5 (Discovered User Journeys)`.
 
-   Also, for each existing to-be file in scope, scan for `STATUS: IMPLEMENTED` markers that do NOT yet carry a corresponding `ESTABLISHED:` stamp. Collect these as "pending promotion" items.
+   Also, for each existing to-be file in scope, scan for `STATUS: implemented` markers (legacy uppercase `STATUS: IMPLEMENTED` is also detected) that do NOT yet carry a corresponding `ESTABLISHED:` stamp. Collect these as "pending promotion" items.
 
 3. **Conceptual Design Drift Analysis** (if in scope):
 
-   Compare `${CONCEPTUAL_DESIGN_AS_IS}` and Part I (Conceptual Design) of `${DESIGN_INTENT_TO_BE}` section by section:
+   Compare `${AS_CODED} § Conceptual Design` (the `## Conceptual Design` H2 section of `project/product-design-as-coded.md`) and Part I (Conceptual Design) of `${DESIGN_INTENT}` section by section:
 
    | Category | What to compare |
    |----------|----------------|
@@ -252,7 +251,7 @@ If `--promote` is the scope argument, skip Steps A and B entirely and go directl
 
 4. **Metacomm Drift Analysis** (if in scope):
 
-   Compare `${METACOMM_AS_IS}` and Part II (Metacommunication) of `${DESIGN_INTENT_TO_BE}`:
+   Compare `${AS_CODED} § Metacommunication` (the `## Metacommunication` H2 section of `project/product-design-as-coded.md`) and Part II (Metacommunication) of `${DESIGN_INTENT}`:
 
    | Category | What to compare |
    |----------|----------------|
@@ -278,11 +277,13 @@ If `--promote` is the scope argument, skip Steps A and B entirely and go directl
 
    ## Pending Promotions
 
-   Items marked IMPLEMENTED in to-be files but not yet promoted to their established
-   counterpart. These are candidates for `/explain spec-drift --promote`.
+   Items marked `STATUS: implemented` (or legacy `IMPLEMENTED`) in registered Human (markers)
+   files but not yet promoted to `established`. These are candidates for
+   `/explain spec-drift --promote` (Phase 3a generates a draft Decision entry proposal;
+   Phase 3b flips the STATUS markers after you apply the prose).
 
-   | To-be file | Section / Row | Marker | Established file |
-   |------------|--------------|--------|-----------------|
+   | File | Section / Row | Marker | Plan |
+   |------|--------------|--------|------|
    | (none) OR list of found items |
    ```
 
@@ -296,39 +297,63 @@ After presenting the drift report, use the AskUserQuestion tool to ask the user 
 - "1. Conceptual-design to metacomm -- align metacomm with the conceptual design"
 - "2. Metacomm to conceptual-design -- align conceptual design with the metacomm"
 - "3. Bidirectional -- reconcile both (with user confirmation for conflicts)"
-- "4. Promote IMPLEMENTED items -- promote marked items to their established counterparts"
+- "4. Promote implemented items -- draft ADR-shaped Decision entries for items marked `STATUS: implemented` (Phase 3a of the two-phase promote workflow)"
 - "5. No -- skip sync"
 
 If the user chooses **No**, run /post-skill <id> and stop.
-If the user chooses **Promote IMPLEMENTED items**, go to Step C.
+If the user chooses **Promote implemented items**, go to Step C (Phase 3a).
 
-#### Step C — Promote Workflow
+#### Step C — Promote Workflow (two-phase, SEJA 2.8.3+)
 
-Used when `--promote` is the scope argument, OR when the user selects "Promote IMPLEMENTED items" from the Step B menu.
+The promote workflow splits into two phases per advisory-000264 Q4 middle-path design:
 
-1. Read the to-be/as-is registry from `project/conventions.md` (or `template/conventions.md` if absent). For each registered to-be file, scan for `STATUS: IMPLEMENTED` markers that do NOT yet carry an `ESTABLISHED:` stamp.
+- **Phase 3a — Proposal generation** (invocation: `/explain spec-drift --promote`): agent drafts ADR-shaped prose entries for items that have `STATUS: implemented` and writes them to `_output/promote-proposals/promote-proposal-plan-<id>.md`. Agent does NOT modify `product-design-as-intended.md`. Agent creates two paired pending actions: `apply-promote-proposal` (reminds the designer to copy the prose) and `apply-promote-markers` (reminds the designer to flip the STATUS markers after the prose is applied).
+- **Phase 3b — Marker flip** (invocation: `/explain spec-drift --promote --apply-markers plan-NNNNNN`, space-separated, 6-digit plan ID): agent verifies that the designer has added the corresponding `### D-NNN:` entries to `product-design-as-intended.md § Decisions` (via a heading-only grep), then runs per-item AskUserQuestion confirmation, then invokes `apply_marker.py` on confirmed items. Post-skill's `check_human_markers_only.py` and `check_changelog_append_only.py` verify the marker flips do not bleed prose.
 
-2. Group candidates by to-be file. If no candidates are found, inform the user ("No IMPLEMENTED items pending promotion.") and run /post-skill <id>.
+##### Phase 3a steps (`/explain spec-drift --promote`)
 
-3. Present the candidates to the user via AskUserQuestion, grouped by file:
-   - Show: file path, section heading or row identifier, plan ID and date from the marker
-   - Ask: "Promote these items to their established counterparts?" with per-item selection or "All" / "None"
+1. Read the to-be/as-is registry from `project/conventions.md` (or `template/conventions.md` if absent). Scan the registered `product-design-as-intended.md` (and any other registered Human (markers) files) for `STATUS: implemented` markers that do NOT yet carry an `ESTABLISHED:` stamp.
 
-4. Ask once: "Enter version tag for these promotions (optional -- leave blank to use date only):"
+2. Group candidates by plan ID (from the STATUS marker's plan field). If no candidates are found, inform the user ("No implemented items pending promotion.") and run /post-skill <id>.
 
-5. For each user-confirmed item:
-   a. Open (or create from template if absent) the corresponding established file. Use the Section column from the registry to target the correct section.
+3. For each candidate, draft an ADR-shaped entry in the **Nygard shape** (Context / Decision / Consequences / optional Supersedes). Pull the Context from the plan's Agent Interpretation section, the Decision from the plan's chosen approach, and Consequences from the plan's Trade-offs section if present, plus any REQ markers the plan touched.
 
-      Promotion targets for journey-related IDs:
-      - JM-TB-NNN items (from `project/design-intent-to-be.md §15`): promote to `project/design-intent-established.md §15 (Designed User Journeys)`.
-      - JM-E-NNN items (in `project/ux-research-established.md §5`): these are research-grounded entries already in their final location -- they do not have a promotion target and should not appear in the candidates list.
+4. Assign stable `D-NNN` IDs by scanning existing Decision entries in `product-design-as-intended.md § Decisions` and using the next available number. REQ IDs and D-NNN IDs are orthogonal namespaces.
 
-   b. Append a new entry block to the established file, copying the content from the to-be section and adding the stamp: `<!-- ESTABLISHED: plan-NNNNNN | YYYY-MM-DD | vX.Y.Z -->` (omit version if blank).
-   c. In the to-be file, replace the `<!-- STATUS: IMPLEMENTED ... -->` marker with `<!-- ESTABLISHED: plan-NNNNNN | YYYY-MM-DD | vX.Y.Z -->`. Optionally remove the entry body if the user confirms -- present this choice per item.
-   d. Append an entry to the established file's Processing Log (date, artifacts, design iteration = plan ID, notes).
-   e. Tag all changes with `source: agent (explain --promote)`.
+5. Write the proposal to `_output/promote-proposals/promote-proposal-plan-<id>.md` with a header linking back to the source plan and the draft Decision entries each wrapped in a copy-paste-friendly fenced block. The proposal is a designer-owned draft -- the designer may rewrite the prose freely before copying it.
 
-6. Run /post-skill <id>.
+6. **Dedup before adding pending actions** (A3): before invoking `pending.py add`, grep the pending ledger for existing `apply-promote-proposal` / `apply-promote-markers` entries with `source: plan-<id>`.
+   - If found with status `pending`, do NOT add duplicates; instead tell the designer: "Proposal already queued. See `_output/promote-proposals/promote-proposal-plan-<id>.md`, or run Phase 3b to continue where you left off."
+   - If found only with status `done`, proceed with a fresh pair (re-promotion cycle is a valid workflow).
+   - Otherwise, invoke `python .claude/skills/scripts/pending.py add --type apply-promote-proposal --source plan-<id> --description "Copy draft Decision entries from _output/promote-proposals/promote-proposal-plan-<id>.md into product-design-as-intended.md § Decisions"` and `python .claude/skills/scripts/pending.py add --type apply-promote-markers --source plan-<id> --description "Flip STATUS markers via /explain spec-drift --promote --apply-markers plan-<id> after prose is applied"`.
+
+7. Tell the designer: "Phase 3a complete. Drafted N Decision entries in `_output/promote-proposals/promote-proposal-plan-<id>.md`. Review, edit to your voice, copy into `product-design-as-intended.md § Decisions`, save, then run `/explain spec-drift --promote --apply-markers plan-<id>` to flip the STATUS markers."
+
+8. Run /post-skill <id>.
+
+##### Phase 3b steps (`/explain spec-drift --promote --apply-markers plan-NNNNNN`)
+
+1. Read the pending ledger to find the matching `apply-promote-markers` action for this plan ID. If not found, warn and continue anyway (the designer may be running Phase 3b without a prior Phase 3a).
+
+2. Read the proposal report at `_output/promote-proposals/promote-proposal-plan-<id>.md`. Extract the list of drafted `D-NNN` IDs.
+
+3. **Tolerant missing-entries with heading-only grep** (A3, A4): read `_references/project/product-design-as-intended.md`. For each D-NNN ID extracted from the proposal, run a heading-only grep: `^###\s+D-NNN(?::|\s*$)`. **Do NOT match on Decision title text, Context prose, or body content** -- the designer may have rewritten the prose to their own voice (advisory-000264 Q4 middle-path), and matching prose would defeat designer-voice-preservation. Separate results into `present` and `missing` sets.
+   - If `present` is empty, abort: "No D-NNN entries from the proposal found in `product-design-as-intended.md`. Copy the draft entries from `_output/promote-proposals/promote-proposal-plan-<id>.md` first, then re-run `/explain spec-drift --promote --apply-markers plan-<id>`."
+   - If `present` is non-empty, proceed with the present set; at the end of the phase, report the `missing` set to the designer so they know what is still pending.
+
+4. For each D-NNN that exists in both the proposal and the file, run AskUserQuestion: "Flip STATUS from implemented to established for D-NNN?" with per-item confirmation.
+
+5. For confirmed items, invoke `python .claude/skills/scripts/apply_marker.py --file _references/project/product-design-as-intended.md --id D-<NNN> --marker STATUS --value established --plan plan-<id> --date <today>`. Legacy uppercase markers (`STATUS: IMPLEMENTED`) are detected by the widened regex and REPLACED (not stacked) by the lowercase form.
+
+6. **Precise lifecycle updates to the pending ledger** (A3):
+   - If ALL originally-proposed D-NNN entries are in the `present` set AND the designer confirmed-and-flipped every present item, invoke `pending.py done <id>` for BOTH `apply-promote-proposal` and `apply-promote-markers`.
+   - If the `present` set is a proper subset of the proposed set (partial copy), leave `apply-promote-proposal` PENDING and emit: "N of M D-NNN entries applied so far; leaving apply-promote-proposal pending. Copy the remaining entries and re-run Phase 3b to finish."
+   - If all entries are present but the designer declined some marker flips via AskUserQuestion, leave `apply-promote-markers` PENDING with a message listing the declined items.
+   - Mark `apply-promote-markers` done ONLY when every present item was flipped successfully.
+
+7. Run /post-skill <id>.
+
+The Phase 3a+Phase 3b cadence is the middle-path mechanism from advisory-000264 Q4: the designer owns every word in Decision entries, but the framework manages the STATUS lifecycle structurally.
 
 #### Step D — Sync Workflow
 
@@ -343,24 +368,24 @@ Every entry created or modified by this workflow must carry:
 ##### Sync Directions
 
 **Direction 1 — conceptual-design -> metacomm**:
-For each entity, feature, or UX pattern in `${DESIGN_INTENT_TO_BE}` that lacks a corresponding entry in `${DESIGN_INTENT_TO_BE}`:
+For each entity, feature, or UX pattern in `${DESIGN_INTENT}` that lacks a corresponding entry in `${DESIGN_INTENT}`:
 - Draft a metacommunication intention describing what the designer communicates to the user through this feature
 - Present the draft to the user for confirmation or revision
 - If the user revises the draft, record their revision **verbatim** (see `general/shared-definitions.md` § Verbatim rule)
-- On confirmation, add the entry to `${DESIGN_INTENT_TO_BE}` with `source: agent (explain)`
+- On confirmation, add the entry to `${DESIGN_INTENT}` with `source: agent (explain)`
 
 **Direction 2 — metacomm -> conceptual-design**:
-For each metacommunication intention in `${DESIGN_INTENT_TO_BE}` that implies entities, permissions, or UX patterns not present in `${DESIGN_INTENT_TO_BE}`:
+For each metacommunication intention in `${DESIGN_INTENT}` that implies entities, permissions, or UX patterns not present in `${DESIGN_INTENT}`:
 - Propose additions to the conceptual design (new entities, permissions, or UX patterns)
 - Present the proposal to the user for confirmation or revision
-- On confirmation, add the entry to `${DESIGN_INTENT_TO_BE}` with `source: agent (explain)`
+- On confirmation, add the entry to `${DESIGN_INTENT}` with `source: agent (explain)`
 
 **Direction 3 — bidirectional**:
 Run both directions sequentially. Present all gaps and conflicts together for human resolution.
 
 ##### Conflict Detection
 
-When the two files disagree (e.g., `${DESIGN_INTENT_TO_BE}` removes an entity but `${DESIGN_INTENT_TO_BE}` still references it):
+When the two files disagree (e.g., `${DESIGN_INTENT}` removes an entity but `${DESIGN_INTENT}` still references it):
 - Present the conflict with both sides clearly shown
 - Ask the user to resolve: keep conceptual-design version, keep metacomm version, or provide a new resolution
 - **Never auto-resolve conflicts** — always ask the user

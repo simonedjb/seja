@@ -41,7 +41,7 @@
 ## Key Reference Files
 
 - `project/product-design-as-coded.md § Conceptual Design` (current system design)
-- `project/product-design-as-intended.md` (unified working intent, Decisions log, and metacommunication; Human (markers) classification)
+- `project/product-design-as-intended.md` (unified working intent, Decisions log, and metacommunication; Human (markers) classification since SEJA 2.8.3)
 - `project/product-design-as-coded.md § Metacommunication` (current metacommunication record)
 - `general/shared-definitions.md` (project terminology)
 - `general/review-perspectives/ux.md` (UX review standards)

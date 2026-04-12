@@ -124,22 +124,22 @@ def collect_skills(verbose: bool = False) -> list[dict[str, str]]:
 
 
 def is_stale() -> bool:
-    """Check if any SKILL.md is newer than the manifest."""
+    """Check if the manifest content differs from what would be generated now.
+
+    Compares the `skills` list by value (ignoring the `generated` timestamp),
+    so the check is deterministic across fresh checkouts where file mtimes
+    reflect write order rather than commit time.
+    """
     if not MANIFEST_PATH.is_file():
         return True
 
-    manifest_mtime = MANIFEST_PATH.stat().st_mtime
+    try:
+        current = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return True
 
-    for skill_dir in SKILLS_DIR.iterdir():
-        if not skill_dir.is_dir():
-            continue
-        if skill_dir.name in INTERNAL_SKILLS:
-            continue
-        skill_md = skill_dir / "SKILL.md"
-        if skill_md.is_file() and skill_md.stat().st_mtime > manifest_mtime:
-            return True
-
-    return False
+    expected_skills = collect_skills()
+    return current.get("skills") != expected_skills
 
 
 def main() -> int:

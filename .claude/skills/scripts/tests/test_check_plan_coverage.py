@@ -133,7 +133,7 @@ class TestRequirementExtraction:
 
     def test_extracts_all_markers(self, tmp_path):
         project_dir, _ = _make_project_structure(tmp_path)
-        spec_file = project_dir / "design-intent-to-be.md"
+        spec_file = project_dir / "product-design-as-intended.md"
         spec_file.write_text(SAMPLE_SPEC, encoding="utf-8")
 
         reqs = extract_requirements(spec_file)
@@ -150,7 +150,7 @@ class TestRequirementExtraction:
 
     def test_extracts_correct_sections(self, tmp_path):
         project_dir, _ = _make_project_structure(tmp_path)
-        spec_file = project_dir / "design-intent-to-be.md"
+        spec_file = project_dir / "product-design-as-intended.md"
         spec_file.write_text(SAMPLE_SPEC, encoding="utf-8")
 
         reqs = extract_requirements(spec_file)
@@ -162,7 +162,7 @@ class TestRequirementExtraction:
 
     def test_extracts_titles(self, tmp_path):
         project_dir, _ = _make_project_structure(tmp_path)
-        spec_file = project_dir / "design-intent-to-be.md"
+        spec_file = project_dir / "product-design-as-intended.md"
         spec_file.write_text(SAMPLE_SPEC, encoding="utf-8")
 
         reqs = extract_requirements(spec_file)
@@ -173,7 +173,7 @@ class TestRequirementExtraction:
 
     def test_empty_file_returns_empty(self, tmp_path):
         project_dir, _ = _make_project_structure(tmp_path)
-        spec_file = project_dir / "design-intent-to-be.md"
+        spec_file = project_dir / "product-design-as-intended.md"
         spec_file.write_text("# Empty spec\n", encoding="utf-8")
 
         reqs = extract_requirements(spec_file)
@@ -183,6 +183,43 @@ class TestRequirementExtraction:
         nonexistent = tmp_path / "nonexistent.md"
         reqs = extract_requirements(nonexistent)
         assert reqs == []
+
+    def test_extract_requirements_ignores_d_nnn_headings(self, tmp_path):
+        """REQ-TYPE-NNN and D-NNN are orthogonal ID conventions.
+
+        plan-000268 Amendment A2 regression guard: the REQ extraction regex
+        must NOT accidentally match D-NNN Decision entries. The merged
+        product-design-as-intended.md file carries both (REQ markers on sections and
+        D-NNN headings on Decision entries in `## Decisions`).
+        """
+        project_dir, _ = _make_project_structure(tmp_path)
+        spec_file = project_dir / "product-design-as-intended.md"
+        spec_file.write_text(
+            "# Design Intent\n\n"
+            "## 2. Entity Hierarchy\n\n"
+            "<!-- REQ-ENT-001 -->\n"
+            "### User\n\n"
+            "The primary entity.\n\n"
+            "## Decisions\n\n"
+            "<!-- STATUS: proposed -->\n"
+            "### D-001: Use Postgres\n\n"
+            "**Context**: The codebase needs a transactional database.\n"
+            "**Decision**: Use Postgres 16.\n"
+            "**Consequences**: We gain MVCC and mature tooling.\n",
+            encoding="utf-8",
+        )
+
+        reqs = extract_requirements(spec_file)
+        ids = [r.id for r in reqs]
+
+        assert "REQ-ENT-001" in ids, "REQ marker should be extracted"
+        assert len(reqs) == 1, (
+            f"expected exactly 1 requirement, got {len(reqs)}: {ids}"
+        )
+        # D-001 must NOT appear in the extracted REQ list.
+        assert not any("D-001" in r.id for r in reqs), (
+            "D-NNN Decision heading was mistakenly extracted as a requirement"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -235,7 +272,7 @@ class TestCoverageComputation:
 
     def test_full_coverage_no_gaps(self, tmp_path):
         project_dir, plans_dir = _make_project_structure(tmp_path)
-        spec_file = project_dir / "design-intent-to-be.md"
+        spec_file = project_dir / "product-design-as-intended.md"
         spec_file.write_text(SAMPLE_SPEC, encoding="utf-8")
         plan_file = plans_dir / "plan-000100-user-entity.md"
         plan_file.write_text(SAMPLE_PLAN_FULL_COVERAGE, encoding="utf-8")
@@ -250,7 +287,7 @@ class TestCoverageComputation:
 
     def test_partial_coverage_reports_gaps(self, tmp_path):
         project_dir, plans_dir = _make_project_structure(tmp_path)
-        spec_file = project_dir / "design-intent-to-be.md"
+        spec_file = project_dir / "product-design-as-intended.md"
         spec_file.write_text(SAMPLE_SPEC, encoding="utf-8")
         plan_file = plans_dir / "plan-000101-partial.md"
         plan_file.write_text(SAMPLE_PLAN_PARTIAL_COVERAGE, encoding="utf-8")
@@ -267,7 +304,7 @@ class TestCoverageComputation:
 
     def test_no_requirements_passes(self, tmp_path):
         project_dir, _ = _make_project_structure(tmp_path)
-        spec_file = project_dir / "design-intent-to-be.md"
+        spec_file = project_dir / "product-design-as-intended.md"
         spec_file.write_text("# Empty spec\nNo REQ markers.\n", encoding="utf-8")
 
         findings = compute_coverage(tmp_path, verbose=True)
@@ -320,7 +357,7 @@ class TestSecurityEscalation:
 
     def test_security_gaps_are_errors(self, tmp_path):
         project_dir, plans_dir = _make_project_structure(tmp_path)
-        spec_file = project_dir / "design-intent-to-be.md"
+        spec_file = project_dir / "product-design-as-intended.md"
         spec_file.write_text(
             "## 4. Permission Model\n<!-- REQ-PERM-001 -->\n### Admin role\n",
             encoding="utf-8",
@@ -333,7 +370,7 @@ class TestSecurityEscalation:
 
     def test_non_security_gaps_are_warnings(self, tmp_path):
         project_dir, plans_dir = _make_project_structure(tmp_path)
-        spec_file = project_dir / "design-intent-to-be.md"
+        spec_file = project_dir / "product-design-as-intended.md"
         spec_file.write_text(
             "## 2. Entity Hierarchy\n<!-- REQ-ENT-001 -->\n### User\n",
             encoding="utf-8",
@@ -353,7 +390,7 @@ class TestEdgeCases:
 
     def test_malformed_req_id_ignored(self, tmp_path):
         project_dir, _ = _make_project_structure(tmp_path)
-        spec_file = project_dir / "design-intent-to-be.md"
+        spec_file = project_dir / "product-design-as-intended.md"
         spec_file.write_text(
             "## 2. Entity\n<!-- REQ-INVALID -->\n### Bad marker\n"
             "<!-- REQ- -->\n### Also bad\n",

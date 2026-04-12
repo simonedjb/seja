@@ -33,7 +33,7 @@ You will receive:
 2. **Load type-specific inputs** based on doc_type:
 
    ### readme
-   Read: project conventions, architecture docs (conceptual-design-as-is), build commands from package files (package.json, pyproject.toml, Makefile), existing setup documentation. Diataxis: reference.
+   Read: project conventions, architecture docs (`product-design-as-coded.md § Conceptual Design`), build commands from package files (package.json, pyproject.toml, Makefile), existing setup documentation. Diataxis: reference.
 
    Model output:
    ```markdown
@@ -100,6 +100,8 @@ You will receive:
 
    ### changelog
    Read: recent git commits since last release tag (`git log <last-tag>..HEAD`), briefs log entries, plan summaries. Generate entries in Keep a Changelog format (Added, Changed, Deprecated, Removed, Fixed, Security). Diataxis: reference.
+
+   > **Note**: For *framework* changelogs (`.claude/CHANGELOG.md`), the `/document` skill handles generation inline via `generate_changelog_data.py` -- the document-generator agent is not invoked. This agent handles *project* changelogs only.
 
    Model output:
    ```markdown

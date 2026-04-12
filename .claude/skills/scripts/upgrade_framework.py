@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import shutil
+import subprocess
 import sys
 import tempfile
 import zipfile
@@ -28,6 +29,56 @@ _OLD_REFS_REL = Path(".claude", "skills", "references")
 
 # New-layout path for references (v2)
 _REFERENCES_REL = Path("_references")
+
+# Reference generators invoked by run_upgrade after migrations succeed.
+# Each entry: (display-name, script-basename). Scripts live under the target
+# repo's .claude/skills/scripts/ directory.
+_REFERENCE_GENERATORS: list[tuple[str, str]] = [
+    ("framework-reference", "generate_framework_reference.py"),
+    ("skills reference", "generate_skills_reference.py"),
+    ("perspectives reference", "generate_perspectives_reference.py"),
+]
+
+
+def _regenerate_reference_files(
+    target: Path,
+    dry_run: bool,
+    report_updated: list[str],
+) -> None:
+    """Invoke the three reference generators against the target repo.
+
+    Best-effort: if a generator is missing (older target), log a warning and
+    continue. If a generator exits non-zero, log a warning and continue. The
+    upgrade itself must not fail because of a generator issue.
+    """
+    scripts_dir = target / ".claude" / "skills" / "scripts"
+    for display_name, script_name in _REFERENCE_GENERATORS:
+        script = scripts_dir / script_name
+        if not script.is_file():
+            print(f"WARN: Skipped {display_name} regeneration: {script_name} not found")
+            continue
+        if dry_run:
+            print(f"OK: Would regenerate {display_name} (dry run)")
+            continue
+        try:
+            result = subprocess.run(
+                [sys.executable, str(script)],
+                cwd=str(target),
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+            if result.returncode == 0:
+                report_updated.append(f"Regenerated {display_name}")
+                print(f"OK: Regenerated {display_name}")
+            else:
+                print(f"WARN: {display_name} regeneration failed (exit {result.returncode})")
+                if result.stderr:
+                    print(result.stderr.rstrip(), file=sys.stderr)
+        except subprocess.TimeoutExpired:
+            print(f"WARN: {display_name} regeneration timed out (60s)")
+        except Exception as exc:
+            print(f"WARN: {display_name} regeneration error: {exc}")
 
 
 # ---------------------------------------------------------------------------
@@ -88,12 +139,13 @@ def collect_source_files(source: Path) -> list[Path]:
                 if skill_file.is_file():
                     files.append(skill_file)
 
-    # Scripts
+    # Scripts (skip priv/ subdirectory -- framework-exclusive scripts)
     scripts_dir = claude_dir / "skills" / "scripts"
     if scripts_dir.is_dir():
         for f in sorted(scripts_dir.iterdir()):
             if f.is_file() and f.suffix == ".py":
                 files.append(f)
+        # Explicitly skip scripts_dir/priv/ -- those are framework-exclusive
 
     # Agents
     agents_dir = claude_dir / "agents"
@@ -347,6 +399,11 @@ def run_upgrade(
         report_migration.append("WARN: Migration runner exited with an error")
     except Exception as exc:
         report_migration.append(f"WARN: Migration runner error: {exc}")
+
+    # --- Regenerate reference files ---
+    print()
+    print(f"INFO: {prefix}Regenerating framework reference files...")
+    _regenerate_reference_files(target, dry_run=dry_run, report_updated=report_updated)
 
     # --- Preserved files summary ---
     # Check for settings files and CLAUDE.md

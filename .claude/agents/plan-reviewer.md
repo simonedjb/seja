@@ -42,7 +42,7 @@ You will receive:
 
    For each qualifying Deferred perspective, perform a deep-dive:
    - Read the source files referenced in the plan that are relevant to the perspective
-   - Read the specific standards/reference file for that perspective (e.g., `project/security-checklists.md` for SEC, `project/backend-standards.md` for DB/ARCH, `project/frontend-standards.md` for UX/A11Y/VIS)
+   - Read the specific standards/reference file for that perspective (e.g., `project/security-checklists.md` for SEC, `project/standards.md § Backend` for DB/ARCH, `project/standards.md § Frontend` for UX/A11Y/VIS)
    - Do NOT read all reference files — only the ones relevant to the specific perspective
    - Evaluate the plan's approach against the perspective and record: finding, step ref, recommendation, and whether the plan should change
    - Limit deep-dives to a maximum of 6 across all iterations. Track the running count in every deep-dive header using the mandatory format `(iteration N, deep-dive M/6)`

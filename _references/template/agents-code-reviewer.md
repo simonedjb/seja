@@ -27,11 +27,11 @@ You will receive one of:
 2. **Read the project standards:**
    - Read `_references/general/review-perspectives.md` for the perspective index, conflict resolution rules, and plan prefix shortcuts
    - For each applicable perspective, read its file from `_references/general/review-perspectives/` (e.g., `sec.md`, `perf.md`). Load the **Essential** section always; load the **Deep-dive** section when the perspective is the primary focus of the review or when thorough coverage is requested.
-   - Read `_references/project/backend-standards.md` for backend conventions
-   - Read `_references/project/frontend-standards.md` for frontend conventions
+   - Read `_references/project/standards.md § Backend` for backend conventions
+   - Read `_references/project/standards.md § Frontend` for frontend conventions
    - Read `_references/project/security-checklists.md` for security checklists
-   - Read `_references/project/testing-standards.md` for testing conventions
-   - Read `_references/project/i18n-standards.md` for i18n conventions
+   - Read `_references/project/standards.md § Testing` for testing conventions
+   - Read `_references/project/standards.md § i18n` for i18n conventions
 
 3. **Evaluate each perspective:**
    For each of the 16 perspectives (SEC, PERF, DB, API, ARCH, DX, I18N, TEST, OPS, COMPAT, DATA, UX, A11Y, VIS, RESP, MICRO), determine:

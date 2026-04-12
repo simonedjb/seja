@@ -16,4 +16,4 @@ paths:
 - **Stable mocks** (critical): mock return values must be referentially stable — new references per call cause hanging tests.
 - **Integration tests**: require the real database and appropriate markers — unit tests use in-memory alternatives.
 
-See `project/testing-standards.md` for full conventions.
+See `project/standards.md § Testing` for full conventions.

@@ -13,7 +13,7 @@
 
 - For every code to be created or altered, evaluate against the applicable engineering and design perspectives in `general/review-perspectives.md`, recording each perspective as adopted, deferred (with reason), or N/A on the plan. If a best practice is deferred only because it is out of scope, ask the user whether it should be included in the plan.
 - If at any point in the execution a helper script is generated that can be useful for future plans, write it into `${TMP_DIR}` (see project/conventions.md) with a header describing its purpose, usage, and other information that may be useful to support future prompt executions.
-- For detailed frontend conventions, see `project/frontend-standards.md`. For backend conventions, see `project/backend-standards.md`. For testing conventions, see `project/testing-standards.md`.
+- For detailed Backend, Frontend, Testing, and i18n conventions, see the corresponding H2 sections of `project/standards.md`.
 
 ## Git commit messages
 
@@ -65,8 +65,8 @@ Rules for creating a great commit message
 
 ## If stack includes TypeScript
 
-- Frontend source files use TypeScript (`.ts`/`.tsx`). New files must be TypeScript; existing `.js`/`.jsx` files should be converted when modified. See `project/frontend-standards.md` §21 for type system conventions.
+- Frontend source files use TypeScript (`.ts`/`.tsx`). New files must be TypeScript; existing `.js`/`.jsx` files should be converted when modified. See `project/standards.md § Frontend > 21` for type system conventions.
 
 ## If stack includes Python
 
-- Backend source files use Python 3. See `project/backend-standards.md` for architectural conventions.
+- Backend source files use Python 3. See `project/standards.md § Backend` for architectural conventions.

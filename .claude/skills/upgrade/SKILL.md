@@ -86,5 +86,6 @@ This skill upgrades the SEJA framework files in the current project from the see
    > - N files auto-updated
    > - N files need manual merge (diffs shown above)
    > - N new files added
+   > - Reference files regenerated (framework-reference.md, skills.md, perspectives.md)
    >
    > Run `git diff` to review all changes before committing.
