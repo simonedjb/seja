@@ -102,6 +102,8 @@ EXCLUDED_FILE_PATTERNS = [
 LINE_COMMENT_MARKERS = {
     ".py": ["#"],
     ".sh": ["#"],
+    ".yaml": ["#"],
+    ".yml": ["#"],
     ".js": ["//"],
     ".jsx": ["//"],
     ".ts": ["//"],
@@ -121,6 +123,7 @@ BLOCK_COMMENT_MARKERS = {
     ".sass": [("/*", "*/")],
     ".less": [("/*", "*/")],
     ".sql": [("/*", "*/")],
+    ".md": [("<!--", "-->")],
     ".html": [("<!--", "-->")],
     ".mako": [("<%doc>", "</%doc>"), ("<!--", "-->")],
 }
@@ -159,8 +162,6 @@ class FileResult:
 def parse_args() -> argparse.Namespace:
     """Parse CLI arguments and provide repo-specific defaults."""
     project_name = get("PROJECT_NAME", "project")
-    backend_dir = get("BACKEND_DIR", "backend")
-    frontend_dir = get("FRONTEND_DIR", "frontend")
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawTextHelpFormatter,
         description=(
@@ -170,6 +171,7 @@ def parse_args() -> argparse.Namespace:
         epilog=(
             "Examples:\n"
             "  py -3 .claude/skills/scripts/count_loc.py\n"
+            "  py -3 .claude/skills/scripts/count_loc.py --framework\n"
             "  py -3 .claude/skills/scripts/count_loc.py --json\n"
             "  py -3 .claude/skills/scripts/count_loc.py --list-files\n"
             "  py -3 .claude/skills/scripts/count_loc.py frontend --ext .js .jsx .css\n"
@@ -390,10 +392,11 @@ def build_summary(results: list[FileResult]) -> dict:
     }
 
 
-def print_text(summary: dict, results: list[FileResult], list_files: bool) -> None:
+def print_text(summary: dict, results: list[FileResult], list_files: bool, *, framework: bool = False) -> None:
     """Render markdown-formatted output."""
     totals = summary["totals"]
-    print("# Source count (tests excluded)\n")
+    heading = "# SEJA framework count" if framework else "# Source count (tests excluded)"
+    print(f"{heading}\n")
     print("| Metric | Count |")
     print("| --- | ---: |")
     print(f"| Files | {summary['files']} |")
@@ -469,6 +472,7 @@ def main() -> int:
 
     if args.json:
         payload = {
+            "mode": "framework" if args.framework else "project",
             **summary,
             "roots": [str(p) for p in roots],
             "extensions": sorted(allowed_exts),
@@ -486,7 +490,7 @@ def main() -> int:
             ]
         print(json.dumps(payload, indent=2))
     else:
-        print_text(summary, results, args.list_files)
+        print_text(summary, results, args.list_files, framework=args.framework)
 
     return 0
 

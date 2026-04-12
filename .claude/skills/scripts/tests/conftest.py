@@ -3,3 +3,5 @@ from pathlib import Path
 
 # Add the scripts directory to sys.path so tests can import sibling modules
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# Also add scripts/priv/ for private-only modules (e.g., generate_changelog_data)
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "priv"))

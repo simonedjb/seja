@@ -8,7 +8,7 @@ Do not edit by hand. To regenerate:
 
 # SEJA framework reference
 
-Generated 2026-04-12T17:13:07Z from seja-priv framework state.
+Generated 2026-04-12T21:15:52Z from seja-priv framework state.
 
 ## Skills
 
