@@ -2,8 +2,7 @@
 
 > Directed relationships between skills, used by `/post-skill` to suggest contextual next steps.
 > Each skill maps to 1-2 suggested follow-up skills with a short reason.
-> Last revised: 2026-04-12 (plan-000305: /help --browse now points at docs/how-to/recipes.md; recipes relocated from _references/general/ per advisory-000302)
-> Previously revised: 2026-04-12 (plan-000299 iteration 2: aligned with CLAUDE.md key workflows -- added /seed -> /design, /design -> /plan, /upgrade -> /check health, /upgrade -> /explain spec-drift, /explain spec-drift -> /design; added Framework maintenance section)
+> Maintained as part of the SEJA framework. Regenerate the visual skill map with `generate_skill_map.py`.
 
 ## Usage
 
@@ -25,8 +24,8 @@ After a skill completes, `/post-skill` reads this file and looks up the complete
 | `/explain spec-drift` | `/plan` | Specs analyzed -- ready to plan next steps? |
 | `/explain spec-drift` | `/design` | Drift indicates intent has evolved -- update the project design |
 | `/explain spec-drift` | `/pending` | Address pending actions surfaced by the drift check |
-| `/pending` | `/explain spec-drift --promote` | Next logical step after addressing pending curation items (Phase 3a generates Decision proposal) |
-| `/explain spec-drift --promote` | `/explain spec-drift --promote --apply-markers plan-<id>` | Phase 3a done — after you apply the prose, flip the STATUS markers (Phase 3b) |
+| `/pending` | `/explain spec-drift --promote` | Next logical step after addressing pending curation items (generates a Decision proposal for promotion candidates) |
+| `/explain spec-drift --promote` | `/explain spec-drift --promote --apply-markers plan-<id>` | Decision proposal drafted -- after you apply the prose, flip the STATUS markers |
 | `/pending` | `/implement` | Next logical step after reviewing pending review items |
 
 ### Analysis & Review

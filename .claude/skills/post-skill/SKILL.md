@@ -44,7 +44,7 @@ metadata:
 
     This step prepares the record in context. The record is written to disk in step 8b after git commit data is available. If any field cannot be determined, set it to `null`.
 
-2. **As-Is alignment** — If the completed skill produced or executed a plan (detectable from the plan ID in $ARGUMENTS[0] or from the brief entry), update the as-is files to reflect changes made by the plan:
+2. **As-Is alignment** — If the completed skill executed a plan (detectable from the brief entry's skill field being "implement"), update the as-is files to reflect changes made by the plan. Skip when the parent skill is "plan" (no code changes yet):
 
    a. Read the plan file to identify what changed: entities added/modified/removed, permissions changed, UX patterns added, metacommunication intents implemented.
 
@@ -94,14 +94,14 @@ metadata:
 
    > **Note:** UX research files (`project/ux-research-new.md`, `project/ux-research-established.md`) are human-maintained and are NOT updated by post-skill. The agent can verify consistency between UX research, design intent, and implementation via `/explain spec-drift` or `/check validate`, but does not modify these files.
 
-2c. **Design intent curation reminder** — If the completed skill produced or executed a plan (same condition as step 2):
+2c. **Design intent curation reminder** — If the completed skill executed a plan (same condition as step 2):
 
    Output (text-based, not AskUserQuestion):
    > "Design intent from plan [plan-id] has been implemented. Consider moving processed entries from `design-intent-to-be.md` to `design-intent-established.md` — P0 priority: §4 Permission Model, §11 Global Vision, §13 Solution Representations, §14 Per-Feature Intentions."
 
    Do **not** perform the move. The designer curates this file manually to preserve their rationale alongside the plan reference. This is informational only.
 
-2b. **Documentation check** — If the completed skill produced or executed a plan (detectable from the plan ID in the argument or from the brief entry):
+2b. **Documentation check** — If the completed skill executed a plan (same condition as step 2):
 
    a. Read the plan file and check for steps with non-N/A `Docs:` fields. Collect all documentation needs into a list. If the plan predates the `Docs:` field (no steps have it), skip this step silently.
 

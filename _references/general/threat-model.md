@@ -53,10 +53,10 @@ Circular references like `a=${b}`, `b=${a}` cause the resolver to loop. With no 
 
 | Component | Guard | Added |
 |---|---|---|
-| `project_config._parse_config()` | Shell-injection regex filter | plan-000117 |
-| `project_config._parse_config()` | Unresolved-var warning after max passes | plan-000117 |
-| `project_config.get_path()` | Path containment within REPO_ROOT | plan-000117 |
-| General guideline (all script generation) | Mandatory user confirmation before write | plan-000117, plan-000152 |
+| `project_config._parse_config()` | Shell-injection regex filter | Initial security hardening |
+| `project_config._parse_config()` | Unresolved-var warning after max passes | Initial security hardening |
+| `project_config.get_path()` | Path containment within REPO_ROOT | Initial security hardening |
+| General guideline (all script generation) | Mandatory user confirmation before write | Initial security hardening |
 | `_MAX_RESOLVE_PASSES` | Iteration cap (10) for variable resolution | Original |
 
 ## Generated Code Vulnerability Patterns
@@ -108,11 +108,11 @@ For defense-in-depth on application codebases, install both:
 - The `security-guidance` plugin catches patterns deterministically before code hits disk (zero-miss for covered patterns, but cannot distinguish safe from unsafe uses)
 - SEJA's code reviewer performs contextual triage during review (can distinguish test files from production code, intentional from accidental uses)
 
-The two approaches operate at different layers and are complementary, not redundant. See advisory-000207 for the full evaluation.
+The two approaches operate at different layers and are complementary, not redundant.
 
 ## Recommended Future Hardening
 
 1. **Allowlist for conventions values**: Instead of blocklisting shell metacharacters, define an allowlist regex (alphanumeric, hyphens, slashes, dots, commas) for convention values.
-2. ~~**Content Security Policy for generated scripts**: Lint generated scripts for dangerous imports (`os.system`, `subprocess.Popen` with `shell=True`) before presenting to the user.~~ **Fulfilled** -- see "Generated Code Vulnerability Patterns" section above (plan-000209, advisory-000207).
+2. ~~**Content Security Policy for generated scripts**: Lint generated scripts for dangerous imports (`os.system`, `subprocess.Popen` with `shell=True`) before presenting to the user.~~ **Fulfilled** -- see "Generated Code Vulnerability Patterns" section above.
 3. **Subagent argument sanitization**: Add a shared sanitization step in `/pre-skill` that validates user arguments against type-specific patterns.
 4. **Audit logging**: Log all rejected values and path escapes to a persistent audit file for post-incident analysis.

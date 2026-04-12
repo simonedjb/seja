@@ -59,12 +59,13 @@ SEJA follows a **copy-and-continue** (seed repo) model:
    |----------|-----------|--------|
    | **Greenfield** | Target does not exist | Create directory (do NOT `git init` yet — workspace routing in step 2b decides) |
    | **Empty project** | Target exists, is a git repo, no source code | Proceed to copy |
-   | **Existing codebase** | Target exists, is a git repo, has source code | Proceed to copy (framework embeds alongside code) |
+   | **Existing codebase** | Target exists, is a git repo, has source code | If `--workspace` flag was passed, proceed directly to step 2b. If a `.claude/` directory exists, the workspace option is included in the `.claude/`-exists menu (see below) rather than asked separately. Otherwise, ask: "Would you like to embed SEJA in this codebase or create a separate workspace?" (options: Embed in codebase, Create companion workspace). If companion workspace, proceed to step 2b. If embed, proceed to copy. |
    | **Not a git repo** | Target exists but is not a git repo | Offer to run `git init`, or abort |
 
-   If a `.claude/` directory already exists in the target, warn the user and offer three options:
+   If a `.claude/` directory already exists in the target, warn the user and offer four options:
    - **Overwrite framework only** (recommended for upgrades) — overwrite skills, `general/` references, `template/` references, scripts, agents, and rules. **Never touch** `project/` references, `settings.json`, `settings.local.json`, the output directory, or `CLAUDE.md`.
    - **Overwrite everything** — full re-seed (destructive, requires confirmation)
+   - **Create companion workspace** — treat this directory as the codebase and create a new workspace alongside it. The existing codebase is not modified. Proceeds to step 2b (brownfield workspace routing).
    - **Abort**
 
 2b. **Workspace routing** (if `--workspace` flag or user chooses workspace mode):

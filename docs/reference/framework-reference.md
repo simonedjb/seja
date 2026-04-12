@@ -8,7 +8,7 @@ Do not edit by hand. To regenerate:
 
 # SEJA framework reference
 
-Generated 2026-04-12T02:36:33Z from seja-priv framework state.
+Generated 2026-04-12T12:09:58Z from seja-priv framework state.
 
 ## Skills
 
@@ -64,6 +64,7 @@ Generated 2026-04-12T02:36:33Z from seja-priv framework state.
 | Name | Purpose | Path | Mentioned in |
 |---|---|---|---|
 | apply_marker.py | Sole write path for Human (markers) files. | `.claude/skills/scripts/apply_marker.py` | `concepts.md`, `foundations.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/recipes.md`, `reference/framework-reference.md`, `reference/glossary.md`, `troubleshooting.md` |
+| backfill_decision_digest.py | One-time backfill of decision-digest.jsonl from existing advisory logs. | `.claude/skills/scripts/backfill_decision_digest.py` |  |
 | backfill_qa_dates.py | One-time script to add dates to existing QA log headers. | `.claude/skills/scripts/backfill_qa_dates.py` | `reference/framework-reference.md` |
 | bump_version.py | Update all SEJA version files atomically. | `.claude/skills/scripts/bump_version.py` | `reference/framework-reference.md` |
 | check_api_auth_decorators.py | Verify API endpoint auth coverage in dialogos. | `.claude/skills/scripts/check_api_auth_decorators.py` | `reference/framework-reference.md` |
@@ -94,6 +95,7 @@ Generated 2026-04-12T02:36:33Z from seja-priv framework state.
 | create_workspace.py | Create a project workspace from the foundational SEJA | `.claude/skills/scripts/create_workspace.py` | `how-to/brownfield-workspace.md`, `reference/framework-reference.md` |
 | generate_briefs_index.py | Generate a lightweight briefs index for fast scanning. | `.claude/skills/scripts/generate_briefs_index.py` | `reference/framework-reference.md` |
 | generate_cheatsheet.py | Generate a skill quick reference from SKILL.md frontmatter. | `.claude/skills/scripts/generate_cheatsheet.py` | `reference/framework-reference.md` |
+| generate_decision_digest.py | Generate a machine-readable decision digest. | `.claude/skills/scripts/generate_decision_digest.py` |  |
 | generate_essential_perspectives_summary.py | Extract Essential (P0) questions | `.claude/skills/scripts/generate_essential_perspectives_summary.py` | `reference/framework-reference.md` |
 | generate_framework_reference.py | Generate the SEJA framework reference Markdown. | `.claude/skills/scripts/generate_framework_reference.py` | `how-to/upgrade.md`, `reference/framework-reference.md` |
 | generate_macro_index.py | Unified artifact index generator. | `.claude/skills/scripts/generate_macro_index.py` | `reference/framework-reference.md` |
@@ -189,11 +191,9 @@ Generated 2026-04-12T02:36:33Z from seja-priv framework state.
 |---|---|---|---|
 | builders | BLD — Builders -- - Frontend developer - Backend developer - Full-stack developer - Mobile developer - DevOps / Infra... | `_references/general/onboarding/builders.md` | `reference/framework-reference.md` |
 | guardians | GRD — Guardians -- - QA / Test engineer - Security engineer - Tech lead - Engineering manager - Release manager - Com... | `_references/general/onboarding/guardians.md` | `reference/framework-reference.md` |
-| l1-newcomer | L1 — Newcomer (Junior) -- - Limited professional experience in the role (0-2 years) - Needs explicit step-by-step ins... | `_references/general/onboarding/l1-newcomer.md` | `reference/framework-reference.md` |
-| l2-practitioner | L2 — Practitioner (Mid-level) -- - Solid professional experience (2-5 years) - Can complete well-defined tasks indepe... | `_references/general/onboarding/l2-practitioner.md` | `reference/framework-reference.md` |
-| l3-expert | L3 — Expert (Senior) -- - Extensive professional experience (5-10 years) - Strong opinions informed by experience — n... | `_references/general/onboarding/l3-expert.md` | `reference/framework-reference.md` |
-| l4-strategist | L4 — Strategist (Staff / Principal) -- - Deep and broad experience (10+ years or equivalent impact) - Thinks in syste... | `_references/general/onboarding/l4-strategist.md` | `reference/framework-reference.md` |
-| l5-leader | L5 — Leader (Tech Lead / Engineering Manager) -- - Responsible for team outcomes, not just individual contributions -... | `_references/general/onboarding/l5-leader.md` | `reference/framework-reference.md` |
+| l1-contributor | L1 -- Contributor (Junior to Mid-level) -- - Professional experience ranging from newcomer (0-2 years) to mid-level p... | `_references/general/onboarding/l1-contributor.md` | `reference/framework-reference.md` |
+| l2-expert | L2 -- Expert (Senior) -- - Extensive professional experience (5-10 years) - Strong opinions informed by experience --... | `_references/general/onboarding/l2-expert.md` | `reference/framework-reference.md` |
+| l3-leader | L3 -- Leader (Staff / Principal / Manager) -- - Deep and broad experience (10+ years or equivalent impact) - Thinks i... | `_references/general/onboarding/l3-leader.md` | `reference/framework-reference.md` |
 | shapers | SHP — Shapers -- - Product manager / Product owner - UX designer - UI designer - UX researcher - Data analyst / Busin... | `_references/general/onboarding/shapers.md` | `reference/framework-reference.md` |
 
 ## Communication
@@ -366,11 +366,9 @@ Framework artifacts mentioned at least once in `D:/git/labs/seja-priv/seja-publi
 | human_markers_registry.py | Scripts | `.claude/skills/scripts/human_markers_registry.py` | `reference/framework-reference.md` |
 | i18n | Rules | `.claude/rules/i18n.md` | `reference/framework-reference.md` |
 | i18n | Perspectives | `_references/general/review-perspectives/i18n.md` | `reference/framework-reference.md` |
-| l1-newcomer | Onboarding | `_references/general/onboarding/l1-newcomer.md` | `reference/framework-reference.md` |
-| l2-practitioner | Onboarding | `_references/general/onboarding/l2-practitioner.md` | `reference/framework-reference.md` |
-| l3-expert | Onboarding | `_references/general/onboarding/l3-expert.md` | `reference/framework-reference.md` |
-| l4-strategist | Onboarding | `_references/general/onboarding/l4-strategist.md` | `reference/framework-reference.md` |
-| l5-leader | Onboarding | `_references/general/onboarding/l5-leader.md` | `reference/framework-reference.md` |
+| l1-contributor | Onboarding | `_references/general/onboarding/l1-contributor.md` | `reference/framework-reference.md` |
+| l2-expert | Onboarding | `_references/general/onboarding/l2-expert.md` | `reference/framework-reference.md` |
+| l3-leader | Onboarding | `_references/general/onboarding/l3-leader.md` | `reference/framework-reference.md` |
 | md_to_html.py | Scripts | `.claude/skills/scripts/md_to_html.py` | `reference/framework-reference.md` |
 | micro | Perspectives | `_references/general/review-perspectives/micro.md` | `reference/framework-reference.md` |
 | migrate_to_global_ids.py | Scripts | `.claude/skills/scripts/migrate_to_global_ids.py` | `reference/framework-reference.md` |

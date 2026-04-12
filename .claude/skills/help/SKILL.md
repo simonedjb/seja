@@ -91,14 +91,14 @@ When invoked with `--browse` (`/help --browse`), or when the user says "pick pro
 
 5. After the user picks a specific skill, ask what arguments to pass (if the skill has an `argument-hint`), then execute the corresponding skill command.
 
-6. **Skill Relationships** -- After showing categories (step 4) and before the user picks a skill, include a "Skill Relationships" section. Display the contents of `_output/skill-map.mmd` inside a Mermaid code block so the user can visualize how skills connect. If the file does not exist, skip this section silently.
+6. **Skill Relationships** -- After showing categories (step 4) and before the user picks a skill, include a "Skill Relationships" section. Display the contents of `_references/general/skill-map.mmd` inside a Mermaid code block so the user can visualize how skills connect. If the file does not exist, skip this section silently.
 
    Format:
 
    **Skill Relationships**
 
    ```mermaid
-   <contents of _output/skill-map.mmd>
+   <contents of _references/general/skill-map.mmd>
    ```
 
    > To regenerate: `python .claude/skills/scripts/generate_skill_map.py`

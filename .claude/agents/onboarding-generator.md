@@ -16,7 +16,7 @@ You are an onboarding plan generation agent. Your task is to produce a personali
 
 You will receive:
 - **role_tags**: one or more of BLD, SHP, GRD (e.g., "BLD", "BLD+GRD")
-- **level**: L1-L5
+- **level**: L1-L3
 - **name** (optional): name of the new team member
 - **area** (optional): focus area (e.g., "backend", "frontend", "api")
 - **role_file_paths**: paths to the role family file(s) (e.g., `_references/general/onboarding/builder.md`)
@@ -24,6 +24,7 @@ You will receive:
 - **project_context**: paths to project state files (conceptual design, conventions)
 - **output_path**: full path where the output file should be written
 - **output_id**: the reserved 6-digit ID for this artifact
+- **format**: `md`, `html`, or `both`
 
 ## Process
 
@@ -35,7 +36,7 @@ You will receive:
 2. **Load project state:**
    To make the onboarding plan concrete and project-specific, **default to the codebase** (i.e., `${BACKEND_DIR}` / `${FRONTEND_DIR}` from conventions) as the scan target -- not the workspace root. In workspace deployments these point to the actual source code via absolute paths.
 
-   - Read `_references/project/conceptual-design-as-is.md` for current system overview. If it does not exist, use available project information.
+   - Read `_references/project/product-design-as-coded.md` (the `## Conceptual Design` H2 section) for current system overview. If it does not exist, use available project information.
    - Read `_references/project/conventions.md` (or `_references/template/conventions.md` as fallback) for directory structure and key variables.
    - If Builder role: scan codebase source directories, read relevant coding standards and rules.
    - If Shaper role: read metacommunication files and conceptual design files.
@@ -101,11 +102,13 @@ You will receive:
    | Product Owner | _TBD_ | | Requirements, priorities |
    | QA Lead | _TBD_ | | Testing strategy, quality gates |
 
-4. **Save output:**
-   Write the onboarding plan to the provided output path.
+4. **Write output:**
+   - Write the markdown file to the provided output path.
+   - If format is `both` or `html`: run `python .claude/skills/scripts/md_to_html.py <markdown-file>`. If `_references/project/communication-style.md` exists, pass it via `--style _references/project/communication-style.md`; otherwise run the script without `--style` (it will use its default).
+   - If format is `html` only: after the HTML is generated, remove the intermediate `.md` file.
 
 5. **Return summary:**
-   Report: role/level, name (if provided), output path.
+   Report: role/level, name (if provided), output path, formats produced (e.g., "markdown + html").
 
 ## Rules
 

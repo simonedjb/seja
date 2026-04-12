@@ -1,6 +1,7 @@
 ---
 paths:
   - "**/*.test.*"
+  - "**/test_*.py"
   - "backend/tests/**"
 ---
 

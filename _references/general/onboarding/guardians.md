@@ -35,11 +35,9 @@
 
 | Level | First Task | Goal |
 |-------|-----------|------|
-| L1 | Write tests for an untested module | Learn the test framework, codebase structure |
-| L2 | Run `/check validate` and triage findings | Understand current quality state, learn validation tools |
-| L3 | Conduct a structured code review using `/check review` | Learn the review perspective framework in practice |
-| L4 | Audit the security posture of a critical user flow | Map security boundaries, identify gaps |
-| L5 | Review and improve the team's development process | Understand team dynamics, propose improvements |
+| L1 Contributor | Write tests for an untested module (newcomer) or run `/check validate` and triage (practitioner) | Learn the test framework or current quality state |
+| L2 Expert | Conduct a structured code review using `/check review` | Learn the review perspective framework in practice |
+| L3 Leader | Audit security posture (Strategist) or review team development process (Manager) | Map security boundaries or understand team dynamics |
 
 ## Key Reference Files
 

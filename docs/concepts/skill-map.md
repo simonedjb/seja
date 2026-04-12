@@ -44,7 +44,7 @@ flowchart TD
     explain -->|Drift indicates intent has evolved -- update th...| design
     explain -->|Address pending actions surfaced by the drift c...| pending
     pending -->|Next logical step after addressing pending cura...| explain
-    explain -->|Phase 3a done — after you apply the prose, flip...| explain
+    explain -->|Decision proposal drafted -- after you apply th...| explain
     pending -->|Next logical step after reviewing pending revie...| implement
     explain -->|Have questions about what you just learned| advise
     check -->|Want to plan fixes for the review findings| plan
@@ -96,8 +96,8 @@ flowchart TD
 - `/explain spec-drift` -> `/plan`: Specs analyzed -- ready to plan next steps
 - `/explain spec-drift` -> `/design`: Drift indicates intent has evolved -- update the project design
 - `/explain spec-drift` -> `/pending`: Address pending actions surfaced by the drift check
-- `/pending` -> `/explain spec-drift --promote`: Next logical step after addressing pending curation items (Phase 3a generates Decision proposal)
-- `/explain spec-drift --promote` -> `/explain spec-drift --promote --apply-markers plan-<id>`: Phase 3a done — after you apply the prose, flip the STATUS markers (Phase 3b)
+- `/pending` -> `/explain spec-drift --promote`: Next logical step after addressing pending curation items (generates a Decision proposal for promotion candidates)
+- `/explain spec-drift --promote` -> `/explain spec-drift --promote --apply-markers plan-<id>`: Decision proposal drafted -- after you apply the prose, flip the STATUS markers
 - `/pending` -> `/implement`: Next logical step after reviewing pending review items
 - `/explain` -> `/advise`: Have questions about what you just learned
 - `/check review` -> `/plan`: Want to plan fixes for the review findings

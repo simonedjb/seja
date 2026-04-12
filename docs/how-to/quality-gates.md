@@ -30,7 +30,7 @@ We run `/check smoke` after route or component changes, or after any change that
 
 `/check preflight` is our default gate before pushing to main or opening a PR. We prefer it over running validate and review in sequence because it parallelizes them.
 
-**Framework:** `/check preflight` launches validate and review as parallel Agent invocations (per advisory-000188), then synthesizes a unified report that ranks findings by perspective priority.
+**Framework:** `/check preflight` launches validate and review as parallel Agent invocations, then synthesizes a unified report that ranks findings by perspective priority.
 
 ## Step 5: Periodically, run `/check health` on the framework itself
 

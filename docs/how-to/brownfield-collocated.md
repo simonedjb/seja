@@ -38,13 +38,13 @@ Run `/plan <description>` targeting the highest-priority gap between what the as
 
 Run `/implement <plan-id>` and let the generator-critic loop land the changes. Then verify in the running codebase that the implemented behavior matches what `project/product-design-as-intended.md` describes. When you are satisfied, run `/explain spec-drift --promote`.
 
-**Framework:** Phase 3a drafts `D-NNN` Decision entries against `project/product-design-as-intended.md` and writes them to `_output/explained-<id>/`. No markers are flipped yet -- Phase 3a is a draft-only pass so that you can review the rationale text before it becomes part of the spec. See [framework-reference.md#explain-spec-drift](../reference/framework-reference.md#explain-spec-drift).
+**Framework:** The proposal pass drafts `D-NNN` Decision entries against `project/product-design-as-intended.md` and writes them to `_output/explained-<id>/`. No markers are flipped yet -- the proposal pass is a draft-only operation so that you can review the rationale text before it becomes part of the spec. See [framework-reference.md#explain-spec-drift](../reference/framework-reference.md#explain-spec-drift).
 
 ## Step 6: Apply markers with `/explain spec-drift --apply-markers`
 
 Review the draft Decision entries in `_output/explained-<id>/`. If you accept them, run `/explain spec-drift --apply-markers plan-<id>` to flip the marker.
 
-**Framework:** Phase 3b invokes `apply_marker.py` to flip `STATUS: to-be` -> `STATUS: implemented` at the line level inside `project/product-design-as-intended.md`. The as-intended file is enforced by `check_human_markers_only.py` -- only marker lines may change in this operation, so prose edits and marker flips stay separated into two distinct audit events. See [framework-reference.md#apply-marker](../reference/framework-reference.md#apply-marker) and [framework-reference.md#check-human-markers-only](../reference/framework-reference.md#check-human-markers-only).
+**Framework:** The marker pass invokes `apply_marker.py` to flip `STATUS: to-be` -> `STATUS: implemented` at the line level inside `project/product-design-as-intended.md`. The as-intended file is enforced by `check_human_markers_only.py` -- only marker lines may change in this operation, so prose edits and marker flips stay separated into two distinct audit events. See [framework-reference.md#apply-marker](../reference/framework-reference.md#apply-marker) and [framework-reference.md#check-human-markers-only](../reference/framework-reference.md#check-human-markers-only).
 
 ## Step 7: Run `/check` before committing
 

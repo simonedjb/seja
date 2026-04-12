@@ -24,15 +24,13 @@ Cross-functional roles (e.g., a tech lead who also codes) should load both appli
 
 ### Determining Expertise Level
 
-Each team member maps to one of five expertise levels, aligned with the Dreyfus skill acquisition model:
+Each team member maps to one of three expertise levels. These levels consolidate the original 5-level Dreyfus-aligned taxonomy into three actionable bands: guided contributor, independent expert, and organizational leader.
 
 | Tag | Name | File | Characteristics |
 |-----|------|------|-----------------|
-| L1 | Newcomer | [l1-newcomer.md](onboarding/l1-newcomer.md) | Learning fundamentals; needs guidance on *how* and *where* |
-| L2 | Practitioner | [l2-practitioner.md](onboarding/l2-practitioner.md) | Independent on familiar tasks; needs context on *what* and *when* |
-| L3 | Expert | [l3-expert.md](onboarding/l3-expert.md) | Deep domain expertise; needs context on *why* and *trade-offs* |
-| L4 | Strategist | [l4-strategist.md](onboarding/l4-strategist.md) | Cross-cutting influence; needs *organizational context* |
-| L5 | Leader | [l5-leader.md](onboarding/l5-leader.md) | Owns process and people; needs *team dynamics and governance* |
+| L1 | Contributor | [l1-contributor.md](onboarding/l1-contributor.md) | Junior to mid-level IC (0-5 years); needs guidance on *how*, *what*, and *where* |
+| L2 | Expert | [l2-expert.md](onboarding/l2-expert.md) | Senior (5-10 years); needs context on *why* and *trade-offs* |
+| L3 | Leader | [l3-leader.md](onboarding/l3-leader.md) | Staff/Principal/Manager (10+ years); needs *organizational context* and *team dynamics* |
 
 ### Onboarding Layers
 
@@ -61,11 +59,12 @@ Common combinations for quick reference:
 | Scenario | Role | Level | Key Focus |
 |----------|------|-------|-----------|
 | Junior frontend dev | BLD | L1 | Guided tutorial, pair programming, code review receiving |
-| Senior backend dev | BLD | L3 | Architecture decisions, system design rationale, technical debt |
-| New product manager | SHP | L2 | Domain context, user research, roadmap, metrics |
-| New QA engineer | GRD | L1-L2 | Test strategy, coverage expectations, review perspective framework |
-| Tech lead joining | BLD+GRD | L4-L5 | Team dynamics, process ownership, cross-team dependencies |
-| Designer with AI tools | SHP+BLD | L1-L2 | Conceptual design, AI-assisted workflow, metacommunication |
+| Mid-level backend dev | BLD | L1 | Project conventions, architecture boundaries, independent features |
+| Senior backend dev | BLD | L2 | Architecture decisions, system design rationale, technical debt |
+| New product manager | SHP | L1 | Domain context, user research, roadmap, metrics |
+| New QA engineer | GRD | L1 | Test strategy, coverage expectations, review perspective framework |
+| Tech lead joining | BLD+GRD | L3 | Team dynamics, process ownership, cross-team dependencies |
+| Designer with AI tools | SHP+BLD | L1 | Conceptual design, AI-assisted workflow, metacommunication |
 
 ---
 
@@ -90,17 +89,17 @@ Onboarding plans are saved in date-versioned folders under `${ONBOARDING_PLANS_D
 ```
 ${ONBOARDING_PLANS_DIR}/
 ├── 2026-03-28/
-│   ├── onboarding-0001-alice-bld-l2.md
-│   ├── onboarding-0002-bob-shp-l3.md
+│   ├── onboarding-0001-alice-bld-l1.md
+│   ├── onboarding-0002-bob-shp-l2.md
 │   └── onboarding-0003-grd-l1.md
 ├── 2026-04-15/
 │   ├── onboarding-0004-carol-bld-l1.md
-│   └── onboarding-0005-dave-bld+grd-l4.md
+│   └── onboarding-0005-dave-bld+grd-l3.md
 ```
 
 - **Date folder** (`YYYY-MM-DD` UTC): Groups all plans generated on the same date. When the team evolves or the project changes, regenerating plans on a new date creates a new version without overwriting the old ones.
 - **Sequential ID**: Global across all date folders (not reset per folder).
-- **Batch generation**: Use `--batch` to generate multiple plans in parallel via concurrent agents. See the `/onboarding` skill for details.
+- **Batch generation**: Use `--all` to generate all 9 combinations (3 roles x 3 levels), `--all-levels <role>` for all levels of one role, `--all-roles <level>` for all roles at one level, or `--batch` for custom spec lists. See the `/onboarding` skill for details.
 
 ---
 
@@ -109,5 +108,5 @@ ${ONBOARDING_PLANS_DIR}/
 - **Review perspectives** (`general/review-perspectives.md`): The DX perspective's P1 question on structured onboarding paths is directly addressed by this framework.
 - **Conceptual design** (`project/conceptual-design-*.md`): Shapers onboarding draws heavily from these files.
 - **Metacommunication** (`project/metacomm-*.md`): Shapers and Guardians need to understand the designer's intent.
-- **Coding standards** (`project/backend-standards.md`, `project/frontend-standards.md`): Builders onboarding references these.
+- **Coding standards** (`project/standards.md §§ Backend and Frontend`): Builders onboarding references these.
 - **Skills system** (`.claude/skills/`): The onboarding skill orchestrates all of the above.

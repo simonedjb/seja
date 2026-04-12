@@ -6,7 +6,7 @@ Exit codes: 0 = success, 1 = no relationships found, 2 = script error.
 
 Reads _references/general/skill-graph.md, parses After/Suggest/Reason
 triples from markdown tables, categorizes skills by color, and emits a
-Mermaid flowchart to _output/skill-map.mmd. Optionally runs mmdc for SVG
+Mermaid flowchart to _references/general/skill-map.mmd. Optionally runs mmdc for SVG
 if available on PATH.
 
 Usage
@@ -29,7 +29,7 @@ except ImportError:
     REPO_ROOT = Path(__file__).resolve().parents[3]
 
 SKILL_GRAPH_PATH = REPO_ROOT / "_references" / "general" / "skill-graph.md"
-OUTPUT_DIR = REPO_ROOT / "_output"
+OUTPUT_DIR = REPO_ROOT / "_references" / "general"
 OUTPUT_MMD = OUTPUT_DIR / "skill-map.mmd"
 OUTPUT_SVG = OUTPUT_DIR / "skill-map.svg"
 

@@ -276,9 +276,15 @@ When using the metacomm framing:
 
 6. Output the plan id.
 
-7. Ask the user if they want to execute the plan and, if so, run /implement <id>.
+7. Ask the user via AskUserQuestion what to do next. Options (with rationale per the Decision-point rationale convention in `_references/general/constraints.md`):
+   - **Implement now** -- commit the plan and run `/implement <id>` to execute the plan steps. Recommended when the plan has been reviewed and you are ready to proceed in this session. NOT recommended when you want to review the plan offline or share it with others first.
+   - **Commit plan** -- commit the plan as-is without implementing. The plan can be implemented later via `/implement <id>`. Recommended when you want to review further, implement in a separate session, or share the plan. NOT recommended when the plan is trivially correct and delay adds no value.
+   - **Revise plan** -- stop and wait for further instructions. The plan is not committed yet. Recommended when you spotted an issue or want to adjust the approach before committing. NOT recommended when the plan is satisfactory and the revision impulse is perfectionism rather than substance.
 
-8. If the user does not execute the plan, run /post-skill <id>.
+8. Based on the user's choice:
+   - **Implement now**: run /post-skill <id>, then run /implement <id>.
+   - **Commit plan**: run /post-skill <id>.
+   - **Revise plan**: do not run /post-skill. Wait for the user's instructions.
 
 ---
 
@@ -449,23 +455,41 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
 
 7. Ask the user to review, add, remove, or reorder items before generating plans.
 
-8. **Generate plans**: For each approved work item:
-   - If classified as **technical**: invoke the standard plan workflow with the item's description
-   - If classified as **design**: invoke the plan skill with `--framing metacomm` and the item's description phrased as a metacommunication message using I/you (e.g., "When you open the home page, I want you to see...")
-   - Record the generated plan ID next to each work item
-
-8b. **Coverage check (advisory)**: After all plans are generated, if `_references/project/design-intent-to-be.md` exists and contains REQ markers, run `python .claude/skills/scripts/check_plan_coverage.py --mode advisory` and include the coverage summary in the roadmap file. This provides an aggregate view of which requirements are covered across all generated plans.
-
-9. **Save roadmap summary**: Save to `${ROADMAP_DIR}/roadmap-<id>-<slug>.md` with:
+8. **Save roadmap summary**: Save to `${ROADMAP_DIR}/roadmap-<id>-<slug>.md` with:
    - Header: `# Roadmap <id> | <current datetime> | <short title>`
    - Source: which reference files were used
-   - Wave summary table with plan IDs and classifications
+   - Wave summary table with `plan-TBD` in the Plan column and classifications
    - Execution instructions (which plans can run in parallel)
 
-10. **Output execution instructions**: Tell the user how to proceed:
-    - Which plans to execute first (Wave 0 -- sequential)
-    - Which plans to execute next in parallel (Wave 1+)
-    - Recommended execution method (multiple Claude Code sessions or worktree-isolated agents)
+9. **Plan generation decision point**: Present the user with a decision point (text-based, not AskUserQuestion -- this is a mixed open-ended/closed-set decision point where freeform response is preferred) offering three options:
+
+   - **Create all plans now** -- generates plans for every work item, processing waves sequentially (Wave 0 first, then Wave 1, etc.). Each plan invokes the standard plan workflow inline.
+     - Recommended when: the roadmap has 5 or fewer work items and you want to proceed immediately.
+     - NOT recommended when: the roadmap has 6+ items, as context budget may degrade plan quality in later waves.
+   - **Create plans for Wave 0 only** -- generates plans only for the foundational wave items.
+     - Recommended when: the roadmap has 6+ items, or you want to review foundation plans before committing to the full roadmap. Wave 0 items are always needed first and most immediately actionable.
+     - NOT recommended when: you already know the full roadmap scope is correct and want to batch-generate everything.
+   - **Don't create plans now** -- keep the roadmap as-is with `plan-TBD` entries; create plans manually later via the commands in Execution Instructions.
+     - Recommended when: you want to review the roadmap across sessions, share it with others, or are not ready to commit to implementation.
+     - NOT recommended when: you have a clear scope and want to start immediately.
+
+   **Context budget guardrail**: If the roadmap has more than 5 work items and the user selects "Create all plans now", emit a note: "This roadmap has N work items. Generating all plans in a single session may impact quality for later waves due to context budget. Consider 'Wave 0 only' if quality is a concern." Do not block -- just inform.
+
+   **Conditional plan generation**: Based on the user's choice, generate plans for the selected work items:
+   - If classified as **technical**: invoke the standard plan workflow with the item's description
+   - If classified as **design**: invoke the plan skill with `--framing metacomm` and the item's description phrased as a metacommunication message using I/you (e.g., "When you open the home page, I want you to see...")
+   - Record the generated plan ID next to each work item by updating the roadmap file's Plan column from `plan-TBD` to the actual plan ID
+   - If "Don't create plans now" was selected, skip generation entirely
+
+   **Anti-pattern -- do not pre-reserve plan IDs.** `/plan` reserves its own ID when invoked. Do not call `reserve_id.py --type plan` up front for the downstream work items, and do not embed such a step in the roadmap summary's "Next steps" or resumption prose. Pre-reserving looks tidy but causes drift when the user executes items out of their original order across sessions -- the pre-reserved IDs stop matching the IDs `/plan` actually assigns, and the roadmap's Plan column goes stale. The Plan column should start as `plan-TBD` (or `pending`) for every row and be filled in with the real ID after each `/plan` invocation completes. Note: generating full plans eagerly (via the decision point above) is acceptable -- a generated plan can be revised or discarded without causing the ID drift that empty reservations create.
+
+9b. **Coverage check (advisory)**: After plans are generated (skip if no plans were generated), if `_references/project/product-design-as-intended.md` exists and contains REQ markers, run `python .claude/skills/scripts/check_plan_coverage.py --mode advisory` and include the coverage summary in the roadmap file. This provides an aggregate view of which requirements are covered across all generated plans.
+
+10. **Output execution instructions**: Tell the user how to proceed, adapting the output based on which plans were generated:
+    - If all plans were generated: show `/implement <plan-id>` commands with real plan IDs for each wave
+    - If only Wave 0 plans were generated: show `/implement <plan-id>` commands for Wave 0 with real IDs, and `/plan <description>` commands for remaining waves
+    - If no plans were generated: show `/plan <description>` commands for all waves
+    - Include the recommended execution method (multiple Claude Code sessions or worktree-isolated agents) for parallel waves
 
 ---
 
@@ -494,9 +518,9 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
 
 6. **Present validation report**: Show the parsed items with their classifications and dependency graph. Ask user to confirm or adjust.
 
-7. **Generate plans**: Same as Mode 1, step 8.
+7. **Save roadmap summary**: Same as Mode 1, step 8.
 
-8. **Save roadmap summary**: Same as Mode 1, step 9.
+8. **Plan generation decision point**: Same as Mode 1, step 9.
 
 9. **Output execution instructions**: Same as Mode 1, step 10.
 

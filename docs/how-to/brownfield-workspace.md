@@ -39,13 +39,13 @@ Run `/plan <description>` from the workspace targeting a specific gap between as
 
 Launch the agent from the workspace with the codebase attached via `claude --add-dir <codebase-path>`, then run `/implement <plan-id>`. Verify the implemented behavior in the running codebase. When satisfied, run `/explain spec-drift --promote`.
 
-**Framework:** Phase 3a drafts `D-NNN` Decision entries against `project/product-design-as-intended.md` and writes them to the workspace's `_output/explained-<id>/` directory. No markers are flipped yet; the Decision text is a draft for review. Source-code writes from `/implement` land in the attached codebase, while design-reconciliation writes land in the workspace, preserving the separation between the two repositories. See [framework-reference.md#explain-spec-drift](../reference/framework-reference.md#explain-spec-drift).
+**Framework:** The proposal pass drafts `D-NNN` Decision entries against `project/product-design-as-intended.md` and writes them to the workspace's `_output/explained-<id>/` directory. No markers are flipped yet; the Decision text is a draft for review. Source-code writes from `/implement` land in the attached codebase, while design-reconciliation writes land in the workspace, preserving the separation between the two repositories. See [framework-reference.md#explain-spec-drift](../reference/framework-reference.md#explain-spec-drift).
 
 ## Step 6: Apply markers with `/explain spec-drift --apply-markers`
 
 Review the draft Decision entries in the workspace. If you accept them, run `/explain spec-drift --apply-markers plan-<id>`.
 
-**Framework:** Phase 3b invokes `apply_marker.py` to flip `STATUS: to-be` -> `STATUS: implemented` at the line level inside the workspace copy of `project/product-design-as-intended.md`. `check_human_markers_only.py` enforces that only marker lines change in this operation, so the Decision prose and the marker flip remain two distinct audit events inside the workspace git history. See [framework-reference.md#apply-marker](../reference/framework-reference.md#apply-marker) and [framework-reference.md#check-human-markers-only](../reference/framework-reference.md#check-human-markers-only).
+**Framework:** The marker pass invokes `apply_marker.py` to flip `STATUS: to-be` -> `STATUS: implemented` at the line level inside the workspace copy of `project/product-design-as-intended.md`. `check_human_markers_only.py` enforces that only marker lines change in this operation, so the Decision prose and the marker flip remain two distinct audit events inside the workspace git history. See [framework-reference.md#apply-marker](../reference/framework-reference.md#apply-marker) and [framework-reference.md#check-human-markers-only](../reference/framework-reference.md#check-human-markers-only).
 
 ## Step 7: Upgrade the workspace when the foundational framework changes
 

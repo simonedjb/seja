@@ -660,6 +660,88 @@ def plugin_structural_completeness(root: Path, verbose: bool) -> list[Finding]:
 
 
 # ---------------------------------------------------------------------------
+# Plugin 7: Internal reference leakage
+# ---------------------------------------------------------------------------
+
+@register_plugin("internal-reference-leakage", "Detect internal development references in public documentation")
+def plugin_internal_reference_leakage(root: Path, verbose: bool) -> list[Finding]:
+    """Scan documentation files for internal plan IDs, advisory IDs,
+    internal phase labels, and SEJA version numbers that should not
+    appear in public-facing documentation."""
+    findings: list[Finding] = []
+
+    # Patterns that indicate internal development references
+    _patterns = [
+        (re.compile(r"plan-\d{6}"), "Specific plan ID"),
+        (re.compile(r"advisory-\d{6}"), "Specific advisory ID"),
+        (re.compile(r"Phase\s+3[ab]\b"), "Internal development phase label"),
+        (re.compile(r"SEJA\s+\d+\.\d+\.\d+"), "Internal SEJA version number"),
+    ]
+
+    # Files that legitimately contain these patterns (format examples, etc.)
+    _allowlisted_files = {
+        "shared-definitions.md",     # format syntax examples
+        "plan-and-execute.md",       # example plan filenames
+    }
+
+    _fenced_re = re.compile(r"^```")
+    _example_re = re.compile(r"e\.g\.,|for example|example:", re.IGNORECASE)
+
+    # Scan .md files in documentation directories
+    scan_dirs = [
+        root / ".claude",
+        root / "_references",
+        root / "docs",
+    ]
+
+    seen: set[Path] = set()
+    for scan_dir in scan_dirs:
+        if not scan_dir.is_dir():
+            continue
+        for md_file in sorted(scan_dir.rglob("*.md")):
+            if md_file in seen:
+                continue
+            seen.add(md_file)
+
+            # Skip _output/ directories (internal artifacts)
+            rel = md_file.relative_to(root)
+            if "_output" in rel.parts:
+                continue
+
+            # Skip allowlisted files
+            if md_file.name in _allowlisted_files:
+                continue
+
+            try:
+                text = md_file.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+
+            in_fence = False
+            for line_no, line in enumerate(text.splitlines(), 1):
+                if _fenced_re.match(line.strip()):
+                    in_fence = not in_fence
+                    continue
+                if in_fence:
+                    continue
+
+                # Skip lines that are explicit examples
+                if _example_re.search(line):
+                    continue
+
+                for pattern, label in _patterns:
+                    m = pattern.search(line)
+                    if m:
+                        findings.append(Finding(
+                            str(md_file), line_no, "warning",
+                            f"{label}: '{m.group()}'",
+                            "internal-reference-leakage",
+                        ))
+
+    return findings
+
+
+# ---------------------------------------------------------------------------
 # CLI and runner
 # ---------------------------------------------------------------------------
 

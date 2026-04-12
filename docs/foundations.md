@@ -159,8 +159,4 @@ The primary sources behind this primer are:
 - Schon, D.A. (1983). *The Reflective Practitioner: How Professionals Think in Action*. New York: Basic Books. Reflection-in-action, reflection-on-action, reflection-on-practice; conversation with materials.
 - Eraut, M. (1994). *Developing Professional Knowledge and Competence*. London: Falmer Press. The critical counter-reading used above on the limits of engineered reflection.
 
-The private `_output/semiotic-engineering/` corpus holds the longer, audit-grade draft I worked from while writing this file.
-Readers who want the unabridged version can open `_output/semiotic-engineering/01-concepts.md` for the concept catalog, `_output/semiotic-engineering/03-current-reading.md` for my current fit assessment, and `_output/semiotic-engineering/04-working-synthesis.md` for the working synthesis.
-Those files are private on purpose: they are the scaffolding, not the primer.
-
 > Last reviewed: 2026-04-11. I revisit this file on every major framework release.

@@ -15,7 +15,7 @@
 
 ### Essential (all Shapers must cover)
 
-- **Conceptual design and metacommunication**: The as-is and to-be design documents (`project/conceptual-design-as-is.md`, `project/design-intent-to-be.md`, `project/metacomm-as-is.md`). These capture the system's entity model, user roles, permissions, interaction patterns, and the designer's intent as expressed through the system -- who the user is, what they need, and why the system works this way.
+- **Conceptual design and metacommunication**: The unified as-coded implementation state and the design intent documents (`project/product-design-as-coded.md` with `## Conceptual Design` and `## Metacommunication` H2 sections, `project/product-design-as-intended.md`). These capture the system's entity model, user roles, permissions, interaction patterns, and the designer's intent as expressed through the system -- who the user is, what they need, and why the system works this way.
 - **User personas and journey maps**: Who uses the system, what their goals are, and how they move through key workflows.
 - **Design system and component library**: Visual language, design tokens, reusable components, interaction patterns.
 - **Product roadmap and priorities**: Current and upcoming work, strategic goals, how features are prioritized. Use `/plan --roadmap` output if available.
@@ -34,17 +34,15 @@
 
 | Level | First Task | Goal |
 |-------|-----------|------|
-| L1 | Conduct a heuristic evaluation of one user flow | Learn the product through a critical lens |
-| L2 | Write a feature brief for an upcoming item | Learn the product language, priorities, and constraints |
-| L3 | Review and critique the conceptual design document | Understand design intent, propose refinements |
-| L4 | Map cross-feature dependencies and conflicts | Identify systemic design issues |
-| L5 | Lead a design review session | Understand team norms, decision-making process |
+| L1 Contributor | Conduct a heuristic evaluation (newcomer) or write a feature brief (practitioner) | Learn the product through a critical lens |
+| L2 Expert | Review and critique the conceptual design document | Understand design intent, propose refinements |
+| L3 Leader | Map cross-feature dependencies (Strategist) or lead a design review session (Manager) | Identify systemic design issues or understand team norms |
 
 ## Key Reference Files
 
-- `project/conceptual-design-as-is.md` (current system design)
-- `project/design-intent-to-be.md` (target system design and metacommunication)
-- `project/metacomm-as-is.md` (current metacommunication record)
+- `project/product-design-as-coded.md § Conceptual Design` (current system design)
+- `project/product-design-as-intended.md` (unified working intent, Decisions log, and metacommunication; Human (markers) classification)
+- `project/product-design-as-coded.md § Metacommunication` (current metacommunication record)
 - `general/shared-definitions.md` (project terminology)
 - `general/review-perspectives/ux.md` (UX review standards)
 - `general/review-perspectives/a11y.md` (accessibility standards)
