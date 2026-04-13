@@ -3,6 +3,35 @@
 All notable changes to the SEJA-Claude framework are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.11.0] -- 2026-04-12 22:00 UTC
+
+### Added
+
+- SEJA slide tutorial modular build system (plan-000351) -- manifest-driven slide deck generation replacing the monolithic single-file approach. Each manifest (YAML) declares which slide modules to include, style tokens, and output variants (deck, presenter, handout). `generate_html.py` assembles modules from `_output/tutorial/modules/`, applies per-manifest `theme.css` and `style-tokens.yaml`, and produces audience-specific builds in `_output/tutorial/builds/<variant>/`. Six audience variants shipped: `full-workshop`, `intro-30min`, `cs-audience`, `mixed-audience`, `workshop-format`, `lecture-conceptual`.
+- Tutorial content improvements for non-AI audience (plan-000353, advisory-000352) -- rewritten slide modules focusing on semiotic engineering concepts, governance, and design frameworks rather than assuming agentic AI familiarity. Includes calibration poll, pair-share exercises, spoke-specific deep-dives (linguists, designers, philosophers, historians), and a three-act narrative structure.
+- Narrated slideshow video generator (plan-000357, advisory-000355) -- `generate_video.py` produces narrated video from slide decks using Playwright screenshots for per-slide PNGs and TTS audio synthesis. Combines PNGs + audio into MP4 via ffmpeg.
+- BroadcastChannel cross-window sync for presenter view (plan-000358, advisory-000356) -- the presenter window broadcasts navigation events (`slideChanged`) over a named `BroadcastChannel`, allowing a second browser window (audience view) to follow slide transitions in real time. Includes feedback-loop prevention via a `_fromSync` flag.
+- Presenter view numeric go-to navigation -- type a slide number and press Enter to jump directly; Escape to cancel. Visual indicator shows the typed number.
+- Touch swipe navigation for mobile slide viewing -- horizontal swipe gestures advance or retreat slides on touch devices.
+- `count_loc.py` enhanced with SEJA framework file counting (plan-000339 follow-up) -- new `--framework` and `--heading` options for counting lines across skills, agents, scripts, tests, rules, and references. Supports YAML and Markdown comment markers in LOC counting.
+- Externalized CSS and JavaScript for tutorial builds -- `deck-nav.js` (audience navigation), `presenter-nav.js` (presenter navigation + BroadcastChannel), `deck-base.css`, `mermaid-init.js`, and per-mode CSS files (`mode-landscape-only.css`, `mode-portrait-forced.css`) extracted from inline HTML.
+
+### Changed
+
+- Mermaid diagram rendering in presenter view -- 11 fixes across 11 commits addressing: raw code blocks displayed instead of rendered diagrams (HTML-escaping of `<pre><code>` blocks), invisible diagrams on non-active slides, syntax errors from `<<<`/`>>>` in subgraph labels, text clipping at right edge, configurable min/max height, section `overflow-x` cropping, and `.slide-preview` container clipping. The presenter view now correctly renders and sizes Mermaid diagrams inline.
+- Video generation pipeline hardened -- switched to Playwright async API to avoid sync-inside-async errors, fixed 24kHz mono audio encoding producing inaudible output, resolved Windows subprocess compatibility by using full paths for marp and ffmpeg executables.
+- `generate_html.py` defaults to `--all` when no `--manifest` flag is provided, building every manifest in the `manifests/` directory. Lists available manifests when invoked without arguments.
+- Slide screenshots saved to `slide_PNGs/` subfolder instead of the tutorial root directory.
+- `conftest.py` test configuration updated -- private modules directory (`scripts/priv/`) added to `sys.path` for test discovery.
+- Framework reference documentation regenerated for v2.10.0 timestamp.
+- `theme.css` made the single source of truth for all tutorial styles, replacing scattered inline CSS and per-file overrides.
+- Script count: 64 → 63. Unit test count: 273 → 268. Skill count: 17 (unchanged). Agent count: 10 (unchanged).
+
+### Removed
+
+- `test_generate_changelog_data.py` from public distribution (`seja-public/`) -- the test file tests a priv-only script and should not have been synced. Excluded from future syncs.
+- `plan-000346-priv-only-markers-and-scripts-separation.md` removed (superseded by implementation).
+
 ## [2.10.0] -- 2026-04-12 15:22 UTC
 
 ### Added

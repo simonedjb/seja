@@ -8,7 +8,7 @@ Do not edit by hand. To regenerate:
 
 # SEJA framework reference
 
-Generated 2026-04-12T21:15:52Z from seja-priv framework state.
+Generated 2026-04-12T22:00:08Z from seja-priv framework state.
 
 ## Skills
 
@@ -139,7 +139,6 @@ Generated 2026-04-12T21:15:52Z from seja-priv framework state.
 | Name | Purpose | Path | Mentioned in |
 |---|---|---|---|
 | check_plugin_registry.json | Registry of check_docs.py plugin scanners | `.claude/skills/scripts/check_plugin_registry.json` | `how-to/quality-gates.md`, `reference/framework-reference.md` |
-| settings.json | Claude Code harness settings | `.claude/settings.json` | `reference/framework-reference.md` |
 | skills-manifest.json | Generated L1 skills manifest (from generate_skills_manifest.py) | `.claude/skills/skills-manifest.json` | `reference/framework-reference.md` |
 
 ## General references
@@ -418,7 +417,6 @@ Framework artifacts mentioned at least once in `D:/git/labs/seja-priv/seja-publi
 | scan_public_docs_for_filenames.py | Scripts | `.claude/skills/scripts/scan_public_docs_for_filenames.py` | `reference/framework-reference.md` |
 | sec | Perspectives | `_references/general/review-perspectives/sec.md` | `reference/framework-reference.md` |
 | security-checklists | Templates | `_references/template/security-checklists.md` | `reference/framework-reference.md` |
-| settings.json | Configs | `.claude/settings.json` | `reference/framework-reference.md` |
 | shapers | Onboarding | `_references/general/onboarding/shapers.md` | `reference/framework-reference.md` |
 | shared-definitions | General references | `_references/general/shared-definitions.md` | `foundations-assessment.md` |
 | skill-graph | General references | `_references/general/skill-graph.md` | `how-to/recipes.md` |

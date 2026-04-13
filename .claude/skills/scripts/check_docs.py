@@ -39,8 +39,10 @@ Lifecycle fact uniqueness plugin
 ``lifecycle-fact-uniqueness`` scans paragraphs containing ``**Framework:**``
 callouts in ``seja-public/docs/how-to/*.md`` plus paragraphs under
 ``concepts.md`` section ``## Framework lifecycle`` and flags pairs whose
-normalized-token Jaccard overlap is at least 60 percent (with an 8-token
-minimum to suppress short-boilerplate noise). Run it alone with:
+normalized-token Jaccard overlap is at least 70 percent (with an 8-token
+minimum to suppress short-boilerplate noise). Paragraphs under "Before you
+start" headings are excluded as prerequisite pointers (advisory-000359).
+Run it alone with:
 
     python .claude/skills/scripts/check_docs.py --plugins lifecycle-fact-uniqueness
 
@@ -1032,7 +1034,7 @@ _LIFECYCLE_TOKEN_MINIMUM = 8
 
 # Jaccard threshold (0-1). 0.6 matches the advisory wording and is the value
 # the plan explicitly pins.
-_LIFECYCLE_JACCARD_THRESHOLD = 0.6
+_LIFECYCLE_JACCARD_THRESHOLD = 0.7
 
 _MD_SYNTAX_STRIP_RE = re.compile(r"[`*\[\]()\\]")
 _PARAGRAPH_SPLIT_RE = re.compile(r"\n\s*\n+")
@@ -1107,10 +1109,14 @@ def _paragraphs_with_headings(text: str) -> list[tuple[str, str]]:
 
 def _extract_framework_callout_paragraphs(
     file_path: Path,
+    exclude_anchors: frozenset[str] = frozenset(),
 ) -> list[tuple[str, str, str, set[str]]]:
     """Return ``(source_file, anchor_hint, raw_text, normalized_tokens)``
     tuples for every paragraph in ``file_path`` containing the literal
     ``**Framework:**`` substring.
+
+    Paragraphs whose ``anchor_hint`` matches any entry in
+    ``exclude_anchors`` (case-insensitive) are skipped.
     """
     try:
         text = file_path.read_text(encoding="utf-8", errors="replace")
@@ -1118,9 +1124,12 @@ def _extract_framework_callout_paragraphs(
         return []
 
     source = file_path.name
+    exclude_lower = {a.lower() for a in exclude_anchors}
     results: list[tuple[str, str, str, set[str]]] = []
     for anchor_hint, paragraph in _paragraphs_with_headings(text):
         if "**Framework:**" not in paragraph:
+            continue
+        if anchor_hint.lower() in exclude_lower:
             continue
         tokens = _normalize_paragraph_tokens(paragraph)
         results.append((source, anchor_hint, paragraph, tokens))
@@ -1170,13 +1179,14 @@ def plugin_lifecycle_fact_uniqueness(root: Path, verbose: bool) -> list[Finding]
     ``**Framework:**`` callout, plus every paragraph under
     ``seja-public/docs/concepts.md`` section ``## Framework lifecycle``,
     computes pairwise Jaccard overlap on normalized token sets (see
-    ``_normalize_paragraph_tokens``). Pairs with overlap ``>= 0.6`` and at
+    ``_normalize_paragraph_tokens``). Pairs with overlap ``>= 0.7`` and at
     least ``_LIFECYCLE_TOKEN_MINIMUM`` tokens in the smaller set are flagged
     as ``warning`` findings whose message names both paragraph locations.
 
-    The 8-token minimum avoids false positives on short boilerplate callouts
-    like ``**Framework:** see concepts.md``. The 0.6 threshold matches the
-    advisory's stated ``>= 60% textual overlap`` criterion.
+    Paragraphs under "Before you start" headings are excluded as
+    prerequisite pointers (advisory-000359 R1). The threshold was raised
+    from 0.6 to 0.7 (advisory-000359 R2) to avoid flagging contextual
+    inline reminders that share moderate overlap with each other.
 
     Graceful degradation: emits a single ``info`` finding when the how-to
     directory is absent.
@@ -1199,7 +1209,9 @@ def plugin_lifecycle_fact_uniqueness(root: Path, verbose: bool) -> list[Finding]
     # Gather paragraphs from how-to files (source_key "how-to/<name>").
     paragraphs: list[tuple[str, str, str, set[str]]] = []
     for how_to_md in sorted(how_to_dir.glob("*.md")):
-        for source, anchor, raw, tokens in _extract_framework_callout_paragraphs(how_to_md):
+        for source, anchor, raw, tokens in _extract_framework_callout_paragraphs(
+            how_to_md, exclude_anchors=frozenset({"before you start"}),
+        ):
             source_key = f"how-to/{source}"
             paragraphs.append((source_key, anchor, raw, tokens))
 

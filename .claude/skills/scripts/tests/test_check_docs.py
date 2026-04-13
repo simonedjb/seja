@@ -191,6 +191,49 @@ def test_plugin_lifecycle_fact_uniqueness_is_registered() -> None:
     assert "lifecycle" in desc.lower()
 
 
+def test_before_you_start_paragraphs_excluded() -> None:
+    """Paragraphs under 'Before you start' are prerequisite pointers, not
+    duplicated facts. The plugin should exclude them from comparison even
+    when they are identical across files (advisory-000359 R1)."""
+    findings = check_docs.plugin_lifecycle_fact_uniqueness(DRIFT, verbose=False)
+    warnings = [f for f in findings if f.severity == "warning"]
+    before_warnings = [
+        f for f in warnings if "Before you start" in f.message
+    ]
+    assert not before_warnings, (
+        f"'Before you start' paragraphs should be excluded; got "
+        f"{[f.message for f in before_warnings]}"
+    )
+
+
+def test_moderate_overlap_below_threshold_not_flagged(tmp_path: Path) -> None:
+    """Paragraphs with 60-69% Jaccard overlap should not be flagged after
+    the threshold was raised from 0.60 to 0.70 (advisory-000359 R2)."""
+    how_to = tmp_path / "seja-public" / "docs" / "how-to"
+    how_to.mkdir(parents=True)
+    # Two paragraphs sharing ~65% tokens but not identical.
+    (how_to / "alpha.md").write_text(
+        "# Alpha\n\n## Step 1: Do the thing\n\n"
+        "**Framework:** the harness records applied markers, flips status "
+        "fields, propagates established dates, and writes journey lifecycle "
+        "rotation events into the changelog ledger deterministically.\n",
+        encoding="utf-8",
+    )
+    (how_to / "beta.md").write_text(
+        "# Beta\n\n## Step 1: Do the thing\n\n"
+        "**Framework:** the harness records applied markers, flips status "
+        "fields, propagates validation timestamps, and writes entity "
+        "permission updates into the audit trail deterministically.\n",
+        encoding="utf-8",
+    )
+    findings = check_docs.plugin_lifecycle_fact_uniqueness(tmp_path, verbose=False)
+    warnings = [f for f in findings if f.severity == "warning"]
+    assert not warnings, (
+        f"moderate overlap (~65%) should not trigger at 0.70 threshold; got "
+        f"{[f.message for f in warnings]}"
+    )
+
+
 # ---------------------------------------------------------------------------
 # CLI integration
 # ---------------------------------------------------------------------------
