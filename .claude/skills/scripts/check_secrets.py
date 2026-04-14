@@ -89,6 +89,15 @@ SKIP_EXTENSIONS = {
     ".pyc",
     ".pyo",
 }
+
+# Multi-part extensions matched against the filename tail (case-insensitive).
+# Path.suffix only returns the last component, so ".min.js" must be matched
+# on the filename, not the suffix.
+SKIP_NAME_SUFFIXES = {
+    ".min.js",
+    ".min.css",
+    ".bundle.js",
+}
 SKIP_EXTENSIONS |= set(_extra("SECRETS_EXTRA_SKIP_EXTENSIONS"))
 
 # Secret detection patterns: (name, compiled regex)
@@ -166,6 +175,9 @@ def should_skip_file(filepath: Path) -> bool:
     suffix = filepath.suffix.lower()
 
     if suffix in SKIP_EXTENSIONS:
+        return True
+
+    if any(name.endswith(s) for s in SKIP_NAME_SUFFIXES):
         return True
 
     if any(skip in name for skip in SKIP_PATTERNS):
