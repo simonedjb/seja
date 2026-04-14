@@ -12,7 +12,7 @@ losing craft, context, or accountability.
 
 The framework grew out of work by Clarisse Sieckenius de Souza, Gabriel DJ
 Barbosa, and Simone DJ Barbosa on redesigning an academic discussion forum
-with agentic tooling. It is grounded in semiotic engineering and in Schon's
+with agentic tooling. It is grounded in semiotic engineering and in Schön's
 concepts of reflection-in-action, reflection-on-action, and reflection-on-
 practice.
 
