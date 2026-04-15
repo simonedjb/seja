@@ -4,8 +4,8 @@ description: "Define or update project design — stack, conventions, domain mod
 argument-hint: "[--generate-spec] [--add-docs] [spec-file-path]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
-  last-updated: 2026-03-31 16:30 UTC
-  version: 1.0.0
+  last-updated: 2026-04-15 18:26 UTC
+  version: 1.0.1
   category: planning
   context_budget: standard
   questionnaire_version: 6
@@ -72,8 +72,9 @@ If a spec file path is provided, go directly to Mode 2.
 1. **Check for in-progress design**: Look for `specs/design-in-progress.md`. If found, ask: "Resume previous design session or start fresh?"
 
 2. **Run the questionnaire**: Read `template/questionnaire.md` and walk the user through it:
-   - If Section metacomm-message (0.1) has been answered, parse it before proceeding: extract project name hint, description, target user type, and primary use case. When the agent reaches questions basic-definitions 1.1, 1.2, and conceptual-design 2.1, 2.10, present the extracted value as: "From your metacomm message, I suggest: [extracted value]. Accept or override?"
-   - Start with **Section metacomm-message (0)** (optional but recommended) and **Section basic-definitions (1)** -- 10 minimum questions for a working skeleton
+   - **Invocation-supplied metacomm**: Before asking Section metacomm-message (0.1), check whether the user already supplied a metacommunication message at `/design` invocation (i.e., as part of the initial prompt, a preceding `/seed` brief, or an explicit "metacomm: ..." line in the invocation context). If so, treat Section 0.1 as **already answered** using the supplied text **verbatim** (per the metacomm-verbatim rule); do not re-prompt the user for it in Section 0.1 or in the Final Step. Confirm reuse to the user with a one-line note: "Using metacomm message you provided at invocation." Extraction hints (project name, description, user type, primary use case) still apply.
+   - If Section metacomm-message (0.1) has been answered (either via questionnaire prompt or invocation reuse), parse it before proceeding: extract project name hint, description, target user type, and primary use case. When the agent reaches questions basic-definitions 1.1, 1.2, and conceptual-design 2.1, 2.10, present the extracted value as: "From your metacomm message, I suggest: [extracted value]. Accept or override?"
+   - Start with **Section metacomm-message (0)** (optional but recommended; skip the prompt if reused from invocation) and **Section basic-definitions (1)** -- 10 minimum questions for a working skeleton
    - For each question, present the options with their pros/cons and a recommendation
    - Record all answers
    - After Section basic-definitions, ask if the user wants to continue with the remaining sections or use defaults
@@ -91,7 +92,7 @@ If a spec file path is provided, go directly to Mode 2.
    - Entity hierarchy (conceptual-design 2.3) — what the system manages
    - Permission levels (conceptual-design 2.6) — who can do what
    - Greenfield/evolving status (conceptual-design 2.9) — determines as-is/to-be population
-   The metacommunication message is handled separately in the Final Step (see `template/questionnaire.md`). If Section metacomm-message (0.1) was answered, the Final Step uses it as the default. The verbatim rule applies to the final confirmed answer.
+   The metacommunication message is handled separately in the Final Step (see `template/questionnaire.md`). If Section metacomm-message (0.1) was answered — either via questionnaire prompt or by reusing an invocation-supplied message — the Final Step is skipped entirely (the provided text stands as the metacomm). The verbatim rule applies to the final confirmed answer.
 
    For **brownfield** projects, additionally require:
    - Existing tech stack (conceptual-design 2.12)

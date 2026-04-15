@@ -3,6 +3,12 @@
 All notable changes to the SEJA-Claude framework are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.11.1] -- 2026-04-15 18:26 UTC
+
+### Changed
+
+- `/design` interactive questionnaire now reuses an invocation-supplied metacommunication message verbatim: if the user provides a metacomm message as part of the `/design` invocation context (e.g., initial prompt or preceding `/seed` brief), Section 0.1 is treated as already answered and the Final Step is skipped. Avoids re-prompting for content the user already supplied and preserves the metacomm-verbatim rule. Affects `.claude/skills/design/SKILL.md` (v1.0.1) and `_references/template/questionnaire.md` Final Step wording (questionnaire_version unchanged at 6 -- clarification only, no schema change).
+
 ## [2.11.0] -- 2026-04-12 22:00 UTC
 
 ### Added

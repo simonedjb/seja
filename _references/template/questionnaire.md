@@ -840,7 +840,7 @@ Answer:
 
 ## Final Step -- Metacommunication Message (if not provided in Section 0)
 
-> **When this applies:** Only when the user did not provide a metacommunication message in Section 0 (`metacomm-message`). This step is always the last item asked, regardless of whether the user skipped other sections.
+> **When this applies:** Only when the user did not provide a metacommunication message -- neither in Section 0 (`metacomm-message`) nor at `/design` invocation (e.g., as part of the initial prompt/brief). If a metacomm message was supplied at invocation, the agent reuses it verbatim as the Section 0.1 answer and skips this Final Step. Otherwise, this step is always the last item asked, regardless of whether the user skipped other sections.
 >
 > **What the agent does:** Using the answers (or assumed defaults) from all previous sections, the agent composes a recommended metacommunication message -- a 1-3 sentence message from the designer (I) speaking directly to the user (you), describing who the user is, what the designer has designed for them, and why (see `general/shared-definitions.md` for the full definition and phrasing rule).
 >
