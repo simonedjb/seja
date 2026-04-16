@@ -102,7 +102,7 @@
 > **Append-only discipline:** This section is structurally append-only for prose. `check_changelog_append_only.py` (post-skill step 6c) diffs this section against the prior git commit using a prose-only rule: lines matching any marker regex in `human_markers_registry.ALLOWED_MARKERS` are filtered out before comparison, so `apply_marker.py` may insert `<!-- INCORPORATED: plan-NNN | YYYY-MM-DD -->` markers above existing `### JM-E-NNN:` headings without triggering a middle-insertion violation. Prose lines, however, cannot be removed, modified, or inserted in the middle. Only prose additions at the end are allowed.
 >
 > **Related files:**
-> - `project/product-design-as-intended.md §15` -- designed journeys (to-be, human-maintained)
+> - `project/product-design-as-intended.md §15` -- designed journeys (as-intended, human-maintained)
 > - `project/product-design-as-coded.md § Journey Maps` -- implemented journeys (agent-maintained)
 
 <!--

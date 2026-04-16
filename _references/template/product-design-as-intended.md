@@ -8,7 +8,7 @@
 >
 > **Stable IDs**: Decision entries use `D-NNN` (e.g., `D-001`); journey map entries in §15 use `JM-TB-NNN`; requirement markers preserved from the pre-merge template use the existing REQ-TYPE-NNN convention (REQ-ENT, REQ-PERM, REQ-UX, REQ-MC, REQ-JM, REQ-I18N, REQ-DELTA). D-NNN and REQ-TYPE-NNN are orthogonal: Decisions record *why* something was chosen; REQs identify *what* must exist. A single section can carry both.
 >
-> **STATUS state machine** (for to-be items and Decision entries): `proposed -> implemented -> established -> superseded`. The `apply_marker.py` helper validates transitions. Legacy uppercase `STATUS: IMPLEMENTED` markers from pre-2.8.3 files remain valid and are grandfathered in; new markers should use the lowercase form.
+> **STATUS state machine** (for as-intended items and Decision entries): `proposed -> implemented -> established -> superseded`. The `apply_marker.py` helper validates transitions. Legacy uppercase `STATUS: IMPLEMENTED` markers from pre-2.8.3 files remain valid and are grandfathered in; new markers should use the lowercase form.
 >
 > **Append-only sections**: `## Decisions` and `## CHANGELOG` are enforced append-only by `check_changelog_append_only.py` (post-skill step 6c). The `## Decisions` section uses the prose-only rule: marker lines matching `ALLOWED_MARKERS` are filtered out before the prefix-preserving check, so apply_marker.py may insert STATUS markers above existing `### D-NNN:` headings without triggering a middle-insertion violation. The `## CHANGELOG` section uses the strict rule: historical lines never change.
 >
@@ -363,26 +363,26 @@ journey
 
 ---
 
-# Part III -- Delta from As-Is
+# Part III -- Delta from As-Coded
 
 ## 16. Conceptual Design Delta
 
 > Summary of what is new, changed, or removed compared to `project/product-design-as-coded.md § Conceptual Design`. Updated manually or via `/explain spec-drift`.
 
-### New (in to-be but not in as-is)
+### New (in as-intended but not in as-coded)
 
 | Section | Element | Description |
 |---|---|---|
 <!-- REQ-DELTA-001 -->
 | {{section}} | {{element}} | {{description}} |
 
-### Changed (differs between as-is and to-be)
+### Changed (differs between as-coded and as-intended)
 
-| Section | Element | As-Is | To-Be |
+| Section | Element | As-Coded | As-Intended |
 |---|---|---|---|
 | {{section}} | {{element}} | {{current}} | {{target}} |
 
-### Removed (in as-is but not in to-be)
+### Removed (in as-coded but not in as-intended)
 
 | Section | Element | Reason for Removal |
 |---|---|---|
@@ -402,7 +402,7 @@ journey
 
 ### Changed Intentions (implementation differs from intent)
 
-| Feature / Flow | Current (As-Is) | Intended (To-Be) | Priority |
+| Feature / Flow | As-Coded | As-Intended | Priority |
 |---|---|---|---|
 | {{feature}} | {{current}} | {{intended}} | {{P0 / P1 / P2}} |
 

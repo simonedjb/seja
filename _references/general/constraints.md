@@ -42,7 +42,7 @@ Each entry is a clickable relative-path link (relative to the project root). Lis
 - `/plan --light` step 6 -- the just-generated proposal file
 - `/advise` step 9b -- the advisory report (and optionally the design-intent file receiving D-NNN entries)
 - `/advise` step 10 -- the advisory report
-- post-skill step 6e -- the plan file and to-be files with STATUS marker candidates
+- post-skill step 6e -- the plan file and as-intended files with STATUS marker candidates
 - post-skill step 11 -- the just-completed artifact
 - `/explain spec-drift` Step B -- the drift report
 - `/explain spec-drift` Phase 3b step 4 -- the promote-proposal file

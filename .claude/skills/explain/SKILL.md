@@ -24,9 +24,9 @@ metadata:
 > Agent: Produces a visual diagram of the auth flow, explains each step in plain language, and highlights key design decisions. Uses analogies to clarify complex parts.
 
 > You: /explain spec-drift
-> Agent: "3 entities in to-be not yet in as-is. 1 permission removed. 2 UX patterns modified." Then asks whether you want to sync the specs.
+> Agent: "3 entities in as-intended not yet in as-coded. 1 permission removed. 2 UX patterns modified." Then asks whether you want to sync the specs.
 
-**When to use**: You want to understand how a part of the system works, need to onboard yourself on unfamiliar code, want a visual overview of the architecture, or want to see and resolve the gap between as-is and to-be design specs.
+**When to use**: You want to understand how a part of the system works, need to onboard yourself on unfamiliar code, want a visual overview of the architecture, or want to see and resolve the gap between as-coded and as-intended design specs.
 
 **See also**: `/document` -- generate project documentation artifacts (READMEs, changelogs, API references, ADRs).
 
@@ -39,7 +39,7 @@ metadata:
 | `behavior-evolution [brief]` | -- | Explain current behavior AND how it evolved over time |
 | `code [brief]` | -- | Explain how code works, aimed at junior developers |
 | `data-model [brief]` | -- | Explain data model, pitfalls, and refactoring opportunities |
-| `spec-drift [scope]` | -- | Compare as-is and to-be design specs, with optional sync. Scope: `all`, `conceptual-design`, `metacomm`, `--promote` |
+| `spec-drift [scope]` | -- | Compare as-coded and as-intended design specs, with optional sync. Scope: `all`, `conceptual-design`, `metacomm`, `--promote` |
 
 > One type is required. Types are mutually exclusive.
 
@@ -53,7 +53,7 @@ If the explanation type (architecture, behavior, behavior-evolution, code, data-
 - "3. Behavior evolution -- current behavior AND how it evolved over time"
 - "4. Code -- how code works, aimed at junior developers being onboarded"
 - "5. Data model -- data model, pitfalls, and refactoring opportunities"
-- "6. Spec drift -- drift between as-is and to-be design specs, then optionally sync"
+- "6. Spec drift -- drift between as-coded and as-intended design specs, then optionally sync"
 
 ## Definitions per type
 
@@ -228,13 +228,13 @@ If `--promote` is the scope argument, skip Steps A and B entirely and go directl
 
 1. Determine the scope from the argument (default: `all`).
 
-2. Read the to-be/as-is registry from `project/conventions.md` (or `template/conventions.md` if the project file is absent). The registry lists all registered to-be/established/as-is file triples (see "To-Be / As-Is Registry" section). The registry includes a Section column indicating which section of the file holds the relevant entries -- use the Section column to narrow scans to the correct heading rather than searching the entire file. For each triple, determine whether it falls within the requested scope. If either the to-be or as-is file in a pair does not exist, report it and skip that pair.
+2. Read the as-intended/as-coded registry from `project/conventions.md` (or `template/conventions.md` if the project file is absent). The registry lists all registered as-intended files and their as-coded counterparts (see "As-Intended / As-Coded Registry" section). The registry includes a Section column indicating which section of the file holds the relevant entries -- use the Section column to narrow scans to the correct heading rather than searching the entire file. For each row, determine whether it falls within the requested scope. If the as-coded counterpart is `-` (research-only row) or either file in a paired row does not exist, report it and skip that row.
 
    Key registry entries for journey-related IDs:
    - JM-TB-NNN entries live in `project/product-design-as-intended.md §15 (Designed User Journeys)`.
    - JM-E-NNN entries live in `project/ux-research-results.md §5 (Discovered User Journeys)`.
 
-   Also, for each existing to-be file in scope, scan for `STATUS: implemented` markers (legacy uppercase `STATUS: IMPLEMENTED` is also detected) that do NOT yet carry a corresponding `ESTABLISHED:` stamp. Collect these as "pending promotion" items.
+   Also, for each existing as-intended file in scope, scan for `STATUS: implemented` markers (legacy uppercase `STATUS: IMPLEMENTED` is also detected) that do NOT yet carry a corresponding `ESTABLISHED:` stamp. Collect these as "pending promotion" items.
 
 3. **Conceptual Design Drift Analysis** (if in scope):
 
@@ -242,12 +242,12 @@ If `--promote` is the scope argument, skip Steps A and B entirely and go directl
 
    | Category | What to compare |
    |----------|----------------|
-   | Entities | Names, attributes, relationships present in to-be but not as-is (added), present in as-is but not to-be (removed), present in both but different (modified) |
+   | Entities | Names, attributes, relationships present in as-intended but not as-coded (added), present in as-coded but not as-intended (removed), present in both but different (modified) |
    | Permissions | Role-permission mappings that differ between the two files |
    | UX Patterns | Interaction patterns, page flows, navigation structures that differ |
    | Business Rules | Validation rules, constraints, workflows that differ |
 
-   For each difference, classify as: **Added** (in to-be, not in as-is), **Removed** (in as-is, not in to-be), or **Modified** (in both, but different).
+   For each difference, classify as: **Added** (in as-intended, not in as-coded), **Removed** (in as-coded, not in as-intended), or **Modified** (in both, but different).
 
 4. **Metacomm Drift Analysis** (if in scope):
 
@@ -255,9 +255,9 @@ If `--promote` is the scope argument, skip Steps A and B entirely and go directl
 
    | Category | What to compare |
    |----------|----------------|
-   | Feature Intentions | Metacommunication intentions present in to-be but not implemented in as-is |
-   | Implementation Status | Features marked as "Implemented" in as-is but modified/removed in to-be |
-   | Designer Intent | Changes in the designer's stated intent between as-is and to-be |
+   | Feature Intentions | Metacommunication intentions present in as-intended but not implemented in as-coded |
+   | Implementation Status | Features marked as "Implemented" in as-coded but modified/removed in as-intended |
+   | Designer Intent | Changes in the designer's stated intent between as-coded and as-intended |
 
 5. Compile the drift report:
 
@@ -312,7 +312,7 @@ The promote workflow splits into two phases per advisory-000264 Q4 middle-path d
 
 ##### Phase 3a steps (`/explain spec-drift --promote`)
 
-1. Read the to-be/as-is registry from `project/conventions.md` (or `template/conventions.md` if absent). Scan the registered `product-design-as-intended.md` (and any other registered Human (markers) files) for `STATUS: implemented` markers that do NOT yet carry an `ESTABLISHED:` stamp.
+1. Read the as-intended/as-coded registry from `project/conventions.md` (or `template/conventions.md` if absent). Scan the registered `product-design-as-intended.md` (and any other registered Human (markers) files) for `STATUS: implemented` markers that do NOT yet carry an `ESTABLISHED:` stamp.
 
 2. Group candidates by plan ID (from the STATUS marker's plan field). If no candidates are found, inform the user ("No implemented items pending promotion.") and run /post-skill <id>.
 
@@ -393,7 +393,7 @@ When the two files disagree (e.g., `${DESIGN_INTENT}` removes an entity but `${D
 ##### Finalization
 
 1. After all changes are confirmed, update the `last-synced` field on all modified entries.
-2. Update the "Delta from As-Is" sections in both to-be files if the as-is files exist.
+2. Update the "Delta from As-Coded" sections in both as-intended files if the as-coded files exist.
 3. Run /post-skill <id>.
 
 ### If code:

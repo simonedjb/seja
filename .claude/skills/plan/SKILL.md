@@ -399,13 +399,13 @@ If the argument includes `--from-spec <path>`, skip the menu and go directly to 
 
    If no REQ markers are found, skip this step and proceed with the existing decomposition approach (step 3 reads the full prose directly).
 
-3. **Decompose into work items**: Compare the as-is and to-be conceptual designs to identify work items from the **delta** between them. Use this decomposition strategy:
+3. **Decompose into work items**: Compare the as-coded and as-intended conceptual designs to identify work items from the **delta** between them. Use this decomposition strategy:
 
    **Delta analysis:**
-   - Entities, permissions, or UX patterns present in **to-be but not in as-is** become **new** work items.
-   - Entities, permissions, or UX patterns present in **as-is but removed in to-be** become **deprecation** work items (migration to remove, API sunset, UI removal).
+   - Entities, permissions, or UX patterns present in **as-intended but not in as-coded** become **new** work items.
+   - Entities, permissions, or UX patterns present in **as-coded but removed in as-intended** become **deprecation** work items (migration to remove, API sunset, UI removal).
    - Entities that exist in both but differ become **modification** work items (migration alter, API update, UI update).
-   - If as-is and to-be are identical (greenfield), all entities in to-be are treated as new work items.
+   - If as-coded and as-intended are identical (greenfield), all entities in as-intended are treated as new work items.
 
    **Layer decomposition** (applied to the delta work items above):
 

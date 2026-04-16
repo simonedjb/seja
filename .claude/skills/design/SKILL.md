@@ -91,7 +91,7 @@ If a spec file path is provided, go directly to Mode 2.
 5. **Mandatory conceptual design**: Section conceptual-design core questions are **required** for all projects. The agent must not allow the user to skip these by accepting defaults. At minimum, the user must provide:
    - Entity hierarchy (conceptual-design 2.3) — what the system manages
    - Permission levels (conceptual-design 2.6) — who can do what
-   - Greenfield/evolving status (conceptual-design 2.9) — determines as-is/to-be population
+   - Greenfield/evolving status (conceptual-design 2.9) — determines as-coded/as-intended population
    The metacommunication message is handled separately in the Final Step (see `template/questionnaire.md`). If Section metacomm-message (0.1) was answered — either via questionnaire prompt or by reusing an invocation-supplied message — the Final Step is skipped entirely (the provided text stands as the metacomm). The verbatim rule applies to the final confirmed answer.
 
    For **brownfield** projects, additionally require:
@@ -132,7 +132,7 @@ If a spec file path is provided, go directly to Mode 2.
 
     5. **Fallback**: If no dependency files are found, or if detection is ambiguous for a specific field, fall back to standard manual entry for that field. Do not guess — only pre-fill values with high confidence.
 
-5c. **As-Is Pre-population** (brownfield only — runs after 5b when `MODELS_DIR` or schema files were detected):
+5c. **As-Coded Pre-population** (brownfield only — runs after 5b when `MODELS_DIR` or schema files were detected):
 
     Using the codebase scan results from step 5b, extract domain knowledge to pre-populate the `## Conceptual Design` section of `product-design-as-coded.md` instead of copying the empty template.
 
@@ -174,10 +174,10 @@ If a spec file path is provided, go directly to Mode 2.
        Map extracted constraints to **Section 10** (Validation Constants) with:
        - Field name, min/max values, and the source file where detected
 
-    4. **Present extracted as-is model**: Before writing anything, display the extracted model to the designer in a structured summary:
+    4. **Present extracted as-coded model**: Before writing anything, display the extracted model to the designer in a structured summary:
 
        ```
-       ## Extracted As-Is Model
+       ## Extracted As-Coded Model
 
        ### Entities (Section 2)
        <entity tree and per-entity details>
@@ -204,7 +204,7 @@ If a spec file path is provided, go directly to Mode 2.
 
     After question 1.3 confirms brownfield mode, the questionnaire diverges from the standard flow into three phases:
 
-    **Phase 1 — Automated scan**: Execute the Brownfield Codebase Scan (step 5b) and As-Is Pre-population (step 5c). Present detected values to the user in the summary table before proceeding.
+    **Phase 1 — Automated scan**: Execute the Brownfield Codebase Scan (step 5b) and As-Coded Pre-population (step 5c). Present detected values to the user in the summary table before proceeding.
 
     **Phase 2 — Confirm detected values**: The following questions become confirmation prompts pre-filled with detected values instead of open-ended questions. For each, present the detected value and its source, and let the user confirm or override:
     - Question 1.4 (Backend framework) — from `BACKEND_FRAMEWORK`
@@ -256,14 +256,14 @@ If a spec file path is provided, go directly to Mode 2.
    - Copy `template/conventions.md` to `project/conventions.md`, substituting answers
    - When substituting answers into `project/conventions.md`, set `PROJECT_MODE` from question 2.9 (greenfield -> `greenfield`, evolving -> `brownfield`). Set `CODEBASE_DIR` to `.` for embedded mode (default) or to the absolute codebase path if the project was seeded with workspace separation (detectable from the directory structure -- if `_references/` is not in the codebase root, the codebase is external).
    - Copy `template/constitution.md` to `project/constitution.md` (Required -- always generated for new projects. Content may be customized but file cannot be skipped.)
-   - Copy `template/product-design-as-intended.md` to `project/product-design-as-intended.md`. The file is classified `Human (markers)` -- prose (working intent, entity hierarchies, metacomm intentions, §15 Designed User Journeys) remains human-authored, but agents may write `STATUS` markers on to-be items and Decision entries (`### D-NNN:`) via `apply_marker.py` after AskUserQuestion confirmation. The file includes a `## Decisions` section (ADR shape) and a `## CHANGELOG` section. Apply the **I/you phrasing rule** for Part II metacommunication sections.
+   - Copy `template/product-design-as-intended.md` to `project/product-design-as-intended.md`. The file is classified `Human (markers)` -- prose (working intent, entity hierarchies, metacomm intentions, §15 Designed User Journeys) remains human-authored, but agents may write `STATUS` markers on as-intended items and Decision entries (`### D-NNN:`) via `apply_marker.py` after AskUserQuestion confirmation. The file includes a `## Decisions` section (ADR shape) and a `## CHANGELOG` section. Apply the **I/you phrasing rule** for Part II metacommunication sections.
    - **For evolving (brownfield) projects only**: copy `template/product-design-as-coded.md` to `project/product-design-as-coded.md` (the unified implementation-state file, SEJA 2.8.4; replaces the former three separate as-is files). If step 5c produced pre-populated content for the `## Conceptual Design` section, use that instead of copying the empty section. Also copy `template/product-design-changelog.md` to `project/product-design-changelog.md` (this file is kept separate from `product-design-as-coded.md`; Phase 3 F from advisory-000264 will conditionally embed it in a future release after this plan operates without incidents for one release cycle).
    - **For greenfield projects**: do **not** instantiate `product-design-as-coded.md` (post-skill will create it on first plan execution)
    - Copy `template/standards.md` to `project/standards.md` (unified engineering standards: Backend, Frontend, Testing, i18n sections)
    - Copy `template/design-standards.md` to `project/design-standards.md` (unified design standards: UX patterns, Graphic/visual design sections)
    - Copy `template/security-checklists.md` to `project/security-checklists.md`
    - Copy `template/ux-research-results.md` to `project/ux-research-results.md`, pre-populating persona and user community entries from section conceptual-design (2.10) answers if provided. The file is classified `Human (markers)` -- prose remains human-authored, but agents may write `INCORPORATED` markers and CHANGELOG appends via `apply_marker.py` after AskUserQuestion confirmation.
-   > **Registry note:** For each to-be/as-is triple in the To-Be / As-Is Registry (see conventions.md), ensure the to-be and established templates are copied during project setup. As new pairs are added to the registry in future framework versions, add their template copies here.
+   > **Registry note:** For each row in the As-Intended / As-Coded Registry (see conventions.md), ensure the as-intended template is copied during project setup; as-coded templates are copied for brownfield projects per the branch above. As new rows are added to the registry in future framework versions, add their template copies here.
    - Copy agent YAML templates (`template/agent/constraints.yaml`, `entities.yaml`, `permissions.yaml`, `spec-checks.yaml`) to `project/agent/`
    - Based on Section docs-templates (5) answers: copy selected `template/docs/*.md` files to `project/docs/` in `_references/`. If the user chose "defaults", copy only the 3 recommended templates (readme.md, contextual-help.md, adr.md). If "skip", copy none.
    - Customize `template/settings.json` to `.claude/settings.json` with actual paths

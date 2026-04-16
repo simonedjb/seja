@@ -90,7 +90,7 @@ Stub body for first journey.
 
 Stub body for second journey.
 
-### Delta from To-Be
+### Delta from As-Intended
 
 Stub delta body.
 """

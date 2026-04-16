@@ -41,14 +41,14 @@
 
 ---
 
-## To-Be / As-Is Registry
+## As-Intended / As-Coded Registry
 
-> Registered to-be/as-is file pairs for the TaskFlow demo.
+> Registered as-intended/as-coded file pairs for the TaskFlow demo.
 
-| To-be file | Section | Established counterpart | Section | As-is counterpart |
-| ---------- | ------- | ---------------------- | ------- | ----------------- |
-| `${DESIGN_INTENT}` | §0-§17 design intent + Decisions + CHANGELOG | `-` | `-` | `${AS_CODED}` |
-| `${DESIGN_INTENT}` | §15 designed journeys | `-` | `-` | `${AS_CODED} § Journey Maps` |
+| As-Intended file | Section | As-Coded counterpart |
+| ---------------- | ------- | -------------------- |
+| `${DESIGN_INTENT}` | §0-§17 design intent + Decisions + CHANGELOG | `${AS_CODED}` |
+| `${DESIGN_INTENT}` | §15 designed journeys | `${AS_CODED} § Journey Maps` |
 
 ---
 

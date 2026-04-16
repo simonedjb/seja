@@ -113,30 +113,30 @@ metadata:
       Steps 2c and 2d inherit the branch decision from step 2b. If 2b took branch 3 (legacy warning), 2d is a no-op.
 
       - If `project/product-design-as-coded.md § Journey Maps` section is missing (e.g., the file was created by branch 2 above but the Journey Maps section is still a template placeholder) or `project/product-design-as-intended.md §15` does not exist, skip silently.
-      - If `project/product-design-as-intended.md` exists with a §15 section (detectable by scanning for `## 15. Designed User Journeys`) and `## Journey Maps` is populated: update incrementally. For each feature added/modified by the plan, check if it corresponds to a JM-TB-NNN entry in `project/product-design-as-intended.md §15 (Designed User Journeys)` and update the implementation status under the appropriate H3 subsection (`### JM-TB-NNN: ...`). For JM-E-NNN entries, cross-reference `project/ux-research-results.md §5 (Discovered User Journeys)`. Update the `### Delta from To-Be` H3 subsection.
+      - If `project/product-design-as-intended.md` exists with a §15 section (detectable by scanning for `## 15. Designed User Journeys`) and `## Journey Maps` is populated: update incrementally. For each feature added/modified by the plan, check if it corresponds to a JM-TB-NNN entry in `project/product-design-as-intended.md §15 (Designed User Journeys)` and update the implementation status under the appropriate H3 subsection (`### JM-TB-NNN: ...`). For JM-E-NNN entries, cross-reference `project/ux-research-results.md §5 (Discovered User Journeys)`. Update the `### Delta from As-Intended` H3 subsection.
       - Append a changelog entry to the `### Changelog` H3 subsection under `## Journey Maps`.
       - Tag all changes with `source: agent (post-skill)`.
 
    **Section boundary discipline** (SEJA 2.8.4): post-skill writes to `project/product-design-as-coded.md` must stay within one H2 domain section per `Edit` call. The `check_section_boundary_writes.py` validator at preflight step 6c rejects any single contiguous write region that spans two or more H2 sections. Use anchor-based `Edit` with `old_string` containing the H3 heading text (not line numbers). If a single logical update requires changes in multiple sections, issue multiple Edit calls, one per section.
 
    e. **DONE marker proposal** -- If the plan implemented any user-facing features or journey steps:
-      1. Read the to-be/as-is registry from `project/conventions.md` (or `template/conventions.md` if the project file is absent). For each to-be file listed in the registry, check if the file exists in `_references/project/`.
-      2. For each existing to-be file, scan for sections (headings) or table rows that correspond to features implemented by this plan -- match against the plan's step descriptions and the Files list (Modified/Created). Ignore sections that already carry a `STATUS: implemented` (or legacy `STATUS: IMPLEMENTED`) or `ESTABLISHED` marker.
+      1. Read the as-intended/as-coded registry from `project/conventions.md` (or `template/conventions.md` if the project file is absent). For each as-intended file listed in the registry, check if the file exists in `_references/project/`.
+      2. For each existing as-intended file, scan for sections (headings) or table rows that correspond to features implemented by this plan -- match against the plan's step descriptions and the Files list (Modified/Created). Ignore sections that already carry a `STATUS: implemented` (or legacy `STATUS: IMPLEMENTED`) or `ESTABLISHED` marker.
       3. If candidate items are found, prepare a proposal listing for each:
          - File path (relative to `_references/`)
          - Section heading or table row identifier
          - The marker that would be added: `<!-- STATUS: implemented | plan-NNNNNN | YYYY-MM-DD -->`
-      4. Present the proposal via AskUserQuestion: "The following to-be items appear to have been implemented by this plan. Apply markers now, defer for later review, or skip?" Show the candidate list with three options, each carrying rationale per the Decision-point rationale convention in `_references/general/constraints.md`:
-         - **Apply now** -- I flip STATUS markers to `implemented` now, while the mapping between plan steps and to-be items is fresh in context. Recommended when the implementation has been verified in the working session. NOT recommended when you are unsure whether every candidate item actually matches what shipped.
+      4. Present the proposal via AskUserQuestion: "The following as-intended items appear to have been implemented by this plan. Apply markers now, defer for later review, or skip?" Show the candidate list with three options, each carrying rationale per the Decision-point rationale convention in `_references/general/constraints.md`:
+         - **Apply now** -- I flip STATUS markers to `implemented` now, while the mapping between plan steps and as-intended items is fresh in context. Recommended when the implementation has been verified in the working session. NOT recommended when you are unsure whether every candidate item actually matches what shipped.
          - **Defer for later review** -- I add each candidate to the pending ledger so you can review them against the real codebase later, without losing the mapping. Recommended when the implementation looks right but you want a cool-down period before committing to markers. NOT recommended when the candidates are trivially correct and deferring is pure procrastination.
-         - **Skip** -- I do nothing. Recommended when the plan did not actually implement any to-be items (e.g., refactor, tooling, docs). NOT recommended when there are real candidates I would lose if we skip.
+         - **Skip** -- I do nothing. Recommended when the plan did not actually implement any as-intended items (e.g., refactor, tooling, docs). NOT recommended when there are real candidates I would lose if we skip.
       5. On **Apply now**: route the markers through `python .claude/skills/scripts/apply_marker.py` for any file in the Human (markers) registry (`HUMAN_MARKERS_FILES` in `human_markers_registry.py`). For files classified Human or Human/Agent not in the registry, the existing inline HTML-comment insertion continues to work.
       6. On **Defer for later review**: for each candidate item, invoke `python .claude/skills/scripts/pending.py add --type mark-implemented --source plan-<id> --description "Flip STATUS markers on <file> for <entry-id> after verification"`. Do not apply markers inline. Log silently on success; log a one-line warning on failure and continue.
       7. On **Skip**: do nothing (same as the previous "None / skip" behavior).
       8. Tag all marker changes with `source: agent (post-skill)`.
       > Note: Markers on `project/ux-research-results.md` and `project/product-design-as-intended.md` must go through `python .claude/skills/scripts/apply_marker.py` because both files are classified Human (markers). Prose content remains human-authored; agents may write only STATUS (on D-NNN Decision entries and §15 journey entries), ESTABLISHED (legacy), INCORPORATED, and CHANGELOG_APPEND lines after AskUserQuestion confirmation. Enforced by `check_human_markers_only.py` and `check_changelog_append_only.py` during step 6c.
 
-   f. Include the updated as-is files and any to-be files with DONE markers in the commit scope (step 8).
+   f. Include the updated as-coded files and any as-intended files with DONE markers in the commit scope (step 8).
 
    g. **Pending action creation from plan metadata** -- If the completed skill executed a plan (same condition as step 2), auto-create pending actions based on the plan's metadata:
       i. Read the plan file's Files section. Count entries (both Modified and Created). If the count is >= the `Verify-as-coded file threshold` from `## Periodic Triggers` in conventions.md (default 5), invoke `python .claude/skills/scripts/pending.py add --type verify-as-coded --source plan-<id> --description "Review _references/project/product-design-as-coded.md against the real implementation of plan-<id>"`. Log silently on success.
@@ -214,7 +214,7 @@ metadata:
 
    Write checkpoint: `7 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
 
-8. Git stage the affected files (including regenerated index files and any updated as-is files) and commit using the generated message.
+8. Git stage the affected files (including regenerated index files and any updated as-coded files) and commit using the generated message.
 
    Write checkpoint: `8 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
 

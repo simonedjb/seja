@@ -287,9 +287,9 @@
 
 #### Mermaid Diagram (optional)
 
-> Mirror the to-be diagram structure but annotate with implementation status.
+> Mirror the as-intended diagram structure but annotate with implementation status.
 
-### Delta from To-Be
+### Delta from As-Intended
 
 > Gaps between current implementation and intended journey design (`project/product-design-as-intended.md §15 (Designed User Journeys)`).
 > Updated by post-skill or manually via `/explain spec-drift`.
@@ -302,28 +302,28 @@
 
 #### Differs from Intent
 
-| Journey (JM-TB-NNN) | Step(s) | To-Be | As-Is | Reason |
-|---------------------|---------|-------|-------|--------|
+| Journey (JM-TB-NNN) | Step(s) | As-Intended | As-Coded | Reason |
+|---------------------|---------|-------------|----------|--------|
 | {{JM-TB-001}} | {{step numbers}} | {{intended}} | {{current}} | {{why it differs}} |
 
-### Delta from Established
+### Delta from Research Findings
 
 <!-- Populate this section when `project/ux-research-results.md §5` contains JM-E-NNN entries
      (i.e., the project has conducted formal journey research and documented it there).
      This delta compares the current implementation against empirical research findings --
-     a qualitatively different signal from the to-be delta above (research-vs-reality, not intent-vs-reality).
+     a qualitatively different signal from the as-intended delta above (research-vs-reality, not intent-vs-reality).
      Leave this section empty or omit it when no such entries are present. -->
 
 #### Not Yet Matching Research Findings
 
-| Journey (JM-E-NNN) | Step(s) | Research Finding | As-Is State | Gap |
-|--------------------|---------|-----------------|-------------|-----|
+| Journey (JM-E-NNN) | Step(s) | Research Finding | As-Coded State | Gap |
+|--------------------|---------|-----------------|----------------|-----|
 | {{JM-E-001}} | {{step numbers}} | {{what research showed}} | {{current behavior}} | {{gap description}} |
 
 #### Differs from Research
 
-| Journey (JM-E-NNN) | Step(s) | Research Finding | As-Is | Reason |
-|--------------------|---------|-----------------|-------|--------|
+| Journey (JM-E-NNN) | Step(s) | Research Finding | As-Coded | Reason |
+|--------------------|---------|-----------------|----------|--------|
 | {{JM-E-001}} | {{step numbers}} | {{finding}} | {{current}} | {{why it differs}} |
 
 ### Changelog

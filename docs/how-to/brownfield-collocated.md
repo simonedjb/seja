@@ -1,6 +1,6 @@
 # Brownfield collocated how-to
 
-This how-to is for you when you are a solo designer or a team with an existing codebase and you want to introduce SEJA into it without a separate workspace -- the framework files will live inside the same repository as your source code. By the end of it you will have a seeded codebase, an explained snapshot of what the system currently does, a design spec set that captures both as-coded reality and intended target, a first planned improvement, and a clean spec-drift promote cycle that flips a verified item from `to-be` to `implemented`. It takes about 45 minutes.
+This how-to is for you when you are a solo designer or a team with an existing codebase and you want to introduce SEJA into it without a separate workspace -- the framework files will live inside the same repository as your source code. By the end of it you will have a seeded codebase, an explained snapshot of what the system currently does, a design spec set that captures both as-coded reality and intended target, a first planned improvement, and a clean spec-drift promote cycle that flips a verified item from `proposed` to `implemented`. It takes about 45 minutes.
 
 ## Before you start
 
@@ -44,7 +44,7 @@ Run `/implement <plan-id>` and let the generator-critic loop land the changes. T
 
 Review the draft Decision entries in `_output/explained-<id>/`. If you accept them, run `/explain spec-drift --apply-markers plan-<id>` to flip the marker.
 
-**Framework:** The marker pass invokes `apply_marker.py` to flip `STATUS: to-be` -> `STATUS: implemented` at the line level inside `project/product-design-as-intended.md`. The as-intended file is enforced by `check_human_markers_only.py` -- only marker lines may change in this operation, so prose edits and marker flips stay separated into two distinct audit events. See [framework-reference.md#apply-marker](../reference/framework-reference.md#apply-marker) and [framework-reference.md#check-human-markers-only](../reference/framework-reference.md#check-human-markers-only).
+**Framework:** The marker pass invokes `apply_marker.py` to flip `STATUS: proposed` -> `STATUS: implemented` at the line level inside `project/product-design-as-intended.md`. The as-intended file is enforced by `check_human_markers_only.py` -- only marker lines may change in this operation, so prose edits and marker flips stay separated into two distinct audit events. See [framework-reference.md#apply-marker](../reference/framework-reference.md#apply-marker) and [framework-reference.md#check-human-markers-only](../reference/framework-reference.md#check-human-markers-only).
 
 ## Step 7: Run `/check` before committing
 

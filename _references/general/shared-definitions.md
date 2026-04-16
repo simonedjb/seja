@@ -23,7 +23,7 @@ The **metacommunication message** is a designer-to-user message that is conveyed
 | Metacommunication files (product-design-as-intended § Metacommunication / product-design-as-coded § Metacommunication) | Metacommunication template -- the abstract message every system delivers from designers to users | [SemEng-2005, Ch. 1 & 3] |
 | First-person "I/you" phrasing rule | Designer's personal engagement -- designers are communicators, not anonymous producers | [SemEng-2005, Ch. 3 p.84] |
 | Extended Metacommunication Template (EMT) | EMT with guiding questions aligned to lifecycle stages (Analysis, Design, Prototype, Evaluation) | [EMT-Ethics-2021, pp.365-368] |
-| Spec-drift detection (as-is vs. to-be) | Communicability monitoring -- tracking whether design intent is being communicated | [SemEng-2005, Ch. 4; SemEng-Methods-2009] |
+| Spec-drift detection (as-coded vs. as-intended) | Communicability monitoring -- tracking whether design intent is being communicated | [SemEng-2005, Ch. 4; SemEng-Methods-2009] |
 | Constitution (immutable principles) | Value inscription governance -- making implicit values explicit and binding | [SemEng-2005, Ch. 1 pp.9-10] |
 | Design -> plan -> implement -> check pipeline | Meaning propagation -- tracking how meanings transform from conception to code | [SigniFYI-2016] |
 | Review perspectives (16 lenses) | Communicability evaluation -- segmented analysis from multiple viewpoints | [SemEng-2005, Ch. 4; SemEng-Methods-2009] |
@@ -49,8 +49,8 @@ Cross-references to the unified standards files use the form `standards.md § Ba
 
 ## Lifecycle Markers
 
-> Standard inline markers for tracking the lifecycle of to-be items across all registered
-> to-be files (see conventions.md To-Be / As-Is Registry). Defined here so all skills
+> Standard inline markers for tracking the lifecycle of as-intended items across all registered
+> as-intended files (see conventions.md As-Intended / As-Coded Registry). Defined here so all skills
 > and agents use a consistent convention when reading or writing markers.
 >
 > **Agent rules**: agents may read markers and propose new IMPLEMENTED markers (via
@@ -153,9 +153,9 @@ counterpart file (via `/explain spec-drift --promote` or manual curation):
 The version field (`vX.Y.Z`) is optional -- projects without semver use date only:
 `<!-- ESTABLISHED: plan-000178 | 2026-04-02 -->`.
 
-The stamp is appended to the corresponding established file entry. In the to-be file,
-the IMPLEMENTED marker is replaced with the ESTABLISHED stamp (or the entry is removed
--- designer's choice, both are valid).
+In the as-intended file, the IMPLEMENTED marker on the entry is replaced with the
+ESTABLISHED stamp (or the entry is removed -- designer's choice, both are valid).
+Pre-2.8.3 two-file projects instead appended the stamp to a separate established file.
 
 ---
 

@@ -67,19 +67,21 @@
 
 ---
 
-## To-Be / As-Is Registry
+## As-Intended / As-Coded Registry
 
-> Canonical list of all to-be / established / as-is file triples in this project.
+> Canonical list of all as-intended files and their as-coded counterparts in this project.
 > Read by `/design` (template generation), `/explain spec-drift` (drift checking),
-> and post-skill (DONE marking proposals). Add a row when a new to-be/as-is pair
-> is introduced. `established` and `as-is` are optional -- set to `-` if not applicable.
+> and post-skill (DONE marking proposals). Add a row when a new as-intended file
+> is introduced. `as-coded` is optional -- set to `-` if not applicable (e.g., research-only files).
 > The Section column identifies which portion of a file corresponds to each registry row when a file hosts multiple artifact types. Tools that scan for drift use the ID prefix (JM-TB-NNN for designed journeys, JM-E-NNN for discovered journeys) to discriminate artifact types within the same file.
+>
+> **Lifecycle markers**: the pre-2.8.3 framework tracked a separate "established" file per registered row. Post-merge, the `STATUS: established` lifecycle state is recorded inline in the as-intended file (on Decision entries and §15 journeys) rather than in a separate file -- no registry column is required.
 
-| To-be file | Section | Established counterpart | Section | As-is counterpart |
-| ---------- | ------- | ---------------------- | ------- | ----------------- |
-| `${DESIGN_INTENT}` | §0-§17 design intent + Decisions + CHANGELOG | `-` | `-` | `${AS_CODED}` |
-| `${DESIGN_INTENT}` | §15 designed journeys | `-` | `-` | `${AS_CODED} § Journey Maps` |
-| `${UX_RESEARCH}` | all (personas, scenarios, journeys, CHANGELOG) | `-` | `-` | `-` |
+| As-Intended file | Section | As-Coded counterpart |
+| ---------------- | ------- | -------------------- |
+| `${DESIGN_INTENT}` | §0-§17 design intent + Decisions + CHANGELOG | `${AS_CODED}` |
+| `${DESIGN_INTENT}` | §15 designed journeys | `${AS_CODED} § Journey Maps` |
+| `${UX_RESEARCH}` | all (personas, scenarios, journeys, CHANGELOG) | `-` |
 
 ---
 

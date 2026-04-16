@@ -60,7 +60,7 @@ Otherwise (no argument or `list`):
 
    - **test-implementation**: Read the plan file at `_output/plans/plan-<source>-*.md`. Extract and display the `## Test plan` section. Print `Run the tests, then /pending done <id>` and return to step 4. Do NOT auto-mark done.
 
-   - **verify-as-coded**: Print `Suggest: /explain spec-drift to compare as-coded vs to-be, then /pending done <id>`. Do NOT auto-mark.
+   - **verify-as-coded**: Print `Suggest: /explain spec-drift to compare as-coded vs as-intended, then /pending done <id>`. Do NOT auto-mark.
 
    - **update-documentation**: Print `Suggest: /document --plan <source>, then /pending done <id>`. Do NOT auto-mark.
 

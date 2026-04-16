@@ -92,5 +92,5 @@ Then run a code review on the files you just generated:
 
 - Run `/help` to see all available skills
 - Run `/design` to modify the project configuration
-- Run `/explain spec-drift` to compare as-is vs. to-be design files
+- Run `/explain spec-drift` to compare as-coded vs. as-intended design files
 - Edit the design files directly and re-run `/check validate` to see how the framework detects changes

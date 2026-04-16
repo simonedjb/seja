@@ -186,25 +186,25 @@ journey
 
 ---
 
-# Part III -- Delta from As-Is
+# Part III -- Delta from As-Coded
 
 ## 16. Conceptual Design Delta
 
-### New (in to-be but not in as-is)
+### New (in as-intended but not in as-coded)
 
 | Section | Element | Description |
 |---|---|---|
-| §2 | Category entity | New in to-be; as-coded state does not yet exist for the demo |
-| §2 | Task entity | New in to-be; as-coded state does not yet exist for the demo |
-| §3 | Status Toggle concept | New in to-be; as-coded state does not yet exist for the demo |
+| §2 | Category entity | New in as-intended; as-coded state does not yet exist for the demo |
+| §2 | Task entity | New in as-intended; as-coded state does not yet exist for the demo |
+| §3 | Status Toggle concept | New in as-intended; as-coded state does not yet exist for the demo |
 
-### Changed (differs between as-is and to-be)
+### Changed (differs between as-coded and as-intended)
 
-| Section | Element | As-Is | To-Be |
+| Section | Element | As-Coded | As-Intended |
 |---|---|---|---|
 | -- | N/A for greenfield demo | -- | -- |
 
-### Removed (in as-is but not in to-be)
+### Removed (in as-coded but not in as-intended)
 
 | Section | Element | Reason for Removal |
 |---|---|---|
@@ -228,7 +228,7 @@ journey
 
 ### Changed Intentions (implementation differs from intent)
 
-| Feature / Flow | Current (As-Is) | Intended (To-Be) | Priority |
+| Feature / Flow | As-Coded | As-Intended | Priority |
 |---|---|---|---|
 | -- | N/A for greenfield demo | -- | -- |
 

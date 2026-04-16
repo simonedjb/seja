@@ -151,7 +151,7 @@ Answer:
 Answer:
 
 **2.9** Is this a greenfield project (no existing implementation) or an evolving product with a gap between current and target design?
-> *Determines whether /design defers as-is files to post-plan execution (greenfield) or instantiates them immediately with current state (brownfield).*
+> *Determines whether /design defers as-coded files to post-plan execution (greenfield) or instantiates them immediately with current state (brownfield).*
 
 Answer: (greenfield / evolving)
 

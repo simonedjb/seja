@@ -226,7 +226,7 @@ A **section boundary** is an enforcement rule preventing agents from writing out
 <a id="product-design-as-intended-vs-as-coded"></a>
 ### product-design-as-intended vs product-design-as-coded
 
-SEJA tracks two design specs, and keeping them legible as distinct artifacts is what makes spec-drift reconciliation possible. The to-be / as-is distinction is the heart of the reconciliation model: one file holds intent, the other holds the implementation state, and the skill in between is what tells you where the two disagree.
+SEJA tracks two design specs, and keeping them legible as distinct artifacts is what makes spec-drift reconciliation possible. The as-intended / as-coded distinction is the heart of the reconciliation model: one file holds intent, the other holds the implementation state, and the skill in between is what tells you where the two disagree.
 
 - **product-design-as-intended**: Unified working-intent file (`project/product-design-as-intended.md`) holding design intent, ADR-shaped Decisions, and CHANGELOG, classified Human (markers). You own the prose and we may only stamp STATUS, ESTABLISHED, and CHANGELOG_APPEND markers into it through `apply_marker.py` after you confirm the edit in the same turn. This file holds your working intent in sections 0 through 17.
 - **product-design-as-coded**: Unified implementation-state file (`project/product-design-as-coded.md`) auto-maintained by the agent, with three H2 sections: Conceptual Design, Metacommunication, Journey Maps. We maintain this file via post-skill writes and its three sections mirror the implementation state of the corresponding sections of the intended file.
