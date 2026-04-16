@@ -62,7 +62,7 @@ metadata:
 
     > **Backwards compatibility (additive).** The four new fields (`qa_type`, `user_revised_output`, `decision_points`, `advisory_decisions`) are additive. Any telemetry reader that expected the previous 14-field record continues to work because JSON object field order is non-significant and unknown fields are ignored by well-behaved readers. The 17-to-18 expansion follows the same pattern as the 14-to-17 expansion (plan-000295).
 
-2. **As-Is alignment** — If the completed skill executed a plan (detectable from the brief entry's skill field being "implement"), update the as-is files to reflect changes made by the plan. Skip when the parent skill is "plan" (no code changes yet):
+2. **As-Coded alignment** — If the completed skill executed a plan (detectable from the brief entry's skill field being "implement"), update the as-coded files to reflect changes made by the plan. Skip when the parent skill is "plan" (no code changes yet):
 
    a. Read the plan file to identify what changed: entities added/modified/removed, permissions changed, UX patterns added, metacommunication intents implemented.
 

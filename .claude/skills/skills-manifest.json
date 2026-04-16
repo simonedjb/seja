@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-12T14:36:19Z",
+  "generated": "2026-04-15T23:51:42Z",
   "count": 15,
   "skills": [
     {
@@ -28,7 +28,7 @@
       "description": "Define or update project design — stack, conventions, domain model, conceptual design, and standards. Use when user mentions 'design', 'design project', 'configure project', 'update design', or 'project setup'.",
       "argument_hint": "[--generate-spec] [--add-docs] [spec-file-path]",
       "category": "planning",
-      "version": "1.0.0"
+      "version": "1.0.1"
     },
     {
       "name": "document",

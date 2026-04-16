@@ -67,8 +67,6 @@ CONFIG_FILES: dict[str, str] = {
         "Registry of check_docs.py plugin scanners",
     ".claude/skills/skills-manifest.json":
         "Generated L1 skills manifest (from generate_skills_manifest.py)",
-    ".claude/settings.json":
-        "Claude Code harness settings",
     ".claude/config.json":
         "Claude Code framework configuration",
 }
@@ -787,12 +785,17 @@ def main(argv: list[str] | None = None) -> int:
     else:
         generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    # Resolve public_docs_root display string
-    display_root = (
-        public_docs_root.as_posix()
-        if public_docs_root is not None
-        else scan_payload.get("public_docs_root", "")
-    )
+    # Resolve public_docs_root display string. Prefer a path relative to the
+    # framework root so rendered output is stable across machines; fall back
+    # to the absolute path only when the public docs root lives outside the
+    # framework tree (e.g., sibling `../seja/docs` checkout).
+    if public_docs_root is not None:
+        try:
+            display_root = public_docs_root.relative_to(framework_root).as_posix()
+        except ValueError:
+            display_root = public_docs_root.as_posix()
+    else:
+        display_root = scan_payload.get("public_docs_root", "")
 
     rendered = render_framework_reference(artifacts, display_root, generated_at)
 

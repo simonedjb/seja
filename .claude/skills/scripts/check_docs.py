@@ -979,7 +979,14 @@ def plugin_framework_reference_coverage(root: Path, verbose: bool) -> list[Findi
 
     try:
         artifacts = generator.discover_all(root)
-        public_docs_display = public_docs_root.as_posix()
+        # Match the CLI's display-root logic: prefer a path relative to the
+        # framework root so rendered output is stable across machines.
+        try:
+            public_docs_display = public_docs_root.resolve().relative_to(
+                root.resolve()
+            ).as_posix()
+        except ValueError:
+            public_docs_display = public_docs_root.as_posix()
         # Match the CLI's code path: populate cross-reference mentions via the
         # scanner before rendering. Without this, the plugin's fresh output has
         # empty `Mentioned in` cells while the on-disk file has populated cells
