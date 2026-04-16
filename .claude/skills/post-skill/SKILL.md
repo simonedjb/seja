@@ -80,13 +80,13 @@ metadata:
          ```
          WARNING: legacy as-is layout detected (one or more of
          conceptual-design-as-is.md, metacomm-as-is.md, journey-maps-as-is.md
-         present) but project/product-design-as-coded.md is missing. Skipping as-is alignment
+         present) but project/product-design-as-coded.md is missing. Skipping as-coded alignment
          for this plan. Migrate per CHANGELOG 2.8.4 Migration Option 1 or 2,
          or run /upgrade. This warning repeats on every post-skill invocation
          until migrated.
          ```
 
-         Then return from the as-is alignment step. Steps 2b, 2c, and 2d all become no-ops for this plan. Do not create `product-design-as-coded.md`, do not edit any legacy file. Continue to append changelog entries to `${CD_AS_IS_CHANGELOG}` as normal (that file is unchanged in this plan; Phase 3 F from advisory-000264 handles its conditional embedding later).
+         Then return from the as-coded alignment step. Steps 2b, 2c, and 2d all become no-ops for this plan. Do not create `product-design-as-coded.md`, do not edit any legacy file. Continue to append changelog entries to `${CD_AS_IS_CHANGELOG}` as normal (that file is unchanged in this plan; Phase 3 F from advisory-000264 handles its conditional embedding later).
 
       After branch 1 or 2 completes, append a changelog entry to `${CD_AS_IS_CHANGELOG}` (see project/conventions.md). If the changelog file does not exist, instantiate it from `template/product-design-changelog.md`. Append the entry after the last existing changelog version:
 
