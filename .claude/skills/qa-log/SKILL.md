@@ -29,7 +29,7 @@ metadata:
 
 # Log QA
 
-Logs the entire current Q&A session (all user prompts and agent responses) into `${QA_LOGS_DIR}` (see project/conventions.md).
+Logs the entire current Q&A session (all user prompts and agent responses) into `${QA_LOGS_DIR}` (see project/conventions.md). Standalone invocations write to `${QA_LOGS_DIR}`; lifecycle callers like `/post-skill` may override `output_dir` to collocate the log with the artifact it documents.
 
 If an argument is provided, use it as the short title for the log file. If no argument is provided, derive a short title from the conversation topic.
 
@@ -44,7 +44,7 @@ The sequential ID is globally unique across all artifact types (6-digit, zero-pa
 
 When invoked by another skill (e.g., post-skill), the caller may provide overrides for the defaults above. The following overrides are supported:
 
-- **output_dir**: Write the QA file to this directory instead of `${QA_LOGS_DIR}`.
+- **output_dir**: Write the QA file to this directory instead of `${QA_LOGS_DIR}`. Typical use: `/post-skill` passes the parent artifact's directory here (e.g., `${PLANS_DIR}`, `${ADVISORY_DIR}`) so the QA log lives next to the artifact. When no override is provided (standalone `/qa-log` invocation), the skill falls back to `${QA_LOGS_DIR}`.
 - **filename**: Use this exact filename instead of the default `qa-<id>-<slug>.md` pattern. When provided, skip the ID reservation (step 1) and slug generation (step 2) -- use the filename as-is. The caller is responsible for ensuring the filename uses 6-digit zero-padded IDs derived from the parent artifact (e.g., `advisory-000015-qa-topic.md`).
 - **no_commit**: If true, skip the stage-and-commit step (step 6). The caller is responsible for committing.
 

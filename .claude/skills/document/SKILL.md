@@ -1,7 +1,7 @@
 ---
 name: document
 description: "Generate or update project documentation based on plan Docs: fields, auto-detection, or explicit type selection."
-argument-hint: "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|adr|help-center|changelog>]"
+argument-hint: "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|adr|help-center|changelog>] [--since <ref>] [--full-history]"
 compatibility: "Designed for Claude Code with SEJA framework"
 metadata:
   last-updated: 2026-04-01 16:42 UTC
@@ -43,6 +43,8 @@ metadata:
 | `--plan <id>` | No | Read Docs: fields from a plan file and generate documentation for each identified need |
 | `--auto-detect` | No | Detect documentation needs from recent git changes using heuristics |
 | `--type <type>` | No | Force a specific documentation type: readme, contextual-help, api-reference, adr, help-center, or changelog |
+| `--since <ref>` | No | Override auto-detect bounding window. Accepts a date (`2026-04-01`), a git SHA, or `last` (since last `/document` run of any kind). Ignored by non-auto-detect modes |
+| `--full-history` | No | Ignore per-doc-type bounding windows and apply the heuristic over the full recent git history (equivalent to pre-proposal behavior). Use when you want a clean-slate scan |
 
 # Document
 
@@ -62,6 +64,47 @@ If there are no arguments, ask the user what they need documented.
 1. Run `/pre-skill "document" $ARGUMENTS[0]` to add general instructions to the context window.
 
 2. Determine scope and documentation type using mode detection logic above. If `--plan`, read the plan file and collect all steps with non-N/A `Docs:` fields into a work list.
+
+2a. **Compute per-doc-type bounding windows** (applies to `--auto-detect` only; skip for other modes):
+
+   If `--full-history` is present, skip this step entirely (use unbounded heuristic).
+
+   If `--since <ref>` is present, resolve it:
+   - Date string (e.g., `2026-04-01`): use `git log --since="<ref>"` for all doc-types uniformly.
+   - Git SHA: use `git log <ref>..HEAD` for all doc-types uniformly.
+   - `last`: find the single most recent DONE `/document` row in `${BRIEFS_INDEX_FILE}` regardless of doc-type; use its Head SHA or Date as the uniform bound.
+
+   Otherwise (default history-aware behavior):
+   1. Read `${BRIEFS_INDEX_FILE}` (see project/conventions.md).
+   2. For each doc-type in the auto-detection heuristic table (`api-reference`, `contextual-help`, `readme`, `adr`, `changelog`, `help-center`), scan the index for the most recent DONE row where:
+      - `Skill` is `document`, AND
+      - `Generated` column contains that doc-type (comma-separated match)
+   3. If a matching row is found and has a non-empty `Head SHA`:
+      - Check reachability: run `git merge-base --is-ancestor <head-sha> HEAD`. If reachable, use `git log <head-sha>..HEAD -- <relevant-file-patterns>` to get the change set for that doc-type's heuristic row.
+      - If unreachable (rebase, squash-merge, GC'd): fall back to the row's `Date` timestamp via `git log --since="<date>"`. Annotate in the output: "SHA `<sha>` unreachable, using timestamp `<date>` as fallback."
+   4. If no matching row exists for a doc-type (first run, or that type was never generated), leave the window unbounded for that type — apply the heuristic over full recent history (same as pre-proposal behavior).
+   5. Print a summary of the resolved windows before proceeding:
+      ```
+      Auto-detect bounding windows:
+        api-reference: since <sha> (2026-04-02)
+        readme: since <sha> (2026-03-20)
+        changelog: unbounded (no prior run)
+        ...
+      ```
+
+   Pass these per-doc-type windows to the auto-detection heuristic in the next step. For each heuristic row, apply the matching window's git log filter when determining whether matching files changed.
+
+2b. **Record document run metadata** (applies to all `/document` modes; execute after generation in step 3, before post-skill in step 4):
+
+   1. Run `git rev-parse HEAD` to capture the current HEAD SHA (abbreviated to 10 chars).
+   2. Determine the list of doc-types this run generated:
+      - `--type <X>`: generated is `X`
+      - `--auto-detect`: generated is the comma-separated list of doc-types the heuristic actually matched and produced
+      - `--plan <id>`: generated is the comma-separated list of doc-types derived from the plan's Docs: fields
+      - Bare scope: generated is the inferred doc-type
+   3. Edit the current STARTED entry in `${BRIEFS_FILE}` (the one created by pre-skill for this invocation) to append: ` | SHA | <head-sha> | GENERATED | <comma-separated-types>`.
+
+   This metadata is preserved when post-skill prepends `DONE | <datetime> |` to the same line, and is parsed by `generate_briefs_index.py` into the `Head SHA` and `Generated` columns of `${BRIEFS_INDEX_FILE}`.
 
 3. **Launch generator agent(s):**
 

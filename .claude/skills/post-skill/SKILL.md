@@ -174,7 +174,29 @@ metadata:
 3. Run the /qa-log skill with the following caller overrides:
    - **no_commit**: true (post-skill handles the commit in step 8).
    - **filename**: `<prefix>${ARGUMENTS[0]}-qa-<truncated short title slug>.md` where `<prefix>` is the corresponding kind of file (plan-, advisory-, check-, etc) and `<truncated short title slug>` is the truncated short title slug of the previously generated file. If there is no corresponding file, derive the slug from the conversation topic.
-   - **output_dir**: `${QA_LOGS_DIR}`. All QA logs are centralized, not co-located with the artifact they document.
+   - **output_dir**: Resolve to the parent artifact's directory by extracting the filename prefix (the portion before the first digit group) from the `filename` override and mapping it via this table:
+
+     | Prefix | Directory variable |
+     |--------|---------------------|
+     | `plan-` | `${PLANS_DIR}` |
+     | `implement-` | `${PLANS_DIR}` |
+     | `advisory-` | `${ADVISORY_DIR}` |
+     | `check-` | `${CHECK_LOGS_DIR}` |
+     | `proposal-` | `${PROPOSALS_DIR}` |
+     | `roadmap-` | `${ROADMAP_DIR}` |
+     | `onboarding-` | `${ONBOARDING_PLANS_DIR}` |
+     | `communication-` | `${COMMUNICATION_DIR}` |
+     | `inventory-` | `${INVENTORIES_DIR}` |
+     | `reflection-` | `${REFLECTIONS_DIR}` |
+     | `user-tests-` | `${USER_TESTS_DIR}` |
+     | `explained-behavior-` | `${EXPLAINED_BEHAVIORS_DIR}` |
+     | `explained-code-` | `${EXPLAINED_CODE_DIR}` |
+     | `explained-data-model-` | `${EXPLAINED_DATA_MODEL_DIR}` |
+     | `explained-architecture-` | `${EXPLAINED_ARCHITECTURE_DIR}` |
+     | `behavior-evolution-` | `${BEHAVIOR_EVOLUTION_DIR}` |
+     | (no known prefix / free-form) | `${QA_LOGS_DIR}` (fallback) |
+
+     QA logs are collocated with the artifact they document. `${QA_LOGS_DIR}` is reserved for user-invoked `/qa-log` sessions without a parent artifact. The `implement-` prefix maps to `${PLANS_DIR}` because `/implement` lifecycle logs carry a plan ID and belong with their parent plan.
    The file should include the brief and the full Q&A log.
 
    Write checkpoint: `3 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
@@ -191,7 +213,7 @@ metadata:
    - Determine the skill's expected output paths using these methods, in order of priority:
      a. If the invocation produced a plan file (detectable from the plan ID argument), read the plan file's "Files" section (Modified + Created lists) to get the expected paths. Also include `project/product-design-as-coded.md` from `_references/` when a plan was executed.
      b. Otherwise, use the calling skill's output directory convention from project/conventions.md (e.g., `/advise` outputs to `${ADVISORY_DIR}`, `/explain` outputs to the appropriate `${EXPLAINED_*_DIR}`).
-     c. Always include `${BRIEFS_FILE}`, `${BRIEFS_INDEX_FILE}`, `${ARTIFACT_INDEX_FILE}`, the QA log file, and `${OUTPUT_DIR}/telemetry.jsonl` as expected outputs (post-skill itself produces these; note that `telemetry.jsonl` is written in step 8b after commit).
+     c. Always include `${BRIEFS_FILE}`, `${BRIEFS_INDEX_FILE}`, `${ARTIFACT_INDEX_FILE}`, the QA log file, and `${OUTPUT_DIR}/telemetry.jsonl` as expected outputs (post-skill itself produces these; note that `telemetry.jsonl` is written in step 8b after commit). The QA log path is the parent-collocated path computed in step 3 (i.e., the parent artifact's directory, not `${QA_LOGS_DIR}`), so the commit scope check treats it as an expected output of the parent skill's directory.
    - Compare pre-staged files against expected paths. Files under `_loom/` and `.claude/` matching the skill's output convention are always allowed.
    - If there are pre-staged files that are NOT part of the skill's expected output, warn the user, list the unexpected files, and output the commit message for manual use.
    - If there are no unexpected pre-staged files, proceed to stage and commit normally.

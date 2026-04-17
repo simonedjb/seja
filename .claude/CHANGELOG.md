@@ -3,6 +3,47 @@
 All notable changes to the SEJA-Claude framework are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.12.1] -- 2026-04-17 00:08 UTC
+
+### Added
+
+- History-aware `/document --auto-detect` with per-doc-type SHA-anchored bounding (proposal-000368, advisory-000366). The skill now reads `${BRIEFS_INDEX_FILE}` to find the last successful `/document` run per doc-type and bounds the change-detection window accordingly. Two new nullable columns (`Head SHA`, `Generated`) added to `briefs-index.md`. New flags: `--since <ref>` (override bounding window), `--full-history` (ignore windows, revert to unbounded). First-run and fresh-clone scenarios fall through to unbounded behavior automatically.
+- New step 2b in `/document` Core Workflow and Framework Changelog Workflow: records `| SHA | <head-sha> | GENERATED | <doc-types>` metadata on the STARTED entry in `briefs.md` before post-skill runs. Parsed by `generate_briefs_index.py` into the new index columns.
+- SEJA for Developers spoke appendix for the slide tutorial (`55-spoke-developers.md` in en-US and pt-BR).
+
+### Changed
+
+- `generate_briefs_index.py`: replaced `_extract_plan_id` with `_extract_trailing_metadata` that chains extraction of GENERATED, SHA, and PLAN suffixes from the end of the raw brief line. Backward-compatible -- existing rows render with empty `Head SHA` and `Generated` cells. Script count: 64 (unchanged). Unit test count: 270 (unchanged).
+- Framework vocabulary migrated from "as-is / to-be / established" to "as-coded / as-intended / implemented" across all framework-structure documentation and shared definitions (refactor commit `28b0409`).
+- `generate_framework_reference.py` stabilized to produce deterministic output across machines by sorting glob results and normalizing path separators.
+
+### Fixed
+
+- `framework-reference.md` output now stable across Windows and macOS due to sorted file enumeration and forward-slash normalization in `generate_framework_reference.py`.
+
+## [2.12.0] -- 2026-04-16 23:41 UTC
+
+### Changed
+
+- `/post-skill` step 3 now writes QA logs next to the artifact they document (e.g., `_output/advisory-logs/advisory-000366-qa-*.md`) instead of centralizing them in `${QA_LOGS_DIR}`. The `output_dir` caller-override passed to `/qa-log` resolves via a prefix→directory table inlined in SKILL.md step 3. `${QA_LOGS_DIR}` (`_output/qa-logs/`) is now reserved exclusively for user-invoked `/qa-log` sessions without a parent artifact. (plan-000367)
+- `/qa-log` caller-override documentation updated to describe the collocation pattern. No behavioral change to the skill itself.
+- `/upgrade` step 7 ("Offer follow-up actions") now detects legacy-layout QA logs in `${QA_LOGS_DIR}` and offers to migrate them via `migrate_qa_logs_to_parent_dirs.py --apply`.
+
+### Added
+
+- `migrate_qa_logs_to_parent_dirs.py` — idempotent migration script that moves post-skill-generated QA logs from `${QA_LOGS_DIR}` to their parent artifact directories via `git mv`. Dry-run by default; pass `--apply` to execute. Ships with the framework so downstream projects can adopt the new layout on `/upgrade`.
+
+### Migration
+
+Existing projects upgrading to 2.12.0 can migrate their centralized QA logs:
+
+```bash
+python .claude/skills/scripts/migrate_qa_logs_to_parent_dirs.py          # preview
+python .claude/skills/scripts/migrate_qa_logs_to_parent_dirs.py --apply  # execute
+```
+
+The `/upgrade` skill will also prompt for this migration automatically when it detects legacy-layout files.
+
 ## [2.11.1] -- 2026-04-15 18:26 UTC
 
 ### Changed

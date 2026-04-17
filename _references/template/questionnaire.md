@@ -104,7 +104,7 @@ Answer:
 
 Answer:
 
-**2.2** Does your platform follow a specific design philosophy or methodology? (e.g., gamification, collaborative filtering, evidence-based design)
+**2.2** Does your platform follow a specific design philosophy or methodology?
 
 Answer:
 

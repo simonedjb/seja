@@ -77,6 +77,7 @@ This skill upgrades the SEJA framework files in the current project from the see
    - If new convention variables were found: "Would you like to add these to your `project/conventions.md`?"
    - If old path references were found: "Would you like me to update the references?"
    - If CLAUDE.md needs refresh: "Would you like to regenerate your CLAUDE.md?"
+   - If `${QA_LOGS_DIR}` (default: `_output/qa-logs/`) contains files whose basename matches the post-skill pattern `^<prefix>-\d{6}-qa-.*\.md$` (legacy centralized layout): "The framework's `/post-skill` hook now collocates QA logs with the artifact they document, rather than centralizing them in `${QA_LOGS_DIR}`. I detected N legacy-layout QA logs in your `qa-logs/` folder. Would you like me to migrate them now via `python .claude/skills/scripts/migrate_qa_logs_to_parent_dirs.py --apply`? (This is safe, uses `git mv` to preserve history, and is dry-run-previewable beforehand.)"
 
 8. **Clean up**: Remove the temporary clone directory if one was created.
 

@@ -8,7 +8,7 @@ Do not edit by hand. To regenerate:
 
 # SEJA framework reference
 
-Generated 2026-04-15T23:57:28Z from seja-priv framework state.
+Generated 2026-04-17T00:04:47Z from seja-priv framework state.
 
 ## Skills
 
@@ -109,6 +109,7 @@ Generated 2026-04-15T23:57:28Z from seja-priv framework state.
 | generate_telemetry_report.py | Aggregate telemetry.jsonl and print a markdown report. | `.claude/skills/scripts/generate_telemetry_report.py` | `reference/framework-reference.md` |
 | human_markers_registry.py | Shared registry for Human (markers) files and allowed marker patterns. | `.claude/skills/scripts/human_markers_registry.py` | `reference/framework-reference.md` |
 | md_to_html.py | Convert a markdown file to styled standalone HTML. | `.claude/skills/scripts/md_to_html.py` | `reference/framework-reference.md` |
+| migrate_qa_logs_to_parent_dirs.py | Move post-skill QA logs to parent artifact dirs. | `.claude/skills/scripts/migrate_qa_logs_to_parent_dirs.py` | `reference/framework-reference.md` |
 | migrate_to_global_ids.py | One-time migration from mixed 4/6-digit per-type IDs | `.claude/skills/scripts/migrate_to_global_ids.py` | `reference/framework-reference.md` |
 | pending.py | Pending actions ledger for SEJA. | `.claude/skills/scripts/pending.py` | `how-to/recipes.md`, `reference/framework-reference.md` |
 | project_config.py | Central configuration for SEJA helper scripts. | `.claude/skills/scripts/project_config.py` | `reference/framework-reference.md` |
@@ -374,6 +375,7 @@ Framework artifacts mentioned at least once in `seja-public/docs`.
 | l3-leader | Onboarding | `_references/general/onboarding/l3-leader.md` | `reference/framework-reference.md` |
 | md_to_html.py | Scripts | `.claude/skills/scripts/md_to_html.py` | `reference/framework-reference.md` |
 | micro | Perspectives | `_references/general/review-perspectives/micro.md` | `reference/framework-reference.md` |
+| migrate_qa_logs_to_parent_dirs.py | Scripts | `.claude/skills/scripts/migrate_qa_logs_to_parent_dirs.py` | `reference/framework-reference.md` |
 | migrate_to_global_ids.py | Scripts | `.claude/skills/scripts/migrate_to_global_ids.py` | `reference/framework-reference.md` |
 | migration-validator | Agents | `.claude/agents/migration-validator.md` | `reference/framework-reference.md` |
 | migrations | Rules | `.claude/rules/migrations.md` | `reference/framework-reference.md` |
