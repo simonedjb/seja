@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: Before you deploy a database change, I walk your
+#   migration history end to end and call out anything that would
+#   block the deploy: two branches competing for head, an orphan
+#   revision, a cycle. You see the shape of the chain and the
+#   problems in one place instead of finding them at boot time.
 """
 check_migration_chain.py — Validate Alembic migration revision chain in dialogos.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Checks performed
 ================

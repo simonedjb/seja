@@ -1,4 +1,12 @@
+# designer: When you want to know whether your frontend and backend agree on
+#   the API surface, I line up the backend's declared routes against the
+#   frontend's API calls and flag the endpoints that one side added without
+#   the other -- so dead routes and missing callers surface before a user
+#   hits them.
 """Check that backend API routes have corresponding frontend API methods and vice versa.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Purpose
 - Detect frontend/backend API drift: routes defined on one side but missing on the other.

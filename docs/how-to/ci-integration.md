@@ -1,12 +1,18 @@
+---
+diataxis: how-to
+freshness: release-bound
+last-reviewed: 2026-04-18
+---
+
 # CI/CD integration how-to
 
 This how-to is for you when you want to wire SEJA quality checks into your CI/CD pipeline so that the same gates you run locally also run on every push and pull request. By the end of it you will have a three-layer enforcement model -- git hooks, post-skill gate, and CI pipeline -- sharing a single entry point.
 
 ## Before you start
 
-- Your project has been seeded and configured via `/seed` + `/design`.
+- Your project has been seeded and configured via `/seja-setup` + `/design`.
 - You have Python 3.9+ available in your CI environment.
-- The lifecycle definitions in [concepts.md -- Framework lifecycle](../concepts.md#framework-lifecycle) -- every **Framework:** callout below links back there for its definitions.
+- The lifecycle definitions in [concepts.md -- Harness lifecycle](../concepts.md#harness-lifecycle) -- every **Harness:** callout below links back there for its definitions.
 
 ## The three-layer enforcement model
 
@@ -20,7 +26,7 @@ SEJA validates work at three layers, each with a different speed and blocking be
 
 All three layers share a single entry point: `run_preflight_fast.py`.
 
-**Framework:** the fast preflight script orchestrates the validator suite (`check_conventions.py`, `check_skill_system.py`, `check_secrets.py`, `check_spec_conformance.py`) and optionally runs `pytest` in CI mode. See also [quality-gates.md](quality-gates.md) for which `/check` mode to reach for at each stage of a local workflow.
+**Harness:** the fast preflight script orchestrates the validator suite (`check_conventions.py`, `check_skill_system.py`, `check_secrets.py`, `check_spec_conformance.py`) and optionally runs `pytest` in CI mode. See also [quality-gates.md](quality-gates.md) for which `/check` mode to reach for at each stage of a local workflow.
 
 ## Step 1: Install git hooks (local)
 
@@ -42,7 +48,7 @@ To bypass for a single commit (use sparingly):
 git commit --no-verify -m "message"
 ```
 
-**Framework:** the git hook is the hard-block layer. If any check fails, the commit is rejected. The hook runs the same checks as post-skill step 6b, so if a skill session already passed, the hook confirms nothing regressed between skill completion and commit time.
+**Harness:** the git hook is the hard-block layer. If any check fails, the commit is rejected. The hook runs the same checks as post-skill step 6b, so if a skill session already passed, the hook confirms nothing regressed between skill completion and commit time.
 
 ## Step 2: Understand the post-skill gate (automatic)
 
@@ -112,7 +118,7 @@ The following skills cannot run in headless CI mode because they require user de
 | Skill | Why interactive |
 |-------|----------------|
 | `/design` | Questionnaire requires user answers |
-| `/advise` | Q&A conversation loop |
+| `/research` | Q&A conversation loop |
 | `/plan` | Review and approval step |
 | `/implement` | May pause for guidance on failures |
 | `/help --browse` | Interactive menu selection |
@@ -130,7 +136,7 @@ Use these skills in local development sessions, not in CI.
 
 ## Troubleshooting
 
-- **Scripts fail with "project/conventions.md not found"**: This is a warning, not an error. The scripts fall back to `template/conventions.md`. In project repos (not the framework repo), ensure `/design` has been run to generate `project/conventions.md`.
+- **Scripts fail with "project/conventions.md not found"**: This is a warning, not an error. The scripts fall back to `template/conventions.md`. In project repos (not the harness repo), ensure `/design` has been run to generate `project/conventions.md`.
 - **Claude Code invocations timeout**: Set a generous timeout (5-10 minutes) for skill invocations. `/check validate` and `/check preflight` can take several minutes on large codebases.
 - **Index regeneration fails**: Ensure the `_output/` directory exists and the scripts have write access.
 - **Pre-commit hook not running**: Verify hooks are installed with `git config core.hooksPath`. Should show `.githooks`.
@@ -138,4 +144,4 @@ Use these skills in local development sessions, not in CI.
 ## What to read next
 
 - [quality-gates.md](quality-gates.md) -- which `/check` mode to run at each stage of a local workflow.
-- [concepts.md -- Framework lifecycle](../concepts.md#framework-lifecycle) -- the canonical definitions the callouts above link back to.
+- [concepts.md -- Harness lifecycle](../concepts.md#harness-lifecycle) -- the canonical definitions the callouts above link back to.

@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
+# designer: When you want a one-page, printer-friendly index of every skill the
+#   harness ships, I'm the generator that reads each SKILL.md's frontmatter,
+#   groups the skills by category, and writes `.claude/CHEATSHEET.md` so you
+#   can scan what's available without opening the browser-based viewer.
 """
 generate_cheatsheet.py — Generate a skill quick reference from SKILL.md frontmatter.
+
+Invocation: user-cli
+Lifecycle: active
 
 Exit codes: 0 = success, 1 = no skills found, 2 = script error.
 

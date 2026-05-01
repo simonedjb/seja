@@ -1,15 +1,15 @@
 ---
 paths:
   - "backend/migrations/**"
+designer_description: "When you are about to write or edit a database migration, I surface the P0 review questions for database change and security alongside your project's migration conventions, so reversibility, data loss risk, lock behaviour, and permission implications get weighed before the migration lands rather than after it has already run in staging."
 ---
 
 # Migration Rules
 
-- **Idempotency required**: all operations must use guards (`IF NOT EXISTS`, `IF EXISTS`, `inspector.has_table()`, `inspector.has_column()`).
-- **PostgreSQL syntax**: use PostgreSQL-compatible SQL — avoid SQLite or MySQL-isms.
-- **Chain integrity**: `down_revision` must reference an existing revision. Run `check_migration_chain.py` after creating migrations.
+When editing files under these paths:
 
-See `project/standards.md § Backend > 6` for full conventions.
+- **Review questions**: see `.claude/references/general/review-perspectives/db.md`, `.claude/references/general/review-perspectives/sec.md` -- P0 questions are the critical checks.
+- **Full conventions**: see `project/standards.md § Backend > 6` -- stack-specific rules.
 
 ## Perspective Alignment
 

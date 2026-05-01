@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When you add or rename a translated string, I check that
+#   every key your code asks for is defined in each language, that
+#   neither translation has drifted ahead of the other, and that
+#   nothing is still sitting empty. You see the missing keys before
+#   a user sees a blank button.
 """
 check_i18n_keys.py — Detect undefined / mismatched i18n keys.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Checks performed
 ================

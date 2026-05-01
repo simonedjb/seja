@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
+# designer: When /check smoke exercises your project's API surface, I'm the
+#   reusable runner underneath -- the piece that drives each endpoint from a
+#   registry, classifies the response as PASS, WARN, or FAIL, and rolls the
+#   results into a report. Your project brings the endpoint list, auth
+#   adapter, and app factory; I handle the tracking, the error shaping, and
+#   the exit-code convention so every smoke test speaks the same language.
 """Smoke Test Core — generic framework for registry-driven API smoke testing.
+
+Invocation: library
+Lifecycle: active
 
 Provides:
 - SmokeTestRunner: result tracking, error classification, report generation
 - run_registry(): registry-driven endpoint executor
-- Framework adapters: create_flask_client(), etc.
+- Harness adapters: create_flask_client(), etc.
 - Auth adapters: FlaskJWTAuth, etc.
 
 Usage:
@@ -143,7 +152,7 @@ def run_registry(client, runner, registry, auth_adapter):
     """Execute all endpoints in a registry.
 
     Args:
-        client: Framework test client (e.g., Flask test client)
+        client: Harness test client (e.g., Flask test client)
         runner: SmokeTestRunner instance
         registry: Parsed registry dict
         auth_adapter: Auth adapter instance with get_headers()/get_admin_headers()
@@ -276,7 +285,7 @@ def _substitute_path(path, group_captured, all_captured, depends_on=None):
 
 
 # ---------------------------------------------------------------------------
-# Framework adapters
+# Harness adapters
 # ---------------------------------------------------------------------------
 
 def create_flask_client(config_name="unit_testing"):

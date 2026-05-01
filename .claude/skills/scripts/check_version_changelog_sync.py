@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
+# designer: Before a release, I confirm that the VERSION file and the top
+#   heading of the harness's CHANGELOG name the same version number.
+#   If they disagree you hear about it here instead of after a tag has
+#   already shipped with the wrong label.
 """
 check_version_changelog_sync.py — Verify VERSION file matches latest CHANGELOG heading.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Exit codes: 0 = in sync, 1 = version mismatch, 2 = script error.
 

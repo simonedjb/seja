@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
+# designer: When you want a full-coverage sweep of the harness's validation
+#   scripts -- not just the fast gate, but every registered check -- I'm the
+#   orchestrator that discovers them, runs them in turn, and rolls the results
+#   up into a single pass/fail verdict. You get a per-check breakdown (and an
+#   optional JUnit XML report for CI pipelines) instead of having to chase
+#   each check script by name.
 """
 run_all_checks.py -- CI-independent validation orchestrator for SEJA checks.
+
+Invocation: agent-invoked
+Lifecycle: active
 
 Discovers and runs all check_*.py scripts in the scripts directory with unified
 exit codes and optional JUnit XML output. This is the preferred orchestrator for
@@ -80,8 +89,12 @@ class CheckResult:
 # ---------------------------------------------------------------------------
 
 def discover_scripts(scripts_dir: Path) -> List[Path]:
-    """Find all check_*.py files, sorted alphabetically."""
-    return sorted(scripts_dir.glob("check_*.py"))
+    """Find all check_*.py files in scripts/ and co-located skill subdirectories."""
+    results = list(scripts_dir.glob("check_*.py"))
+    for skill_dir in sorted(scripts_dir.parent.iterdir()):
+        if skill_dir.is_dir() and skill_dir.name not in ("scripts", "_internal"):
+            results.extend(skill_dir.glob("check_*.py"))
+    return sorted(set(results))
 
 
 # ---------------------------------------------------------------------------

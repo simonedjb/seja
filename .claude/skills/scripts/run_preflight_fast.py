@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
+# designer: When you are about to commit, I am the fast gate that catches the
+#   most common harness-integrity regressions before they land -- convention
+#   drift, stale skill manifests, leaked secrets, human-marker violations, and
+#   the handful of other checks that must stay green on every push. You see a
+#   single pass/fail per check and a green verdict in under ten seconds, so
+#   the hook does not become the reason you stop running the hook.
 """
 run_preflight_fast.py -- Fast preflight checks for git hooks and CI.
+
+Invocation: skill-invoked, hook-ci
+Lifecycle: active
 
 Runs a curated subset of fast validation scripts (<10s total) and returns
 a single pass/fail exit code. This is the single entry point for:
@@ -21,7 +30,7 @@ Usage
     python .claude/skills/scripts/run_preflight_fast.py --verbose
 
 Flags:
-    --ci       Also run framework unit tests (pytest)
+    --ci       Also run harness unit tests (pytest)
     --verbose  Show detailed output from each check
 """
 from __future__ import annotations
@@ -32,36 +41,51 @@ import sys
 from pathlib import Path
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
+SKILLS_DIR = SCRIPTS_DIR.parent
 REPO_ROOT = SCRIPTS_DIR.parents[2]
 
 # Checks to run, in order. Each entry: (display_name, command_args)
 FAST_CHECKS: list[tuple[str, list[str]]] = [
     ("conventions", [sys.executable, str(SCRIPTS_DIR / "check_conventions.py")]),
     ("skill-system", [sys.executable, str(SCRIPTS_DIR / "check_skill_system.py")]),
-    ("secrets", [sys.executable, str(SCRIPTS_DIR / "check_secrets.py"), "--all"]),
+    ("secrets", [sys.executable, str(SKILLS_DIR / "design" / "check_secrets.py"), "--all"]),
     ("skills-manifest", [sys.executable, str(SCRIPTS_DIR / "generate_skills_manifest.py"), "--check"]),
     ("skill-spec", [sys.executable, str(SCRIPTS_DIR / "check_skill_spec.py")]),
     ("version-changelog-sync", [sys.executable, str(SCRIPTS_DIR / "check_version_changelog_sync.py")]),
     ("design-output", [sys.executable, str(SCRIPTS_DIR / "check_design_output.py")]),
-    ("plan-coverage", [sys.executable, str(SCRIPTS_DIR / "check_plan_coverage.py"), "--mode", "blocking"]),
+    ("plan-coverage", [sys.executable, str(SKILLS_DIR / "design" / "check_plan_coverage.py"), "--mode", "blocking"]),
     ("human-markers", [sys.executable, str(SCRIPTS_DIR / "check_human_markers_only.py"), "--staged"]),
-    ("changelog-append-only", [sys.executable, str(SCRIPTS_DIR / "check_changelog_append_only.py"), "--staged"]),
-    ("section-boundary-writes", [sys.executable, str(SCRIPTS_DIR / "check_section_boundary_writes.py"), "--staged"]),
+    ("changelog-append-only", [sys.executable, str(SKILLS_DIR / "explain" / "check_changelog_append_only.py"), "--staged"]),
+    ("section-boundary-writes", [sys.executable, str(SKILLS_DIR / "post-skill" / "check_section_boundary_writes.py"), "--staged"]),
     # lifecycle-fact-uniqueness is intentionally excluded from the hot path:
     # its O(N^2) comparison and 60% threshold can produce false positives
     # during transitional doc states. It still runs under /check docs and
     # run_all_checks.py.
-    ("framework-reference-coverage",
-     [sys.executable, str(SCRIPTS_DIR / "check_docs.py"),
-      "--plugins", "framework-reference-coverage",
+    ("harness-reference-coverage",
+     [sys.executable, str(SKILLS_DIR / "check" / "check_docs.py"),
+      "--plugins", "harness-reference-coverage",
+      "--filter", "warning"]),
+    ("docs-frontmatter",
+     [sys.executable, str(SKILLS_DIR / "check" / "check_docs.py"),
+      "--plugins", "docs-frontmatter",
+      "--filter", "warning"]),
+    ("mantra-banner-consistency",
+     [sys.executable, str(SKILLS_DIR / "check" / "check_docs.py"),
+      "--plugins", "mantra-banner-consistency",
       "--filter", "warning"]),
     ("no-private-leaks",
      [sys.executable, str(SCRIPTS_DIR / "check_no_private_leaks.py")]),
+    ("call-graph",
+     [sys.executable, str(SCRIPTS_DIR / "generate_call_graph.py"), "--check"]),
+    ("skill-graph-sync",
+     [sys.executable, str(SCRIPTS_DIR / "generate_skill_graph.py"), "--check"]),
+    ("harness-reference",
+     [sys.executable, str(SCRIPTS_DIR / "generate_harness_reference.py"), "--check"]),
 ]
 
 SPEC_CHECKS_LOCATIONS = [
-    REPO_ROOT / "_references" / "project" / "agent" / "spec-checks.yaml",
-    REPO_ROOT / "_references" / "template" / "agent" / "spec-checks.yaml",
+    REPO_ROOT / "project-design" / "agent" / "spec-checks.yaml",
+    REPO_ROOT / ".claude" / "references" / "template" / "agent" / "spec-checks.yaml",
 ]
 
 CI_CHECKS: list[tuple[str, list[str]]] = [
@@ -110,7 +134,7 @@ def main() -> int:
         if spec_path.is_file():
             checks.append((
                 "spec-conformance",
-                [sys.executable, str(SCRIPTS_DIR / "check_spec_conformance.py")],
+                [sys.executable, str(SKILLS_DIR / "check" / "check_spec_conformance.py")],
             ))
             break
 

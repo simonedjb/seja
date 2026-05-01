@@ -1,4 +1,4 @@
-"""Smoke tests for the 17-field post-skill telemetry record schema.
+"""Smoke tests for the 18-field post-skill telemetry record schema.
 
 These tests parse hard-coded sample records to verify that the schema
 documented in `.claude/skills/post-skill/SKILL.md` steps 1b and 8b is
@@ -22,7 +22,7 @@ if str(_SCRIPTS_DIR) not in sys.path:
 
 from check_telemetry import validate_record  # noqa: E402
 
-# The canonical 17 field names, in the order they appear in the SKILL.md
+# The canonical 18 field names, in the order they appear in the SKILL.md
 # step 8b example. Order is not semantically meaningful for JSON readers
 # but this list is the single source of truth for these tests.
 EXPECTED_FIELDS = [
@@ -43,6 +43,7 @@ EXPECTED_FIELDS = [
     "qa_type",
     "user_revised_output",
     "decision_points",
+    "tokens_used",
 ]
 
 QA_TYPE_ALLOWED = {
@@ -57,7 +58,7 @@ QA_TYPE_ALLOWED = {
 
 @pytest.fixture
 def full_record() -> dict:
-    """A realistic 17-field record matching the step 8b example."""
+    """A realistic 18-field record matching the step 8b example."""
     raw = (
         '{"timestamp": "2026-03-29T14:00:00Z", "skill": "advise", '
         '"id": "000014", "duration_seconds": 1800, "outcome": "success", '
@@ -69,7 +70,8 @@ def full_record() -> dict:
         '"qa_type": "advisory-follow-up", "user_revised_output": null, '
         '"decision_points": [{"prompt": "Apply markers now?", '
         '"chosen_option": "Defer for later review", '
-        '"rationale_presented": true}]}'
+        '"rationale_presented": true}], '
+        '"tokens_used": null}'
     )
     return json.loads(raw)
 
@@ -85,13 +87,14 @@ def degenerate_record() -> dict:
         '"context_budget": "light", "git_commit_sha": null, '
         '"files_changed": null, "parent_skill": "check", '
         '"qa_type": "single-prompt", "user_revised_output": null, '
-        '"decision_points": null}'
+        '"decision_points": null, '
+        '"tokens_used": null}'
     )
     return json.loads(raw)
 
 
-def test_full_record_has_all_17_fields(full_record: dict) -> None:
-    assert len(EXPECTED_FIELDS) == 17
+def test_full_record_has_all_18_fields(full_record: dict) -> None:
+    assert len(EXPECTED_FIELDS) == 18
     for field in EXPECTED_FIELDS:
         assert field in full_record, f"missing field: {field}"
     assert set(full_record.keys()) == set(EXPECTED_FIELDS)
@@ -146,7 +149,7 @@ def test_degenerate_record_types(degenerate_record: dict) -> None:
 
 
 def test_record_roundtrips_through_json(full_record: dict) -> None:
-    """Serializing and re-parsing must preserve all 17 fields and their values."""
+    """Serializing and re-parsing must preserve all 18 fields and their values."""
     serialized = json.dumps(full_record)
     reparsed = json.loads(serialized)
     assert reparsed == full_record
@@ -156,14 +159,14 @@ def test_record_roundtrips_through_json(full_record: dict) -> None:
 # ---------------------------------------------------------------------------
 # check_telemetry.validate_record integration tests
 # ---------------------------------------------------------------------------
-# These tests verify that the central validator accepts the 17-field schema
+# These tests verify that the central validator accepts the 18-field schema
 # and produces no unknown-field warnings for the 3 fields added by
 # plan-000295 step 1. They also verify per-field type validation catches
 # bad inputs (wrong enum, wrong type, wrong nested shape).
 
 
-def test_validator_accepts_full_17_field_record(full_record: dict) -> None:
-    """A full 17-field record must validate with no errors and no warnings."""
+def test_validator_accepts_full_18_field_record(full_record: dict) -> None:
+    """A full 18-field record must validate with no errors and no warnings."""
     errors, warnings = validate_record(full_record)
     assert errors == [], f"unexpected errors: {errors}"
     assert warnings == [], f"unexpected warnings: {warnings}"
@@ -192,7 +195,7 @@ def test_validator_accepts_legacy_14_field_record() -> None:
     assert warnings == [], f"unexpected warnings: {warnings}"
 
 
-def test_validator_accepts_degenerate_17_field_record(degenerate_record: dict) -> None:
+def test_validator_accepts_degenerate_18_field_record(degenerate_record: dict) -> None:
     errors, warnings = validate_record(degenerate_record)
     assert errors == [], f"unexpected errors: {errors}"
     assert warnings == [], f"unexpected warnings: {warnings}"
@@ -270,3 +273,32 @@ def test_validator_flags_decision_point_non_dict_entry(full_record: dict) -> Non
     full_record["decision_points"] = ["not-a-dict"]
     errors, _ = validate_record(full_record)
     assert any("decision_points[0]" in e and "dict" in e for e in errors), errors
+
+
+# ---------------------------------------------------------------------------
+# tokens_used field validation
+# ---------------------------------------------------------------------------
+
+
+def test_tokens_used_null_is_valid(full_record: dict) -> None:
+    full_record["tokens_used"] = None
+    errors, _ = validate_record(full_record)
+    assert not any("tokens_used" in e for e in errors), errors
+
+
+def test_tokens_used_positive_int_is_valid(full_record: dict) -> None:
+    full_record["tokens_used"] = 42000
+    errors, _ = validate_record(full_record)
+    assert not any("tokens_used" in e for e in errors), errors
+
+
+def test_validator_flags_non_int_tokens_used(full_record: dict) -> None:
+    full_record["tokens_used"] = "many"
+    errors, _ = validate_record(full_record)
+    assert any("tokens_used" in e and "int or null" in e for e in errors), errors
+
+
+def test_validator_flags_negative_tokens_used(full_record: dict) -> None:
+    full_record["tokens_used"] = -1
+    errors, _ = validate_record(full_record)
+    assert any("tokens_used" in e and ">= 0" in e for e in errors), errors

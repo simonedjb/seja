@@ -1,6 +1,12 @@
+---
+diataxis: reference
+freshness: release-bound
+last-reviewed: 2026-04-26
+---
+
 # SEJA Glossary
 
-Canonical reference for SEJA terminology. This is a lookup, not a tutorial: scan the category you need and read the matching entry. Definitions are pinned to their authoritative source in the foundational framework and must not be paraphrased in a way that drifts from that source.
+Canonical reference for SEJA terminology. This is a lookup, not a tutorial: scan the category you need and read the matching entry. Definitions are pinned to their authoritative source in the foundational harness and must not be paraphrased in a way that drifts from that source.
 
 ## Sign system
 
@@ -12,27 +18,26 @@ Canonical reference for SEJA terminology. This is a lookup, not a tutorial: scan
 ## Markers
 
 - **CHANGELOG_APPEND** -- Append-only marker type used to add entries to a CHANGELOG section of a Human (markers) file via `apply_marker.py`.
-- **D-NNN** -- ADR-shaped Decision entry ID (Context / Decision / Consequences) living in `project/product-design-as-intended.md § Decisions`, orthogonal to the REQ namespace.
+- **D-NNN** -- DRR-shaped Decision entry ID (Context / Decision / Consequences) living in `project/product-design-as-intended.md § Decisions`, orthogonal to the REQ namespace.
 - **ESTABLISHED** -- Inline HTML comment stamp recording that a human has promoted an implemented item to established status, carrying plan ID, date, and optional version.
+- **PUBLISH pending entry** -- Pending-ledger entry subtype filed by `cut_tag.py` at tag-cut to track outstanding publish-to-public work; surfaced by the pre-skill hook and escalated after 3 days overdue. See `docs/reference/release-process.md § Drift prevention`.
 - **REQ-TYPE-NNN** -- Stable machine-parseable requirement ID (ENT, PERM, VAL, UX, MC, JM, I18N, DELTA) placed as an HTML comment before the heading, row, or bullet that defines the requirement.
 - **STATUS** -- Inline HTML comment marker above a section heading tracking its lifecycle state through `proposed -> implemented -> established -> superseded`, with plan ID and date.
 
 ## Profiles and patterns
 
 - **brownfield** -- Project profile for embedding or attaching SEJA to an existing codebase that already has source history.
-- **collocated** -- Deployment pattern where framework files (`.claude/`, `_references/`, `_output/`) live directly inside the product codebase repository.
+- **collocated** -- Deployment pattern where harness files (`.claude/`, `project-design/`, `_output/`) live directly inside the product codebase repository.
 - **greenfield** -- Project profile for a brand-new project with no pre-existing codebase.
-- **workspace** -- Deployment pattern where framework files live in a standalone git repository alongside, not inside, the product codebase.
+- **workspace** -- Deployment pattern where harness files live in a standalone git repository alongside, not inside, the product codebase.
 
 ## Roles and levels
 
 - **BLD (Builders)** -- Role family for developers, DevOps engineers, and infrastructure engineers who write, deploy, and maintain code.
 - **GRD (Guardians)** -- Role family for QA engineers, security engineers, tech leads, and engineering managers who ensure quality, alignment, and governance.
-- **L1 Newcomer** -- Expertise level for team members learning fundamentals and needing explicit step-by-step guidance.
-- **L2 Practitioner** -- Mid-level expertise; works independently on familiar tasks within established patterns.
-- **L3 Expert** -- Senior expertise; makes independent judgment calls and mentors others.
-- **L4 Strategist** -- Staff or principal expertise; shapes architecture and technical direction across teams.
-- **L5 Leader** -- Tech lead or engineering manager expertise; aligns teams, strategy, and organizational outcomes.
+- **L1 Contributor** -- Junior to mid-level expertise (0-5 years); needs guidance on how, what, and where; learns via walkthroughs and reviewable first tasks.
+- **L2 Expert** -- Senior expertise (5-10 years); makes independent judgment calls, mentors others, and wants the "why" behind patterns.
+- **L3 Leader** -- Tech lead, staff engineer, or engineering manager expertise (10+ years); aligns teams, governance, and organizational outcomes.
 - **SHP (Shapers)** -- Role family for product managers, UX and UI designers, researchers, and analysts who define what gets built and how.
 
 ## Review perspectives
@@ -54,17 +59,29 @@ Canonical reference for SEJA terminology. This is a lookup, not a tutorial: scan
 - **UX** (User Experience) -- User flows, feedback, error handling, navigation, discoverability.
 - **VIS** (Visual Design) -- Design system consistency, CSS conventions, spacing, typography.
 
-## Framework artifacts
+## Harness artifacts
 
+- **harness** -- The SEJA agent harness: the collection of skills, agents, rules, references, scripts, and lifecycle pipelines under `.claude/` that govern how the AI agent operates on a project. The harness wraps every skill invocation in a pre-skill / post-skill envelope, enforces trust boundaries via the constitution, and maintains the sign system that tracks design intent. "Harness files" refers to the on-disk artifacts (`.claude/`, `project-design/`, `_output/`) that the harness reads and writes.
 - **agent** -- Subagent prompt under `.claude/agents/` executing a single role (evaluator, generator, or executor) on one artifact type.
 - **constitution** -- Immutable project principles in `project/constitution.md`, never agent-altered, required for new projects.
-- **migration** -- Upgrade script under `.claude/migrations/` that moves a target project's framework files between SEJA versions.
+- **migration** -- Upgrade script under `.claude/migrations/` that moves a target project's harness files between SEJA versions.
 - **pending ledger** -- Append-only JSONL log at `_output/pending.jsonl` tracking outstanding human actions surfaced by skills.
 - **post-skill pipeline** -- Lifecycle hook run after every skill for briefs update, QA logging, as-coded updates, marker proposals, and git commit.
 - **pre-skill pipeline** -- Eight-stage pipeline run before every skill: help, brief-log, orphan-check, budget-eval, compaction-check, pending-check, ref-load, constitution.
 - **product-design-as-coded** -- Unified implementation-state file (`project/product-design-as-coded.md`) auto-maintained by the agent, with three H2 sections: Conceptual Design, Metacommunication, Journey Maps.
-- **product-design-as-intended** -- Unified working-intent file (`project/product-design-as-intended.md`) holding design intent, ADR-shaped Decisions, and CHANGELOG, classified Human (markers).
+- **product-design-as-intended** -- Unified working-intent file (`project/product-design-as-intended.md`) holding design intent, DRR-shaped Decisions, and CHANGELOG, classified Human (markers).
 - **rule** -- Path-scoped guidance file under `.claude/rules/` auto-loaded when Claude edits files matching the rule's scope.
 - **script** -- Helper script under `.claude/skills/scripts/` performing validation, index generation, conversion, or orchestration tasks.
 - **section boundary** -- Enforcement rule preventing agents from writing outside designated H2 sections of a multi-section file, validated by `check_section_boundary_writes.py`.
+- **`.seja-version`** -- Per-project pin file written by `/seja-setup --here` recording the harness tag (or literal `HEAD`) the project was seeded from; read by `/seja-setup --upgrade` to compute the upgrade baseline. See `docs/how-to/upgrade.md § Pinning to a specific release`.
 - **skill** -- A `SKILL.md` file under `.claude/skills/<name>/` defining an agent-invocable capability and invoked via a slash command.
+
+## Processes
+
+- **A2 release process** -- Manual release discipline for cutting SemVer-tagged releases of SEJA to public `seja`, with pending-ledger drift prevention and monthly dogfooding. See `docs/reference/release-process.md`.
+- **Two-path lifecycle** -- The two entry paths to `/design`: first-iteration (one-shot, via `/seja-setup`) and iteration-2+ (recurring, via `/research` or `/explain` into `/design` or `/plan`). See `docs/concepts.md § Lifecycle: canonical path`.
+
+## Flags
+
+- **`--version`** -- Flag on `/seja-setup` (install and `--upgrade` modes) pinning the harness to an exact tag (or `HEAD`) at seed time or upgrade time. See `docs/how-to/upgrade.md § Pinning to a specific release`.
+- **`/seja-setup --here`** -- Flag variant of `/seja-setup` that finalises setup in place inside a freshly cloned seed repo rather than copying to a new target directory; writes `.seja-version`. See `docs/how-to/greenfield-collocated.md § Option B: clone directly into the project folder`.

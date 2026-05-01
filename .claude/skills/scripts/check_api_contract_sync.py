@@ -1,4 +1,11 @@
+# designer: When you change a backend schema or a frontend type and
+#   forget to change the other side, I line them up and show you which
+#   fields are missing or mistyped on each side. You catch the drift
+#   before a caller hits a broken response.
 """Check frontend/backend API contract synchronization.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Purpose:
 - Compare backend Marshmallow schema fields with frontend TypeScript interfaces.

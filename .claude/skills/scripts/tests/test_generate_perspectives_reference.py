@@ -113,7 +113,7 @@ def test_check_mode_detects_drift(tmp_framework: Path, tmp_path: Path):
     output_path.write_text("stale\n", encoding="utf-8")
     exit_code = gen.main(
         [
-            "--framework-root",
+            "--harness-root",
             str(tmp_framework),
             "--output",
             str(output_path),
@@ -129,7 +129,7 @@ def test_check_mode_passes_on_match(tmp_framework: Path, tmp_path: Path):
     output_path = tmp_path / "perspectives.md"
     gen.main(
         [
-            "--framework-root",
+            "--harness-root",
             str(tmp_framework),
             "--output",
             str(output_path),
@@ -139,7 +139,7 @@ def test_check_mode_passes_on_match(tmp_framework: Path, tmp_path: Path):
     )
     exit_code = gen.main(
         [
-            "--framework-root",
+            "--harness-root",
             str(tmp_framework),
             "--output",
             str(output_path),
@@ -156,7 +156,7 @@ def test_cli_stdout(tmp_framework: Path):
         [
             sys.executable,
             str(SCRIPT_PATH),
-            "--framework-root",
+            "--harness-root",
             str(tmp_framework),
             "--output",
             "-",

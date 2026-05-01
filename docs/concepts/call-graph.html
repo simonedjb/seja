@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SEJA harness call graph</title>
+<!--
+  Generated 2026-05-01T20:31:14Z by .claude/skills/scripts/generate_call_graph.py.
+  Do not edit by hand.
+
+  CDN versions and integrity hashes pinned below. To refresh SRI hashes run
+  `python .claude/skills/scripts/generate_call_graph.py --refresh-sri`, or
+  manually:
+    for url in \
+      https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js \
+      https://unpkg.com/layout-base@2.0.1/layout-base.js \
+      https://unpkg.com/cose-base@2.2.0/cose-base.js \
+      https://unpkg.com/cytoscape-fcose@2.2.0/cytoscape-fcose.js \
+      https://unpkg.com/webcola@3.4.0/WebCola/cola.min.js \
+      https://unpkg.com/cytoscape-cola@2.5.1/cytoscape-cola.js \
+      https://unpkg.com/cytoscape-svg@0.4.0/cytoscape-svg.js ; do
+      echo "$url"
+      curl -sL "$url" | openssl dgst -sha384 -binary | openssl base64 -A
+      echo
+    done
+  Then replace the sha384-PLACEHOLDER values in the <script> tags below.
+  Placeholders are intentional for Step 3 scaffolding; refresh is tracked as
+  a follow-up maintenance task rather than blocking this step on a network
+  fetch we cannot perform reliably from the generator context.
+-->
+<link rel="stylesheet" href="call-graph.css">
+<script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"
+        integrity="sha384-H3uzGzTfGHUAumB8+s4GEdfFwzAceN9wCCndN8AXubWKFIPuBSWKKtWDx7RhSf/z" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/layout-base@2.0.1/layout-base.js"
+        integrity="sha384-5E2lB9AIGE6LRCnOOSTnZRlYZFZ01iMeN2fw97Z1r4Z/kXALxKw2AC+ZzQqoeDsG" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/cose-base@2.2.0/cose-base.js"
+        integrity="sha384-RswRBkrMsPUYpJLbZ1CVA08zbNzAkykE2oGJTujBwfjWNdfxv2WVjLJNqv1LhAOp" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/cytoscape-fcose@2.2.0/cytoscape-fcose.js"
+        integrity="sha384-uk5Wbjq1+KqUdHO30w7N7GrEGdzBhaJeW9o/ANF6v9+yx3M/cBmoX51C000JNCUf" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/webcola@3.4.0/WebCola/cola.min.js"
+        integrity="sha384-o4yPeUKY7q5q4fuMcFuJWSBJPJgSHtssnfVZvjNRGOEuBwT8zxXnzyGJcy5Ojpeo" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/cytoscape-cola@2.5.1/cytoscape-cola.js"
+        integrity="sha384-hS0F3AnUYl+EBC3wCT4+d6MKdLR27UlifwZZYJi5oRCNhKA1ptaEWExH6BqyfMeW" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/cytoscape-svg@0.4.0/cytoscape-svg.js"
+        integrity="sha384-bOfT/gjvLn+2+GkQyPN3ooyaZ1sk6KnoCaqOev0BTeIkn6kZQBm9sZTkTosZqOmy" crossorigin="anonymous"></script>
+</head>
+<body>
+<header class="top-bar">
+  <h1>SEJA harness call graph</h1>
+  <nav class="top-links" aria-label="Related views">
+    <a href="call-graph.md">Markdown view</a>
+    <a href="../reference/harness-reference.md">Harness reference</a>
+    <a href="skill-map.md">Skill map (suggestions)</a>
+  </nav>
+  <div class="top-search" aria-label="Node search controls">
+    <label for="node-search-input">Search nodes</label>
+    <input id="node-search-input" type="search" placeholder="Type to match node labels..." autocomplete="off">
+    <button type="button" id="node-search-clear" aria-label="Clear node search">Clear</button>
+  </div>
+  <div class="export-buttons">
+    <button type="button" id="export-svg" aria-label="Export current graph view as SVG">Export SVG</button>
+    <button type="button" id="export-png" aria-label="Export current graph view as PNG">Export PNG</button>
+  </div>
+</header>
+<main class="app">
+  <aside class="sidebar" aria-label="Graph controls">
+    <section class="legend">
+      <h2>Legend</h2>
+      <ul class="legend-list">
+        <li><span class="swatch swatch-skill"></span>Skill</li>
+        <li><span class="swatch swatch-skill-internal"></span>Skill (internal, inlined)</li>
+        <li><span class="swatch swatch-agent"></span>Agent</li>
+        <li><span class="swatch swatch-script"></span>Script</li>
+        <li><span class="swatch swatch-rule"></span>Rule</li>
+        <li><span class="swatch swatch-ref-general"></span>Ref (general)</li>
+        <li><span class="swatch swatch-ref-template"></span>Ref (template)</li>
+        <li><span class="swatch swatch-ref-project"></span>Ref (project)</li>
+        <li><span class="swatch swatch-edge-suggests"></span>Suggests (post-completion hint)</li>
+        <li><span class="swatch swatch-edge-dispatches-inline"></span>Dispatches inline (wrapper -&gt; internal)</li>
+        <li><span class="swatch swatch-edge-dynamic-load"></span>Dynamic load (via runtime argument)</li>
+        <li><span class="swatch swatch-edge-reads"></span>Reads (explicit ref read in prose/code)</li>
+        <li><span class="swatch swatch-edge-conditional"></span>Conditional edge (fires under flag)</li>
+      </ul>
+    </section>
+    <section class="filters" aria-label="Node type filters">
+      <details class="filter-collapsible" open>
+        <summary class="filter-collapsible-heading">Filter by node type</summary>
+        <label><input type="checkbox" class="filter-type" value="skill" checked> Skill</label>
+        <label><input type="checkbox" class="filter-type" value="skill-internal" checked> Internal skills</label>
+        <label><input type="checkbox" class="filter-type" value="agent" checked> Agent</label>
+        <label><input type="checkbox" class="filter-type" value="script" checked> Script</label>
+        <label><input type="checkbox" class="filter-type" value="rule" checked> Rule</label>
+        <label><input type="checkbox" class="filter-type" value="ref-general" checked> Ref (general)</label>
+        <label><input type="checkbox" class="filter-type" value="ref-template" checked> Ref (template)</label>
+        <label><input type="checkbox" class="filter-type" value="ref-project" checked> Ref (project)</label>
+        <div class="filter-buttons">
+          <button type="button" id="filter-all">Select all</button>
+          <button type="button" id="filter-none">Deselect all</button>
+        </div>
+        <label class="filter-missing"><input type="checkbox" id="filter-hide-disconnected"> Hide disconnected nodes</label>
+        <label class="filter-missing"><input type="checkbox" id="filter-hide-internal-skills" aria-label="Hide internal skills"> Hide internal skills (pre-skill, post-skill)</label>
+        <div class="filter-buttons filter-presets">
+          <button type="button" id="filter-preset-user-facing" aria-label="Show only user-facing slash-command skills">User-facing view</button>
+          <button type="button" id="filter-preset-full" aria-label="Restore the full call graph view">Full view</button>
+        </div>
+      </details>
+    </section>
+    <section class="filters filter-edge-types" aria-label="Edge type filters">
+      <details class="filter-collapsible" open>
+        <summary class="filter-collapsible-heading">Filter by edge type</summary>
+        <div class="filter-subgroup" aria-label="Calls and delegations">
+          <span class="filter-subgroup-label">Calls / delegations</span>
+          <label><input type="checkbox" class="filter-edge-type" value="invokes" checked> invokes (skill -> script)</label>
+          <label><input type="checkbox" class="filter-edge-type" value="delegates" checked> delegates (skill -> agent)</label>
+          <label><input type="checkbox" class="filter-edge-type" value="orchestrates" checked> orchestrates (skill -> skill)</label>
+          <label><input type="checkbox" class="filter-edge-type" value="dispatches-inline" checked> dispatches-inline (wrapper -> internal)</label>
+        </div>
+        <div class="filter-subgroup" aria-label="Reference loads">
+          <span class="filter-subgroup-label">Ref loads</span>
+          <label><input type="checkbox" class="filter-edge-type" value="eager-load" checked> eager-load</label>
+          <label><input type="checkbox" class="filter-edge-type" value="lazy-load" checked> lazy-load</label>
+          <label><input type="checkbox" class="filter-edge-type" value="auto-loads" checked> auto-loads (rules, via path scope)</label>
+          <label><input type="checkbox" class="filter-edge-type" value="dynamic-load" checked> dynamic-load (dotted, runtime arg)</label>
+          <label><input type="checkbox" class="filter-edge-type" value="reads" checked> reads (explicit ref read in prose/code)</label>
+        </div>
+        <div class="filter-subgroup" aria-label="Other edge types">
+          <span class="filter-subgroup-label">Other</span>
+          <label><input type="checkbox" class="filter-edge-type" value="suggests" checked> suggests (dashed, skill-graph.md)</label>
+          <label><input type="checkbox" class="filter-edge-type" value="imports" checked> imports (script -> script)</label>
+          <label><input type="checkbox" id="filter-conditional-show" checked> conditional (amber, fires only under flag)</label>
+        </div>
+        <div class="filter-buttons">
+          <button type="button" id="edge-filter-all">Select all</button>
+          <button type="button" id="edge-filter-none">Deselect all</button>
+        </div>
+      </details>
+    </section>
+    <section class="layout-controls" aria-label="Layout selection">
+      <h2>Layout</h2>
+      <label><input type="radio" name="layout" value="fcose" checked> fcose (force-directed, general)</label>
+      <label><input type="radio" name="layout" value="cola"> cola (constraint-force, downward flow)</label>
+      <label><input type="radio" name="layout" value="concentric"> concentric (radial by type)</label>
+      <div class="layout-buttons">
+        <button type="button" id="layout-fit" aria-label="Zoom to fit currently visible graph elements">Zoom to fit</button>
+        <button type="button" id="layout-reset" aria-label="Reset layout to algorithmic positions">Reset layout</button>
+        <button type="button" id="layout-save" aria-label="Download current node positions as JSON">Download layout</button>
+        <button type="button" id="layout-load" aria-label="Load node positions from a previously downloaded JSON file">Load layout</button>
+        <input type="file" id="layout-load-input" accept="application/json,.json" hidden>
+      </div>
+    </section>
+  </aside>
+  <div id="cy" class="cy-canvas" role="region" aria-label="Call graph"></div>
+  <aside id="match-panel" class="match-panel" hidden aria-hidden="true" aria-label="Matched nodes">
+    <header class="match-panel-header">
+      <h2>Matched nodes</h2>
+      <span id="match-count" class="match-count">0</span>
+    </header>
+    <p id="match-panel-empty" class="match-empty">Type in "Search nodes" to highlight matching labels.</p>
+    <ul id="match-list" class="match-list" aria-label="Search results"></ul>
+  </aside>
+  <aside id="side-panel" class="side-panel" hidden aria-hidden="true" aria-label="Node details">
+    <header class="side-panel-header">
+      <span id="side-panel-type-badge" class="type-badge">Node</span>
+      <h2 id="side-panel-title" class="side-panel-title">Select a node</h2>
+      <div class="side-panel-controls">
+        <button type="button" id="side-panel-pin" class="side-panel-btn"
+                aria-pressed="false" aria-label="Pin side panel open">Pin</button>
+        <button type="button" id="side-panel-close" class="side-panel-btn side-panel-close"
+                aria-label="Close side panel">&times;</button>
+      </div>
+    </header>
+    <div class="side-panel-body">
+      <p class="side-panel-path-wrap">
+        <a id="side-panel-path" href="#" target="_blank" rel="noopener"
+           class="side-panel-path">&nbsp;</a>
+      </p>
+      <div id="side-panel-description" class="side-panel-description"></div>
+      <div id="side-panel-fallback-badge" class="fallback-badge" hidden>
+        Developer-oriented &mdash; awaiting designer rewrite
+      </div>
+      <section id="side-panel-incoming" class="side-panel-section">
+        <h3>Incoming edges</h3>
+        <ul class="edge-list" id="side-panel-incoming-list"></ul>
+      </section>
+      <section id="side-panel-outgoing" class="side-panel-section">
+        <h3>Outgoing edges</h3>
+        <div id="side-panel-outgoing-groups"></div>
+      </section>
+    </div>
+  </aside>
+</main>
+<script src="call-graph.js"></script>
+</body>
+</html>

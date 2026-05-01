@@ -79,7 +79,7 @@ def _empty_results() -> dict[str, dict]:
 def _assert_no_prescriptive_phrasing(report: str) -> None:
     """Forbidden substrings must not appear outside the static hand-off paragraph.
 
-    The hand-off paragraph uses "run `/advise`" which is allowed because it
+    The hand-off paragraph uses "run `/research`" which is allowed because it
     is a static, non-prescriptive hand-off signal (not first-person advice).
     """
     lower = report.lower()

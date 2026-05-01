@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When you want to know how well your frontend is tested, I
+#   run the suite, measure coverage, and group the numbers by area --
+#   components, pages, hooks, services, and so on. You get a single
+#   table plus a list of source files that nothing tests at all and
+#   files that do not even have a test next to them.
 """
 check_frontend_test_coverage.py -- Analyse frontend test coverage.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Generated : 2026-03-08T19:00:00 UTC
 User brief: Check frontend test coverage

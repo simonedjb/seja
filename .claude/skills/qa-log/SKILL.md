@@ -2,7 +2,7 @@
 name: qa-log
 description: "Log the entire current Q&A session into a file for future reference."
 argument-hint: brief or topic
-compatibility: "Designed for Claude Code with SEJA framework"
+compatibility: "Designed for Claude Code with the SEJA harness"
 metadata:
   last-updated: 2026-03-27 00:00 UTC
   version: 1.0.0
@@ -11,15 +11,7 @@ metadata:
   references: []
 ---
 
-## Quick Guide
-
-**What it does**: Saves the current conversation (questions and answers) to a file for future reference. Useful for documenting decisions and rationale.
-
-**Example**:
-> You: /qa-log Design decisions for the notification system
-> Agent: Captures the full Q&A exchange from this session and saves it as a timestamped file you can reference later.
-
-**When to use**: You have had a productive conversation with useful decisions or insights and want to preserve it as project documentation.
+> Overview: see [./SKILL-quickguide.md](./SKILL-quickguide.md)
 
 ## Arguments
 
@@ -45,10 +37,12 @@ The sequential ID is globally unique across all artifact types (6-digit, zero-pa
 When invoked by another skill (e.g., post-skill), the caller may provide overrides for the defaults above. The following overrides are supported:
 
 - **output_dir**: Write the QA file to this directory instead of `${QA_LOGS_DIR}`. Typical use: `/post-skill` passes the parent artifact's directory here (e.g., `${PLANS_DIR}`, `${ADVISORY_DIR}`) so the QA log lives next to the artifact. When no override is provided (standalone `/qa-log` invocation), the skill falls back to `${QA_LOGS_DIR}`.
-- **filename**: Use this exact filename instead of the default `qa-<id>-<slug>.md` pattern. When provided, skip the ID reservation (step 1) and slug generation (step 2) -- use the filename as-is. The caller is responsible for ensuring the filename uses 6-digit zero-padded IDs derived from the parent artifact (e.g., `advisory-000015-qa-topic.md`).
+- **filename**: Use this exact filename instead of the default `qa-<id>-<slug>.md` pattern. When provided, skip the ID reservation (step 1) and slug generation (step 2) -- use the filename as-is. The caller is responsible for ensuring the filename uses 6-digit zero-padded IDs derived from the parent artifact (e.g., `research-000015-qa-topic.md`).
 - **no_commit**: If true, skip the stage-and-commit step (step 6). The caller is responsible for committing.
 
 When no overrides are provided, all defaults apply (standalone behavior).
+
+> **Upstream bypass**: the caller (typically `/post-skill` step 3) may decide to skip invoking `/qa-log` entirely when the parent skill already embeds a verbatim Q&A record in its primary artifact (currently `/research`). See `.claude/skills/post-skill/SKILL.md` step 3 for the `skip_qa_log` contract. This is an upstream decision — it does not add an override to this skill's own interface.
 
 **Important**: The `<current datetime>` field in the header (step 4) is NEVER overridden -- it must always be present regardless of which overrides are active. This ensures every QA log is indexable by date.
 
@@ -62,7 +56,7 @@ When no overrides are provided, all defaults apply (standalone behavior).
 
 4. Save to `<output_dir>/<filename>` (using overrides or defaults) with:
    - **Header** (standalone mode): `# QA <id> | <current datetime> | <short title>` (datetime in `YYYY-MM-DD HH:MM UTC` format)
-   - **Header** (with `filename` override): `# QA Log | <parent-type> <parent-id> | <current datetime> | <short title>` (datetime in `YYYY-MM-DD HH:MM UTC` format). The `<parent-type>` and `<parent-id>` are derived from the filename (e.g., `advisory-000058-qa-...` means parent-type is "Advisory" and parent-id is "000058").
+   - **Header** (with `filename` override): `# QA Log | <parent-type> <parent-id> | <current datetime> | <short title>` (datetime in `YYYY-MM-DD HH:MM UTC` format). The `<parent-type>` and `<parent-id>` are derived from the filename (e.g., `research-000058-qa-...` means parent-type is "Research" and parent-id is "000058").
    - **Brief**: A one-line summary of what the session was about. If the user provided an argument, use that as the brief. If not, generate a brief based on the conversation topic and make the session title Brief Summary instead of Brief.
    - **Q&A Log**: Numbered exchanges using the format:
      ```

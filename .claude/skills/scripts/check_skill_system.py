@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
+# designer: When you want to know whether your skills, agents, and their
+#   declared references still hang together, I walk the whole .claude/
+#   tree and check that every reference resolves, every dependency points
+#   to a real skill, no cycle exists in the depends graph, and each agent
+#   carries the frontmatter the harness expects. You get one report that
+#   says which skills are structurally sound and which need attention.
 """
 check_skill_system.py — Validate .claude skill system integrity.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Exit codes: 0 = pass, 1 = failures found, 2 = script error.
 
@@ -29,7 +38,7 @@ CHECK_PLUGIN_MANIFEST:
   stack:
     backend: [any]
     frontend: [any]
-  scope: framework
+  scope: harness
   critical: false
 """
 from __future__ import annotations
@@ -43,16 +52,17 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CLAUDE_DIR = REPO_ROOT / ".claude"
 SKILLS_DIR = CLAUDE_DIR / "skills"
-REFERENCES_DIR = REPO_ROOT / "_references"
+HARNESS_REFS_DIR = REPO_ROOT / ".claude" / "references"
+PROJECT_REFS_DIR = REPO_ROOT / "project-design"
 AGENTS_DIR = CLAUDE_DIR / "agents"
 
 ALLOWED_CATEGORIES = {"planning", "analysis", "code", "utility", "internal"}
 ALLOWED_BOOLEAN_FIELDS = {"disable-model-invocation"}
 ALLOWED_CONTEXT_BUDGETS = {"light", "standard", "heavy"}
 
-# Framework-only detection: no project configured if conventions.md is absent
-_PROJECT_CONVENTIONS = REFERENCES_DIR / "project" / "conventions.md"
-IS_FRAMEWORK_ONLY = not _PROJECT_CONVENTIONS.exists()
+# Harness-only detection: no project configured if conventions.md is absent
+_PROJECT_CONVENTIONS = PROJECT_REFS_DIR / "conventions.md"
+IS_HARNESS_ONLY = not _PROJECT_CONVENTIONS.exists()
 VERSION_RE = re.compile(r"^\d+\.\d+\.\d+$")
 
 # Simple YAML frontmatter parser (between --- delimiters)
@@ -206,14 +216,18 @@ def check_skills(verbose: bool = False) -> tuple[list[str], list[str], list[str]
         metadata = fm.get("metadata", {})
 
         # Check metadata.references — empty list [] is valid
-        # Files live in _references/general/, _references/template/, _references/project/
+        # Files live in general/, template/ (under HARNESS_REFS_DIR) or
+        # project/ entries (under PROJECT_REFS_DIR after stripping the "project/" prefix).
         refs = metadata.get("references", [])
         infos = []
         if isinstance(refs, list):
             for ref in refs:
-                ref_path = REFERENCES_DIR / ref
+                if ref.startswith("project/"):
+                    ref_path = PROJECT_REFS_DIR / ref.removeprefix("project/")
+                else:
+                    ref_path = HARNESS_REFS_DIR / ref
                 if not ref_path.exists():
-                    if IS_FRAMEWORK_ONLY and ref.startswith("project/"):
+                    if IS_HARNESS_ONLY and ref.startswith("project/"):
                         infos.append(
                             f"  - {name}/SKILL.md: project/* reference not found "
                             f"(expected -- no project configured): '{ref}'"
@@ -236,11 +250,14 @@ def check_skills(verbose: bool = False) -> tuple[list[str], list[str], list[str]
                     f"got: {type(eager_refs).__name__}"
                 )
             else:
-                # Paths must exist in _references/
+                # Paths must exist (general/template via HARNESS_REFS_DIR; project/ via PROJECT_REFS_DIR)
                 for eref in eager_refs:
-                    eref_path = REFERENCES_DIR / eref
+                    if eref.startswith("project/"):
+                        eref_path = PROJECT_REFS_DIR / eref.removeprefix("project/")
+                    else:
+                        eref_path = HARNESS_REFS_DIR / eref
                     if not eref_path.exists():
-                        if IS_FRAMEWORK_ONLY and eref.startswith("project/"):
+                        if IS_HARNESS_ONLY and eref.startswith("project/"):
                             infos.append(
                                 f"  - {name}/SKILL.md: project/* eager_reference not found "
                                 f"(expected -- no project configured): '{eref}'"
@@ -378,29 +395,39 @@ def check_agents(verbose: bool = False) -> tuple[list[str], list[str]]:
 
 
 def check_references(verbose: bool = False) -> tuple[list[str], list[str]]:
-    """Check reference file structure in _references/. Returns (errors, warnings)."""
+    """Check reference file structure. Returns (errors, warnings)."""
     errors = []
     warnings = []
 
-    if not REFERENCES_DIR.is_dir():
-        errors.append("  - _references/ directory not found")
-        return errors, warnings
+    harness_refs_found = 0
+    project_refs_found = 0
 
-    # References live in general/, template/, project/ subdirectories
-    valid_subdirs = {"general", "template", "project"}
-    ref_files = sorted(REFERENCES_DIR.glob("**/*.md"))
-    print(f"## References ({len(ref_files)} found in _references/)\n")
+    if HARNESS_REFS_DIR.is_dir():
+        harness_ref_files = sorted(HARNESS_REFS_DIR.glob("**/*.md"))
+        harness_refs_found = len(harness_ref_files)
+        valid_subdirs = {"general", "template"}
+        for ref_file in harness_ref_files:
+            rel = ref_file.relative_to(HARNESS_REFS_DIR)
+            if rel.parts[0] not in valid_subdirs:
+                warnings.append(
+                    f"  - {rel}: not in expected subdirectory "
+                    f"(expected general/ or template/)"
+                )
+            if verbose:
+                print(f"  OK: .claude/references/{rel}")
+    else:
+        errors.append("  - .claude/references/ directory not found")
 
-    for ref_file in ref_files:
-        rel = ref_file.relative_to(REFERENCES_DIR)
-        # Top-level part should be one of the valid subdirectories
-        if rel.parts[0] not in valid_subdirs:
-            warnings.append(
-                f"  - {rel}: not in expected subdirectory "
-                f"(expected general/, template/, or project/)"
-            )
+    if PROJECT_REFS_DIR.is_dir():
+        project_ref_files = sorted(PROJECT_REFS_DIR.glob("**/*.md"))
+        project_refs_found = len(project_ref_files)
         if verbose:
-            print(f"  OK: {rel}")
+            for ref_file in project_ref_files:
+                rel = ref_file.relative_to(PROJECT_REFS_DIR)
+                print(f"  OK: project-design/{rel}")
+
+    total = harness_refs_found + project_refs_found
+    print(f"## References ({harness_refs_found} harness, {project_refs_found} project, {total} total)\n")
 
     return errors, warnings
 
@@ -471,7 +498,7 @@ def check_script_imports(verbose: bool = False) -> tuple[list[str], list[str], l
     Only SyntaxError counts as an error. ImportError for missing external
     packages counts as a warning. All other exceptions (FileNotFoundError,
     SystemExit, RuntimeError, etc.) count as info -- these are expected in
-    framework-only repos where project_config cannot find conventions.md.
+    harness-only repos where project_config cannot find conventions.md.
     """
     errors: list[str] = []
     warnings: list[str] = []
@@ -536,7 +563,7 @@ def check_script_imports(verbose: bool = False) -> tuple[list[str], list[str], l
         f"{warn_count} warnings, {error_count} errors"
     )
     if info_count:
-        print(f"  ({info_count} info-level exceptions — expected in framework-only repos)")
+        print(f"  ({info_count} info-level exceptions — expected in harness-only repos)")
     print()
 
     return errors, warnings, infos

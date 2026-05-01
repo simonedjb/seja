@@ -1,8 +1,8 @@
 ---
 name: implement
 description: Execute a previously generated plan to add a feature, fix a bug, or refactor code. Use when user mentions "implement", "execute plan", or "run plan".
-argument-hint: "<planned-item-id> [--manual] [--roadmap <roadmap-id>] [--checkpoint wave|plan|none] [--max-iterations N] [--dry-run] [--skip-checks]"
-compatibility: "Designed for Claude Code with SEJA framework"
+argument-hint: "<planned-item-id> [--manual] [--roadmap <roadmap-id>] [--checkpoint wave|plan|none] [--max-iterations N] [--dry-run] [--skip-checks] [--skip-docs]"
+compatibility: "Designed for Claude Code with the SEJA harness"
 metadata:
   last-updated: 2026-03-27 12:00 UTC
   version: 1.0.0
@@ -24,18 +24,7 @@ metadata:
     - general/review-perspectives.md
 ---
 
-## Quick Guide
-
-**What it does**: Runs a previously approved plan step by step. Nothing changes in your project until you have reviewed and approved the plan first.
-
-**Example**:
-> You: /implement 0042
-> Agent: Executes each step of Plan 0042 in order — creates files, modifies code, runs verifications. Reports progress and flags any issues encountered.
-
-> You: /implement --roadmap 000316
-> Agent: Reads roadmap 000316, identifies 4 plans across 3 waves. Executes Wave 0 plans sequentially, then pauses for review. After approval, executes Wave 1 plans in parallel, pauses again, then Wave 2.
-
-**When to use**: You have reviewed a plan (created by /plan) and are ready to have the agent carry it out. Use `--roadmap` when you want to execute all plans in a roadmap wave-by-wave without manually triggering each one.
+> Overview: see [./SKILL-quickguide.md](./SKILL-quickguide.md)
 
 ## Arguments
 
@@ -48,6 +37,7 @@ metadata:
 | `--roadmap <roadmap-id>` | No | Execute all plans in a roadmap, wave by wave. Mutually exclusive with `<planned-item-id>` |
 | `--checkpoint <wave\|plan\|none>` | No | Checkpoint granularity for roadmap mode. Default: `wave` |
 | `--skip-checks` | No | Skip the automatic quality checks (`/check validate` + `/check review`) at the end |
+| `--skip-docs` | No | Skip the automatic documentation generation at post-skill step 2b. Files an `update-documentation` pending entry instead |
 
 # Execute a plan
 
@@ -55,98 +45,79 @@ If no argument was provided, ask the user for the planned item id.
 
 ## Definitions
 
-Plan file: Resolve the plan filename by looking up `$ARGUMENTS[0]` in `${OUTPUT_DIR}/INDEX.md` (the global artifact index). The index maps artifact IDs to their titles and status. Use the matched ID to construct the filename `${PLANS_DIR}/plan-<id>-<slug>.md`. If INDEX.md does not exist, run `python .claude/skills/scripts/generate_macro_index.py` to generate it. If the ID is not found in the index, inform the user and abort.
+| Term | Definition |
+|------|------------|
+| Plan file | Resolve `$ARGUMENTS[0]` via `${OUTPUT_DIR}/INDEX.md` (run `python .claude/skills/scripts/generate_macro_index.py` if missing); construct `${PLANS_DIR}/plan-<id>-<slug>.md`. Abort if the ID is not in the index. |
+| Progress file | `${PLANS_DIR}/plan-<id>-progress.md` -- append-only cross-iteration learnings. Created at start of auto mode; each subagent reads it and appends. |
+| Rollback branch | `git branch pre-plan-<id>` from current HEAD before executing. Inform the user; undo via `git checkout pre-plan-<id>`. |
 
-Progress file: `${PLANS_DIR}/plan-<id>-progress.md` — append-only cross-iteration learnings. Created at the start of auto mode, read by each subagent, appended to after each iteration.
-
-## General Instructions
-After completing each step (or iteration in auto mode), update the to-do list in the plan file and save it to make it persistent immediately, in case the plan is interrupted.
-
-Before executing, create a rollback branch: `git branch pre-plan-<id>` from the current HEAD. If execution fails and the user wants to undo changes, they can `git checkout pre-plan-<id>`. Inform the user that the rollback branch was created.
+After each step (or iteration in auto mode), output the updated to-do list, update and save the plan-file to-do list immediately.
 
 ## Quality Gate
 
-The quality gate runs validation, code review, and tests. It is referenced from multiple locations in both manual and auto modes. Skipped if `--skip-checks` was passed.
+Runs validation, code review, and tests. Skipped if `--skip-checks`.
 
-1. Run `/check validate` to run all project validation scripts.
-2. Run `/check review` to review all changes in scope.
-3. Launch the `test-runner` agent with scope "all" to verify tests pass.
+1. Run `/check validate`.
+2. Run `/check review`.
+3. Launch the `test-runner` agent with scope "all".
 4. If the plan's `smoke` field is `true`, run `/check smoke api`.
-5. If any check surfaces **critical** issues (failing tests, security findings, blocking validation errors), fix them before proceeding. For non-critical issues, list them in the plan file summary as deferred items.
+5. **Critical** issues (failing tests, security findings, blocking validation errors) must be fixed before proceeding; non-critical issues become deferred items in the plan summary.
 
 ### Generator-Critic Loop (Auto Mode Only)
 
-When running in **auto mode**, the quality gate applies a bounded generator-critic retry loop for critical code review findings. In **manual (interactive) mode**, review findings remain advisory — the user decides what to fix.
-
-**Retry logic** (auto mode, after step 2 above):
-
-1. Classify each code-reviewer finding as **critical** (blocking: security, correctness, failing tests) or **advisory** (non-blocking: style, minor improvements).
-2. Set `retry_count = 0`.
-3. While critical findings exist AND `retry_count < 2`:
-   a. Increment `retry_count`.
-   b. For each critical finding: construct a fix prompt containing the finding description, affected file(s) and line(s), and the original plan context.
-   c. Launch a `general-purpose` subagent to apply the fix.
-   d. Re-run `/check review` on the changed files only.
-   e. Re-classify findings from the new review.
-4. If `retry_count` reaches 2 and critical findings remain, log them as **unresolved** in the plan file summary and continue — do not block the workflow.
-5. Append a **Generator-Critic Iterations** section to the quality gate output:
-   ```
-   ### Generator-Critic Iterations
-   - Iteration count: N/2
-   - Findings per iteration: [list counts]
-   - Resolution status: all resolved / N unresolved critical findings remain
-   ```
+Auto mode runs a bounded retry loop for critical code-review findings. Manual mode treats review findings as advisory (the user decides). After Quality Gate step 2: classify each finding as **critical** (security, correctness, failing tests) or **advisory** (non-blocking); set `retry_count = 0`; while critical findings exist AND `retry_count < 2`, increment, build a fix prompt per critical finding (description + file/line + plan context), launch a `general-purpose` subagent, re-run `/check review` on changed files only, re-classify. If `retry_count` hits 2 with criticals remaining, log them as **unresolved** in the plan summary and continue -- do not block. Append to the quality gate output (verbatim):
+```
+### Generator-Critic Iterations
+- Iteration count: N/2
+- Findings per iteration: [list counts]
+- Resolution status: all resolved / N unresolved critical findings remain
+```
 
 ## Execution Modes
 
-This skill supports three execution modes:
+Dispatch: `--roadmap` -> roadmap; else `--manual` -> manual; else auto (default).
 
-- **Auto** (default): Execute each plan step in a fresh subagent context. Inspired by the Ralph pattern — each iteration gets a clean context window and communicates via disk artifacts. Best for most plans, especially larger ones (>6 steps) where context degradation is a risk.
-- **Manual** (`--manual`): Execute all plan steps sequentially in the current context. Best for small plans (≤6 steps) or when interactive confirmation is needed for each step.
-- **Roadmap** (`--roadmap <id>`): Execute all plans in a roadmap, wave by wave. Each plan runs via auto mode in a fresh subagent. Pauses between waves for user review (configurable via `--checkpoint`). Best for completing entire roadmaps without manual per-plan invocation.
+| Mode | Recommended when | Topology |
+|------|------------------|----------|
+| Auto (default) | Most plans, especially >6 steps where context degradation is a risk. | Each step runs in a fresh `general-purpose` subagent (Ralph pattern); state via the progress file. |
+| Manual (`--manual`) | Small plans (<=6 steps) or when per-step confirmation is needed. | Sequential in the current context. |
+| Roadmap (`--roadmap <id>`) | Executing every plan in a roadmap without per-plan invocation. | Each plan runs auto mode in a fresh subagent; pauses between waves per `--checkpoint`. |
 
-If `--roadmap` is passed, use roadmap mode. If `--manual` is passed, use manual mode. Otherwise, use auto mode.
+**Flags.** `--max-iterations N` caps auto-mode iterations (default 20; ignored in manual). `--dry-run` previews per-step file creates/modifies without writing. `--skip-checks` skips the final quality gate. `--skip-docs` suppresses the post-skill step 2b auto-doc `AskUserQuestion` (goes straight to Skip; files an `update-documentation` pending entry) -- use when documenting in a separate session or for harness-internal-only plans.
 
-`--max-iterations N` sets the iteration cap for auto mode (default: 20). Ignored in manual mode.
-
-`--dry-run` previews the planned changes for each step without applying them. For each step, the agent describes what files would be created/modified and what changes would be made, but does not write any files or run any commands. Useful for reviewing the plan's concrete impact before committing to execution.
-
-`--skip-checks` skips the automatic quality checks (validate, review, tests) at the end of execution. Use for documentation-only or low-risk plans where speed matters more than a full quality review.
-
----
-
-## Manual Mode — Skill-specific Instructions
+## Manual Mode -- Skill-specific Instructions
 
 1. Run /pre-skill "implement" $ARGUMENTS[0] to add general instructions to the context window.
 
 2. Read the planned item from the plan file.
 
-3. **Load references on demand**: As you execute each step, load lazy references from the "Available references" list based on the step's References field:
-   - Load `project/standards.md` when executing steps that touch backend, frontend, testing, or i18n files
-   - Load `project/security-checklists.md` when executing auth or validation steps
-   - Load `general/review-perspectives.md` when running the post-execution quality gate
+3. **Load references on demand** based on what the step touches:
 
-4. If the plan file does not end with a to-do list, append a to-do list to the plan file and check each item as done after you execute each step.
+   | When step touches | Load |
+   |-------------------|------|
+   | backend / frontend / testing / i18n files | `project/standards.md` |
+   | auth or validation | `project/security-checklists.md` |
+   | quality gate (step 8) | `general/review-perspectives.md` |
 
-5. Execute the actions according to the plan. If an affected file has unsaved or uncommitted changes, pause and ask for authorization before proceeding or changing it.
+4. If the plan file lacks a to-do list, append one; check each item off as completed and output the updated to-do list.
 
-6. Document every file, constant, class, method, and relevant key code fragments you create or modify. Update the to do list in the plan file when this step is done and save it to make it persistent in case the plan is interrupted.
+5. Execute the plan actions. If an affected file has unsaved or uncommitted changes, pause and ask for authorization before proceeding.
 
-7. **Test generation** (skipped if `--skip-checks` was passed): For each completed step that has a non-N/A `Tests` field, write or update tests following `project/standards.md § Testing`. If the step has no `Tests` field (pre-format plans), infer test needs from the modified files. If a bug is found, make and record a new plan to fix it, don't execute it yet, and alert the user when concluding the execution of this skill. Revise or eliminate obsolete tests.
+6. Document every file, constant, class, method, and key code fragment created or modified. Save the to-do list.
 
-8. Run the [Quality Gate](#quality-gate) (skipped if `--skip-checks` was passed).
+7. **Test generation** (skipped if `--skip-checks`): for each step with a non-N/A `Tests` field, write or update tests per `project/standards.md § Testing`. Absent field (pre-format plans) -- infer from modified files. If a bug is found, record a new plan, do not execute it, and alert the user when concluding. Revise or eliminate obsolete tests. **Note (mode split):** manual mode retains test-after ordering by design. The user's presence provides the quality oversight that the TDD red-green cycle substitutes for in auto mode. Do not invert this order in manual mode.
 
-9. Mark the resolved issue in the plan file preceding the issue id with `# DONE | <datetime> |`, where <datetime> is the date and time the execution finished in the format YYYY-MM-DD HH:MM UTC. Update the to do list in the plan file when this step is done and save it to make it persistent in case the plan is interrupted. Rename the plan file to reflect the completion of the planned item, changing the prefix from `plan-<id>-` to `plan-<id>-done-` and keeping the rest of the filename unchanged.
+8. Run the [Quality Gate](#quality-gate) (skipped if `--skip-checks`).
 
-10. Append a summary of all changes made to the plan file.
+9. Mark the plan id with `# DONE | <YYYY-MM-DD HH:MM UTC> |`. Save. Invoke `python .claude/skills/scripts/pending.py done --source plan-<id> --type implement` (idempotent; one-line warning on non-zero exit; do not block -- post-skill step 7g.iv is the safety net).
 
-11. If the plan is part of a roadmap, mark the corresponding roadmap item as completed, following the conventions in `project/conventions.md` for roadmap management. Then check whether all roadmap items are now completed. If this was the **last item** in the roadmap, run the [Quality Gate](#quality-gate) with review scope set to all changes since the roadmap's rollback branch (`pre-plan-<first-plan-id>`).
+10. Append a summary of all changes to the plan file.
+
+11. If `--roadmap <roadmap-id>` is in `$ARGUMENTS`: open the roadmap (resolve `<roadmap-id>` via `${OUTPUT_DIR}/INDEX.md`) and flip **only this plan's** Wave Summary row Status to `done`. Must happen **before** step 12 so the edit lands in the same commit as the plan rename. If this was the **last** roadmap item, run the [Quality Gate](#quality-gate) with review scope = all changes since `pre-plan-<first-plan-id>`. **File-overlap check**: collect the completed plan's `Files:` entries (all Modified + Created paths) and compare against each remaining plan's (Status != `done`) `Files:` entries; resolve remaining plan files via INDEX.md. If any overlap exists: `python .claude/skills/scripts/pending.py add --type review-downstream-plan --source plan-<id> --description "Plan <id> modified files also referenced by plan(s) <overlapping-ids>: review step descriptions for assumption drift before implementing."` -- silent on success; one-line warning on non-zero exit; do not block.
 
 12. Run /post-skill <planned-item-id>.
 
----
-
-## Auto Mode — Skill-specific Instructions
+## Auto Mode -- Skill-specific Instructions
 
 ### Phase 0: Setup
 
@@ -154,13 +125,11 @@ If `--roadmap` is passed, use roadmap mode. If `--manual` is passed, use manual 
 
 2. Read the planned item from the plan file.
 
-3. Parse the Steps section from the plan file. Each step has structured metadata: title, description, Files, References, Depends on, Verify, and a checkbox.
+3. Parse the Steps section. Each step has structured metadata (title, description, Files, References, Verify, checkbox; optional: Depends on, Docs, Traces). **Version check**: read the plan header for `plan_format_version`; if absent or != `1`, warn and fall back to manual mode (plans without version metadata predate the structured step format). A future v2 must extend this skill or provide a migration path.
 
-   **Version check**: Before parsing steps, read the plan file's header for `plan_format_version`. If it is present and does not match the expected version (`1`), warn the user and fall back to manual mode. If the field is missing entirely, warn the user and fall back to manual mode — plans without version metadata predate the structured step format. The version check uses exact match. When a future version 2 is introduced, implement must be updated to support both versions or provide a migration path.
-
-4. Create the progress file if it does not exist, with the header:
+4. Create the progress file if missing, with header (verbatim):
    ```markdown
-   # Progress — Plan <id>
+   # Progress -- Plan <id>
 
    Append-only cross-iteration learnings. Each subagent reads this file at the start and appends findings at the end.
 
@@ -170,151 +139,104 @@ If `--roadmap` is passed, use roadmap mode. If `--manual` is passed, use manual 
    ## Iteration Log
    ```
 
-5. Determine the list of incomplete steps from the plan file (unchecked `- [ ] Done`). Verify that dependency ordering is respected: a step whose "Depends on" lists incomplete steps cannot be executed yet. Build the execution queue in dependency order.
+5. Build the execution queue: incomplete steps (unchecked `- [ ] Done`) in dependency order. A step whose "Depends on" lists any incomplete step is not yet eligible. Steps without a "Depends on" field have no dependencies (eligible immediately when the queue reaches them).
 
-6. Inform the user: "Auto mode: N steps remaining, max M iterations. Each step runs in a fresh subagent. Use Ctrl+C to stop between iterations."
+6. Inform the user (verbatim): "Auto mode: N steps remaining, max M iterations. Each step runs in a fresh subagent. Use Ctrl+C to stop between iterations."
 
 ### Phase 1: Iteration Loop
 
 For each step in the execution queue, up to `--max-iterations` (default 20):
 
-7. **Pick the next step**: Select the next step from the execution queue whose dependencies are all complete. If all steps are done, exit the loop (go to Phase 2). If remaining steps all have unmet dependencies (blocked), pause and ask the user for guidance.
+7. **Pick the next step**: select the next eligible step (all dependencies complete). If all steps are done, exit to Phase 2. If only blocked steps remain, pause and ask the user for guidance.
 
-8. **Build the subagent prompt**: Construct a self-contained prompt for a `general-purpose` subagent using the step's structured metadata:
-   - The step's full description (title + body — already self-contained per plan conventions)
-   - The step's **Files** list — which files to read, create, modify, or delete
-   - The step's **Verify** condition — how the subagent knows it succeeded
-   - The content of the progress file (cross-iteration learnings from prior steps)
-   - Project conventions: instruct the subagent to read `_references/project/conventions.md` and `_references/general/coding-standards.md`
-   - The step's **References**: instruct the subagent to read only these specific `_references/` files (e.g., `project/standards.md § Backend`). Do not load all 9 references.
-   - The step's **Tests** field — what tests to create or update (if non-N/A). If the field is absent (pre-format plans), infer test needs from the modified files.
-   - Explicit instructions:
-     - Implement the step as described
-     - If the step's Tests field is non-N/A, write or update tests as specified. If the Tests field is absent, write or update tests for any code changed.
-     - Run the test commands from project/conventions.md to verify the **Verify** condition is met
-     - If tests fail, fix the issues (up to 3 retries) before moving on, returning PARTIAL if you can't fully resolve them but made some progress
-     - Commit changes with a descriptive message: `plan-<id> step <N>: <step title>`
-     - Append learnings to the progress file: what was discovered, gotchas, patterns, useful context for future steps
-     - If a reusable pattern was discovered, also add it to the "Codebase Patterns" section at the top of the progress file
-     - Report result as: SUCCESS (step completed and verify condition met), PARTIAL (some work done but blocked), or FAILED (could not complete)
-     - If PARTIAL or FAILED, describe the blocker clearly in the progress file so the next iteration or the user can address it
+8. **Build the subagent prompt** for a `general-purpose` agent. Include: the step's full description (title + body -- self-contained per plan conventions), **Files**, **Verify**, **Tests** (if non-N/A; absent -> infer from modified files), **Interface** (if present and non-N/A), and the progress-file content. Tell the subagent to read `project-design/conventions.md`, `.claude/references/general/coding-standards.md`, and **only** the `project-design/` files named in the step's References (e.g., `project/standards.md § Backend`) -- do not load all 9. Action contract: if `Tests:` is non-N/A, follow the TDD red-green cycle -- (a) write a failing test per `Tests:` (if `Interface:` is present, use it as the type contract; if the test passes before any implementation, report PARTIAL with note "test already passes -- possible scope overlap with existing code"); (b) implement the step until the test passes (green phase); (c) run test commands from `project/conventions.md` to confirm **Verify**; on failure, retry the green phase up to 3 times before returning PARTIAL. If `Tests:` is N/A or absent (pre-format plans), use the legacy order: implement the step; infer and write/update tests from modified files; run test commands to confirm **Verify**; on failure, retry up to 3 times before returning PARTIAL. Commit message: `plan-<id> step <N>: <step title>`. Append discoveries / gotchas / useful context to the progress file; promote reusable patterns to "Codebase Patterns" at the top. Report **SUCCESS** (verify met), **PARTIAL** (some progress, blocked), or **FAILED**; on PARTIAL/FAILED, describe the blocker in the progress file.
 
-9. **Spawn the subagent**: Launch the `general-purpose` agent with the constructed prompt. Wait for it to complete.
+9. **Spawn the subagent** and wait for completion.
 
-10. **Process result**: Read the subagent's response.
-    - If SUCCESS: mark the step's checkbox as `- [x] Done` in the plan file. Save the plan file. Continue to next step.
-    - If PARTIAL: mark the step's checkbox as `- [~] Partial` in the plan file. Read the progress file for the blocker description. If the blocker is addressable (e.g., a missing file, a test that needs a fixture), attempt the next step anyway — it may unblock later. If 2 consecutive PARTIAL/FAILED results occur, pause and ask the user for guidance.
-    - If FAILED: mark the step's checkbox as `- [!] Failed` in the plan file. Read the progress file for the failure description. Pause and ask the user whether to skip this step, retry it, or abort.
+10. **Process result**:
 
-11. **Inter-iteration checkpoint**: After each iteration, read the plan file to count remaining items and report progress: "Step N/M complete. Remaining: K steps."
+    | Result | Plan checkbox | Action |
+    |--------|---------------|--------|
+    | SUCCESS | `- [x] Done` | Save plan file; continue. |
+    | PARTIAL | `- [~] Partial` | Read progress-file blocker; if addressable (missing file/fixture), proceed -- a later step may unblock. After 2 consecutive PARTIAL/FAILED, pause and ask the user. |
+    | FAILED | `- [!] Failed` | Read progress-file failure; pause and ask the user: skip, retry, or abort. |
+
+11. **Inter-iteration checkpoint**: report "Step N/M complete. Remaining: K steps."
 
 ### Phase 2: Wrap-up
 
-12. Run the [Quality Gate](#quality-gate) (skipped if `--skip-checks` was passed). If tests fail, attempt to fix them in the current context since this is a small targeted fix.
+12. Run the [Quality Gate](#quality-gate) (skipped if `--skip-checks`). Test failures here may be fixed in-context (small targeted fix).
 
-13. Mark the resolved issue in the plan file preceding the issue id with `# DONE | <datetime> |`. Update the to-do list. Rename the plan file from `plan-<id>-` to `plan-<id>-done-`.
+13. Mark the plan id with `# DONE | <datetime> |`. Save. Invoke `python .claude/skills/scripts/pending.py done --source plan-<id> --type implement` (idempotent; one-line warning on non-zero exit; do not block -- post-skill step 7g.iv is the safety net).
 
-14. Append a summary of all changes made (aggregated across all iterations) to the plan file. Include:
-    - Steps completed vs. total
-    - Iterations used
-    - Any steps that were partial or failed
-    - Key learnings from the progress file
+14. Append an aggregated summary to the plan file: steps completed vs total, iterations used, any partial/failed, key progress-file learnings.
 
-15. If the plan is part of a roadmap, mark the corresponding roadmap item as completed, following the conventions in `project/conventions.md` for roadmap management. Then check whether all roadmap items are now completed. If this was the **last item** in the roadmap, run the [Quality Gate](#quality-gate) with review scope set to all changes since the roadmap's rollback branch (`pre-plan-<first-plan-id>`).
+15. If `--roadmap <roadmap-id>` is in `$ARGUMENTS`: open the roadmap (resolve via `${OUTPUT_DIR}/INDEX.md`), flip **only this plan's** Wave Summary row Status to `done`. Must run **before** step 16 so the edit lands in the same commit as the plan rename. If this was the **last** roadmap item, run the [Quality Gate](#quality-gate) with review scope = all changes since `pre-plan-<first-plan-id>`. **File-overlap check**: collect the completed plan's `Files:` entries (all Modified + Created paths) and compare against each remaining plan's (Status != `done`) `Files:` entries; resolve remaining plan files via INDEX.md. If any overlap exists: `python .claude/skills/scripts/pending.py add --type review-downstream-plan --source plan-<id> --description "Plan <id> modified files also referenced by plan(s) <overlapping-ids>: review step descriptions for assumption drift before implementing."` -- silent on success; one-line warning on non-zero exit; do not block.
 
 16. Run /post-skill <planned-item-id>.
 
----
-
 ## Roadmap Mode -- Skill-specific Instructions
 
-> This section is used when `--roadmap <id>` is present in the arguments. Skip the Manual Mode and Auto Mode sections above entirely.
+> Used when `--roadmap <id>` is present. Skip the Manual Mode and Auto Mode sections above entirely.
 
 ### Phase 0: Setup
 
 1. Run /pre-skill "implement" --roadmap $ARGUMENTS to add general instructions to the context window.
 
-2. **Resolve roadmap file**: Look up the roadmap ID in `${OUTPUT_DIR}/INDEX.md`. Read the roadmap file from `${ROADMAP_DIR}/roadmap-<id>-*.md`. If the roadmap is not found, inform the user and abort.
+2. **Resolve roadmap file**: look up the roadmap ID in `${OUTPUT_DIR}/INDEX.md`; read `${ROADMAP_DIR}/roadmap-<id>-*.md`. Abort if not found.
 
-3. **Parse wave summary**: Extract the wave summary tables from the roadmap file. For each work item, capture:
-   - Wave number
-   - Item ID and title
-   - Plan ID (from the Plan column -- skip items with `plan-TBD` or no plan ID)
-   - Dependencies (from the Depends on column)
-   - Status (from the Status column -- skip items with status "done")
+3. **Parse wave summary**: extract per-item Wave number, Item ID + title, Plan ID (skip `plan-TBD`/missing), Dependencies, Status.
 
-4. **Filter to incomplete items**: Remove items whose status is "done". If no incomplete items remain, inform the user: "All roadmap items are already complete." and exit.
+4. **Filter to incomplete items**: drop status `done`. If none remain, inform the user: "All roadmap items are already complete." and exit.
 
-5. **Validate plan availability**: For each incomplete item, verify that its plan file exists in `${PLANS_DIR}`. If any plan file is missing, list the missing plans and ask the user whether to skip those items or abort.
+5. **Validate plan availability**: for each incomplete item, verify the plan file exists in `${PLANS_DIR}`. If any are missing, list them and ask the user to skip or abort.
 
-6. **Determine checkpoint mode**: Read the `--checkpoint` flag value (default: `wave`).
-   - `wave`: pause between waves for user review (default)
-   - `plan`: pause after every plan for user review
-   - `none`: no pauses -- full autopilot with progress notes only
+6. **Determine checkpoint mode** from `--checkpoint` (default `wave`): `wave` -> pause between waves; `plan` -> pause after every plan; `none` -> full autopilot, progress notes only.
 
-7. **Create rollback branches**:
-   - Create `git branch pre-roadmap-<id>` from current HEAD as the overall rollback point.
-   - Inform the user: "Roadmap mode: N plans remaining across W waves. Checkpoint: <mode>. Rollback branch: pre-roadmap-<id>. Use Ctrl+C to stop between plans."
+7. **Create rollback branches**: `git branch pre-roadmap-<id>` from current HEAD. Inform the user: "Roadmap mode: N plans remaining across W waves. Checkpoint: <mode>. Rollback branch: pre-roadmap-<id>. Use Ctrl+C to stop between plans."
 
 ### Phase 1: Wave Execution Loop
 
-For each wave (Wave 0, Wave 1, ...) that has incomplete plans:
+For each wave (Wave 0, Wave 1, ...) with incomplete plans:
 
-8. **Start wave**: Create a wave rollback branch: `git branch pre-wave-<N>-<roadmap-id>` from current HEAD.
+8. **Start wave**: `git branch pre-wave-<N>-<roadmap-id>` from current HEAD.
 
-9. **Identify plans in this wave**: Collect all incomplete plans belonging to this wave. Determine parallelism:
-   - Plans within the same wave whose Files lists do not overlap can run in parallel.
-   - Plans that share files or have intra-wave dependencies must run sequentially.
-   - Wave 0 plans always run sequentially (migration chain safety).
+9. **Identify plans in this wave** and determine parallelism: Wave 0 is always sequential (migration chain safety); Wave 1+ may run in parallel when plans' Files lists do not overlap, otherwise sequentially.
 
-10. **Execute plans**: For each plan in the wave (sequentially or in parallel as determined above):
-    a. Launch a `general-purpose` subagent with a self-contained prompt:
-       - Instruct it to run `/implement <plan-id>` in auto mode
-       - Include the plan file path, project conventions path, and coding standards path
-       - Instruct it to report result as: SUCCESS, PARTIAL, or FAILED
-       - Pass through `--skip-checks` and `--max-iterations` flags if provided
-    b. Wait for the subagent to complete.
-    c. Read the subagent's result.
+10. **Execute plans** (sequentially or in parallel per step 9). For each: launch a `general-purpose` subagent with a self-contained prompt that runs `/implement <plan-id> --roadmap <roadmap-id>` in auto mode. The `--roadmap` pass-through activates per-plan roadmap-file maintenance: Auto Mode step 15 / Manual Mode step 11 flips this plan's Wave Summary Status to `done` **before** `/post-skill`, so the roadmap edit lands in the same commit as the plan rename. Include plan path, roadmap path, project conventions, coding standards. Subagent reports SUCCESS / PARTIAL / FAILED. Pass through `--skip-checks` and `--max-iterations` if provided. Wait for each subagent before moving on.
 
-11. **Process wave results**: After all plans in the wave complete:
-    a. Collect results: count SUCCESS, PARTIAL, FAILED.
-    b. Update the roadmap file: mark completed items as "done" in the Status column.
-    c. If any plan FAILED: pause regardless of checkpoint mode. Show the failure details and ask the user:
-       - **Continue** -- skip the failed plan and proceed to the next wave
-       - **Retry** -- re-run the failed plan
-       - **Abort** -- stop the roadmap execution (completed plans are preserved)
+11. **Process wave results**:
+    a. Count SUCCESS / PARTIAL / FAILED.
+    b. Re-parse the roadmap to confirm all SUCCESS plans show Status `done` (each subagent flipped its own row via the step-10 pass-through). This is reconciliation, not a write -- any SUCCESS row still `pending` triggers a warning and a safety-net flip.
+    c. If any plan FAILED: pause regardless of checkpoint mode and ask the user:
+       - **Continue** -- Recommended when the failed plan is non-blocking for downstream waves. NOT recommended when later plans depend on it.
+       - **Retry** -- Recommended when the failure looked transient or context-induced.
+       - **Abort** -- Recommended when the failure exposes a roadmap-level issue that needs replanning. Completed plans are preserved.
+    d. **Compaction warning**: count the cumulative completed plans across all waves so far (all plans with Status `done` in the roadmap). If the count exceeds 6, emit (advisory only -- do not block): "Context is getting heavy after N plans. Consider stopping here and resuming in a fresh session -- `/implement --roadmap <id>` will pick up from the next incomplete item."
 
-12. **Inter-wave checkpoint** (based on `--checkpoint` mode):
-    - **`wave`** (default): Show wave summary (plans completed, failed, remaining across future waves). List key files modified. Ask the user: "Wave N complete. Continue to Wave N+1?" with options:
-      - **Continue** -- proceed to the next wave
-      - **Review changes** -- pause so the user can inspect the code before continuing
-      - **Abort** -- stop here (completed work is preserved)
-    - **`plan`**: The per-plan pause is handled by each `/implement` invocation's post-skill step 11 (which already asks the user what to do next). The roadmap orchestrator reads the plan status after each invocation and proceeds.
-    - **`none`**: Emit a one-line progress note: "Wave N complete (K/M plans succeeded). Continuing to Wave N+1..." and proceed automatically. If a plan fails, still pause (failures always get user attention).
+12. **Inter-wave checkpoint** (per `--checkpoint`):
+    - **`wave`** (default): show wave summary (completed, failed, remaining) + key files modified, then ask "Wave N complete. Continue to Wave N+1?" Also emit: "Before continuing, scan the next wave's plan descriptions for step assumptions that may have changed based on what this wave implemented. If any steps reference files or interfaces this wave altered, choose 'Review changes' and revise the affected plan.":
+      - **Continue** -- Recommended when the wave summary looks correct and no next-wave plan's steps reference files this wave altered.
+      - **Review changes** -- Recommended when you want to inspect code first, or when a next-wave plan's step descriptions may assume a state this wave altered. NOT recommended when the wave is purely additive and low-risk.
+      - **Abort** -- Recommended when output reveals a roadmap-level problem. Completed work is preserved.
+    - **`plan`**: per-plan pauses are handled by each `/implement` invocation's post-skill step 11; the orchestrator reads status after each and proceeds.
+    - **`none`**: emit "Wave N complete (K/M plans succeeded). Continuing to Wave N+1..." and proceed. Failures still pause (failures always get user attention).
 
 ### Phase 2: Wrap-up
 
-13. **Final quality gate**: After all waves complete (or user aborts), run the [Quality Gate](#quality-gate) with review scope set to all changes since `pre-roadmap-<id>` branch. This is the cross-plan integration check. Skipped only if `--skip-checks` was passed.
+13. **Final quality gate**: run the [Quality Gate](#quality-gate) with review scope = all changes since `pre-roadmap-<id>`. Cross-plan integration check. Skipped only if `--skip-checks`.
 
-14. **Update roadmap file**: Write final status for all items. If all items are "done", append a completion note:
+14. **Update roadmap file**: write final status for all items. If all are `done`, append:
     ```
     ## Completion
     Roadmap completed at <datetime UTC>. All N plans executed across W waves.
     ```
+    After writing the Completion block, close the roadmap pending entry: `python .claude/skills/scripts/pending.py done --source roadmap-<id> --type implement` (idempotent; silent on success; one-line warning on non-zero exit; do not block).
 
-15. **Report summary**:
-    - Total plans executed vs. total in roadmap
-    - Waves completed
-    - Failures (if any)
-    - Total files changed (from `git diff --stat pre-roadmap-<id>..HEAD`)
-    - Rollback instructions: "To undo all changes: `git checkout pre-roadmap-<id>`. To undo a specific wave: `git checkout pre-wave-<N>-<roadmap-id>`."
+15. **Report summary**: total plans executed vs total; waves completed; failures (if any); total files changed (`git diff --stat pre-roadmap-<id>..HEAD`); rollback instructions: "To undo all changes: `git checkout pre-roadmap-<id>`. To undo a specific wave: `git checkout pre-wave-<N>-<roadmap-id>`."
 
 16. Run /post-skill --roadmap <roadmap-id>.
 
 ### Constraints
 
-- Each plan runs in auto mode via a fresh subagent. Manual mode is not supported for roadmap execution.
-- The `--skip-checks` flag, if passed, applies to all per-plan quality gates. The final roadmap-level quality gate (step 13) is never skipped.
-- The `--max-iterations` flag, if passed, applies to each plan's auto mode iteration cap.
-- The `--dry-run` flag, if passed, previews all plans without executing any. Each plan's dry-run output is shown sequentially, wave by wave.
-- Resumable: running `/implement --roadmap <id>` again on a partially-completed roadmap picks up from the first incomplete item. Completed plans are not re-executed.
+Each plan runs in auto mode via a fresh subagent; manual mode is not supported for roadmap execution. `--skip-checks` applies only to per-plan quality gates (the roadmap-level final gate at step 13 is never skipped). `--max-iterations` applies to each plan's auto-mode iteration cap. `--dry-run` previews all plans without executing; output is shown sequentially, wave by wave. Resumable: re-running `/implement --roadmap <id>` on a partially-complete roadmap picks up from the first incomplete item; completed plans are not re-executed.

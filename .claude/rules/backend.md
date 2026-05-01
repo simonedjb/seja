@@ -1,15 +1,15 @@
 ---
 paths:
   - "backend/**"
+designer_description: "When you touch anything under backend/, I surface the P0 review questions for security, database, and architecture alongside your project's backend standards, so the most expensive classes of mistake -- auth holes, schema drift, layering violations -- get a second look before you move on."
 ---
 
 # Backend Rules
 
-- **Soft delete**: queries must always filter `deleted_at.is_(None)` — omitting this exposes deleted data.
-- **Marshmallow validation**: all JSON endpoints validate through schemas — no raw `json_data.get()`.
-- **Service layer** never imports Flask `request`/`response` — accepts plain arguments, raises `ServiceError` subtypes.
+When editing files under these paths:
 
-See `project/standards.md § Backend` for full conventions.
+- **Review questions**: see `.claude/references/general/review-perspectives/sec.md`, `.claude/references/general/review-perspectives/db.md`, `.claude/references/general/review-perspectives/arch.md` -- P0 questions are the critical checks.
+- **Full conventions**: see `project/standards.md § Backend` -- stack-specific rules.
 
 ## Perspective Alignment
 

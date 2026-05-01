@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
+# designer: When you cut a new harness release, I move every version
+#   stamp to the number you choose in one step and refuse to proceed if
+#   the changelog is missing the matching heading. You get a single
+#   consistent bump instead of three files drifting apart.
 """
 bump_version.py -- Update all SEJA version files atomically.
+
+Invocation: user-cli
+Lifecycle: active
 
 Updates `.claude/skills/VERSION`, `.seja-version`, and validates that
 `.claude/CHANGELOG.md` has a matching `## [x.y.z]` heading.
@@ -107,7 +114,7 @@ def run_sync_check(root: Path) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Bump SEJA framework version")
+    parser = argparse.ArgumentParser(description="Bump SEJA harness version")
     parser.add_argument("--version", required=True, help="Target version (e.g., 2.7.0)")
     parser.add_argument("--dry-run", action="store_true", help="Show what would change")
     args = parser.parse_args()

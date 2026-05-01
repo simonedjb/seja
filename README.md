@@ -1,16 +1,16 @@
 # SEJA -- Semiotic Engineering Journeys with Agents
 
-SEJA is a human-centered methodology and file-based framework for designing
-and building software with AI coding agents. It gives an agent-driven project
-a shared memory of intent, conventions, and implementation state, so that
-people and agents can reflect on what the system is communicating, decide
-together what to change, and keep that decision trail durable. It is for
-designers, developers, and small teams who want agent assistance without
-losing craft, context, or accountability.
+SEJA is an agent harness grounded in semiotic engineering. It gives an
+agent-driven project a shared memory of intent, conventions, and
+implementation state, so that people and agents can reflect on what the
+system is communicating, decide together what to change, and keep that
+decision trail durable. It is for designers, developers, and small teams
+who want agent assistance without losing craft, context, or
+accountability.
 
-*We (SEJA creators and Claude Code) built this framework to make the communication between people and agents explicit, reviewable, and accountable.*
+*We (SEJA creators and Claude Code) built this harness to make the communication between people and agents explicit, reviewable, and accountable.*
 
-The framework grew out of work by Clarisse Sieckenius de Souza, Gabriel DJ
+The harness grew out of work by Clarisse Sieckenius de Souza, Gabriel DJ
 Barbosa, and Simone DJ Barbosa on redesigning an academic discussion forum
 with agentic tooling. It is grounded in semiotic engineering and in Schön's
 concepts of reflection-in-action, reflection-on-action, and reflection-on-
@@ -28,14 +28,18 @@ What you get once SEJA is installed in a project:
 ## Pick your path
 
 Two questions decide how you adopt SEJA: are you starting a new product or
-working inside an existing one, and do you want the framework files to live
+working inside an existing one, and do you want the harness files to live
 next to the source code or in a separate workspace repo? The matrix below
 maps each combination to the right how-to guide.
 
 |                | Collocated                                                                                 | Workspace                                                                                              |
 |----------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
-| **Greenfield** | New product, framework lives next to source. [Guide](docs/how-to/greenfield-collocated.md) | New product, framework lives in a separate workspace repo. [Guide](docs/how-to/greenfield-workspace.md) |
-| **Brownfield** | Existing codebase, framework added in place. [Guide](docs/how-to/brownfield-collocated.md) | Existing codebase, framework kept in a side workspace. [Guide](docs/how-to/brownfield-workspace.md)    |
+| **Greenfield** | New product, harness lives next to source. [Guide](docs/how-to/greenfield-collocated.md) | New product, harness lives in a separate workspace repo. [Guide](docs/how-to/greenfield-workspace.md) |
+| **Brownfield** | Existing codebase, harness added in place. [Guide](docs/how-to/brownfield-collocated.md) | Existing codebase, harness kept in a side workspace. [Guide](docs/how-to/brownfield-workspace.md)    |
+
+You can also clone SEJA directly into your project folder (e.g. `git clone https://github.com/simonedjb/seja my-project`) and run `/seja-setup --here` to finalise setup in place without copying harness files. This is the most common entry point for the collocated patterns; the four how-to guides above describe the same flow in detail.
+
+`/seja-setup --here` finalises SEJA setup inside a directory where you have already cloned SEJA (no file copying -- it detects the current state, prompts about git history and harness-dev artefact cleanup, and pins `.seja-version` from the clone's tag). Pass `--version vX.Y.Z` to `/seja-setup` in either install or `--upgrade` mode to pin to a specific harness release; the resolved version is recorded in `.seja-version` for later upgrades. See the walkthrough at [docs/how-to/greenfield-collocated.md#option-b-clone-directly-into-the-project-folder](docs/how-to/greenfield-collocated.md#option-b-clone-directly-into-the-project-folder).
 
 If you are unsure, skim the quickstart first, then re-read this table. The
 collocated pattern is the simplest starting point for solo and small-team
@@ -46,19 +50,28 @@ without touching its source tree.
 ## Read the docs
 
 Three entry points cover everything most readers need. Start at the top and
-move down as your questions get more detailed.
+move down as your questions get more detailed. Once you are through the
+quickstart, the Skills overview in [docs/concepts.md](docs/concepts.md) also
+covers how the lifecycle enters through `/research` (or `/explain`) from your
+second iteration onward, after the one-shot `/seja-setup` scaffold + `/design`
+intent-definition bootstrap. `/seja-setup <target>` produces a bootable
+project scaffold in a single invocation (stack-populated `conventions.md`,
+`CLAUDE.md`, rules, and smoke-test infra); `/design` afterward focuses on
+design intent (personas, metacomm, entities, permissions, standards,
+constitution) and amends `CLAUDE.md` rather than regenerating it.
 
-- [docs/quickstart.md](docs/quickstart.md) -- 20-minute worked example, read this first. Walks through a tiny project end to end so you can see the framework in motion before committing to a pattern.
-- [docs/concepts.md](docs/concepts.md) -- sign system, profile x pattern matrix, and the Framework lifecycle chapter. Read this once the quickstart makes sense and you want to know why each artifact exists.
+- [docs/quickstart.md](docs/quickstart.md) -- 20-minute worked example, read this first. Walks through a tiny project end to end so you can see the harness in motion before committing to a pattern.
+- [docs/concepts.md](docs/concepts.md) -- sign system, profile x pattern matrix, and the Harness lifecycle chapter. Read this once the quickstart makes sense and you want to know why each artifact exists.
 - [docs/foundations.md](docs/foundations.md) -- theoretical primer on semiotic engineering and reflective practice, the two research traditions SEJA draws on.
 - [docs/foundations-assessment.md](docs/foundations-assessment.md) -- correspondence assessment mapping semiotic engineering constructs onto SEJA artifacts and workflows.
-- [docs/how-to/](docs/how-to/) -- full how-to set covering the four profile x pattern entry points plus cross-cutting tasks like planning, quality gates, team handoffs, and framework upgrades.
-- [docs/troubleshooting.md](docs/troubleshooting.md) -- symptom lookup table for diagnosing common issues when running the framework.
+- [docs/how-to/](docs/how-to/) -- full how-to set covering the four profile x pattern entry points plus cross-cutting tasks like planning, quality gates, team handoffs, and harness upgrades.
+- [docs/troubleshooting.md](docs/troubleshooting.md) -- symptom lookup table for diagnosing common issues when running the harness.
 
-### Advanced / complete framework file list
+### Advanced / complete harness file list
 
-- [docs/reference/framework-reference.md](docs/reference/framework-reference.md) -- complete inventory of every skill, agent, rule, script, and reference file in the framework. This file is auto-generated from the framework source and is intended as a lookup table, not a tutorial.
+- [docs/reference/framework-reference.md](docs/reference/framework-reference.md) -- complete inventory of every skill, agent, rule, script, and reference file in the harness. This file is auto-generated from the harness source and is intended as a lookup table, not a tutorial.
 - [docs/reference/glossary.md](docs/reference/glossary.md) -- canonical SEJA terminology lookup.
+- [docs/reference/agents.md](docs/reference/agents.md) -- 16 agents catalog (9 evaluator, 7 generator) with purpose, invoking skill, and output.
 - [docs/reference/perspectives.md](docs/reference/perspectives.md) -- 16 review perspectives catalog.
 - [docs/reference/skills.md](docs/reference/skills.md) -- skills catalog organized by category.
 
@@ -74,9 +87,9 @@ Full terms are in [LICENSE](./LICENSE).
 
 ## Attribution
 
-If you reuse or adapt this framework, please credit the original as:
+If you reuse or adapt this harness, please credit the original as:
 
-> Based on the SEJA Design and Development Framework by Simone Diniz Junqueira Barbosa
+> Based on the SEJA Design and Development Harness by Simone Diniz Junqueira Barbosa
 
 and link back to this repository.
 

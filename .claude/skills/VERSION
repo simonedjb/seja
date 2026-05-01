@@ -1,2 +1,2 @@
-framework: seja-claude
-version: 2.12.0
+harness: seja-claude
+version: 2.13.0

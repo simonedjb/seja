@@ -1,8 +1,17 @@
+# designer: When you want a rough shape of how big your project is, I count
+#   source files and lines across your frontend, backend, and the SEJA
+#   harness layer, separating physical lines from code-only lines so
+#   the comment-heavy directories do not inflate the number. You can
+#   scope the count by path, by extension, or ask for JSON for further
+#   analysis.
 """Local source line counter for this workspace.
+
+Invocation: user-cli
+Lifecycle: active
 
 Purpose
 - Count source files and line totals across frontend/backend.
-- Count SEJA framework files (.claude/, _references/).
+- Count SEJA harness files (.claude/, .claude/references/).
 - Exclude tests by directory and filename pattern.
 - Report both:
   - physical lines (includes blank + comment-only)
@@ -11,8 +20,8 @@ Purpose
 Usage:
 - Default project scan (backend + frontend):
   - `python .claude/skills/scripts/count_loc.py`
-- Framework scan (SEJA framework files):
-  - `python .claude/skills/scripts/count_loc.py --framework`
+- Harness scan (SEJA harness files):
+  - `python .claude/skills/scripts/count_loc.py --harness`
 - JSON output (machine-readable):
   - `python .claude/skills/scripts/count_loc.py --json`
 - Include per-file details:
@@ -60,7 +69,7 @@ DEFAULT_SOURCE_EXTENSIONS = {
     ".sh",
 }
 
-FRAMEWORK_SOURCE_EXTENSIONS = {
+HARNESS_SOURCE_EXTENSIONS = {
     ".md",
     ".py",
     ".sh",
@@ -69,13 +78,13 @@ FRAMEWORK_SOURCE_EXTENSIONS = {
     ".yml",
 }
 
-# Framework component directories scanned by --framework, relative to REPO_ROOT.
-FRAMEWORK_DIRS = [
+# Harness component directories scanned by --harness, relative to REPO_ROOT.
+HARNESS_DIRS = [
     ".claude/skills",
     ".claude/agents",
     ".claude/rules",
-    "_references/general",
-    "_references/template",
+    ".claude/references/general",
+    ".claude/references/template",
 ]
 
 # Directories skipped during recursive scans. Includes test locations and common generated folders.
@@ -171,7 +180,7 @@ def parse_args() -> argparse.Namespace:
         epilog=(
             "Examples:\n"
             "  py -3 .claude/skills/scripts/count_loc.py\n"
-            "  py -3 .claude/skills/scripts/count_loc.py --framework\n"
+            "  py -3 .claude/skills/scripts/count_loc.py --harness\n"
             "  py -3 .claude/skills/scripts/count_loc.py --json\n"
             "  py -3 .claude/skills/scripts/count_loc.py --list-files\n"
             "  py -3 .claude/skills/scripts/count_loc.py frontend --ext .js .jsx .css\n"
@@ -181,12 +190,12 @@ def parse_args() -> argparse.Namespace:
         "paths",
         nargs="*",
         default=None,
-        help="Paths to scan (defaults to backend and frontend, or framework dirs with --framework).",
+        help="Paths to scan (defaults to backend and frontend, or harness dirs with --harness).",
     )
     parser.add_argument(
-        "--framework",
+        "--harness",
         action="store_true",
-        help="Count SEJA framework files (skills, agents, rules, references) instead of project source.",
+        help="Count SEJA harness files (skills, agents, rules, references) instead of project source.",
     )
     parser.add_argument(
         "--ext",
@@ -392,10 +401,10 @@ def build_summary(results: list[FileResult]) -> dict:
     }
 
 
-def print_text(summary: dict, results: list[FileResult], list_files: bool, *, framework: bool = False) -> None:
+def print_text(summary: dict, results: list[FileResult], list_files: bool, *, harness: bool = False) -> None:
     """Render markdown-formatted output."""
     totals = summary["totals"]
-    heading = "# SEJA framework count" if framework else "# Source count (tests excluded)"
+    heading = "# SEJA harness count" if harness else "# Source count (tests excluded)"
     print(f"{heading}\n")
     print("| Metric | Count |")
     print("| --- | ---: |")
@@ -439,10 +448,10 @@ def print_text(summary: dict, results: list[FileResult], list_files: bool, *, fr
 
 
 def resolve_defaults(args: argparse.Namespace) -> tuple[list[Path], set[str]]:
-    """Apply framework-aware defaults for paths and extensions."""
-    if args.framework:
-        paths = args.paths or [str(REPO_ROOT / d) for d in FRAMEWORK_DIRS]
-        exts = args.ext or sorted(FRAMEWORK_SOURCE_EXTENSIONS)
+    """Apply harness-aware defaults for paths and extensions."""
+    if args.harness:
+        paths = args.paths or [str(REPO_ROOT / d) for d in HARNESS_DIRS]
+        exts = args.ext or sorted(HARNESS_SOURCE_EXTENSIONS)
     else:
         backend_dir = get("BACKEND_DIR", "backend")
         frontend_dir = get("FRONTEND_DIR", "frontend")
@@ -472,7 +481,7 @@ def main() -> int:
 
     if args.json:
         payload = {
-            "mode": "framework" if args.framework else "project",
+            "mode": "harness" if args.harness else "project",
             **summary,
             "roots": [str(p) for p in roots],
             "extensions": sorted(allowed_exts),
@@ -490,7 +499,7 @@ def main() -> int:
             ]
         print(json.dumps(payload, indent=2))
     else:
-        print_text(summary, results, args.list_files, framework=args.framework)
+        print_text(summary, results, args.list_files, harness=args.harness)
 
     return 0
 

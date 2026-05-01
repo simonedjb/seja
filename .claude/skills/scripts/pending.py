@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
+# designer: When a skill proposes work you should get to later, I'm the
+#   ledger command that stores, shows, and closes those pending actions so
+#   nothing gets dropped on the floor -- add new entries, mark them done,
+#   snooze or dismiss them, list by status, and run the periodic curation
+#   that keeps the backlog from rotting; the `/pending` skill is the
+#   designer-facing front door, and I'm the CLI underneath.
 """
 pending.py -- Pending actions ledger for SEJA.
+
+Invocation: skill-invoked, user-cli
+Lifecycle: active
 
 Manages `_output/pending.jsonl`, a JSONL append-only log of human actions
 surfaced by skills and post-skill. Agents append new records and transition
@@ -12,13 +21,15 @@ This is the first SEJA script to use argparse subparsers. Subcommands:
 Usage
 -----
     python .claude/skills/scripts/pending.py add --type mark-implemented \\
-        --source plan-000265 --description "Confirm impl for R-P-001"
+        --source plan-NNNNNN --description "Confirm impl for R-P-001"
     python .claude/skills/scripts/pending.py list --status pending --json
     python .claude/skills/scripts/pending.py status --overdue-days 14 --json
 
 Exit codes: 0 success, 1 forbidden transition or validation error, 2 runtime
 error (e.g. OUTPUT_DIR not configured).
 """
+
+# Rationale for design choices and historical context: see pending-rationale.md in this directory.
 from __future__ import annotations
 
 import argparse
@@ -39,6 +50,13 @@ if sys.platform == "win32":
 _ID_RE = re.compile(r"pa-(\d{6})")
 _STAMP_CLEANUP = ".pending-cleanup-stamp"
 _STAMP_PERIODIC = ".pending-periodic-stamp"
+_PUBLISH_PREFIX = "PUBLISH:"
+_PUBLISH_OVERDUE_DAYS = 3
+_IMPLEMENT_TYPE = "implement"
+_IMPLEMENT_DEFAULT_THRESHOLD = 30
+_IMPLEMENT_THRESHOLD_TRIGGER = "Pending plan age escalation"
+_PLAN_ID_RE = re.compile(r"^plan-(\d{6})$")
+_ROADMAP_ID_RE = re.compile(r"^roadmap-(\d{6})$")
 
 
 # ---------------------------------------------------------------------------
@@ -201,9 +219,36 @@ def _age_days(rec: dict) -> int:
 # ---------------------------------------------------------------------------
 
 
+def _find_matching_open(state: dict[str, dict], source: str, type_: str) -> list[dict]:
+    """Return entries whose (source, type) match and effective status is pending/snoozed."""
+    matches = [
+        r for r in state.values()
+        if r.get("source") == source
+        and r.get("type") == type_
+        and _effective_status(r) in ("pending", "snoozed")
+    ]
+    matches.sort(key=lambda r: r.get("created_at", ""))
+    return matches
+
+
 def cmd_add(args: argparse.Namespace) -> int:
     path = _require_ledger_path()
     records = _read_lines(path)
+    if getattr(args, "if_absent", False):
+        try:
+            state = _reduce(records)
+        except ValueError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 1
+        existing = _find_matching_open(state, args.source, args.type)
+        if existing:
+            existing_id = existing[0]["id"]
+            print(
+                f"INFO: existing open {args.type} entry {existing_id} for "
+                f"{args.source}, skipping",
+                file=sys.stderr,
+            )
+            return 0
     new_id = _next_id(records)
     now = _iso(_utcnow())
     rec = {
@@ -229,11 +274,39 @@ def cmd_done(args: argparse.Namespace) -> int:
     except ValueError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
+
+    # Source-based resolver: close ALL matching open entries to restore the
+    # (source, type) uniqueness invariant. Idempotent no-op when no match.
+    if getattr(args, "source", None) and getattr(args, "type", None):
+        matches = _find_matching_open(state, args.source, args.type)
+        if not matches:
+            return 0
+        now = _iso(_utcnow())
+        for rec in matches:
+            _append(path, {
+                "id": rec["id"],
+                "status": "done",
+                "closed_at": now,
+            })
+        print(
+            f"INFO: closed {len(matches)} {args.type} entr"
+            f"{'y' if len(matches) == 1 else 'ies'} for {args.source}",
+            file=sys.stderr,
+        )
+        return 0
+
+    # Positional-id resolver (original behavior).
+    if not getattr(args, "id", None):
+        print("ERROR: provide <id> or --source/--type", file=sys.stderr)
+        return 1
     if args.id not in state:
         print(f"ERROR: {args.id} not found", file=sys.stderr)
         return 1
     prev = state[args.id]
-    prev_status = prev.get("status", "pending")
+    prev_status = _effective_status(prev)
+    if prev_status == "done":
+        # Already done: idempotent no-op.
+        return 0
     if prev_status == "dismissed":
         print(f"ERROR: forbidden transition for {args.id}: dismissed -> done", file=sys.stderr)
         return 1
@@ -366,6 +439,64 @@ def cmd_due(args: argparse.Namespace) -> int:
     return 0
 
 
+def _plan_file_present(plan_id: str) -> bool:
+    """Return True iff at least one matching plan file exists for plan_id.
+
+    A plan file counts as "present" when a file `plan-<id>-*.md` exists in
+    PLANS_DIR whose suffix is NOT `-progress.md` and does NOT match
+    `-qa-*.md` or `-qa-log-*.md`. The file is present regardless of whether
+    it carries a # DONE header. Leftover progress/QA siblings do NOT count —
+    if the main plan file has been deleted, the entry should orphan even when
+    those remain.
+    """
+    m = _PLAN_ID_RE.match(plan_id)
+    if not m:
+        # Non-plan source (e.g., periodic-trigger, manual): treat as present.
+        return True
+    plans_dir = get_path("PLANS_DIR")
+    if plans_dir is None or not plans_dir.is_dir():
+        # Plans dir missing entirely -- don't mass-dismiss; treat as present.
+        return True
+    suffix_n = m.group(1)
+    prefix = f"plan-{suffix_n}-"
+    for p in plans_dir.glob(f"{prefix}*.md"):
+        name = p.name
+        if name.endswith("-progress.md"):
+            continue
+        rest = name[len(prefix):-3]  # strip prefix and ".md"
+        if rest.startswith("qa-") or rest.startswith("qa-log-"):
+            continue
+        return True
+    return False
+
+
+def _roadmap_file_present(roadmap_id: str) -> bool:
+    """Return True iff at least one matching roadmap file exists for roadmap_id.
+
+    A roadmap file counts as "present" when a file `roadmap-<id>-*.md` exists
+    in ROADMAP_DIR whose suffix is NOT `-qa-*.md`. The check mirrors
+    ``_plan_file_present`` but uses ``ROADMAP_DIR`` and the ``_ROADMAP_ID_RE``
+    pattern.
+    """
+    m = _ROADMAP_ID_RE.match(roadmap_id)
+    if not m:
+        # Non-roadmap source: treat as present (safe default).
+        return True
+    roadmap_dir = get_path("ROADMAP_DIR")
+    if roadmap_dir is None or not roadmap_dir.is_dir():
+        # Roadmap dir missing entirely -- don't mass-dismiss; treat as present.
+        return True
+    suffix_n = m.group(1)
+    prefix = f"roadmap-{suffix_n}-"
+    for p in roadmap_dir.glob(f"{prefix}*.md"):
+        name = p.name
+        rest = name[len(prefix):-3]  # strip prefix and ".md"
+        if rest.startswith("qa-"):
+            continue
+        return True
+    return False
+
+
 def cmd_cleanup(args: argparse.Namespace) -> int:
     path = _require_ledger_path()
     records = _read_lines(path)
@@ -375,19 +506,42 @@ def cmd_cleanup(args: argparse.Namespace) -> int:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
     threshold = 90
+    now_iso = _iso(_utcnow())
     for rec in state.values():
         eff = _effective_status(rec)
         if eff not in ("pending", "snoozed"):
             continue
+        # Orphan-cleanup for implement: dismiss if source file is gone.
+        if rec.get("type") == _IMPLEMENT_TYPE:
+            source = rec.get("source", "")
+            if source:
+                # Check plan sources
+                if _PLAN_ID_RE.match(source) and not _plan_file_present(source):
+                    _append(path, {
+                        "id": rec["id"],
+                        "status": "dismissed",
+                        "closed_at": now_iso,
+                        "reason": "plan file deleted",
+                    })
+                    continue
+                # Check roadmap sources
+                if _ROADMAP_ID_RE.match(source) and not _roadmap_file_present(source):
+                    _append(path, {
+                        "id": rec["id"],
+                        "status": "dismissed",
+                        "closed_at": now_iso,
+                        "reason": "roadmap file deleted",
+                    })
+                    continue
+        # Aged-out auto-dismiss (existing behavior).
         if _age_days(rec) < threshold:
             continue
-        dismiss_rec = {
+        _append(path, {
             "id": rec["id"],
             "status": "dismissed",
-            "closed_at": _iso(_utcnow()),
+            "closed_at": now_iso,
             "reason": "auto-dismissed: aged out",
-        }
-        _append(path, dismiss_rec)
+        })
     return 0
 
 
@@ -405,8 +559,8 @@ _TRIGGER_ROW_RE = re.compile(
 def _conventions_text() -> str | None:
     # Prefer project, fall back to template
     for rel in (
-        Path("_references/project/conventions.md"),
-        Path("_references/template/conventions.md"),
+        Path("project-design/conventions.md"),
+        Path(".claude/references/template/conventions.md"),
     ):
         p = REPO_ROOT / rel
         if p.is_file():
@@ -472,6 +626,26 @@ def _get_periodic_trigger_interval(action_type: str, default: int) -> int:
             except (TypeError, ValueError):
                 return default
     return default
+
+
+def _get_implement_threshold() -> tuple[int, bool]:
+    """Return (threshold_days, using_default) for the Pending plan age escalation.
+
+    Reads the Periodic Triggers table's 'Pending plan age escalation' row by
+    name. Falls back to _IMPLEMENT_DEFAULT_THRESHOLD when the row is
+    missing, and sets using_default=True so the caller can surface a warning.
+    """
+    text = _conventions_text()
+    if not text:
+        return _IMPLEMENT_DEFAULT_THRESHOLD, True
+    triggers = _parse_periodic_triggers(text)
+    for t in triggers:
+        if t.get("name") == _IMPLEMENT_THRESHOLD_TRIGGER:
+            try:
+                return int(t.get("interval_days", _IMPLEMENT_DEFAULT_THRESHOLD)), False
+            except (TypeError, ValueError):
+                return _IMPLEMENT_DEFAULT_THRESHOLD, True
+    return _IMPLEMENT_DEFAULT_THRESHOLD, True
 
 
 def cmd_periodic_check(args: argparse.Namespace) -> int:
@@ -613,20 +787,137 @@ def _touch_stamp_strict(stamp: Path | None) -> None:
     stamp.write_text(_iso(_utcnow()), encoding="utf-8")
 
 
+def _format_status_output(
+    count: int,
+    overdue_count: int,
+    top_3: list[dict],
+    publish: list[dict],
+    publish_overdue_count: int,
+    publish_overdue_threshold_days: int,
+    implement: list[dict],
+    implement_overdue: list[dict],
+    implement_overdue_threshold_days: int,
+    warnings: list[str],
+) -> str:
+    """Return pre-formatted Markdown banners for the pre-skill pending-check stage.
+
+    Returns an empty string when there is nothing to display. Each section is
+    conditionally included per the spec:
+      - Publish banner: skip if ``publish`` is empty.
+      - Implement banner: skip if ``implement`` is empty; cap at 5 lines.
+      - Generic pending notice: silent when count == 0.
+    Warnings (from cleanup/periodic-check) are appended as ``Warning: <msg>`` lines.
+    """
+    lines: list[str] = []
+
+    # --- Publish banner ---
+    if publish:
+        # Overdue entries first
+        for entry in publish:
+            if entry["age_days"] >= publish_overdue_threshold_days:
+                lines.append(
+                    f"⚠️ OVERDUE publish (>{publish_overdue_threshold_days} days):"
+                    f" {entry['description']} -- filed {entry['age_days']} days ago."
+                    f" Manual sync is drifting; run tools/sync-runbook.md now, or dismiss"
+                    f" the pending entry if the tag should not be published."
+                )
+        # Non-overdue entries
+        for entry in publish:
+            if entry["age_days"] < publish_overdue_threshold_days:
+                lines.append(
+                    f"⏳ Pending publish: {entry['description']}"
+                    f" (filed {entry['age_days']} days ago)."
+                    f" Run the manual sync runbook (tools/sync-runbook.md) to resolve."
+                )
+
+    # --- Implement banner ---
+    if implement:
+        cap = 5
+        emitted = 0
+        # Overdue first
+        for entry in implement_overdue:
+            if emitted >= cap:
+                break
+            lines.append(
+                f"⚠️ OVERDUE plan (>{implement_overdue_threshold_days} days):"
+                f" {entry['description']} -- filed {entry['age_days']} days ago."
+                f" Run /implement {entry['source']} now, or dismiss the pending entry"
+                f" if the plan is abandoned."
+            )
+            emitted += 1
+        # Non-overdue (entries in implement but not in implement_overdue)
+        overdue_ids = {e["id"] for e in implement_overdue}
+        for entry in implement:
+            if entry["id"] in overdue_ids:
+                continue
+            if emitted >= cap:
+                break
+            lines.append(
+                f"⏳ Pending plan: {entry['description']}"
+                f" (filed {entry['age_days']} days ago)."
+                f" Run /implement {entry['source']} to resolve, or dismiss."
+            )
+            emitted += 1
+        # Overflow line
+        total_implement = len(implement)
+        if total_implement > cap:
+            remaining = total_implement - emitted
+            if remaining > 0:
+                lines.append(f"… and {remaining} more (run /pending to see all).")
+
+    # --- Generic pending notice ---
+    if count == 0:
+        pass  # silent
+    elif 1 <= count <= 5 and overdue_count == 0:
+        lines.append(f"You have {count} pending actions (run /pending to view).")
+    else:
+        # count > 5 or overdue_count > 0
+        lines.append(
+            f"You have {count} pending actions ({overdue_count} overdue). Top 3 by age:"
+        )
+        for item in top_3:
+            desc = item.get("description", "")
+            if len(desc) > 80:
+                desc = desc[:80]
+            lines.append(
+                f"  - [{item.get('type', '')}] {item.get('source', '')}"
+                f" ({item.get('age_days', 0)}d): {desc}"
+            )
+
+    # --- Warnings from cleanup/periodic-check ---
+    for w in warnings:
+        lines.append(f"Warning: {w}")
+
+    return "\n".join(lines)
+
+
 def cmd_status(args: argparse.Namespace) -> int:
     warnings: list[str] = []
+    format_mode = getattr(args, "format_mode", None)
+    formatted = getattr(args, "formatted", False)
+    # Resolution order: --format > --formatted > --json > default (json)
+    if format_mode == "banner":
+        use_json = False
+    elif format_mode == "json":
+        use_json = True
+    elif formatted:
+        use_json = False
+    else:
+        use_json = True
 
     # If OUTPUT_DIR cannot be resolved, skip cleanup/periodic-check entirely and
     # emit an empty payload with a warning. This prevents the pre-skill hot path
-    # from bricking the framework when a project's conventions.md is malformed.
+    # from bricking the harness when a project's conventions.md is malformed.
     if _ledger_path() is None:
-        payload = {
-            "count": 0,
-            "overdue_count": 0,
-            "top_3": [],
-            "warnings": ["OUTPUT_DIR not configured; pending-check is a no-op"],
-        }
-        print(json.dumps(payload, sort_keys=True))
+        if use_json:
+            payload = {
+                "count": 0,
+                "overdue_count": 0,
+                "top_3": [],
+                "warnings": ["OUTPUT_DIR not configured; pending-check is a no-op"],
+            }
+            print(json.dumps(payload, sort_keys=True))
+        # --formatted: nothing to display (no ledger = no pending items)
         return 0
 
     cleanup_stamp = _stamp_path(_STAMP_CLEANUP)
@@ -659,26 +950,34 @@ def cmd_status(args: argparse.Namespace) -> int:
     # Reduce ledger
     path = _ledger_path()
     if path is None or not path.is_file():
-        payload = {
-            "count": 0,
-            "overdue_count": 0,
-            "top_3": [],
-            "warnings": warnings,
-        }
-        print(json.dumps(payload, sort_keys=True))
+        if use_json:
+            payload = {
+                "count": 0,
+                "overdue_count": 0,
+                "top_3": [],
+                "warnings": warnings,
+            }
+            print(json.dumps(payload, sort_keys=True))
+        elif warnings:
+            for w in warnings:
+                print(f"Warning: {w}")
         return 0
     records = _read_lines(path)
     try:
         state = _reduce(records)
     except ValueError as exc:
         warnings.append(f"reduce failed: {exc}")
-        payload = {
-            "count": 0,
-            "overdue_count": 0,
-            "top_3": [],
-            "warnings": warnings,
-        }
-        print(json.dumps(payload, sort_keys=True))
+        if use_json:
+            payload = {
+                "count": 0,
+                "overdue_count": 0,
+                "top_3": [],
+                "warnings": warnings,
+            }
+            print(json.dumps(payload, sort_keys=True))
+        elif warnings:
+            for w in warnings:
+                print(f"Warning: {w}")
         return 0
 
     pending_items = [r for r in state.values() if _effective_status(r) == "pending"]
@@ -695,13 +994,76 @@ def cmd_status(args: argparse.Namespace) -> int:
             "description": rec.get("description", ""),
         })
 
-    payload = {
-        "count": len(pending_items),
-        "overdue_count": len(overdue_items),
-        "top_3": top_3,
-        "warnings": warnings,
-    }
-    print(json.dumps(payload, sort_keys=True))
+    publish_items = [
+        r for r in pending_items
+        if r.get("description", "").startswith(_PUBLISH_PREFIX)
+    ]
+    publish = [
+        {
+            "id": r.get("id", ""),
+            "source": r.get("source", ""),
+            "age_days": _age_days(r),
+            "description": r.get("description", ""),
+        }
+        for r in publish_items
+    ]
+    publish_overdue_count = sum(
+        1 for p in publish if p["age_days"] >= _PUBLISH_OVERDUE_DAYS
+    )
+
+    implement_items = [
+        r for r in pending_items
+        if r.get("type") == _IMPLEMENT_TYPE
+    ]
+    implement = [
+        {
+            "id": r.get("id", ""),
+            "source": r.get("source", ""),
+            "age_days": _age_days(r),
+            "description": r.get("description", ""),
+        }
+        for r in implement_items
+    ]
+    imp_threshold, imp_default = _get_implement_threshold()
+    if imp_default and implement:
+        warnings.append(
+            "pending plan age escalation threshold not configured, "
+            f"using {_IMPLEMENT_DEFAULT_THRESHOLD}-day default"
+        )
+    implement_overdue = [
+        e for e in implement if e["age_days"] >= imp_threshold
+    ]
+
+    if use_json:
+        payload = {
+            "count": len(pending_items),
+            "overdue_count": len(overdue_items),
+            "top_3": top_3,
+            "publish": publish,
+            "publish_overdue_count": publish_overdue_count,
+            "publish_overdue_threshold_days": _PUBLISH_OVERDUE_DAYS,
+            "implement": implement,
+            "implement_overdue": implement_overdue,
+            "implement_overdue_count": len(implement_overdue),
+            "implement_overdue_threshold_days": imp_threshold,
+            "warnings": warnings,
+        }
+        print(json.dumps(payload, sort_keys=True))
+    else:
+        output = _format_status_output(
+            count=len(pending_items),
+            overdue_count=len(overdue_items),
+            top_3=top_3,
+            publish=publish,
+            publish_overdue_count=publish_overdue_count,
+            publish_overdue_threshold_days=_PUBLISH_OVERDUE_DAYS,
+            implement=implement,
+            implement_overdue=implement_overdue,
+            implement_overdue_threshold_days=imp_threshold,
+            warnings=warnings,
+        )
+        if output:
+            print(output)
     return 0
 
 
@@ -721,10 +1083,28 @@ def build_parser() -> argparse.ArgumentParser:
     p_add.add_argument("--source", required=True)
     p_add.add_argument("--description", required=True)
     p_add.add_argument("--snooze-until", dest="snooze_until")
+    p_add.add_argument(
+        "--if-absent",
+        dest="if_absent",
+        action="store_true",
+        help=(
+            "Skip add when an open entry with matching --source and --type "
+            "already exists. Idempotent for callers."
+        ),
+    )
     p_add.set_defaults(func=cmd_add)
 
     p_done = sub.add_parser("done", help="Mark an action as done.")
-    p_done.add_argument("id")
+    p_done.add_argument("id", nargs="?", default=None)
+    p_done.add_argument(
+        "--source",
+        help="Close by (source, type) pair. Mutually exclusive with positional id.",
+    )
+    p_done.add_argument(
+        "--type",
+        dest="type",
+        help="Required with --source. Matches on entry type.",
+    )
     p_done.set_defaults(func=cmd_done)
 
     p_snooze = sub.add_parser("snooze", help="Snooze an action until a date.")
@@ -762,6 +1142,25 @@ def build_parser() -> argparse.ArgumentParser:
     p_status = sub.add_parser("status", help="Composite status (pre-skill).")
     p_status.add_argument("--overdue-days", type=int, dest="overdue_days")
     p_status.add_argument("--json", action="store_true")
+    p_status.add_argument(
+        "--formatted",
+        action="store_true",
+        help=(
+            "Legacy flag for --format banner. "
+            "Kept for backward compatibility; prefer --format banner."
+        ),
+    )
+    p_status.add_argument(
+        "--format",
+        choices=["json", "banner"],
+        dest="format_mode",
+        default=None,
+        help=(
+            "Output format: 'json' for machine-readable JSON, "
+            "'banner' for pre-formatted Markdown banners. "
+            "Default: json. Overrides --json and --formatted when set."
+        ),
+    )
     p_status.set_defaults(func=cmd_status)
 
     return parser

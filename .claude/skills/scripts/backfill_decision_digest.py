@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When you adopt the decision digest on an existing project,
+#   I sweep every advisory log you have already written, pull out the
+#   high and medium recommendations, and seed the digest so your past
+#   decisions show up alongside new ones. Safe to re-run: I skip
+#   anything I have already recorded.
 """
 backfill_decision_digest.py -- One-time backfill of decision-digest.jsonl from existing advisory logs.
+
+Invocation: user-cli
+Lifecycle: one-shot
 
 Scans all advisory logs in ADVISORY_DIR for HIGH/MEDIUM recommendations
 and appends them as JSONL records to the decision digest. Idempotent:
@@ -13,6 +21,8 @@ Usage
 
 Run from the repository root.
 """
+
+# Rationale for design choices and historical context: see backfill_decision_digest-rationale.md in this directory.
 from __future__ import annotations
 
 import argparse
@@ -25,11 +35,18 @@ from project_config import REPO_ROOT, get_path
 
 OUTPUT_DIR = get_path("OUTPUT_DIR") or REPO_ROOT / "_output"
 ADVISORY_DIR = get_path("ADVISORY_DIR") or OUTPUT_DIR / "advisory-logs"
+RESEARCH_DIR = get_path("RESEARCH_DIR") or OUTPUT_DIR / "research-logs"
 DIGEST_FILE = OUTPUT_DIR / "decision-digest.jsonl"
 
 # Advisory header pattern
 _ADVISORY_HEADER_RE = re.compile(
     r"^#\s+Advisory\s+(\d+)\s*\|.*?\|\s*(\d{4}-\d{2}-\d{2})\s+\d{2}:\d{2}\s+UTC\s*\|\s*(.+)$",
+    re.MULTILINE,
+)
+
+# Research header pattern for the forward-only advisory-to-research rename.
+_RESEARCH_HEADER_RE = re.compile(
+    r"^#\s+Research\s+(\d+)\s*\|.*?\|\s*(\d{4}-\d{2}-\d{2})\s+\d{2}:\d{2}\s+UTC\s*\|\s*(.+)$",
     re.MULTILINE,
 )
 
@@ -72,19 +89,25 @@ def _load_existing_keys() -> set[str]:
 
 
 def backfill(dry_run: bool = False) -> int:
-    """Scan advisory logs and append new records to the digest. Returns count of new records."""
-    if not ADVISORY_DIR.is_dir():
-        print(f"ERROR: Advisory directory not found: {ADVISORY_DIR}")
+    """Scan advisory and research logs and append new records to the digest. Returns count of new records."""
+    advisory_files: list[Path] = []
+    if ADVISORY_DIR.is_dir():
+        advisory_files += sorted(ADVISORY_DIR.glob("advisory-*.md"))
+    else:
+        print(f"WARNING: Advisory directory not found: {ADVISORY_DIR}")
+    if RESEARCH_DIR.is_dir():
+        advisory_files += sorted(RESEARCH_DIR.glob("research-*.md"))
+    if not advisory_files:
+        print("ERROR: No advisory or research logs found.")
         return 0
 
     existing_keys = _load_existing_keys()
     new_records = []
-    advisory_files = sorted(ADVISORY_DIR.glob("advisory-*.md"))
 
     for fpath in advisory_files:
         text = fpath.read_text(encoding="utf-8", errors="replace")
 
-        header_match = _ADVISORY_HEADER_RE.search(text)
+        header_match = _ADVISORY_HEADER_RE.search(text) or _RESEARCH_HEADER_RE.search(text)
         if not header_match:
             continue
 

@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When /seja-setup --upgrade moves your project from one SEJA version to a newer
+#   one, I'm the step that runs the numbered migration scripts that sit
+#   between those versions, in order, so the harness bits your project
+#   carries stay in step with the new release. You see which migrations ran
+#   and can dry-run first to preview the changes before committing to them.
 """
-run_migrations.py -- Run pending SEJA framework migrations.
+run_migrations.py -- Run pending SEJA harness migrations.
+
+Invocation: script-invoked, user-cli
+Lifecycle: active
 
 Reads .seja-version from the target project, scans .claude/migrations/ for
 NNNN_*.py migration files, filters those whose from_version matches the
@@ -204,7 +212,7 @@ def find_project_root() -> Path:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Run pending SEJA framework migrations.",
+        description="Run pending SEJA harness migrations.",
     )
     parser.add_argument(
         "--target",

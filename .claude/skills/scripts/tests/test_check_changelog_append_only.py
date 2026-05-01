@@ -16,7 +16,9 @@ from pathlib import Path
 import pytest
 
 SCRIPTS_DIR = Path(__file__).resolve().parent.parent
-SCRIPT_PATH = SCRIPTS_DIR / "check_changelog_append_only.py"
+# check_changelog_append_only.py lives in the sibling explain/ skill directory.
+EXPLAIN_DIR = SCRIPTS_DIR.parent / "explain"
+SCRIPT_PATH = EXPLAIN_DIR / "check_changelog_append_only.py"
 
 sys.path.insert(0, str(SCRIPTS_DIR))
 
@@ -91,6 +93,7 @@ def _run_validator(
         "import sys\n"
         "from pathlib import Path\n"
         f"sys.path.insert(0, {str(SCRIPTS_DIR)!r})\n"
+        f"sys.path.insert(0, {str(EXPLAIN_DIR)!r})\n"
         "import check_changelog_append_only as mod\n"
         f"mod.REPO_ROOT = Path({str(repo_root)!r})\n"
         f"mod.APPEND_ONLY_SECTIONS = {{{registry_path!r}: ['5. Discovered User Journeys', 'CHANGELOG']}}\n"
@@ -111,13 +114,14 @@ def _run_validator(
 def test_empty_registry_warns_and_passes(tmp_path: Path) -> None:
     """With APPEND_ONLY_SECTIONS empty, the validator exits 0 with a loud warning."""
     _init_git_repo(tmp_path)
-    _commit_baseline(tmp_path, "_references/template/ux-research-results.md", BASELINE_UX_RESEARCH)
+    _commit_baseline(tmp_path, ".claude/references/template/ux-research-results.md", BASELINE_UX_RESEARCH)
 
     runner = tmp_path / "_runner.py"
     runner.write_text(
         "import sys\n"
         "from pathlib import Path\n"
         f"sys.path.insert(0, {str(SCRIPTS_DIR)!r})\n"
+        f"sys.path.insert(0, {str(EXPLAIN_DIR)!r})\n"
         "import check_changelog_append_only as mod\n"
         "mod.APPEND_ONLY_SECTIONS = {}\n"
         f"sys.argv = [{str(SCRIPT_PATH)!r}, '--staged']\n"
@@ -139,7 +143,7 @@ def test_empty_registry_warns_and_passes(tmp_path: Path) -> None:
 @pytest.mark.skipif(shutil.which("git") is None, reason="git not available")
 def test_append_only_happy_path(tmp_path: Path) -> None:
     """Appending a new line to CHANGELOG passes the strict rule."""
-    rel = "_references/template/ux-research-results.md"
+    rel = ".claude/references/template/ux-research-results.md"
     _init_git_repo(tmp_path)
     _commit_baseline(tmp_path, rel, BASELINE_UX_RESEARCH)
 
@@ -156,7 +160,7 @@ def test_append_only_happy_path(tmp_path: Path) -> None:
 @pytest.mark.skipif(shutil.which("git") is None, reason="git not available")
 def test_historical_changelog_line_modified_rejected(tmp_path: Path) -> None:
     """Modifying a pre-existing CHANGELOG line fails the strict rule."""
-    rel = "_references/template/ux-research-results.md"
+    rel = ".claude/references/template/ux-research-results.md"
     _init_git_repo(tmp_path)
     _commit_baseline(tmp_path, rel, BASELINE_UX_RESEARCH)
 
@@ -177,7 +181,7 @@ def test_historical_changelog_line_modified_rejected(tmp_path: Path) -> None:
 @pytest.mark.skipif(shutil.which("git") is None, reason="git not available")
 def test_historical_changelog_line_removed_rejected(tmp_path: Path) -> None:
     """Removing a pre-existing CHANGELOG line fails the strict rule."""
-    rel = "_references/template/ux-research-results.md"
+    rel = ".claude/references/template/ux-research-results.md"
     _init_git_repo(tmp_path)
     _commit_baseline(tmp_path, rel, BASELINE_UX_RESEARCH)
 
@@ -195,7 +199,7 @@ def test_historical_changelog_line_removed_rejected(tmp_path: Path) -> None:
 @pytest.mark.skipif(shutil.which("git") is None, reason="git not available")
 def test_changelog_insertion_in_middle_rejected(tmp_path: Path) -> None:
     """Inserting a new CHANGELOG line in the middle fails the strict rule."""
-    rel = "_references/template/ux-research-results.md"
+    rel = ".claude/references/template/ux-research-results.md"
     _init_git_repo(tmp_path)
     _commit_baseline(tmp_path, rel, BASELINE_UX_RESEARCH)
 
@@ -213,7 +217,7 @@ def test_changelog_insertion_in_middle_rejected(tmp_path: Path) -> None:
 @pytest.mark.skipif(shutil.which("git") is None, reason="git not available")
 def test_file_new_in_diff_silently_passes(tmp_path: Path) -> None:
     """A brand-new file (no prior commit) is skipped silently."""
-    rel = "_references/template/ux-research-results.md"
+    rel = ".claude/references/template/ux-research-results.md"
     _init_git_repo(tmp_path)
     # Commit an UNRELATED file so the repo has HEAD
     (tmp_path / "other.txt").write_text("placeholder", encoding="utf-8")
@@ -238,7 +242,7 @@ def test_marker_line_inserted_mid_section_passes(tmp_path: Path) -> None:
     """Inserting an INCORPORATED marker above an existing JM-E-NNN heading
     inside §5 passes the prose-only rule (marker lines are filtered out before
     the prefix-preserving check)."""
-    rel = "_references/template/ux-research-results.md"
+    rel = ".claude/references/template/ux-research-results.md"
     _init_git_repo(tmp_path)
     _commit_baseline(tmp_path, rel, BASELINE_UX_RESEARCH)
 
@@ -260,7 +264,7 @@ def test_marker_line_inserted_mid_section_passes(tmp_path: Path) -> None:
 @pytest.mark.skipif(shutil.which("git") is None, reason="git not available")
 def test_prose_line_inserted_mid_section_5_rejected(tmp_path: Path) -> None:
     """Inserting a non-marker prose line in the middle of §5 fails the prose-only rule."""
-    rel = "_references/template/ux-research-results.md"
+    rel = ".claude/references/template/ux-research-results.md"
     _init_git_repo(tmp_path)
     _commit_baseline(tmp_path, rel, BASELINE_UX_RESEARCH)
 

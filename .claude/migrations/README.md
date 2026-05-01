@@ -1,15 +1,15 @@
-# SEJA Framework Migrations
+# SEJA Harness Migrations
 
-Migration scripts that run automatically during framework upgrades to transform
+Migration scripts that run automatically during harness upgrades to transform
 project files between versions.
 
 ## Naming convention
 
 ```
-NNNN_description.py
+NNNNNN_description.py
 ```
 
-- **NNNN** -- zero-padded sequence number (0001, 0002, ...).
+- **NNNNNN** -- zero-padded sequence number (00001, 000002, ...).
 - **description** -- short snake_case label describing the change.
 
 Migrations are sorted by sequence number and executed in order.

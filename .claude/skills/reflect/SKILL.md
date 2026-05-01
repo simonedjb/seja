@@ -1,8 +1,8 @@
 ---
 name: reflect
-description: "On-demand reflection anchored on specific plans, advisories, or other artifacts. I summarize the artifacts you choose, ask what stands out, and record your reflection."
+description: "On-demand reflection anchored on specific plans, research reports, or other artifacts. I summarize the artifacts you choose, ask what stands out, and record your reflection."
 argument-hint: "[--telemetry [--since 30d] [--skill <name>] [--dry-run]]"
-compatibility: "Designed for Claude Code with SEJA framework"
+compatibility: "Designed for Claude Code with the SEJA harness"
 metadata:
   last-updated: 2026-04-12 02:12 UTC
   version: 2.0.0
@@ -19,20 +19,7 @@ metadata:
     - general/coding-standards.md
 ---
 
-## Quick Guide
-
-**What it does**: I help you reflect on specific work you have done. You pick the artifacts -- plans, advisories, or anything else in `_output/` -- and I summarize them for you. Then I ask one open-ended question, and you write your reflection in your own words. I save it as a `reflection-<id>-*.md` report that links back to the artifacts you chose. Statistical telemetry mining is available via `--telemetry` for pattern analysis across weeks of usage data.
-
-**Example**:
-> You: /reflect
-> Agent: Asks which scope you want (recent plans, recent advisories, specific ID, time window, or free-form). You pick "Recent plans", select plan-000295 and plan-000303. I summarize them, ask what stands out, and write your reflection to `_output/reflections/reflection-<id>-<slug>.md`.
-
-> You: /reflect --telemetry --since 14d
-> Agent: Reads the last 14 days of telemetry, runs 5 analysis primitives, and writes a statistical reflection report.
-
-**When to use**: You want to step back and look at specific work you have done -- what you decided, what surprised you, what you would do differently. The output is your own words anchored on real artifacts, not mechanical telemetry. When you want statistical pattern mining instead, use `--telemetry`.
-
-**See also**: `/advise` -- prescriptive follow-up for any insight that emerges from your reflection.
+> Overview: see [./SKILL-quickguide.md](./SKILL-quickguide.md)
 
 ## Arguments
 
@@ -61,25 +48,25 @@ If `--telemetry` is present in the arguments, route to the [Telemetry workflow](
 
 2. Reserve the next global ID by running `python .claude/skills/scripts/reserve_id.py --type reflection --title '<short title synthesized from scope>'`. Capture the returned 6-digit ID.
 
-3. **Step A -- Pick scope.** Ask the user via AskUserQuestion which artifacts to reflect on. Each option carries rationale per the Decision-point rationale convention in `_references/general/constraints.md`:
+3. **Step A -- Pick scope.** Ask the user via AskUserQuestion which artifacts to reflect on. Each option carries rationale per the Decision-point rationale convention in `.claude/references/general/constraints.md`:
 
    > "What would you like to reflect on?"
 
    Options:
    - **Recent plans** -- I list the last 5-10 plans from `${PLANS_DIR}` by mtime and you pick one or more. Recommended when you just finished a block of implementation work and want to step back. NOT recommended when your question is about a *sequence* of decisions rather than a single plan.
-   - **Recent advisories** -- I list the last 5-10 advisories from `${ADVISORY_DIR}` by mtime and you pick one or more. Recommended when you want to re-examine a design decision after seeing how it played out. NOT recommended when the advisory has not yet been implemented.
-   - **A specific artifact by ID** -- you give me an ID (e.g., `plan-000295`, `advisory-000300`) and I pull it. Recommended when you already know which artifact the reflection is about. NOT recommended when you are casting around for a topic.
+   - **Recent research** -- I list the last 5-10 research reports from `${RESEARCH_DIR}` and `${ADVISORY_DIR}` (historical) by mtime and you pick one or more. Recommended when you want to re-examine a design decision after seeing how it played out. NOT recommended when the research has not yet been implemented.
+   - **A specific artifact by ID** -- you give me an ID (e.g., `plan-000295`, `research-000300`, `advisory-000300`) and I pull it. Recommended when you already know which artifact the reflection is about. NOT recommended when you are casting around for a topic.
    - **A time window** -- you give me a date range; I list all artifacts in that window grouped by type. Recommended when you want to reflect on a *period* (e.g., "last week"). NOT recommended when the period is shorter than a single session.
    - **Free-form** -- no artifact anchor; I give you an empty note. Recommended when the thing you want to reflect on is not yet in any artifact. NOT recommended when there is an artifact you could point at -- anchored reflections are easier to find later.
 
 4. **Resolve the selection to artifact IDs.**
 
-   - **Recent plans / Recent advisories**: List the last 10 files in the corresponding directory by mtime. Present them as a numbered text list (not AskUserQuestion -- the user may want to pick multiple). Capture their selection as a list of artifact IDs.
+   - **Recent plans / Recent research**: List the last 10 files in the corresponding directory(ies) by mtime. For Recent research, scan both `${RESEARCH_DIR}` and `${ADVISORY_DIR}` (historical). Present them as a numbered text list (not AskUserQuestion -- the user may want to pick multiple). Capture their selection as a list of artifact IDs.
    - **A specific artifact by ID**: Prompt the user for the ID(s) via plain text. Parse the response into artifact IDs.
    - **A time window**: Prompt for start/end dates via plain text. Glob `${OUTPUT_DIR}/**/*.md`, filter by mtime, group by type, present the list, and let the user pick.
    - **Free-form**: No artifact resolution needed. Skip to Step C with an empty summary.
 
-5. **Step B -- Summarize chosen artifacts.** Run `python .claude/skills/scripts/summarize_artifacts.py <id1> <id2> ...` to produce the narrative summary block. Capture the stdout output. Present it to the user so they can see what they are reflecting on.
+5. **Step B -- Summarize chosen artifacts.** Run `python .claude/skills/reflect/summarize_artifacts.py <id1> <id2> ...` to produce the narrative summary block. Capture the stdout output. Present it to the user so they can see what they are reflecting on.
 
 6. **Step C -- Reflection prompt.** Ask the user one open-ended question via plain text (NOT AskUserQuestion -- reflection cannot be multiple choice):
 
@@ -106,18 +93,14 @@ If `--telemetry` is present in the arguments, route to the [Telemetry workflow](
 
    ## Follow-ups
 
-   <!-- Optional: run /advise with any question that emerged from this reflection -->
+   <open questions for future investigation, if any>
    ```
 
 8. Run `/post-skill <reflection-id>` to commit the reflection report.
 
-9. Ask the user with a plain-text prompt (NOT AskUserQuestion):
-
-   > "If any of these insights suggest something you would like to investigate further, run `/advise` with the specific question."
-
 ## Strictly non-prescriptive rule
 
-`/reflect` writes observations and the user's own words, not prescriptions. The skill never writes "you should", "consider changing X", "we recommend", or similar. The hand-off to `/advise` is the boundary between retrospective narration and forward-looking recommendation. This convention is enforced by a test in `test_generate_reflection_report.py` that scans the generated report for forbidden substrings.
+`/reflect` writes observations and the user's own words, not prescriptions. The skill never writes "you should", "consider changing X", "we recommend", or similar. This convention is enforced by a test in `test_generate_reflection_report.py` that scans the generated report for forbidden substrings.
 
 ---
 
@@ -143,7 +126,7 @@ If `--telemetry` is present in the arguments, route to the [Telemetry workflow](
 6. Invoke the orchestrator with the reserved ID:
 
    ```text
-   python .claude/skills/scripts/generate_reflection_report.py \
+   python .claude/skills/reflect/generate_reflection_report.py \
        --since <resolved since> \
        --reflection-id <reserved id> \
        --title "<synthesized title>" \
@@ -160,11 +143,7 @@ If `--telemetry` is present in the arguments, route to the [Telemetry workflow](
 
 8. If not `--dry-run`, confirm that the file landed at the expected path. Read the first line back to verify the H1 header matches `# Reflection <id> | <datetime> | <title>`.
 
-9. Ask the user with a plain-text prompt (NOT AskUserQuestion):
-
-   > "Do any of these patterns suggest something you would like to investigate further? If yes, run `/advise` with the specific pattern as your question."
-
-10. Run `/post-skill <reflection-id>` to commit the reflection report.
+9. Run `/post-skill <reflection-id>` to commit the reflection report.
 
 ## V1 analysis primitives
 

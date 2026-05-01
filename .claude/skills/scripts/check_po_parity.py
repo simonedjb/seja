@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When your project ships in more than one language, I compare the
+#   translation catalogs side by side and tell you which strings are missing
+#   from one locale, which have been left untranslated, which need review,
+#   and which message keys your code uses but no catalog defines -- so your
+#   next release does not leak English into a non-English UI.
 """
 check_po_parity.py — Verify Flask-Babel .po catalog parity.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Checks performed
 ================

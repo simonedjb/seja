@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
+# designer: Before you commit a change to a human-authored design
+#   file, I look at what is actually changing. If anything other than
+#   an allowed lifecycle marker has moved, I stop the commit. You
+#   keep those files under your own hand and block the harness from
+#   quietly rewriting your prose.
 """
 check_human_markers_only.py -- Verify that diffs to Human (markers) files
 contain ONLY allowed marker mutations.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Runs as a preflight check (post-skill step 6c via run_preflight_fast.py).
 Parses a git diff (staged by default), filters to files classified as

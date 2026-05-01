@@ -1,6 +1,7 @@
 ---
 name: document-generator
-description: Generates or updates project documentation for a specific documentation type (readme, contextual-help, api-reference, adr, help-center, changelog). Invoked by the /document skill (thin wrapper).
+description: Generates or updates project documentation for a specific documentation type (readme, contextual-help, api-reference, drr, help-center, changelog). Invoked by the /document skill (thin wrapper).
+designer_description: "When you run /document for a specific artifact -- a README, contextual help for a screen, an API reference, a DRR, a help-center page, or a project changelog -- I'm the engine that reads the right template, scans your codebase for the concrete specifics, and produces a user-facing document that fits its Diataxis category. You get a file that speaks to whoever consumes that doc type, not a generic wall of text."
 tools: Read, Bash, Glob, Grep, Write
 ---
 
@@ -10,15 +11,15 @@ tools: Read, Bash, Glob, Grep, Write
 
 You are a documentation generation agent. Your task is to produce or update project documentation for one specific documentation type.
 
-**Before starting**, read `_references/project/constitution.md` if it exists. Apply its constraints throughout generation. If it does not exist, proceed without it.
+**Before starting**, read `project-design/constitution.md` if it exists. Apply its constraints throughout generation. If it does not exist, proceed without it.
 
 ## Input
 
 You will receive:
-- **doc_type**: one of `readme`, `contextual-help`, `api-reference`, `adr`, `help-center`, `changelog`
+- **doc_type**: one of `readme`, `contextual-help`, `api-reference`, `drr`, `help-center`, `changelog`
 - **scope**: what to document (file path, module, feature name, or general topic)
-- **template_path**: path to the template file for this doc type (e.g., `_references/template/docs/readme.md`)
-- **quality_guide_path**: path to `_references/general/documentation-quality.md`
+- **template_path**: path to the template file for this doc type -- one of `.claude/references/template/docs/readme.md`, `.claude/references/template/docs/contextual-help.md`, `.claude/references/template/docs/api-reference.md`, `.claude/references/template/docs/drr.md`, `.claude/references/template/docs/help-center.md`, `.claude/references/template/docs/changelog.md`
+- **quality_guide_path**: path to `.claude/references/general/documentation-quality.md`
 - **project_context**: paths to project state files (conventions, conceptual design)
 - **output_path**: where to write the output (project location for the doc type)
 - **plan_context** (optional): plan file content with Docs: fields, if invoked via --plan mode
@@ -70,21 +71,14 @@ You will receive:
    | DELETE | `/api/groups/<id>` | Admin | Delete a group and all its nested content |
    ```
 
-   ### adr
-   Read: the plan or advisory that motivated the decision, related conceptual design sections, trade-off analysis. Generate Architecture Decision Record with Context, Decision, Consequences, Status sections. Auto-number using existing ADR index. Diataxis: explanation.
+   ### drr
 
-   Model output:
-   ```markdown
-   # ADR-003: Use PostgreSQL for persistence
-   ## Status
-   Accepted
-   ## Context
-   Our data model requires complex joins across 5+ entities and JSONB fields for
-   flexible metadata storage.
-   ## Decision
-   We will use PostgreSQL 16 as the primary data store, with JSONB columns for
-   extensible entity attributes and GIN indexes for full-text search.
-   ```
+   **Step A -- Check for existing D-NNN entries.** Before generating from scratch, read `product-design-as-intended.md` (the project's `project/product-design-as-intended.md`) and locate its `## Decisions` section. Scan for `### D-NNN:` headings.
+
+   - **If D-NNN entries exist:** present the list of discovered entries to the caller and offer to expand one or more into full standalone DRR files. Expansion adds the fields that the lightweight D-NNN entry omits: Status (Proposed / Accepted / Deprecated / Superseded), Date, Deciders, structured `+`/`-`/`0` Consequences notation, and per-alternative `### Alternative NN` subsections with their own +/-/0 lists. Preserve the original D-NNN entry's Context and Decision prose verbatim; do not paraphrase. Auto-number the output DRR file using the existing DRR index (or starting at DRR-000001 if no index exists). Write each expanded DRR to `docs/drr/drr-NNNNNN-<slug>.md` and update `docs/drr/INDEX.md`.
+   - **If no D-NNN entries exist:** fall back to the from-scratch generation path below.
+
+   **Step B -- From-scratch generation (fallback).** Read: the plan or advisory that motivated the decision, related conceptual design sections, trade-off analysis. Generate Design Rationale Record  Context, Decision, Consequences, Rejected Alternatives, Status sections. Auto-number using existing DRR index. Diataxis: explanation. Read `.claude/references/template/docs/drr.md` for model output.
 
    ### help-center
    Read: conceptual design for entity definitions and permission model, metacomm files for designer intent, UI component inventory. Generate role-based help pages organized by user workflow. Choose minimal variant for early-stage projects (fewer than 5 entities) or full variant for mature projects. Diataxis: how-to.
@@ -101,7 +95,7 @@ You will receive:
    ### changelog
    Read: recent git commits since last release tag (`git log <last-tag>..HEAD`), briefs log entries, plan summaries. Generate entries in Keep a Changelog format (Added, Changed, Deprecated, Removed, Fixed, Security). Diataxis: reference.
 
-   > **Note**: For *framework* changelogs (`.claude/CHANGELOG.md`), the `/document` skill handles generation inline via `generate_changelog_data.py` -- the document-generator agent is not invoked. This agent handles *project* changelogs only.
+   > **Note**: For *harness* changelogs (`.claude/CHANGELOG.md`), the `/document` skill handles generation inline via `generate_changelog_data.py` -- the document-generator agent is not invoked. This agent handles *project* changelogs only.
 
    Model output:
    ```markdown

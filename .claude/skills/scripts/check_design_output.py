@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: After /design generates or refreshes your project specs,
+#   I read them back and flag anything that looks unfinished -- stray
+#   placeholders, phrasing that breaks the house rules, values that
+#   contradict each other across files, missing fields. You see the
+#   rough edges before you hand the specs to anyone else.
 """
 check_design_output.py -- Design output validation with plugin-based scanners.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Scans generated design output files for unsubstituted placeholders, phrasing
 rule violations, cross-file inconsistencies, missing field values, and value
@@ -118,13 +126,13 @@ def register_plugin(name: str, description: str):
 @register_plugin("placeholder", "Detect unsubstituted {{VARIABLE}} placeholders in project files")
 def plugin_placeholder(root: Path, verbose: bool) -> list[Finding]:
     findings: list[Finding] = []
-    project_dir = root / "_references" / "project"
+    project_dir = root / "project-design"
 
     if not project_dir.is_dir():
         if verbose:
             findings.append(Finding(
                 "", 0, "info",
-                "Skipped placeholder plugin: no _references/project/ directory",
+                "Skipped placeholder plugin: no project-design/ directory",
                 "placeholder",
             ))
         return findings
@@ -170,7 +178,7 @@ def plugin_phrasing_rule(root: Path, verbose: bool) -> list[Finding]:
     # Resolve DESIGN_INTENT and AS_CODED paths via project_config. Mirrors the
     # fallback chain in check_plan_coverage.py: prefer DESIGN_INTENT (SEJA 2.8.3+),
     # fall back to DESIGN_INTENT_TO_BE (workspace-mode legacy alias), then to the
-    # hardcoded framework-current name if project_config is unavailable entirely.
+    # hardcoded harness-current name if project_config is unavailable entirely.
     cfg_get = _load_project_config_get(root)
     if cfg_get:
         design_intent_var = cfg_get("DESIGN_INTENT") or cfg_get("DESIGN_INTENT_TO_BE") or "project/product-design-as-intended.md"
@@ -180,10 +188,10 @@ def plugin_phrasing_rule(root: Path, verbose: bool) -> list[Finding]:
         as_coded_var = "project/product-design-as-coded.md"
 
     # --- Scan design intent (Part II, sections 11-15 only) ---
-    di = root / "_references" / design_intent_var
+    di = root / "project-design" / design_intent_var
     if not di.is_file():
         # Backward-compat: pre-2.8.3 projects may still carry the old split file.
-        legacy = root / "_references" / "project" / "design-intent-to-be.md"
+        legacy = root / "project-design" / "design-intent-to-be.md"
         if legacy.is_file():
             di = legacy
 
@@ -214,7 +222,7 @@ def plugin_phrasing_rule(root: Path, verbose: bool) -> list[Finding]:
         ))
 
     # --- Scan as-coded § Metacommunication (SEJA 2.8.4 unified file) ---
-    as_coded = root / "_references" / as_coded_var
+    as_coded = root / "project-design" / as_coded_var
     if as_coded.is_file():
         try:
             text = as_coded.read_text(encoding="utf-8", errors="replace")
@@ -309,13 +317,13 @@ def _check_phrasing_line(findings: list[Finding], line: str, line_no: int, file_
 @register_plugin("cross-file-consistency", "Check PROJECT_NAME and locale consistency across project files")
 def plugin_cross_file_consistency(root: Path, verbose: bool) -> list[Finding]:
     findings: list[Finding] = []
-    project_dir = root / "_references" / "project"
+    project_dir = root / "project-design"
 
     if not project_dir.is_dir():
         if verbose:
             findings.append(Finding(
                 "", 0, "info",
-                "Skipped cross-file-consistency plugin: no _references/project/ directory",
+                "Skipped cross-file-consistency plugin: no project-design/ directory",
                 "cross-file-consistency",
             ))
         return findings
@@ -401,7 +409,7 @@ def plugin_cross_file_consistency(root: Path, verbose: bool) -> list[Finding]:
 @register_plugin("field-presence", "Check conventions.md for remaining template placeholder values")
 def plugin_field_presence(root: Path, verbose: bool) -> list[Finding]:
     findings: list[Finding] = []
-    conventions = root / "_references" / "project" / "conventions.md"
+    conventions = root / "project-design" / "conventions.md"
 
     if not conventions.is_file():
         if verbose:
@@ -467,7 +475,7 @@ def _extract_h2_section(text: str, heading: str) -> str:
     Splits on '^## <heading>\\s*$' (start) through the next '^## ' or EOF.
     Returns empty string if the heading is not found. Used to filter the
     unified standards.md by its H2 domain sections (Backend, Frontend, etc.)
-    so that framework-token checks operate on the relevant section only.
+    so that harness-token checks operate on the relevant section only.
     """
     pattern = re.compile(
         rf"^##\s+{re.escape(heading)}\s*$(.*?)(?=^##\s|\Z)",
@@ -480,7 +488,7 @@ def _extract_h2_section(text: str, heading: str) -> str:
 @register_plugin("value-propagation", "Cross-check conventions.md values against standards files")
 def plugin_value_propagation(root: Path, verbose: bool) -> list[Finding]:
     findings: list[Finding] = []
-    conventions = root / "_references" / "project" / "conventions.md"
+    conventions = root / "project-design" / "conventions.md"
 
     if not conventions.is_file():
         if verbose:
@@ -503,9 +511,9 @@ def plugin_value_propagation(root: Path, verbose: bool) -> list[Finding]:
     # Standards file paths. Since SEJA 2.8.1 the merged standards.md is preferred;
     # the legacy per-domain files are read as a fallback for projects that have not
     # migrated to the unified layout yet.
-    standards_file = root / "_references" / "project" / "standards.md"
-    legacy_backend_standards = root / "_references" / "project" / "backend-standards.md"
-    legacy_frontend_standards = root / "_references" / "project" / "frontend-standards.md"
+    standards_file = root / "project-design" / "standards.md"
+    legacy_backend_standards = root / "project-design" / "backend-standards.md"
+    legacy_frontend_standards = root / "project-design" / "frontend-standards.md"
 
     # Check backend framework propagation
     if backend_fw and "{{" not in backend_fw:

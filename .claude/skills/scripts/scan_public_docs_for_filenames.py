@@ -1,31 +1,40 @@
 #!/usr/bin/env python3
+# designer: When the harness reference needs to know which public docs
+#   already mention each harness file, I'm the scanner that walks your
+#   harness source tree and the public docs tree and builds the mapping.
+#   You get back a JSON map of harness-path to doc-paths that mention it
+#   -- the raw signal the harness-reference generator uses to populate its
+#   "Mentioned in" column and to flag surface that is shipping undocumented.
 """
-scan_public_docs_for_filenames.py -- Map framework files to public-docs mentions.
+scan_public_docs_for_filenames.py -- Map harness files to public-docs mentions.
 
-Walks framework files under a seja-priv repo (`.claude/**`, `_references/**`)
+Invocation: user-cli
+Lifecycle: active
+
+Walks harness files under a seja-priv repo (`.claude/**`, `.claude/references/**`)
 and Markdown files under a seja-public docs root, then emits a JSON map of
-framework-path -> list of public-docs files that mention the framework file
+harness-path -> list of public-docs files that mention the harness file
 (by basename or by repo-relative path). This map is consumed by
-`generate_framework_reference.py` (plan-000281) to populate the "Mentioned in"
-column of the generated framework reference.
+`generate_harness_reference.py` to populate the "Mentioned in"
+column of the generated harness reference.
 
 JSON schema
 -----------
 {
   "generated_at": "2026-04-11T13:46:00Z",
-  "framework_root": "d:/git/labs/seja-priv",
+  "harness_root": "d:/git/labs/seja-priv",
   "public_docs_root": "d:/git/labs/seja-priv/seja-public/docs",
-  "framework_files": {
-    "<repo-relative framework path>": {
+  "harness_files": {
+    "<repo-relative harness path>": {
       "basename": "<filename>",
       "mentioned_in": ["<repo-relative public-docs path>", ...]
     }
   }
 }
 
-`mentioned_in` is sorted alphabetically and deduplicated. Framework files with
+`mentioned_in` is sorted alphabetically and deduplicated. Harness files with
 zero mentions are still included with an empty `mentioned_in` list so the
-generator can flag orphaned framework surface.
+generator can flag orphaned harness surface.
 
 Usage
 -----
@@ -34,9 +43,9 @@ Usage
         --format json
 
 Flags:
-    --framework-root <path>     Auto-detected by walking up to find .claude/
-    --public-docs-root <path>   Default: <framework-root>/seja-public/docs
-                                (falls back to <framework-root>/../seja/docs).
+    --harness-root <path>       Auto-detected by walking up to find .claude/
+    --public-docs-root <path>   Default: <harness-root>/seja-public/docs
+                                (falls back to <harness-root>/../seja/docs).
     --output <path>             Default: stdout ("-" for stdout explicitly)
     --format {json,text}        Default: json
     --verbose                   Progress logging to stderr
@@ -45,6 +54,8 @@ Exit codes:
     0  success
     2  script error (I/O failure, missing public-docs-root)
 """
+
+# Rationale for design choices and historical context: see scan_public_docs_for_filenames-rationale.md in this directory.
 from __future__ import annotations
 
 import argparse
@@ -60,7 +71,7 @@ from pathlib import Path
 SCRIPTS_DIR = Path(__file__).resolve().parent
 
 
-def _find_framework_root() -> Path:
+def _find_harness_root() -> Path:
     """Walk up from this file until we find a `.claude/` directory."""
     candidate = SCRIPTS_DIR
     while candidate != candidate.parent:
@@ -71,11 +82,25 @@ def _find_framework_root() -> Path:
 
 
 # ---------------------------------------------------------------------------
-# Framework file discovery
+# Harness file discovery
 # ---------------------------------------------------------------------------
 
-FRAMEWORK_GLOBS_CLAUDE = ("*.md", "*.py", "*.yaml", "*.yml", "*.json")
-FRAMEWORK_GLOBS_REFS = ("*.md", "*.yaml", "*.json")
+HARNESS_GLOBS_CLAUDE = ("*.md", "*.py", "*.yaml", "*.yml", "*.json")
+HARNESS_GLOBS_REFS = ("*.md", "*.yaml", "*.json")
+
+# Harness files whose basename is too generic to attribute a public-docs
+# mention by basename alone. When a public doc says e.g. `README.md` it almost
+# certainly refers to the project's own README, not `.claude/migrations/README.md`
+# or any other harness file with the same basename. For these basenames we
+# require a repo-relative path match instead of a basename match.
+AMBIGUOUS_BASENAMES: frozenset[str] = frozenset({
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "LICENSE.md",
+    "__init__.py",
+    "constants.py",
+})
 
 
 def _contains_token(text: str, token: str) -> bool:
@@ -128,28 +153,41 @@ def _is_excluded(rel_path: Path) -> bool:
     return False
 
 
-def discover_framework_files(framework_root: Path, verbose: bool = False) -> list[Path]:
-    """Walk the framework repo and return repo-relative paths of all framework files."""
+def discover_harness_files(harness_root: Path, verbose: bool = False) -> list[Path]:
+    """Walk the harness repo and return repo-relative paths of all harness files."""
     found: list[Path] = []
 
-    claude_dir = framework_root / ".claude"
+    claude_dir = harness_root / ".claude"
     if claude_dir.is_dir():
-        for pattern in FRAMEWORK_GLOBS_CLAUDE:
+        for pattern in HARNESS_GLOBS_CLAUDE:
             for path in claude_dir.rglob(pattern):
                 if not path.is_file():
                     continue
-                rel = path.relative_to(framework_root)
+                rel = path.relative_to(harness_root)
                 if _is_excluded(rel):
                     continue
                 found.append(rel)
 
-    refs_dir = framework_root / "_references"
+    # Scan harness references (general/ and template/ under .claude/references/)
+    refs_dir = harness_root / ".claude" / "references"
     if refs_dir.is_dir():
-        for pattern in FRAMEWORK_GLOBS_REFS:
+        for pattern in HARNESS_GLOBS_REFS:
             for path in refs_dir.rglob(pattern):
                 if not path.is_file():
                     continue
-                rel = path.relative_to(framework_root)
+                rel = path.relative_to(harness_root)
+                if _is_excluded(rel):
+                    continue
+                found.append(rel)
+
+    # Scan project-specific references (project-design/)
+    project_design_dir = harness_root / "project-design"
+    if project_design_dir.is_dir():
+        for pattern in HARNESS_GLOBS_REFS:
+            for path in project_design_dir.rglob(pattern):
+                if not path.is_file():
+                    continue
+                rel = path.relative_to(harness_root)
                 if _is_excluded(rel):
                     continue
                 found.append(rel)
@@ -157,7 +195,7 @@ def discover_framework_files(framework_root: Path, verbose: bool = False) -> lis
     # Sort deterministically and dedupe
     unique = sorted({p.as_posix(): p for p in found}.values(), key=lambda p: p.as_posix())
     if verbose:
-        print(f"framework files discovered: {len(unique)}", file=sys.stderr)
+        print(f"harness files discovered: {len(unique)}", file=sys.stderr)
     return unique
 
 
@@ -186,21 +224,21 @@ def discover_public_docs(public_docs_root: Path, verbose: bool = False) -> list[
 
 
 def scan_mentions(
-    framework_root: Path,
+    harness_root: Path,
     public_docs_root: Path,
-    framework_files: list[Path],
+    harness_files: list[Path],
     public_docs: list[Path],
     verbose: bool = False,
 ) -> dict[str, dict]:
-    """Return the framework_files map with mentioned_in lists populated.
+    """Return the harness_files map with mentioned_in lists populated.
 
-    Each public-docs file is read once and matched against all framework
-    paths. A match occurs if the file text contains either the framework
+    Each public-docs file is read once and matched against all harness
+    paths. A match occurs if the file text contains either the harness
     file's basename OR its repo-relative path (POSIX form). Matches are
     case-sensitive.
     """
     result: dict[str, dict] = {}
-    for rel in framework_files:
+    for rel in harness_files:
         result[rel.as_posix()] = {
             "basename": rel.name,
             "mentioned_in": set(),
@@ -214,11 +252,16 @@ def scan_mentions(
             print(f"WARNING: could not read {doc_path}: {exc}", file=sys.stderr)
             continue
 
-        for framework_rel in framework_files:
-            framework_key = framework_rel.as_posix()
-            basename = framework_rel.name
-            if _contains_token(text, framework_key) or _contains_token(text, basename):
-                result[framework_key]["mentioned_in"].add(doc_rel.as_posix())
+        for harness_rel in harness_files:
+            harness_key = harness_rel.as_posix()
+            basename = harness_rel.name
+            path_hit = _contains_token(text, harness_key)
+            basename_hit = (
+                basename not in AMBIGUOUS_BASENAMES
+                and _contains_token(text, basename)
+            )
+            if path_hit or basename_hit:
+                result[harness_key]["mentioned_in"].add(doc_rel.as_posix())
 
         if verbose:
             print(f"scanned: {doc_rel.as_posix()}", file=sys.stderr)
@@ -235,33 +278,33 @@ def scan_mentions(
 
 
 def render_json(
-    framework_root: Path,
+    harness_root: Path,
     public_docs_root: Path,
-    framework_files_map: dict[str, dict],
+    harness_files_map: dict[str, dict],
 ) -> str:
     """Return the JSON payload as a string."""
     payload = {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "framework_root": framework_root.as_posix(),
+        "harness_root": harness_root.as_posix(),
         "public_docs_root": public_docs_root.as_posix(),
-        "framework_files": framework_files_map,
+        "harness_files": harness_files_map,
     }
     return json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
 
 
 def render_text(
-    framework_root: Path,
+    harness_root: Path,
     public_docs_root: Path,
-    framework_files_map: dict[str, dict],
+    harness_files_map: dict[str, dict],
 ) -> str:
     """Return a human-readable grouped listing for ad-hoc inspection."""
     lines: list[str] = []
-    lines.append(f"framework_root: {framework_root.as_posix()}")
+    lines.append(f"harness_root: {harness_root.as_posix()}")
     lines.append(f"public_docs_root: {public_docs_root.as_posix()}")
-    lines.append(f"framework_files: {len(framework_files_map)}")
+    lines.append(f"harness_files: {len(harness_files_map)}")
     lines.append("")
-    for key in sorted(framework_files_map):
-        entry = framework_files_map[key]
+    for key in sorted(harness_files_map):
+        entry = harness_files_map[key]
         mentions = entry["mentioned_in"]
         if mentions:
             lines.append(f"{key}")
@@ -277,32 +320,32 @@ def render_text(
 # ---------------------------------------------------------------------------
 
 
-def _resolve_public_docs_root(framework_root: Path, explicit: str | None) -> Path:
+def _resolve_public_docs_root(harness_root: Path, explicit: str | None) -> Path:
     """Resolve the public-docs root with the in-repo preference."""
     if explicit:
         return Path(explicit).resolve()
-    in_repo = framework_root / "seja-public" / "docs"
+    in_repo = harness_root / "seja-public" / "docs"
     if in_repo.is_dir():
         return in_repo.resolve()
-    sibling = framework_root.parent / "seja" / "docs"
+    sibling = harness_root.parent / "seja" / "docs"
     return sibling.resolve()
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Map framework files to public-docs mentions",
+        description="Map harness files to public-docs mentions",
     )
     parser.add_argument(
-        "--framework-root",
+        "--harness-root",
         default=None,
-        help="Path to seja-priv framework root (default: auto-detect)",
+        help="Path to seja-priv harness root (default: auto-detect)",
     )
     parser.add_argument(
         "--public-docs-root",
         default=None,
         help="Path to seja-public docs root "
-             "(default: <framework-root>/seja-public/docs, "
-             "fallback <framework-root>/../seja/docs)",
+             "(default: <harness-root>/seja-public/docs, "
+             "fallback <harness-root>/../seja/docs)",
     )
     parser.add_argument(
         "--output",
@@ -322,19 +365,19 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    framework_root = (
-        Path(args.framework_root).resolve()
-        if args.framework_root
-        else _find_framework_root()
+    harness_root = (
+        Path(args.harness_root).resolve()
+        if args.harness_root
+        else _find_harness_root()
     )
-    if not framework_root.is_dir():
+    if not harness_root.is_dir():
         print(
-            f"ERROR: framework root does not exist: {framework_root}",
+            f"ERROR: harness root does not exist: {harness_root}",
             file=sys.stderr,
         )
         return 2
 
-    public_docs_root = _resolve_public_docs_root(framework_root, args.public_docs_root)
+    public_docs_root = _resolve_public_docs_root(harness_root, args.public_docs_root)
     if not public_docs_root.is_dir():
         print(
             f"ERROR: public-docs root does not exist: {public_docs_root}. "
@@ -344,16 +387,16 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     if args.verbose:
-        print(f"framework_root: {framework_root}", file=sys.stderr)
+        print(f"harness_root: {harness_root}", file=sys.stderr)
         print(f"public_docs_root: {public_docs_root}", file=sys.stderr)
 
     try:
-        framework_files = discover_framework_files(framework_root, args.verbose)
+        harness_files = discover_harness_files(harness_root, args.verbose)
         public_docs = discover_public_docs(public_docs_root, args.verbose)
         mapping = scan_mentions(
-            framework_root,
+            harness_root,
             public_docs_root,
-            framework_files,
+            harness_files,
             public_docs,
             args.verbose,
         )
@@ -362,9 +405,9 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     if args.format == "json":
-        rendered = render_json(framework_root, public_docs_root, mapping)
+        rendered = render_json(harness_root, public_docs_root, mapping)
     else:
-        rendered = render_text(framework_root, public_docs_root, mapping)
+        rendered = render_text(harness_root, public_docs_root, mapping)
 
     if args.output == "-":
         sys.stdout.write(rendered)

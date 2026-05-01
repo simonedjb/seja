@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
+# designer: When the harness's lifecycle orchestration needs a machine-
+#   readable view of which skill suggests which next -- the After / Suggest /
+#   Reason triples that power post-skill's hand-off prompts -- I'm the parser
+#   that reads `skill-graph.md` and writes `skill-graph.json` so lookups are
+#   fast and the human-authored table stays the single source of truth.
 """
 generate_skill_graph.py -- Generate skill-graph.json from skill-graph.md.
 
-Parses the Markdown table in _references/general/skill-graph.md and produces
-_references/general/skill-graph.json with structured edge data for fast
+Invocation: user-cli
+Lifecycle: active
+
+Parses the Markdown table in .claude/references/general/skill-graph.md and produces
+.claude/references/general/skill-graph.json with structured edge data for fast
 programmatic lookup by /post-skill.
 
 Usage
@@ -29,8 +37,8 @@ from pathlib import Path
 # Repo root discovery (same pattern as generate_skills_manifest.py)
 SCRIPTS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPTS_DIR.parents[2]
-SOURCE_MD = REPO_ROOT / "_references" / "general" / "skill-graph.md"
-OUTPUT_JSON = REPO_ROOT / "_references" / "general" / "skill-graph.json"
+SOURCE_MD = REPO_ROOT / ".claude" / "references" / "general" / "skill-graph.md"
+OUTPUT_JSON = REPO_ROOT / ".claude" / "references" / "general" / "skill-graph.json"
 
 # Category slug mapping: section header -> slug
 _CATEGORY_SLUGS = {

@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
+# designer: When a plan or review has to touch the P0 Essential questions
+#   across all 16 review perspectives at once, I'm the summariser that walks
+#   each perspective file, pulls the Essential section, and writes a single
+#   condensed `review-perspectives-essential-summary.md` so the reviewer can
+#   load the P0 layer in one reference instead of sixteen.
 """
 generate_essential_perspectives_summary.py — Extract Essential (P0) questions
 from all 16 review perspective files and produce a single summary file.
+
+Invocation: user-cli
+Lifecycle: active
 
 Exit codes: 0 = success, 1 = partial (some files missing), 2 = script error.
 
@@ -11,7 +19,7 @@ Usage
 
 Run from the repository root.
 Optional flags:
-    --output PATH   Override the output file path (default: _references/general/review-perspectives-essential-summary.md)
+    --output PATH   Override the output file path (default: .claude/references/general/review-perspectives-essential-summary.md)
 """
 from __future__ import annotations
 
@@ -21,8 +29,8 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-PERSPECTIVES_DIR = REPO_ROOT / "_references" / "general/review-perspectives"
-DEFAULT_OUTPUT = REPO_ROOT / "_references" / "general/review-perspectives-essential-summary.md"
+PERSPECTIVES_DIR = REPO_ROOT / ".claude" / "references" / "general" / "review-perspectives"
+DEFAULT_OUTPUT = REPO_ROOT / ".claude" / "references" / "general" / "review-perspectives-essential-summary.md"
 
 # Extract content between ## Essential and ## Deep-dive (or end of file)
 ESSENTIAL_RE = re.compile(

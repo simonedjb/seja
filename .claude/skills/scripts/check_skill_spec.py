@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When you add or touch a skill, I check its SKILL.md frontmatter
+#   against the agentskills.io universal spec -- name shape, description
+#   length, metadata shape -- and tell you exactly which line the skill
+#   viewer ecosystem would reject. This is the gate that keeps your skills
+#   portable beyond SEJA.
 """
 check_skill_spec.py — Validate SKILL.md files against the agentskills.io spec.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Exit codes: 0 = pass, 1 = failures found, 2 = script error.
 
@@ -22,7 +30,7 @@ CHECK_PLUGIN_MANIFEST:
   stack:
     backend: [any]
     frontend: [any]
-  scope: framework
+  scope: harness
   critical: false
 """
 from __future__ import annotations

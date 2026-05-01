@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
+# designer: Before you ship a backend change, I walk every route in
+#   your API, check each one for a login guard and an authorization
+#   check, and hand you back the list of endpoints that would be
+#   reachable without either. You see the gaps before a reviewer does.
 """
 check_api_auth_decorators.py — Verify API endpoint auth coverage in dialogos.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Checks performed
 ================

@@ -1,8 +1,8 @@
 ---
 name: document
 description: "Generate or update project documentation based on plan Docs: fields, auto-detection, or explicit type selection."
-argument-hint: "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|adr|help-center|changelog>] [--since <ref>] [--full-history]"
-compatibility: "Designed for Claude Code with SEJA framework"
+argument-hint: "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|drr|help-center|changelog>] [--since <ref>] [--full-history]"
+compatibility: "Designed for Claude Code with the SEJA harness"
 metadata:
   last-updated: 2026-04-01 16:42 UTC
   version: 1.0.0
@@ -13,27 +13,7 @@ metadata:
     - general/report-conventions.md
 ---
 
-## Quick Guide
-
-**What it does**: Generate or update documentation for your project. Reads plan Docs: fields, detects changes from git history, or targets a specific documentation type. Uses project templates and the documentation-quality writing guide for structured generation.
-
-**Examples**:
-> You: /document --plan 000130
-> 
-> Agent: Reads the plan's Docs: fields and generates the appropriate documentation for each identified need.
-
-> You: /document --auto-detect
->
-> Agent: Analyzes recent git changes, determines which documentation types are needed, and generates them.
-
-> You: /document --type changelog
->
-> Agent: Generates a changelog entry from recent changes using the changelog template.
-
-
-**When to use**: After implementing a feature or fix that affects user-facing behavior, API contracts, or architectural decisions. Automatically suggested by post-skill for FEATURE and REDESIGN plans.
-
-**See also**: `/explain` -- understand existing system behavior, architecture, data model, or design spec drift.
+> Overview: see [./SKILL-quickguide.md](./SKILL-quickguide.md)
 
 ## Arguments
 
@@ -42,7 +22,7 @@ metadata:
 | `<scope>` | Yes (unless --plan or --auto-detect) | What to document: a file path, module, feature name, or general topic |
 | `--plan <id>` | No | Read Docs: fields from a plan file and generate documentation for each identified need |
 | `--auto-detect` | No | Detect documentation needs from recent git changes using heuristics |
-| `--type <type>` | No | Force a specific documentation type: readme, contextual-help, api-reference, adr, help-center, or changelog |
+| `--type <type>` | No | Force a specific documentation type: readme, contextual-help, api-reference, drr, help-center, or changelog |
 | `--since <ref>` | No | Override auto-detect bounding window. Accepts a date (`2026-04-01`), a git SHA, or `last` (since last `/document` run of any kind). Ignored by non-auto-detect modes |
 | `--full-history` | No | Ignore per-doc-type bounding windows and apply the heuristic over the full recent git history (equivalent to pre-proposal behavior). Use when you want a clean-slate scan |
 
@@ -76,7 +56,7 @@ If there are no arguments, ask the user what they need documented.
 
    Otherwise (default history-aware behavior):
    1. Read `${BRIEFS_INDEX_FILE}` (see project/conventions.md).
-   2. For each doc-type in the auto-detection heuristic table (`api-reference`, `contextual-help`, `readme`, `adr`, `changelog`, `help-center`), scan the index for the most recent DONE row where:
+   2. For each doc-type in the auto-detection heuristic table (`api-reference`, `contextual-help`, `readme`, `drr`, `changelog`, `help-center`), scan the index for the most recent DONE row where:
       - `Skill` is `document`, AND
       - `Generated` column contains that doc-type (comma-separated match)
    3. If a matching row is found and has a non-empty `Head SHA`:
@@ -108,15 +88,15 @@ If there are no arguments, ask the user what they need documented.
 
 3. **Launch generator agent(s):**
 
-   Resolve the template path for each documentation type: check `_references/project/docs/<type>.md` first; fall back to `_references/template/docs/<type>.md`.
+   Resolve the template path for each documentation type: check `project-design/docs/<type>.md` first; fall back to `.claude/references/template/docs/<type>.md`.
 
    **Single doc type** (bare scope, --type, or --auto-detect with one result):
    Launch the `document-generator` agent (Agent tool, subagent_type=`general-purpose`, using the prompt from `.claude/agents/document-generator.md`) with:
    - `doc_type`: the resolved documentation type
    - `scope`: the scope from arguments or auto-detection
    - `template_path`: the resolved template file path
-   - `quality_guide_path`: `_references/general/documentation-quality.md`
-   - `project_context`: paths to `_references/project/conventions.md` (or template fallback), `_references/project/product-design-as-coded.md`
+   - `quality_guide_path`: `.claude/references/general/documentation-quality.md`
+   - `project_context`: paths to `project-design/conventions.md` (or template fallback), `project-design/product-design-as-coded.md`
    - `output_path`: the appropriate project location for this doc type
 
    **Multiple doc types** (--plan with multiple non-N/A Docs: fields, or --auto-detect with multiple results):
@@ -136,7 +116,7 @@ If there are no arguments, ask the user what they need documented.
 | API endpoint files (routes, controllers, schemas) changed | api-reference |
 | New UI screen/component added | contextual-help |
 | README-referenced features changed | readme |
-| Architectural decisions made (plan review log has trade-offs) | adr |
+| Architectural decisions made (plan review log has trade-offs) | drr |
 | New user-facing features (FEATURE prefix) | changelog + help-center |
 | Module files added/removed | module README (convention from standards) |
 

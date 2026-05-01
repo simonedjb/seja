@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
+# designer: When your project predates SEJA's global-ID convention and its
+#   artifacts still carry per-type 4-digit or 6-digit IDs, I'm the one-shot
+#   migration that sorts every `_output/` artifact chronologically, assigns
+#   fresh 6-digit IDs from 000001 forward, renames the files, rewrites
+#   headers and cross-references, updates the briefs and telemetry records,
+#   and refreshes the index -- run `--dry-run` first to see the planned
+#   renames before you let it rewrite history.
 """
 migrate_to_global_ids.py -- One-time migration from mixed 4/6-digit per-type IDs
 to globally unique 6-digit chronological IDs.
+
+Invocation: user-cli
+Lifecycle: one-shot
 
 Scans all .md files in OUTPUT_DIR subdirectories, extracts datetime from headers,
 sorts chronologically, assigns new 6-digit IDs starting from 000001, then:
@@ -20,6 +30,8 @@ Usage
 
 Run from the repository root.
 """
+
+# Rationale for design choices and historical context: see migrate_to_global_ids-rationale.md in this directory.
 from __future__ import annotations
 
 import argparse
@@ -497,9 +509,9 @@ def _update_cross_references(text: str, full_mapping: dict[tuple[str, str], str]
     """Update cross-references throughout the body text.
 
     Handles patterns like:
-      Plan 0011, Advisory 0014, Check 000001, QA 0001, Roadmap 0001
-      plan-0011, advisory-0014, check-000001
-      source: advisory-0015, spawned: plan-0016
+      Plan NNNN, Advisory NNNN, Check NNNNNN, QA NNNN, Roadmap NNNN
+      plan-NNNN, advisory-NNNN, check-NNNNNN
+      source: advisory-NNNN, spawned: plan-NNNN
     """
     # Build a combined lookup: (type_prefix, old_id_stripped) -> new_id
     # where type_prefix is lowercase (plan, advisory, check, qa, roadmap)
@@ -605,6 +617,7 @@ def update_telemetry(mapping: dict[tuple[str, str], str], dry_run: bool, verbose
     new_lines = []
     changed = False
 
+    # KEEP: advise->advisory is the historical artifact-ID prefix mapping; the skill is now /research but produces advisory-NNN artifacts.
     skill_to_type = {
         "plan": "plan",
         "implement": "plan",

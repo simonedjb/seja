@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When you look at an old Q&A log and cannot tell when the
+#   conversation happened, I walk every Q&A file in your workspace,
+#   work out the most plausible date from the body or the git history,
+#   and write it into the header. Safe to re-run: I never overwrite a
+#   date that is already there.
 """
 backfill_qa_dates.py -- One-time script to add dates to existing QA log headers.
+
+Invocation: user-cli
+Lifecycle: one-shot
 
 Scans all QA log files (*-qa-*.md and qa-*.md) in OUTPUT_DIR, checks if the
 header already contains a datetime, and if not, inserts one derived from:
@@ -19,6 +27,8 @@ Usage
 
 Run from the repository root.
 """
+
+# Rationale for design choices and historical context: see backfill_qa_dates-rationale.md in this directory.
 from __future__ import annotations
 
 import argparse
@@ -129,14 +139,14 @@ def backfill(dry_run: bool = False, verbose: bool = False) -> tuple[int, int]:
         return 0, 0
 
     # Find all QA log files (prefixed with qa- or containing -qa- as a QA variant)
-    # Exclude files where -qa- appears only in the slug portion (e.g., advisory-000058-qa-log...)
+    # Exclude files where -qa- appears only in the slug portion.
     qa_files: list[Path] = []
     for fp in OUTPUT_DIR.rglob("*.md"):
         name = fp.name
         if name.startswith("qa-"):
             qa_files.append(fp)
         elif re.match(r"^[a-z]+-\d{6}-qa-", name):
-            # Matches: advisory-000011-qa-..., plan-000014-qa-..., check-000051-qa-...
+            # Matches artifact QA companion files such as <type>-NNNNNN-qa-...
             qa_files.append(fp)
 
     qa_files.sort()

@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When you finish any skill run that writes an artifact, I'm the
+#   indexer that refreshes `_output/INDEX.md` so you can find the new file
+#   without scanning directories -- every plan, advisory, roadmap, proposal,
+#   communication, onboarding, and reflection appears on one chronological
+#   list, newest first, with any RESERVED rows preserved across regenerations.
 """
 generate_macro_index.py -- Unified artifact index generator.
+
+Invocation: skill-invoked, user-cli
+Lifecycle: active
 
 Recursively scans all .md files in the project's OUTPUT_DIR and subfolders,
 extracts metadata (date, type, title) from each file's header, and generates
@@ -22,6 +30,8 @@ Usage
 
 Run from the repository root.
 """
+
+# Rationale for design choices and historical context: see generate_macro_index-rationale.md in this directory.
 from __future__ import annotations
 
 import argparse
@@ -94,6 +104,12 @@ _PLAN_ALT_DONE_RE = re.compile(
 # Advisory: # Advisory NNNN | PREFIX-SCOPE | datetime | title
 _ADVISORY_RE = re.compile(
     r"^#\s+Advisory\s+(\d+)\s*\|\s*(\S+)\s*\|\s*([\d\-: UTC]+)\s*\|\s*(.+)",
+    re.IGNORECASE,
+)
+
+# Research: # Research NNNN | PREFIX-SCOPE | datetime | title
+_RESEARCH_RE = re.compile(
+    r"^#\s+Research\s+(\d+)\s*\|\s*(\S+)\s*\|\s*([\d\-: UTC]+)\s*\|\s*(.+)",
     re.IGNORECASE,
 )
 
@@ -268,6 +284,18 @@ def extract_artifact(filepath: Path) -> dict | None:
         return {
             "date": _normalize_date(m.group(3).strip()),
             "type": "Advisory",
+            "id": m.group(1).strip().zfill(6),
+            "title": truncate(m.group(4).strip().rstrip("|").strip()),
+            "status": "DONE",
+            "file": str(rel_path),
+        }
+
+    # Research (forward-only advisory-to-research rename target)
+    m = _RESEARCH_RE.match(header_line)
+    if m:
+        return {
+            "date": _normalize_date(m.group(3).strip()),
+            "type": "Research",
             "id": m.group(1).strip().zfill(6),
             "title": truncate(m.group(4).strip().rstrip("|").strip()),
             "status": "DONE",

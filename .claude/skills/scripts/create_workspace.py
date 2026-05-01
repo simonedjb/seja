@@ -1,13 +1,22 @@
 #!/usr/bin/env python3
+# designer: When you run /seja-setup --workspace, I am how a fresh SEJA workspace
+#   comes into existence alongside your existing codebase without touching
+#   the codebase itself. I copy the harness skeleton into the workspace
+#   path you name and wire it to point at the target project, so your
+#   design history and plans accumulate in a separate git repo while the
+#   code being described stays untouched.
 """
 create_workspace.py -- Create a project workspace from the foundational SEJA
-framework, targeting an existing codebase without modifying it.
+harness, targeting an existing codebase without modifying it.
+
+Invocation: user-cli
+Lifecycle: active
 
 Usage:
-    python create_workspace.py --from <foundational_framework> --workspace <ws_path> --target <codebase_path> [--dry-run]
+    python create_workspace.py --from <foundational_harness> --workspace <ws_path> --target <codebase_path> [--dry-run]
 
-The --from source (foundational SEJA framework) can be a directory (repo or
-framework source directory) or a .zip file.  The script copies framework files
+The --from source (foundational SEJA harness) can be a directory (repo or
+harness source directory) or a .zip file.  The script copies harness files
 into the workspace and configures absolute paths to the target codebase.
 """
 
@@ -26,13 +35,14 @@ _SCRIPT_DIR = Path(__file__).resolve().parent
 if str(_SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPT_DIR))
 
-from upgrade_framework import collect_source_files  # noqa: E402
+from upgrade_harness import collect_source_files  # noqa: E402
 
 # Standard _output subdirectories — keep in sync with template/conventions.md
 # Directory Structure section (PLANS_DIR, ADVISORY_DIR, etc.)
 _OUTPUT_SUBDIRS = [
     "plans",
     "advisory-logs",
+    "research-logs",
     "generated-scripts",
     "inventories",
     "user-tests",
@@ -122,12 +132,12 @@ def resolve_source(source_path: Path) -> tuple[Path, str | None]:
 
 
 def validate_source(source_root: Path) -> None:
-    """Validate that source contains .claude/ and _references/."""
+    """Validate that source contains .claude/ and .claude/references/."""
     if not (source_root / ".claude").is_dir():
         print(f"ERROR: Source does not contain a .claude/ directory: {source_root}")
         sys.exit(1)
-    if not (source_root / "_references").is_dir():
-        print(f"ERROR: Source does not contain an _references/ directory: {source_root}")
+    if not (source_root / ".claude" / "references").is_dir():
+        print(f"ERROR: Source does not contain a .claude/references/ directory: {source_root}")
         sys.exit(1)
 
 
@@ -212,10 +222,10 @@ def run_create(
         report_setup.append("Would initialize git repository")
         print(f"INFO: {prefix}{report_setup[-1]}")
 
-    # --- 3. Copy framework files ---
+    # --- 3. Copy harness files ---
     source_files = collect_source_files(source_root)
     if not source_files:
-        print("ERROR: No framework files found in source.")
+        print("ERROR: No harness files found in source.")
         sys.exit(1)
 
     for src_file in source_files:
@@ -260,8 +270,8 @@ def run_create(
     print(f"OK: {prefix}Created _output/ with {len(_OUTPUT_SUBDIRS)} subdirectories, briefs.md, and INDEX.md")
 
     # --- 5. Generate project/conventions.md ---
-    template_path = source_root / "_references" / "template/conventions.md"
-    conventions_dest = workspace / "_references" / "project/conventions.md"
+    template_path = source_root / ".claude" / "references" / "template" / "conventions.md"
+    conventions_dest = workspace / "project-design" / "conventions.md"
 
     if template_path.is_file():
         conventions_content, backend_dir, frontend_dir = generate_conventions(template_path, workspace, target)
@@ -319,7 +329,7 @@ def run_create(
         "Start a session: ./launch.sh (Unix/Git Bash) or launch.bat (Windows)."
     )
     report_manual.append(
-        "Review _references/project/conventions.md and fill in remaining "
+        "Review project-design/conventions.md and fill in remaining "
         "{{PLACEHOLDER}} values."
     )
     report_manual.append(
@@ -342,7 +352,7 @@ def run_create(
             print("  (none)")
 
     _section("Setup", report_setup)
-    _section("Framework Files Copied", [f"{len(report_copied)} files copied"])
+    _section("Harness Files Copied", [f"{len(report_copied)} files copied"])
     _section("Output Structure", report_output)
     _section("Conventions", report_conventions)
     _section("Launcher Scripts", report_launchers)
@@ -363,7 +373,7 @@ def run_create(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Create a project workspace from the foundational SEJA framework.",
+        description="Create a project workspace from the foundational SEJA harness.",
         epilog=(
             "Example:\n"
             "  python create_workspace.py --from ../seja-priv --workspace ./my-ws --target ../my-project\n"
@@ -375,7 +385,7 @@ def main() -> None:
         "--from",
         dest="source",
         required=True,
-        help="Path to the foundational SEJA framework: a directory or .zip file",
+        help="Path to the foundational SEJA harness: a directory or .zip file",
     )
     parser.add_argument(
         "--workspace",
@@ -408,7 +418,7 @@ def main() -> None:
         print(f"ERROR: Target codebase directory does not exist: {target}")
         sys.exit(1)
 
-    print(f"INFO: Foundational framework: {source_root}")
+    print(f"INFO: Foundational harness: {source_root}")
     print(f"INFO: Workspace:              {workspace}")
     print(f"INFO: Target codebase:        {target}")
     print()

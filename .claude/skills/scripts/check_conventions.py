@@ -1,8 +1,16 @@
 #!/usr/bin/env python3
+# designer: When a skill or reference file mentions a convention
+#   variable like your backend directory or test layout, I make sure
+#   you have actually defined that variable in your project
+#   conventions. You find out about a missing or mistyped setting
+#   before a skill tries to use it and fails.
 """
 check_conventions.py — Validate conventions variables against skill and reference files.
 
-Checks that every ${VARIABLE_NAME} reference used in SKILL.md and _references/*.md
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
+
+Checks that every ${VARIABLE_NAME} reference used in SKILL.md and .claude/references/**/*.md
 files is defined in project/conventions.md (or template/conventions.md as fallback).
 
 Exit codes: 0 = pass (all referenced variables are defined), 1 = errors found.
@@ -37,9 +45,9 @@ from project_config import REPO_ROOT
 
 CLAUDE_DIR = REPO_ROOT / ".claude"
 SKILLS_DIR = CLAUDE_DIR / "skills"
-REFERENCES_DIR = REPO_ROOT / "_references"
+REFERENCES_DIR = REPO_ROOT / ".claude" / "references"
 
-_CONVENTIONS_REL = REFERENCES_DIR / "project" / "conventions.md"
+_CONVENTIONS_REL = REPO_ROOT / "project-design" / "conventions.md"
 _TEMPLATE_REL = REFERENCES_DIR / "template" / "conventions.md"
 
 # Regex to extract variable definitions from markdown table rows:
@@ -97,7 +105,7 @@ def collect_scan_files() -> list[Path]:
                 if skill_file.is_file():
                     files.append(skill_file)
 
-    # _references/**/*.md files
+    # .claude/references/**/*.md files
     if REFERENCES_DIR.is_dir():
         for md_file in sorted(REFERENCES_DIR.glob("**/*.md")):
             files.append(md_file)

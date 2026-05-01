@@ -4,14 +4,15 @@ The workflow itself is defined in .claude/skills/explain/SKILL.md (Step C) and
 is executed by an agent orchestrating apply_marker.py + pending.py. These tests
 exercise the load-bearing mechanics:
 
-- Phase 3a: proposal-report generation, paired pending-action creation, dedup
+- Phase 3a: proposal-report generation, single-entry pending-action creation, dedup
 - Phase 3b: heading-only grep (designer-voice preservation), STATUS marker flip
-  via apply_marker.py, tolerant missing-entries handling, precise lifecycle
-  updates on the pending ledger.
+  via apply_marker.py, tolerant missing-entries handling, 2-branch lifecycle
+  closure on the pending ledger (all-present AND all-flipped combined gate).
 
 Amendments covered: A1 (legacy uppercase), A3 (partial completion + dedup +
 lifecycle), A4 (heading-form enforcement + command syntax), A5 (extended test
-matrix).
+matrix). plan-000470 R1 collapsed the Phase 3a entry pair to a single
+`apply-promote-markers` entry with copy-prose instructions folded in.
 """
 from __future__ import annotations
 
@@ -268,8 +269,8 @@ def phase3a_generate_proposal(
 def phase3a_pending_dedup_check(
     tmp_path: Path, rel_file: str, plan_id: str
 ) -> bool:
-    """Return True if an `apply-promote-proposal` entry with source=plan-id is
-    already pending (dedup: do NOT add a new pair in that case)."""
+    """Return True if an `apply-promote-markers` entry with source=plan-id is
+    already pending (dedup: do NOT add a duplicate entry in that case)."""
     result = _run_pending(
         tmp_path,
         rel_file,
@@ -277,7 +278,7 @@ def phase3a_pending_dedup_check(
         "--status",
         "pending",
         "--type",
-        "apply-promote-proposal",
+        "apply-promote-markers",
         "--source",
         plan_id,
         "--json",
@@ -293,27 +294,14 @@ def phase3a_pending_dedup_check(
 
 def phase3a_add_pending_actions(
     tmp_path: Path, rel_file: str, plan_id: str, proposal_path: Path
-) -> tuple[str | None, str | None]:
-    """Add the paired pending actions, deduped against any already-pending
-    pair for the same plan-id. Returns (proposal_id, markers_id) or (None,
-    None) if deduped."""
+) -> str | None:
+    """Add the single pending action (`apply-promote-markers`) with copy-prose
+    instructions folded into its description, deduped against any already-
+    pending entry for the same plan-id. Returns markers_id or None if deduped."""
     if phase3a_pending_dedup_check(tmp_path, rel_file, plan_id):
-        return None, None
+        return None
 
-    r1 = _run_pending(
-        tmp_path,
-        rel_file,
-        "add",
-        "--type",
-        "apply-promote-proposal",
-        "--source",
-        plan_id,
-        "--description",
-        f"Copy draft Decision entries from {proposal_path.name} into "
-        "product-design-as-intended.md § Decisions",
-    )
-    assert r1.returncode == 0, r1.stderr
-    r2 = _run_pending(
+    result = _run_pending(
         tmp_path,
         rel_file,
         "add",
@@ -322,11 +310,13 @@ def phase3a_add_pending_actions(
         "--source",
         plan_id,
         "--description",
-        f"Flip STATUS markers via /explain spec-drift --promote "
-        f"--apply-markers {plan_id} after prose is applied",
+        f"Copy draft Decision entries from {proposal_path.name} into "
+        "product-design-as-intended.md § Decisions, then run "
+        f"/explain spec-drift --promote --apply-markers {plan_id} to flip "
+        "STATUS markers (Phase 3b)",
     )
-    assert r2.returncode == 0, r2.stderr
-    return r1.stdout.strip(), r2.stdout.strip()
+    assert result.returncode == 0, result.stderr
+    return result.stdout.strip()
 
 
 def phase3b_heading_only_grep(
@@ -378,18 +368,20 @@ def phase3b_flip_markers(
 def phase3b_update_lifecycle(
     tmp_path: Path,
     rel_file: str,
-    proposal_id: str | None,
     markers_id: str | None,
     proposed: list[str],
     present: list[str],
     flipped: list[str],
 ) -> None:
-    """Mark pending entries done per the A3 precise-lifecycle rules."""
+    """Close the `apply-promote-markers` ledger entry per the 2-branch gate
+    (plan-000470 R1): all proposed D-NNNs present AND every present item
+    flipped. Otherwise leave pending (the proposal file on disk is the
+    partial-copy audit trail)."""
     missing = [p for p in proposed if p not in present]
+    all_present = not missing
+    all_flipped = set(present) == set(flipped)
 
-    if proposal_id and not missing and set(present) == set(flipped):
-        _run_pending(tmp_path, rel_file, "done", proposal_id)
-    if markers_id and set(present) == set(flipped):
+    if markers_id and all_present and all_flipped:
         _run_pending(tmp_path, rel_file, "done", markers_id)
 
 
@@ -440,24 +432,26 @@ def test_phase3a_generates_proposal_report(fake_repo):
     assert "plan-000268" in body
 
 
-def test_phase3a_writes_paired_pending_actions(fake_repo):
+def test_phase3a_writes_single_pending_action(fake_repo):
+    """plan-000470 R1: Phase 3a files ONE pending entry (apply-promote-markers)
+    with copy-prose instructions folded into its description. The proposal file
+    on disk is the Phase-3a audit trail (no separate ledger entry for it)."""
     tmp, rel, target = fake_repo
     _write_design_intent(target, DESIGN_INTENT_WITH_IMPLEMENTED)
 
     proposal = phase3a_generate_proposal(tmp, rel, "plan-000268", _sample_decisions())
-    proposal_id, markers_id = phase3a_add_pending_actions(
-        tmp, rel, "plan-000268", proposal
-    )
+    markers_id = phase3a_add_pending_actions(tmp, rel, "plan-000268", proposal)
 
-    assert proposal_id is not None
     assert markers_id is not None
 
     records = _list_pending(tmp, rel)
     by_type = {r["type"]: r for r in records if r.get("source") == "plan-000268"}
-    assert "apply-promote-proposal" in by_type
     assert "apply-promote-markers" in by_type
-    assert by_type["apply-promote-proposal"]["status"] == "pending"
     assert by_type["apply-promote-markers"]["status"] == "pending"
+    # Description folds in copy-prose instructions + Phase-3b command hint
+    description = by_type["apply-promote-markers"]["description"]
+    assert "Copy draft Decision entries" in description
+    assert "--apply-markers plan-000268" in description
 
 
 def test_phase3b_verifies_decisions_present(fake_repo):
@@ -492,7 +486,13 @@ def test_phase3b_flips_markers_when_prose_applied(fake_repo):
     )
 
 
-def test_phase3b_partial_completion_leaves_proposal_pending(fake_repo):
+def test_phase3b_partial_copy_leaves_markers_pending(fake_repo):
+    """plan-000470 R1 Amendment 1: under the 2-branch closure (all-present AND
+    all-flipped combined gate), partial copy leaves `apply-promote-markers`
+    PENDING -- the proposal file on disk is the partial-copy audit trail;
+    the ledger entry closes only when the cycle is fully complete. This
+    inverts the old 4-branch behavior which closed markers once every
+    *present* item was flipped."""
     tmp, rel, target = fake_repo
     # product-design-as-intended.md has D-001 and D-002 but NOT D-003 (designer hasn't
     # copied the third draft yet)
@@ -511,19 +511,12 @@ def test_phase3b_partial_completion_leaves_proposal_pending(fake_repo):
              "consequences": "."},
         ],
     )
-    proposal_id, markers_id = phase3a_add_pending_actions(
-        tmp, rel, "plan-000268", proposal
-    )
-    assert proposal_id and markers_id
+    markers_id = phase3a_add_pending_actions(tmp, rel, "plan-000268", proposal)
+    assert markers_id
 
     proposed = ["D-001", "D-002", "D-003"]
-    present, missing = phase3b_heading_only_grep(target, proposed)
-    # D-003 is present on disk but the test fixture shapes it as the "not yet
-    # copied" case: the designer has marked it proposed, so it DOES have a
-    # ### heading. The A3 rationale is about heading presence, not STATUS —
-    # let's remove D-003 from the fixture to actually be missing.
-    # (Simpler: use a fixture without D-003.)
-    # Rewrite the file to drop D-003 entirely.
+    # Rewrite the file to drop D-003 entirely so the partial-copy case is
+    # expressed as "heading for D-003 is absent from the intent file".
     stripped = DESIGN_INTENT_THREE_DECISIONS.replace(
         "<!-- STATUS: proposed -->\n### D-003: (draft, not yet copied by designer)\n\nPlaceholder for the partial-completion test.\n\n",
         "",
@@ -538,17 +531,20 @@ def test_phase3b_partial_completion_leaves_proposal_pending(fake_repo):
     assert set(flipped) == {"D-001", "D-002"}
 
     phase3b_update_lifecycle(
-        tmp, rel, proposal_id, markers_id, proposed, present, flipped
+        tmp, rel, markers_id, proposed, present, flipped
     )
 
-    # proposal should remain pending (D-003 still missing)
+    # markers stays PENDING because D-003 is missing from the intent file
+    # (combined gate: all-present AND all-flipped).
     by_id = {r["id"]: r for r in _list_pending(tmp, rel)}
-    assert by_id[proposal_id]["status"] == "pending", (
-        f"expected proposal to stay pending due to missing D-003, got "
-        f"{by_id[proposal_id]['status']}"
+    assert by_id[markers_id]["status"] == "pending", (
+        f"expected markers to stay pending due to missing D-003 "
+        f"(2-branch gate requires all-present AND all-flipped), got "
+        f"{by_id[markers_id]['status']}"
     )
-    # markers can be done because every *present* item was flipped
-    assert by_id[markers_id]["status"] == "done"
+    # Describe the expected user-facing message: it should enumerate the
+    # missing D-NNN so the designer knows what to finish before re-running.
+    assert "D-003" in missing
 
 
 def test_phase3b_flips_legacy_uppercase_marker(fake_repo):
@@ -583,28 +579,31 @@ def test_phase3b_flips_legacy_uppercase_marker(fake_repo):
 
 
 def test_phase3a_duplicate_invocation_is_idempotent(fake_repo):
+    """plan-000470 R1: dedup on the single `apply-promote-markers` entry.
+    Second invocation with the same plan-id returns None; exactly ONE record
+    per plan ID for type `apply-promote-markers`."""
     tmp, rel, target = fake_repo
     _write_design_intent(target, DESIGN_INTENT_WITH_IMPLEMENTED)
 
     proposal = phase3a_generate_proposal(tmp, rel, "plan-000268", _sample_decisions())
 
-    id1, id2 = phase3a_add_pending_actions(tmp, rel, "plan-000268", proposal)
-    assert id1 and id2
+    id1 = phase3a_add_pending_actions(tmp, rel, "plan-000268", proposal)
+    assert id1
 
     # Second invocation with the same plan-id should dedup
-    id3, id4 = phase3a_add_pending_actions(tmp, rel, "plan-000268", proposal)
-    assert id3 is None and id4 is None
+    id2 = phase3a_add_pending_actions(tmp, rel, "plan-000268", proposal)
+    assert id2 is None
 
-    # Exactly one pair of pending actions for this plan
+    # Exactly one `apply-promote-markers` record for this plan
     records = _list_pending(tmp, rel)
     for_this_plan = [
         r
         for r in records
         if r.get("source") == "plan-000268"
-        and r["type"] in {"apply-promote-proposal", "apply-promote-markers"}
+        and r["type"] in {"apply-promote-markers"}
     ]
-    assert len(for_this_plan) == 2, (
-        f"expected 1 pair = 2 records, got {len(for_this_plan)}: {for_this_plan}"
+    assert len(for_this_plan) == 1, (
+        f"expected exactly 1 record, got {len(for_this_plan)}: {for_this_plan}"
     )
 
 

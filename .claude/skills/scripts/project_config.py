@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
+# designer: When any SEJA helper script needs to know where your backend lives,
+#   where tests go, or any other path that varies by project, I'm the central
+#   config reader that parses your project's conventions file and hands back a
+#   consistent answer. Scripts call into me instead of hard-coding paths, so
+#   the same tooling works across projects with different layouts without the
+#   scripts themselves ever seeing your specific choices.
 """
 project_config — Central configuration for SEJA helper scripts.
+
+Invocation: library
+Lifecycle: active
 
 Parses project/conventions.md and exposes all variables via get/get_path/get_list.
 Falls back to template/conventions.md when project/conventions.md is absent.
@@ -21,8 +30,8 @@ from pathlib import Path
 # Repo root discovery
 # ---------------------------------------------------------------------------
 
-_CONVENTIONS_REL = Path("_references", "project", "conventions.md")
-_TEMPLATE_REL = Path("_references", "template", "conventions.md")
+_CONVENTIONS_REL = Path("project-design", "conventions.md")
+_TEMPLATE_REL = Path(".claude", "references", "template", "conventions.md")
 _ROW_RE = re.compile(
     r"^\|\s*`([^`]+)`\s*\|\s*`([^`]+)`\s*\|", re.MULTILINE
 )
@@ -43,6 +52,9 @@ def _find_repo_root() -> Path:
 
 
 REPO_ROOT = _find_repo_root()
+GENERAL_REFS_DIR = REPO_ROOT / ".claude" / "references" / "general"
+TEMPLATE_REFS_DIR = REPO_ROOT / ".claude" / "references" / "template"
+PROJECT_REFS_DIR = REPO_ROOT / "project-design"
 
 # ---------------------------------------------------------------------------
 # Config parsing (lazy, cached at module level)

@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When any tool in the harness needs to know which skills exist
+#   without reading every SKILL.md, I'm the manifest builder that reads each
+#   skill's frontmatter and writes a compact JSON file -- name, description,
+#   argument-hint, category -- so skill discovery stays a single fast lookup
+#   instead of a filesystem walk.
 """
 generate_skills_manifest.py -- Generate L1 metadata manifest from SKILL.md files.
+
+Invocation: script-invoked, user-cli
+Lifecycle: active
 
 Parses YAML frontmatter from all SKILL.md files under .claude/skills/,
 extracts lightweight metadata (name, description, argument-hint, category),

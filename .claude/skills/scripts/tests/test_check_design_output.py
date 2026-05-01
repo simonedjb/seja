@@ -22,8 +22,8 @@ from check_design_output import (
 # ---------------------------------------------------------------------------
 
 def _make_project_dir(tmp_path):
-    """Create the _references/project/ and .claude/ dirs under tmp_path."""
-    project_dir = tmp_path / "_references" / "project"
+    """Create the project-design/ and .claude/ dirs under tmp_path."""
+    project_dir = tmp_path / "project-design"
     project_dir.mkdir(parents=True)
     (tmp_path / ".claude").mkdir(exist_ok=True)
     return project_dir

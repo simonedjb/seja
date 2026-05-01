@@ -1,7 +1,16 @@
 #!/usr/bin/env python3
+# designer: When your backend and frontend both enforce input limits, I
+#   compare the two sides' validation constants and tell you which limits
+#   disagree and which constants only one side knows about. This is how
+#   a "max 255 characters" rule in your Python stays aligned with the
+#   same rule in your TypeScript without anyone having to cross-check
+#   by hand.
 """
 check_validation_constants_sync.py — Detect drift between backend and frontend
 validation constants.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Checks performed
 ================

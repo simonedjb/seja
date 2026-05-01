@@ -10,7 +10,7 @@ import generate_skills_reference as gen
 FIXTURE_ROOT = (
     Path(__file__).resolve().parent / "fixtures" / "generate_skills_reference"
 )
-FRAMEWORK_ROOT = FIXTURE_ROOT / "framework_root"
+HARNESS_ROOT = FIXTURE_ROOT / "harness_root"
 EXPECTED_OUTPUT = FIXTURE_ROOT / "expected_output.md"
 
 SCRIPT_PATH = (
@@ -156,7 +156,7 @@ def test_check_mode_detects_drift(tmp_framework: Path, tmp_path: Path):
     output_path.write_text("stale content\n", encoding="utf-8")
     exit_code = gen.main(
         [
-            "--framework-root",
+            "--harness-root",
             str(tmp_framework),
             "--output",
             str(output_path),
@@ -173,7 +173,7 @@ def test_check_mode_passes_on_match(tmp_framework: Path, tmp_path: Path):
     # Generate once to create the file.
     exit_code = gen.main(
         [
-            "--framework-root",
+            "--harness-root",
             str(tmp_framework),
             "--output",
             str(output_path),
@@ -185,7 +185,7 @@ def test_check_mode_passes_on_match(tmp_framework: Path, tmp_path: Path):
     # Re-run --check against the file we just wrote.
     exit_code = gen.main(
         [
-            "--framework-root",
+            "--harness-root",
             str(tmp_framework),
             "--output",
             str(output_path),
@@ -207,7 +207,7 @@ def test_cli_stdout(tmp_framework: Path):
         [
             sys.executable,
             str(SCRIPT_PATH),
-            "--framework-root",
+            "--harness-root",
             str(tmp_framework),
             "--output",
             "-",

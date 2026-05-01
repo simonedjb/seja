@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When you want to trust what the harness's telemetry is
+#   recording about your sessions, I read every line of telemetry.jsonl
+#   and confirm the required fields are present, the types are right,
+#   and the enum values are ones the schema actually allows. Malformed
+#   rows get called out with line numbers so you can fix the source.
 """
 check_telemetry.py — Validate telemetry.jsonl schema and field constraints.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Reads ${OUTPUT_DIR}/telemetry.jsonl and checks each JSON line for required fields,
 valid types, and allowed enum values. Old records with only the 5 required fields
@@ -21,6 +29,8 @@ CHECK_PLUGIN_MANIFEST:
   scope: telemetry
   critical: false
 """
+
+# Rationale for design choices and historical context: see check_telemetry-rationale.md in this directory.
 from __future__ import annotations
 
 import argparse
@@ -57,7 +67,10 @@ VALID_CONTEXT_BUDGETS = {"light", "standard", "heavy"}
 VALID_QA_TYPES = {
     "single-prompt",
     "multi-turn",
+    # TRANSITION plan-000468
+    # advisory-follow-up is the dual-key legacy alias of research-follow-up.
     "advisory-follow-up",
+    "research-follow-up",
     "decision-point-accept",
     "decision-point-revise",
     "decision-point-reject",
@@ -66,6 +79,8 @@ VALID_QA_TYPES = {
 GIT_SHA_RE = re.compile(r"^[0-9a-f]{7,40}$")
 
 # All recognized fields (required + optional)
+# TRANSITION plan-000468
+# advisory_decisions is the dual-key legacy alias of research_decisions.
 ALL_FIELDS = REQUIRED_FIELDS | {
     "brief",
     "prefix_scope",
@@ -79,6 +94,9 @@ ALL_FIELDS = REQUIRED_FIELDS | {
     "qa_type",
     "user_revised_output",
     "decision_points",
+    "advisory_decisions",
+    "research_decisions",
+    "tokens_used",
 }
 
 
@@ -202,6 +220,16 @@ def validate_record(record: dict) -> list[str]:
                 )
             elif val < 0:
                 errors.append(f"'files_changed' must be >= 0, got {val}")
+
+    if "tokens_used" in record:
+        val = record["tokens_used"]
+        if val is not None:
+            if not isinstance(val, int) or isinstance(val, bool):
+                errors.append(
+                    f"'tokens_used' must be int or null, got {type(val).__name__}"
+                )
+            elif val < 0:
+                errors.append(f"'tokens_used' must be >= 0, got {val}")
 
     if "qa_type" in record:
         val = record["qa_type"]

@@ -106,7 +106,7 @@
       "backend": ["any"],
       "frontend": ["any"]
     },
-    "scope": "framework",
+    "scope": "harness",
     "critical": false
   },
   {
@@ -159,14 +159,15 @@
     "scope": "docs",
     "critical": false,
     "sub_plugins": [
-      "framework-integrity",
+      "harness-integrity",
       "path-liveness",
       "env-vars",
       "command-refs",
       "terminology",
       "structural-completeness",
-      "framework-reference-coverage",
-      "lifecycle-fact-uniqueness"
+      "harness-reference-coverage",
+      "lifecycle-fact-uniqueness",
+      "docs-frontmatter"
     ]
   }
 ]

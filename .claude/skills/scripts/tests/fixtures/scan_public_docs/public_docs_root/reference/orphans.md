@@ -1,3 +1,3 @@
 # Orphans reference
 
-This file does not mention any framework file.
+This file does not mention any harness file.

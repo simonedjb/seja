@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When a skill is about to create a new plan, research report, or any other
+#   numbered artifact, I'm the gate that hands out the next six-digit ID and
+#   appends a RESERVED row to your artifact index, so two sessions cannot
+#   accidentally claim the same number. You get back a stable ID the skill
+#   can write into the filename and the header without guessing what is free.
 """
 reserve_id.py -- ID reservation for SEJA artifacts (single-writer assumed).
+
+Invocation: skill-invoked
+Lifecycle: active
 
 Reads _output/INDEX.md, finds the highest numeric ID across all entries
 (including RESERVED rows), computes the next ID (zero-padded to 6 digits),
@@ -9,7 +17,7 @@ atomicity, but the read-then-write pattern assumes a single concurrent writer.
 
 Usage
 -----
-    python .claude/skills/scripts/reserve_id.py --type advisory --title "Some title"
+    python .claude/skills/scripts/reserve_id.py --type research --title "Some title"
     python .claude/skills/scripts/reserve_id.py --type plan --title "Some title" --dry-run
 
 Run from the repository root.
@@ -127,7 +135,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--type", required=True, dest="artifact_type",
-        help="Artifact type (e.g., advisory, plan, check)",
+        help="Artifact type (e.g., research, plan, check, advisory [legacy read alias])",
     )
     parser.add_argument(
         "--title", required=True,

@@ -1,4 +1,13 @@
+# designer: When you suspect your project is carrying dead weight, I walk
+#   your source tree and list the files that nothing else imports or
+#   references -- likely abandoned modules, stale experiments, or files
+#   that moved without being cleaned up. You can silence known false
+#   positives through an explicit whitelist, so the check stays useful
+#   as a standing hygiene signal.
 """Detect orphaned source files not imported or referenced anywhere.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Purpose
 - Find source files (Python, JS/TS) that are not imported by any other file.

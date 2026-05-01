@@ -1,6 +1,12 @@
+---
+diataxis: explanation
+freshness: on-structural-change
+last-reviewed: 2026-04-18
+---
+
 # Foundations
 
-We wrote this file because a designer who spends any real time inside SEJA eventually asks a version of the same question: why is the framework shaped this way?
+We wrote this file because a designer who spends any real time inside SEJA eventually asks a version of the same question: why is the harness shaped this way?
 Why first-person prose in the design specs, why three marker types instead of one status field, why a council debate for hard calls, why so much reflection machinery around every skill?
 
 The honest answer is that SEJA sits inside a tradition -- semiotic engineering, and the reflective-practice literature it draws on -- and that tradition shapes every one of those choices.
@@ -44,7 +50,7 @@ This is not a stylistic preference.
 When we say "I designed a postpone shortcut for you because I know you tend to over-schedule," we are committing, in public, to a claim about you and a choice we made on your behalf.
 When the prose says "the system provides a postpone shortcut," no one is accountable for anything.
 
-The first-person phrasing rule that lives in `_references/general/shared-definitions.md` is there to hold the moral weight of the template, not to enforce a house style.
+The first-person phrasing rule that lives in `.claude/references/general/shared-definitions.md` is there to hold the moral weight of the template, not to enforce a house style.
 
 Barbosa et al. (2021) extended the template in their FAccT paper as the **Extended Metacommunication Template (EMT)**.
 They added four lifecycle dimensions -- analysis, design, implementation, and post-deployment evaluation -- each carrying base questions (what did I learn about you, what did I build) and explicit ethical questions about beneficence, non-maleficence, autonomy, and justice.
@@ -94,14 +100,14 @@ Abduction is the mode of reasoning where you observe a surprising fact, entertai
 Peirce is blunt about the provisionality: an abductive conclusion holds only until better evidence arrives.
 It is the only mode of reasoning that admits creative formulations, and it is the engine of reflective sense-making.
 
-SEJA operationalizes abduction explicitly in council-debate (the `--deep` mode of `/advise`).
+SEJA operationalizes abduction explicitly in council-debate (the `--deep` mode of `/research`).
 A council is a small group of named experts, each running their own abductive reading of the same question, brought into structured disagreement so the synthesis we hand back has visible counter-readings baked in.
 
 The design choice is deliberate: we do not want to pretend a single recommendation is the only plausible one, so we make the plurality of readings part of the deliverable.
 
 ## Reflecting while you work with SEJA
 
-The framework carries three concrete scaffolds so reflective practice is not just something we talk about in a primer but something you can feel in your hands when you use the skills.
+The harness carries three concrete scaffolds so reflective practice is not just something we talk about in a primer but something you can feel in your hands when you use the skills.
 
 **Decision-point rationale at every AskUserQuestion.**
 When a skill pauses to ask you a question -- pick a profile, pick a pattern, confirm a marker flip, pick the next suggestion -- we carry a short rationale for each option so you see not just "what" but "why this is on the menu."
@@ -143,7 +149,7 @@ His concern, which we take seriously, is that engineered reflection scaffolds ca
 Boud (2013) makes a related argument about reflective writing in educational settings: when the reflection becomes an assessed artifact, it stops being a thinking tool and starts being a genre performance.
 
 The counter-reading would say that SEJA's reflection scaffolds -- the decision-point rationale, the post-action loop, the `/reflect` skill -- risk exactly this.
-By turning reflection into something the framework will ask you to produce on a schedule, we may be training a habit of shape without substance.
+By turning reflection into something the harness will ask you to produce on a schedule, we may be training a habit of shape without substance.
 
 We find this position instructive even where we do not fully accept it.
 The version we accept is that the scaffolds must stay small enough that performance is not worth the effort; the version we do not accept is that the alternative -- no scaffolding at all -- produces better reflection.
@@ -159,4 +165,4 @@ The primary sources behind this primer are:
 - Schon, D.A. (1983). *The Reflective Practitioner: How Professionals Think in Action*. New York: Basic Books. Reflection-in-action, reflection-on-action, reflection-on-practice; conversation with materials.
 - Eraut, M. (1994). *Developing Professional Knowledge and Competence*. London: Falmer Press. The critical counter-reading used above on the limits of engineered reflection.
 
-> Last reviewed: 2026-04-11. I revisit this file on every major framework release.
+> Last reviewed: 2026-04-11. I revisit this file on every major SEJA release.

@@ -33,7 +33,9 @@ from pathlib import Path
 import pytest
 
 SCRIPTS_DIR = Path(__file__).resolve().parent.parent
-SCRIPT_PATH = SCRIPTS_DIR / "check_section_boundary_writes.py"
+# check_section_boundary_writes.py lives in the sibling post-skill/ skill directory.
+POST_SKILL_DIR = SCRIPTS_DIR.parent / "post-skill"
+SCRIPT_PATH = POST_SKILL_DIR / "check_section_boundary_writes.py"
 
 sys.path.insert(0, str(SCRIPTS_DIR))
 
@@ -147,6 +149,7 @@ def _run_validator(
         "import sys\n"
         "from pathlib import Path\n"
         f"sys.path.insert(0, {str(SCRIPTS_DIR)!r})\n"
+        f"sys.path.insert(0, {str(POST_SKILL_DIR)!r})\n"
         "import check_section_boundary_writes as mod\n"
         f"mod.REPO_ROOT = Path({str(repo_root)!r})\n"
         f"mod.SECTION_BOUNDARY_FILES = {registry_literal}\n"

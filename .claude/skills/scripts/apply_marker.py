@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When you need to flip a lifecycle marker on a human-authored
+#   design file -- status, established date, incorporated-by-plan, or a
+#   changelog entry -- I am the only hand allowed to touch those files.
+#   You tell me which entry and which marker; I rewrite the exact line
+#   and leave every other word untouched.
 """
 apply_marker.py -- Sole write path for Human (markers) files.
+
+Invocation: skill-invoked, user-cli
+Lifecycle: active
 
 Applies lifecycle marker HTML comments (STATUS / ESTABLISHED / INCORPORATED) or
 appends a CHANGELOG line to files classified as Human (markers). Agents that
@@ -21,6 +29,8 @@ Usage
 
 Exit codes: 0 success, 1 validation failure, 2 runtime error.
 """
+
+# Rationale for design choices and historical context: see apply_marker-rationale.md in this directory.
 from __future__ import annotations
 
 import argparse
@@ -45,8 +55,8 @@ if sys.platform == "win32":
 
 # Accepts both the new lowercase state-machine values (proposed | implemented |
 # established | superseded) and the legacy uppercase `IMPLEMENTED` one-shot
-# marker from pre-2.8.3 files. Widened per plan-000268 Amendment A1 so that a
-# Phase 3b flip can REPLACE a legacy marker rather than stack a new one above it.
+# marker from pre-2.8.3 files. This lets a Phase 3b flip REPLACE a
+# legacy marker rather than stack a new one above it.
 _STATUS_MARKER_RE = re.compile(r"^<!--\s*STATUS:\s*([A-Za-z]+)(?:\s*\|[^>]*)?\s*-->\s*$")
 
 
@@ -143,8 +153,8 @@ def _apply_status(
     heading_idx = _find_entry_heading(lines, entry_id)
     existing = _existing_status_value(lines, heading_idx)
     # Normalize the legacy uppercase `IMPLEMENTED` marker to the new lowercase
-    # `implemented` value for transition lookup (plan-000268 Amendment A1). This
-    # lets Phase 3b flip a legacy STATUS: IMPLEMENTED marker to STATUS: established
+    # `implemented` value for transition lookup. This lets Phase 3b flip a
+    # legacy STATUS: IMPLEMENTED marker to STATUS: established
     # by REPLACING the preceding line rather than stacking a new marker above it.
     effective_existing = "implemented" if existing == "IMPLEMENTED" else existing
     if effective_existing is not None:
@@ -188,7 +198,7 @@ def _apply_decision_append(
 ) -> tuple[list[str], int, str]:
     """Append a new D-NNN decision entry to the ## Decisions section.
 
-    The ``value`` parameter carries the full ADR-shaped entry text (everything
+    The ``value`` parameter carries the full DRR-shaped entry text (everything
     after the ``### D-NNN: <title>`` heading). The ``--id`` argument is ignored
     at the caller level -- the next D-NNN ID is auto-assigned by scanning
     existing entries.
@@ -352,7 +362,7 @@ def main() -> int:
         "--plan",
         help=(
             "Plan id. Accepts either the fully-qualified form 'plan-NNNNNN' "
-            "(e.g., plan-000265) or a bare 6-digit id (e.g., 000265) which "
+            "(e.g., plan-NNNNNN) or a bare 6-digit id (e.g., NNNNNN) which "
             "will be auto-prefixed with 'plan-'."
         ),
     )

@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
+# designer: When your project has files where the prose belongs to you but
+#   specific markers (STATUS, ESTABLISHED, CHANGELOG_APPEND, DECISION_APPEND)
+#   may be agent-written, I'm the shared registry that names those files and
+#   the marker patterns they allow -- the single list both the write path
+#   (apply_marker.py) and the verifier (check_human_markers_only.py) consult
+#   so nothing agent-authored slips into a prose-owned file by accident.
 """
 human_markers_registry -- Shared registry for Human (markers) files and allowed marker patterns.
+
+Invocation: library
+Lifecycle: active
 
 Imported by apply_marker.py (sole write path) and check_human_markers_only.py (post-skill
 verifier). The split into a shared module avoids circular imports and keeps the allowlist
@@ -14,6 +23,8 @@ Empty-allowlist behavior: apply_marker.py refuses all writes when the registry i
 check_human_markers_only.py prints a loud warning and exits 0 when the registry is empty
 (the verifier is a no-op with nothing to verify).
 """
+
+# Rationale for design choices and historical context: see human_markers_registry-rationale.md in this directory.
 from __future__ import annotations
 
 from pathlib import Path
@@ -26,20 +37,20 @@ from pathlib import Path
 # (repo-relative POSIX) so that git diff output matches on Windows too.
 #
 # Both the template/ and project/ paths are registered for each real file: the
-# template path is what /design seeds (and what framework-level tests touch);
+# template path is what /design seeds (and what harness-level tests touch);
 # the project path is what designer commits exercise via post-skill step 2e.
 # apply_marker.py and check_human_markers_only.py perform exact-string matches
-# against this list, so both forms must be present. See plan-000267 Amendment 1.
+# against this list, so both forms must be present.
 #
 # ux-research-results.md and product-design-as-intended.md are both registered
 # via the dual-path pattern (template + project). A future _paths_for(file_stem)
 # helper could return both forms automatically; deferred.
 HUMAN_MARKERS_FILES: list[str] = [
     ".claude/skills/scripts/tests/fixtures/marker_fixture.md",
-    "_references/template/ux-research-results.md",
-    "_references/project/ux-research-results.md",
-    "_references/template/product-design-as-intended.md",
-    "_references/project/product-design-as-intended.md",
+    ".claude/references/template/ux-research-results.md",
+    "project-design/ux-research-results.md",
+    ".claude/references/template/product-design-as-intended.md",
+    "project-design/product-design-as-intended.md",
 ]
 
 
@@ -60,7 +71,7 @@ HUMAN_MARKERS_FILES: list[str] = [
 ALLOWED_MARKERS: dict[str, dict] = {
     "STATUS": {
         # Accepts both the new lowercase multi-value scheme (proposed | implemented |
-        # established | superseded) introduced by advisory-000264 Q3, AND the legacy
+        # established | superseded), AND the legacy
         # uppercase single-value scheme (IMPLEMENTED) from pre-2.8.0 for backward
         # compatibility with existing markers in design-intent files. Follow-up plans
         # that reclassify real files should use the new lowercase scheme.
@@ -114,7 +125,7 @@ ALLOWED_MARKERS: dict[str, dict] = {
     },
     "DECISION_APPEND": {
         # Appends a new ### D-NNN: section to the ## Decisions heading.
-        # The value field carries the full ADR-shaped entry text.
+        # The value field carries the full DRR-shaped entry text.
         # line_regex validates the heading line of the appended entry.
         "line_regex": r"### D-\d{3}: .{1,200}",
         "allowed_values": None,

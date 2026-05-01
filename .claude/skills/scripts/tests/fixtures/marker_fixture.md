@@ -3,7 +3,7 @@
 <!-- This file exists only for the test suite of apply_marker.py and check_human_markers_only.py.
      It is classified Human (markers) via .claude/skills/scripts/human_markers_registry.py so the
      scripts have a non-empty allowlist to exercise against. Do not modify by hand during normal
-     framework work -- tests will rewrite it in a tmp_path copy per test.
+     harness work -- tests will rewrite it in a tmp_path copy per test.
 -->
 
 ## Entries
@@ -29,10 +29,9 @@ in the proposed -> implemented -> established -> superseded chain.
 ### D-002: Use markdown for design documents
 
 **Context**: Needed a format for design documents.
-**Decision**: Use markdown.
-**Rationale**: Widely supported, version-control friendly.
+**Decision**: Use markdown. Widely supported, version-control friendly.
 **Consequences**: All design documents are markdown files.
-**Alternatives Considered**: AsciiDoc, reStructuredText.
+**Rejected Alternatives**: AsciiDoc, reStructuredText.
 
 ## CHANGELOG
 

@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+# designer: When your briefs ledger grows large, I distill it into a compact
+#   index -- one line per entry, newest first -- so pre-skill can scan
+#   your recent session history quickly without loading the full briefs
+#   file into context. You get faster skill startup and a readable
+#   timeline you can eyeball yourself.
 """
 generate_briefs_index.py — Generate a lightweight briefs index for fast scanning.
+
+Invocation: skill-invoked, user-cli
+Lifecycle: active
 
 Parses OUTPUT_DIR/briefs.md and produces OUTPUT_DIR/briefs-index.md with one-line
 summaries per entry, sorted newest first (descending chronological order).
@@ -51,7 +59,7 @@ def _split_fields(line: str) -> list[str]:
 def _extract_skill(raw_skill: str) -> str:
     """Extract just the skill name from a field that may contain flags.
 
-    E.g., 'advise --deep' -> 'advise', 'plan' -> 'plan'.
+    E.g., 'research --deep' -> 'research', 'plan' -> 'plan'.
     """
     return raw_skill.split()[0] if raw_skill else raw_skill
 

@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
+# designer: When you want your project's whole test surface exercised in one
+#   go, I'm the runner that sweeps through backend, frontend, and end-to-end
+#   suites sequentially and saves a clean, ANSI-free transcript of each run
+#   to a timestamped file. You end up with a reviewable record of which
+#   suites passed, which failed, and where to look, without having to
+#   remember each stack's invocation.
 """
 run_all_tests.py — Run backend, frontend and Playwright tests, saving results.
+
+Invocation: agent-invoked
+Lifecycle: active
 
 Generated : 2026-03-13T00:00:00 UTC
 User brief: Comprehensively test backend and frontend, also with playwright,

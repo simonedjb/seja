@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
+# designer: When you are about to land generated or hand-written code, I
+#   scan it for the vulnerability shapes the harness's threat model
+#   tracks -- things like shell injection, unsafe deserialisation,
+#   hardcoded crypto, path traversal -- and return a list of hits with
+#   enough context to decide whether each one is a real problem or an
+#   intentional exception.
 """
 check_vuln_patterns.py — Scan files for generated code vulnerability patterns.
+
+Invocation: agent-invoked, hook-ci
+Lifecycle: active
 
 Exit codes: 0 = no findings, 1 = findings found, 2 = script error.
 
@@ -49,7 +58,7 @@ REPO_ROOT = _REPO_ROOT or Path(__file__).resolve().parents[3]
 # Directories to skip during recursive scanning
 SKIP_DIRS = {"node_modules", ".git", "__pycache__", ".venv", "venv"}
 
-# Framework skill scripts contain vulnerability pattern definitions as string
+# Harness skill scripts contain vulnerability pattern definitions as string
 # literals (this file, md_to_html.py, etc.) -- not actual vulnerable code.
 # Skip any .claude/skills/scripts/ directory to prevent false positives.
 
@@ -267,7 +276,7 @@ def _in_skip_dir(filepath: Path) -> bool:
     """Return True if any path component is a directory we should skip."""
     if any(part in SKIP_DIRS for part in filepath.parts):
         return True
-    # Skip framework skill scripts (contain pattern definitions, not app code)
+    # Skip harness skill scripts (contain pattern definitions, not app code)
     path_str = str(filepath).replace("\\", "/")
     return ".claude/skills/scripts" in path_str
 
