@@ -16,6 +16,12 @@ Format: loosely based on [Keep a Changelog](https://keepachangelog.com/). SemVer
 
 ## [Unreleased]
 
+### Fixed
+
+- `publish.py`: Unreleased-section detection now matches both `## Unreleased` and `## [Unreleased]` heading forms (bracket notation). Fixes false "empty Unreleased section" preflight errors.
+
+## [v0.3.0] - 2026-05-01
+
 ### Added
 
 - **`/publish` skill and `tools/publish.py` automated release pipeline**: 8-step lifecycle (preflight, cut tag, clone public, copy prose, sync harness, smoke test, commit, push). Replaces the prior manual sync runbook for routine releases. (plan-000533)

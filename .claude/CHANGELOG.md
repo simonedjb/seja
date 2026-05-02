@@ -16,6 +16,41 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   preserved as-is; do not alter them.
 -->
 
+## [0.4.0] -- 2026-05-02 00:03 UTC
+
+### Fixed
+
+- `publish.py`: `unreleased_has_content()`, `parse_bump_hint()`, and `_unreleased_subsections()` now match both `## Unreleased` and `## [Unreleased]` heading forms. Previously only the bare form was matched, causing false "empty Unreleased section" preflight errors when the CHANGELOG used Keep-a-Changelog bracket notation.
+
+## [0.3.0] -- 2026-05-01 21:39 UTC
+
+First release under the unified version namespace (plan-000547). Internal version [2.13.0] and public version [0.3.0] are the same release; from this point forward, both repos use the same version number.
+
+### Added
+
+- `/publish` skill and `tools/publish.py` 8-step lifecycle (preflight, cut tag, clone public, copy prose, sync harness, smoke test, commit, push). (plan-000533)
+- `sync_to_public.py --target` argument and pub-only marker support; root-level CLAUDE.md generation from priv. (plan-000533, plan-000544)
+- Roadmap workflow: pending entry filing/closing at finalization and `/implement --roadmap` completion, orphan cleanup, compaction warning. (plan-000531)
+- Post-skill telemetry/metadata fields and context-filtering with top-N cap on next-step suggestions. (plan-000530, plan-000543)
+- `pending.py --format banner` and `--formatted` output modes; pre-skill banner integration. (plan-000534, plan-000541)
+- Unified D-NNN decision entries inline in `/research` step 9b; `document-generator` wires `drr` doc-type to D-NNN entries; retired the standalone `decision-entry.md` template. (plan-000539)
+- `SKILL-reference.md` companion pattern for post-skill (extracted static schemas to keep SKILL.md lean). (plan-000541)
+
+### Changed
+
+- **Framework → Harness terminology rename** across rules, references, scripts, agents, tutorial, and code identifiers. (plan-000525, plan-000535, plan-000537)
+- **DRR (Decision Record Recommendation) replaces ADR** across the harness, references, tools, and tutorial. (plan-000526)
+- **Split model**: `seja-public` no longer mirrors `.claude/`; consumers receive only the public-authored prose. (plan-000533, plan-000544)
+- Pre-skill SKILL.md merged stages (8 → 6). (plan-000534)
+- Post-skill SKILL.md slimmed by referencing `SKILL-reference.md` companion. (plan-000541)
+- Refactored `/plan` SKILL.md as a thin wrapper dispatching to `_internal/plan/{standard,light,roadmap}/SKILL.md`. (plan-000475)
+- `/research` output files: new invocations emit `research-<id>-*.md` under `_output/research-logs/`. (advisory-000448, plan-000449)
+
+### Removed
+
+- Retired `decision-entry.md` template (decision-entry instructions inlined into `/research` step 9b). (plan-000539)
+- `seja-public/.claude/` mirror directory. (plan-000533)
+
 ## [2.13.0] -- 2026-05-01 21:39 UTC
 
 Internal-version graduation alongside the v0.1.0 public release. Captures the framework→harness terminology rename, split-model decoupling of seja-public, decision-log unification (DRR), and lifecycle-hook streamlining since 2.12.1. Internal and public version namespaces are intentionally decoupled (advisory-000418).
