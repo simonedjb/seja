@@ -16,6 +16,29 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   preserved as-is; do not alter them.
 -->
 
+## [0.4.1] -- 2026-05-02 03:20 UTC
+
+### Added
+
+- `check_harness_drift.py` script: compares a canonical source harness against a target workspace to detect added, removed, or revised files. (plan-000553)
+- `check_worktree_health.py` script: detects orphaned git worktrees from parallel wave execution. (plan-000553)
+- `generate_pending_roadmap.py` script: queries the pending ledger for open implement entries and generates a wave-assigned roadmap with file-overlap-based grouping. (plan-000558)
+- `/implement --pending` flag: auto-generates a roadmap from pending implement entries and hands off to the existing `/implement --roadmap` pathway. (plan-000558)
+- `/check health --source <path>` option: wires harness drift detection into the health evaluator agent. (plan-000553)
+- Parallel worktree execution support for roadmap waves. (research-000557)
+- Tests for `check_harness_drift.py` and `generate_pending_roadmap.py`. (plan-000553, plan-000558)
+
+### Changed
+
+- **Priv-only scripts relocated to `scripts/priv/`**: `bump_version.py`, `check_no_private_leaks.py`, `generate_call_graph.py`, `generate_harness_reference.py`, `generate_perspectives_reference.py`, `generate_skills_reference.py`, `scan_public_docs_for_filenames.py`, and their rationale files moved to a priv-only subdirectory excluded from public sync. (plan-000554)
+- Preflight checks gate on file existence for priv-only scripts, gracefully skipping when absent. (plan-000554)
+- Pre-commit hook path updated for relocated leak checker. (plan-000554)
+- Call-graph output redirected to `_output/docs/`. (plan-000554)
+- Call-graph and harness-reference regenerated with new script paths. (plan-000554)
+- `check_docs.py` updated to find reference generators in `priv/`.
+- `upgrade_harness.py` updated to probe `priv/` for reference generators.
+- Harness metrics: 46 scripts, 533 unit tests, 17 skills, 16 agents.
+
 ## [0.4.0] -- 2026-05-02 00:03 UTC
 
 ### Fixed

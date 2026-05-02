@@ -1,11 +1,11 @@
 {
-  "generated": "2026-05-01T19:36:57Z",
+  "generated": "2026-05-02T03:13:57Z",
   "count": 15,
   "skills": [
     {
       "name": "check",
       "description": "Run quality checks: validation, code review, smoke tests, preflight, or harness health.",
-      "argument_hint": "<validate | review | smoke | preflight | health | test-plan | docs | freshness | telemetry | semiotic-inspection> [--depth <light|standard|deep>] [scope]",
+      "argument_hint": "<validate | review | smoke | preflight | health | test-plan | docs | freshness | telemetry | semiotic-inspection> [--depth <light|standard|deep>] [--source <path>] [scope]",
       "category": "analysis",
       "version": "1.0.0"
     },
@@ -47,7 +47,7 @@
     {
       "name": "implement",
       "description": "Execute a previously generated plan to add a feature, fix a bug, or refactor code. Use when user mentions \"implement\", \"execute plan\", or \"run plan\".",
-      "argument_hint": "<planned-item-id> [--manual] [--roadmap <roadmap-id>] [--checkpoint wave|plan|none] [--max-iterations N] [--dry-run] [--skip-checks] [--skip-docs]",
+      "argument_hint": "<planned-item-id> [--manual] [--roadmap <roadmap-id>] [--pending] [--checkpoint wave|plan|none] [--max-iterations N] [--dry-run] [--skip-checks] [--skip-docs]",
       "category": "planning",
       "version": "1.0.0"
     },

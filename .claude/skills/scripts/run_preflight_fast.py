@@ -73,15 +73,24 @@ FAST_CHECKS: list[tuple[str, list[str]]] = [
      [sys.executable, str(SKILLS_DIR / "check" / "check_docs.py"),
       "--plugins", "mantra-banner-consistency",
       "--filter", "warning"]),
-    ("no-private-leaks",
-     [sys.executable, str(SCRIPTS_DIR / "check_no_private_leaks.py")]),
-    ("call-graph",
-     [sys.executable, str(SCRIPTS_DIR / "generate_call_graph.py"), "--check"]),
     ("skill-graph-sync",
      [sys.executable, str(SCRIPTS_DIR / "generate_skill_graph.py"), "--check"]),
-    ("harness-reference",
-     [sys.executable, str(SCRIPTS_DIR / "generate_harness_reference.py"), "--check"]),
 ]
+
+# Priv-only checks -- only included when the script files exist.
+# In public seja repos the priv/ directory is absent; these are silently omitted.
+_PRIV_CHECKS: list[tuple[str, list[str]]] = [
+    ("no-private-leaks",
+     [sys.executable, str(SCRIPTS_DIR / "priv" / "check_no_private_leaks.py")]),
+    ("call-graph",
+     [sys.executable, str(SCRIPTS_DIR / "priv" / "generate_call_graph.py"), "--check"]),
+    ("harness-reference",
+     [sys.executable, str(SCRIPTS_DIR / "priv" / "generate_harness_reference.py"), "--check"]),
+]
+for _name, _cmd in _PRIV_CHECKS:
+    # _cmd[1] is the script path; only add if the file exists on disk
+    if Path(_cmd[1]).is_file():
+        FAST_CHECKS.append((_name, _cmd))
 
 SPEC_CHECKS_LOCATIONS = [
     REPO_ROOT / "project-design" / "agent" / "spec-checks.yaml",

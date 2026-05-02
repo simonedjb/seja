@@ -1,7 +1,7 @@
 ---
 name: check
 description: "Run quality checks: validation, code review, smoke tests, preflight, or harness health."
-argument-hint: "<validate | review | smoke | preflight | health | test-plan | docs | freshness | telemetry | semiotic-inspection> [--depth <light|standard|deep>] [scope]"
+argument-hint: "<validate | review | smoke | preflight | health | test-plan | docs | freshness | telemetry | semiotic-inspection> [--depth <light|standard|deep>] [--source <path>] [scope]"
 compatibility: "Designed for Claude Code with the SEJA harness"
 metadata:
   last-updated: 2026-03-29 00:15:00
@@ -28,7 +28,7 @@ metadata:
 | `review [scope]` | Structured code review against quality perspectives. Scope: `staged`, file path, or directory path |
 | `smoke [scope]` | Runtime smoke tests. Scope: `all`, `api`, `ui` |
 | `preflight [scope]` | Combined validate + review in one pass (pre-merge checkpoint). Scope: `staged`, `all`, or directory path |
-| `health` | Harness self-diagnosis and integrity check. Supports `--verbose` |
+| `health` | Harness self-diagnosis and integrity check. Supports `--verbose`, `--source <path>` |
 | `test-plan [brief]` | Generate a structured manual test plan for the given brief |
 | `docs [--plugins LIST]` | Documentation consistency check. Supports `--plugins`, `--verbose`, `--filter` |
 | `freshness` | Runtime git-freshness check for configured repos (workspace + codebase when distinct). Never pulls |
@@ -94,7 +94,7 @@ If there are no arguments, use the AskUserQuestion tool (or a numbered text list
 - "2. review -- structured code review against quality perspectives (scope: staged, file, or directory)"
 - "3. smoke -- runtime smoke tests against API endpoints or UI pages (scope: all, api, ui)"
 - "4. preflight -- validate + review in one pass as a pre-merge checkpoint (scope: staged, all, or directory)"
-- "5. health -- harness self-diagnosis and integrity check (7 built-in checks)"
+- "5. health -- harness self-diagnosis and integrity check (9 built-in checks; --source enables drift check)"
 - "6. test-plan -- generate a structured manual test plan from a brief or recent plans"
 - "7. docs -- documentation consistency check via plugin-based scanners (paths, env vars, terminology)"
 - "8. freshness -- compare local branches to upstream for configured repos; advisory-only, never pulls"
@@ -188,11 +188,11 @@ Reuses C1, C2, C3, C4. Combines validate + review into a single pre-merge checkp
 
 ### Mode: health
 
-Reuses C1, C3, C4. Flags: `[--verbose]`.
+Reuses C1, C3, C4. Flags: `[--verbose] [--source <path>]`.
 
 1. Apply C1 (pre-skill + argument parse) and C3 to reserve a `check-NNN` ID via `python .claude/skills/scripts/reserve_id.py --type check --title 'Harness Health Report'` and compute the output path `${CHECK_LOGS_DIR}/check-<id>-harness-health.md`.
 
-2. Launch the `harness-health-evaluator` agent via the Agent tool with inputs `{id, output_path, verbose}`. The agent runs the 8 built-in diagnostic checks (skill system integrity, orphaned briefs, stale plans, reference file completeness, conventions completeness, constitution presence, skill spec compliance, pending ledger summary) and writes the Harness Health Report to `output_path`.
+2. Launch the `harness-health-evaluator` agent via the Agent tool with inputs `{id, output_path, verbose, source}`. When `--source <path>` is provided, pass `source` to the agent so it can run the harness drift check against the given canonical source directory. The agent runs the 9 built-in diagnostic checks (skill system integrity, orphaned briefs, stale plans, reference file completeness, conventions completeness, constitution presence, skill spec compliance, pending ledger summary, harness drift) and writes the Harness Health Report to `output_path`.
 
 3. On return, read the written report file and present the summary per C4, highlighting failures and warnings. Run /post-skill <id>.
 

@@ -1,7 +1,7 @@
 {
-  "generated": "2026-05-01T20:31:14Z",
-  "node_count": 217,
-  "edge_count": 468,
+  "generated": "2026-05-02T03:13:32Z",
+  "node_count": 213,
+  "edge_count": 463,
   "nodes": [
     {
       "id": "agent:architecture-explainer",
@@ -64,7 +64,7 @@
       "type": "agent",
       "label": "harness-health-evaluator",
       "path": ".claude/agents/harness-health-evaluator.md",
-      "description": "When you run /check health, I'm the engine behind it. I run the 8 harness self-diagnosis checks -- skill system integrity, orphaned briefs, stale plans, reference completeness, conventions completeness, constitution presence, skill spec compliance, and pending ledger summary -- and hand you one Harness Health Report: an eight-row status table with PASS/WARN/FAIL per check plus the overall N/8 tally, so you can see the harness's health at a glance and drill into the checks that flagged.",
+      "description": "When you run /check health, I'm the engine behind it. I run the 9 harness self-diagnosis checks -- skill system integrity, orphaned briefs, stale plans, reference completeness, conventions completeness, constitution presence, skill spec compliance, pending ledger summary, and harness drift -- and hand you one Harness Health Report: a nine-row status table with PASS/WARN/FAIL per check plus the overall N/9 tally (or N/8+1 when drift is INFO/skipped), so you can see the harness's health at a glance and drill into the checks that flagged.",
       "description_source": "designer-description"
     },
     {
@@ -972,14 +972,6 @@
       "description_source": "designer-description"
     },
     {
-      "id": "script:bump_version.py",
-      "type": "script",
-      "label": "bump_version.py",
-      "path": ".claude/skills/scripts/bump_version.py",
-      "description": "When you cut a new harness release, I move every version\nstamp to the number you choose in one step and refuse to proceed if\nthe changelog is missing the matching heading. You get a single\nconsistent bump instead of three files drifting apart.",
-      "description_source": "designer-description"
-    },
-    {
       "id": "script:check_api_auth_decorators.py",
       "type": "script",
       "label": "check_api_auth_decorators.py",
@@ -1052,6 +1044,14 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:check_harness_drift.py",
+      "type": "script",
+      "label": "check_harness_drift.py",
+      "path": ".claude/skills/scripts/check_harness_drift.py",
+      "description": "When you want to know whether a target workspace's harness files\nhave drifted from the canonical source -- new files missing, stale files\nlingering, or content diverged -- I compare the two trees, report the\ndelta, and optionally generate an editable remediation plan so you can\nreview before applying destructive changes.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:check_human_markers_only.py",
       "type": "script",
       "label": "check_human_markers_only.py",
@@ -1073,14 +1073,6 @@
       "label": "check_migration_chain.py",
       "path": ".claude/skills/scripts/check_migration_chain.py",
       "description": "Before you deploy a database change, I walk your\nmigration history end to end and call out anything that would\nblock the deploy: two branches competing for head, an orphan\nrevision, a cycle. You see the shape of the chain and the\nproblems in one place instead of finding them at boot time.",
-      "description_source": "designer-description"
-    },
-    {
-      "id": "script:check_no_private_leaks.py",
-      "type": "script",
-      "label": "check_no_private_leaks.py",
-      "path": ".claude/skills/scripts/check_no_private_leaks.py",
-      "description": "Before you publish or share a copy of this repository, I\nlook for content marked as private -- files, directories, and\nfragments between priv-only markers -- and refuse to let the\ncommit through if any of it would escape the boundary. You get a\npre-commit gate that catches leaks at your fingertips instead of\nafter the fact.",
       "description_source": "designer-description"
     },
     {
@@ -1188,6 +1180,14 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:check_worktree_health.py",
+      "type": "script",
+      "label": "check_worktree_health.py",
+      "path": ".claude/skills/scripts/check_worktree_health.py",
+      "description": "When you want to confirm no orphaned git worktrees are\nlingering from parallel wave execution, I run `git worktree list`\nand flag any worktrees beyond the main one. Clean repos pass; stale\nworktrees get listed with their paths so you can remove them.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:count_loc.py",
       "type": "script",
       "label": "count_loc.py",
@@ -1220,14 +1220,6 @@
       "description_source": "designer-description"
     },
     {
-      "id": "script:generate_call_graph.py",
-      "type": "script",
-      "label": "generate_call_graph.py",
-      "path": ".claude/skills/scripts/generate_call_graph.py",
-      "description": "When you want to see how the harness fits together -- which\nskill invokes which script, which agent each skill delegates to,\nwhich references a skill eager-loads -- I produce the call-graph\nviewer you navigate in the docs: a filterable, draggable map of\nevery skill, agent, script, rule, and reference, with a side panel\nthat tells you in plain language what each node does for you.",
-      "description_source": "designer-description"
-    },
-    {
       "id": "script:generate_cheatsheet.py",
       "type": "script",
       "label": "generate_cheatsheet.py",
@@ -1252,14 +1244,6 @@
       "description_source": "designer-description"
     },
     {
-      "id": "script:generate_harness_reference.py",
-      "type": "script",
-      "label": "generate_harness_reference.py",
-      "path": ".claude/skills/scripts/generate_harness_reference.py",
-      "description": "When you want a single catalog of every artifact the harness\nships -- skills, agents, rules, scripts, migrations, references,\ntemplates -- cross-referenced against which ones are actually mentioned\nin the public docs, I'm the generator that walks the harness roots and\nproduces `harness-reference.md`: a grouped table for the whole catalog\nplus a second view listing only the user-facing surface.",
-      "description_source": "designer-description"
-    },
-    {
       "id": "script:generate_macro_index.py",
       "type": "script",
       "label": "generate_macro_index.py",
@@ -1268,11 +1252,11 @@
       "description_source": "designer-description"
     },
     {
-      "id": "script:generate_perspectives_reference.py",
+      "id": "script:generate_pending_roadmap.py",
       "type": "script",
-      "label": "generate_perspectives_reference.py",
-      "path": ".claude/skills/scripts/generate_perspectives_reference.py",
-      "description": "When you want the public docs to show the catalog of review\nperspectives -- tag, human name, one-line purpose, optional tier -- I'm\nthe generator that walks `.claude/references/general/review-perspectives/`, reads\neach file, and writes `seja-public/docs/reference/perspectives.md` as a\nsingle alphabetised table so readers can see the full lens set at a glance.",
+      "label": "generate_pending_roadmap.py",
+      "path": ".claude/skills/scripts/generate_pending_roadmap.py",
+      "description": "When you have multiple open plans piling up in the pending ledger,\nI'm the script that reads them all, figures out which ones touch the same\nfiles, and generates a lightweight roadmap that groups independent plans\ninto parallel waves and overlapping ones into sequential waves -- so\n/implement --pending can hand off to the existing roadmap pathway.",
       "description_source": "designer-description"
     },
     {
@@ -1305,14 +1289,6 @@
       "label": "generate_skills_manifest.py",
       "path": ".claude/skills/scripts/generate_skills_manifest.py",
       "description": "When any tool in the harness needs to know which skills exist\nwithout reading every SKILL.md, I'm the manifest builder that reads each\nskill's frontmatter and writes a compact JSON file -- name, description,\nargument-hint, category -- so skill discovery stays a single fast lookup\ninstead of a filesystem walk.",
-      "description_source": "designer-description"
-    },
-    {
-      "id": "script:generate_skills_reference.py",
-      "type": "script",
-      "label": "generate_skills_reference.py",
-      "path": ".claude/skills/scripts/generate_skills_reference.py",
-      "description": "When the public docs need a human-readable catalog of every\nuser-facing skill -- grouped by category, with description and\nargument-hint -- I'm the generator that walks each SKILL.md, skips the\ninternal lifecycle hooks, and writes\n`seja-public/docs/reference/skills.md` so readers can browse the full\nskill surface without opening the harness source.",
       "description_source": "designer-description"
     },
     {
@@ -1468,14 +1444,6 @@
       "description_source": "designer-description"
     },
     {
-      "id": "script:scan_public_docs_for_filenames.py",
-      "type": "script",
-      "label": "scan_public_docs_for_filenames.py",
-      "path": ".claude/skills/scripts/scan_public_docs_for_filenames.py",
-      "description": "When the harness reference needs to know which public docs\nalready mention each harness file, I'm the scanner that walks your\nharness source tree and the public docs tree and builds the mapping.\nYou get back a JSON map of harness-path to doc-paths that mention it\n-- the raw signal the harness-reference generator uses to populate its\n\"Mentioned in\" column and to flag surface that is shipping undocumented.",
-      "description_source": "designer-description"
-    },
-    {
       "id": "script:smoke_test_core.py",
       "type": "script",
       "label": "smoke_test_core.py",
@@ -1603,7 +1571,7 @@
       "label": "/post-skill",
       "path": ".claude/skills/post-skill/SKILL.md",
       "user_invocable": false,
-      "description": "Post skill\n\n0.",
+      "description": "Post skill\n\nWhen `--deferred` is passed (by the roadmap parallel-wave orchestrator after merging a worktree branch back to main), post-skill runs a reduced pipeline.",
       "description_source": "developer-fallback"
     },
     {
@@ -2629,12 +2597,6 @@
       "label": ""
     },
     {
-      "source": "script:bump_version.py",
-      "target": "script:check_version_changelog_sync.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
       "source": "script:check_api_auth_decorators.py",
       "target": "script:project_config.py",
       "type": "imports",
@@ -2707,6 +2669,12 @@
       "label": ""
     },
     {
+      "source": "script:check_harness_drift.py",
+      "target": "script:upgrade_harness.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
       "source": "script:check_human_markers_only.py",
       "target": "script:human_markers_registry.py",
       "type": "imports",
@@ -2720,12 +2688,6 @@
     },
     {
       "source": "script:check_migration_chain.py",
-      "target": "script:project_config.py",
-      "type": "imports",
-      "label": ""
-    },
-    {
-      "source": "script:check_no_private_leaks.py",
       "target": "script:project_config.py",
       "type": "imports",
       "label": ""
@@ -2785,6 +2747,12 @@
       "label": ""
     },
     {
+      "source": "script:check_worktree_health.py",
+      "target": "script:project_config.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
       "source": "script:count_loc.py",
       "target": "script:project_config.py",
       "type": "imports",
@@ -2803,18 +2771,6 @@
       "label": ""
     },
     {
-      "source": "script:generate_call_graph.py",
-      "target": "script:load_quickguide.py",
-      "type": "imports",
-      "label": ""
-    },
-    {
-      "source": "script:generate_call_graph.py",
-      "target": "ref-general:skill-graph.md",
-      "type": "reads",
-      "label": ""
-    },
-    {
       "source": "script:generate_decision_digest.py",
       "target": "script:project_config.py",
       "type": "imports",
@@ -2827,27 +2783,21 @@
       "label": ""
     },
     {
-      "source": "script:generate_harness_reference.py",
-      "target": "script:scan_public_docs_for_filenames.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "script:generate_harness_reference.py",
-      "target": "ref-general:script-header-convention.md",
-      "type": "reads",
-      "label": ""
-    },
-    {
       "source": "script:generate_macro_index.py",
       "target": "script:project_config.py",
       "type": "imports",
       "label": ""
     },
     {
-      "source": "script:generate_perspectives_reference.py",
-      "target": "script:generate_harness_reference.py",
+      "source": "script:generate_pending_roadmap.py",
+      "target": "script:project_config.py",
       "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:generate_pending_roadmap.py",
+      "target": "script:pending.py",
+      "type": "invokes",
       "label": ""
     },
     {
@@ -2902,12 +2852,6 @@
       "source": "script:generate_skill_map.py",
       "target": "ref-general:skill-graph.md",
       "type": "reads",
-      "label": ""
-    },
-    {
-      "source": "script:generate_skills_reference.py",
-      "target": "script:generate_skills_manifest.py",
-      "type": "imports",
       "label": ""
     },
     {
@@ -3026,12 +2970,6 @@
     },
     {
       "source": "script:run_preflight_fast.py",
-      "target": "script:check_no_private_leaks.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "script:run_preflight_fast.py",
       "target": "script:check_plan_coverage.py",
       "type": "invokes",
       "label": ""
@@ -3069,18 +3007,6 @@
     {
       "source": "script:run_preflight_fast.py",
       "target": "script:check_version_changelog_sync.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "script:run_preflight_fast.py",
-      "target": "script:generate_call_graph.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "script:run_preflight_fast.py",
-      "target": "script:generate_harness_reference.py",
       "type": "invokes",
       "label": ""
     },
@@ -3883,7 +3809,19 @@
     },
     {
       "source": "skill:implement",
+      "target": "script:generate_pending_roadmap.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:implement",
       "target": "script:pending.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:implement",
+      "target": "script:reserve_id.py",
       "type": "invokes",
       "label": ""
     },

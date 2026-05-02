@@ -76,6 +76,8 @@ def _regenerate_reference_files(
     for display_name, script_name in _REFERENCE_GENERATORS:
         script = scripts_dir / script_name
         if not script.is_file():
+            script = scripts_dir / "priv" / script_name
+        if not script.is_file():
             print(f"WARN: Skipped {display_name} regeneration: {script_name} not found")
             continue
         if dry_run:
@@ -178,20 +180,34 @@ def collect_source_files(source: Path) -> list[Path]:
     claude_dir = source / ".claude"
     ar_dir = source / _REFERENCES_REL  # .claude/references/ (v3 layout)
 
-    # Skills -- SKILL.md plus any SKILL-<facet>.md siblings
-    # (SKILL-quickguide.md and SKILL-rationale.md). Glob matches
-    # "SKILL.md" and
-    # "SKILL-*.md" only, so unrelated files in skill directories are left
-    # alone.
+    # Skills -- recursively discover all directories containing SKILL.md
+    # or SKILL-<facet>.md files (e.g., SKILL-quickguide.md, SKILL-rationale.md).
+    # This handles both top-level skills (skills/plan/) and nested internals
+    # (skills/_internal/plan/standard/).  The scripts/ subtree is excluded
+    # because it is enumerated separately below.
     skills_dir = claude_dir / "skills"
     if skills_dir.is_dir():
-        for skill_dir in sorted(skills_dir.iterdir()):
-            if skill_dir.is_dir() and skill_dir.name != "scripts":
-                for sibling in sorted(skill_dir.glob("SKILL*.md")):
-                    name = sibling.name
-                    if name == "SKILL.md" or name.startswith("SKILL-"):
-                        if sibling.is_file():
-                            files.append(sibling)
+        # Collect unique skill directories that contain SKILL*.md files
+        skill_dirs: set[Path] = set()
+        for skill_md in skills_dir.rglob("SKILL.md"):
+            if "scripts" not in skill_md.relative_to(skills_dir).parts:
+                skill_dirs.add(skill_md.parent)
+        for skill_facet in skills_dir.rglob("SKILL-*.md"):
+            if "scripts" not in skill_facet.relative_to(skills_dir).parts:
+                skill_dirs.add(skill_facet.parent)
+
+        for skill_dir in sorted(skill_dirs):
+            # Collect SKILL.md and SKILL-<facet>.md files
+            for sibling in sorted(skill_dir.glob("SKILL*.md")):
+                name = sibling.name
+                if name == "SKILL.md" or name.startswith("SKILL-"):
+                    if sibling.is_file():
+                        files.append(sibling)
+            # Collect co-located .py scripts (skill-owned scripts that live
+            # next to SKILL.md, e.g. check/check_docs.py, design/check_plan_coverage.py)
+            for py_file in sorted(skill_dir.glob("*.py")):
+                if py_file.is_file():
+                    files.append(py_file)
 
     # Scripts (skip priv/ subdirectory -- harness-exclusive scripts)
     scripts_dir = claude_dir / "skills" / "scripts"

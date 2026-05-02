@@ -25,4 +25,4 @@ LLM-drafted prose introduces typographic substitutions (em-dash, en-dash, curly 
 
 - Governing encoding rules: `.claude/references/general/report-conventions.md`.
 - Priv-public split: `.claude/references/general/harness-governance.md` section Private-Only Content Convention.
-- Generator hook: `.claude/skills/scripts/generate_call_graph.py` (`_parse_frontmatter_designer_description`, `_extract_python_designer_description`, `compute_node_description`).
+- Generator hook: `.claude/skills/scripts/priv/generate_call_graph.py` (`_parse_frontmatter_designer_description`, `_extract_python_designer_description`, `compute_node_description`).

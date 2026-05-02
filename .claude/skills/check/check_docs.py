@@ -122,6 +122,7 @@ from typing import NamedTuple
 # so the bare `from load_quickguide import ...` below resolves correctly when
 # this script is invoked directly from its check/ home.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts" / "priv"))
 
 from load_quickguide import load_quickguide as _shared_load_quickguide
 
@@ -987,7 +988,7 @@ def plugin_harness_reference_coverage(root: Path, verbose: bool) -> list[Finding
             str(reference_path), 0, "info",
             f"harness-reference.md not found at {reference_path.as_posix()}; "
             "run the generator first: "
-            "python .claude/skills/scripts/generate_harness_reference.py",
+            "python .claude/skills/scripts/priv/generate_harness_reference.py",
             plugin_name,
         ))
         return findings
@@ -1016,7 +1017,7 @@ def plugin_harness_reference_coverage(root: Path, verbose: bool) -> list[Finding
         findings.append(Finding(
             str(reference_path), 0, "warning",
             f"harness file '{missing}' is not mentioned in harness-reference.md; "
-            "regenerate with: python .claude/skills/scripts/generate_harness_reference.py",
+            "regenerate with: python .claude/skills/scripts/priv/generate_harness_reference.py",
             plugin_name,
         ))
 
@@ -1123,7 +1124,7 @@ def plugin_harness_reference_coverage(root: Path, verbose: bool) -> list[Finding
         findings.append(Finding(
             str(reference_path), 0, "warning",
             "harness-reference.md is stale; regenerate with: "
-            "python .claude/skills/scripts/generate_harness_reference.py",
+            "python .claude/skills/scripts/priv/generate_harness_reference.py",
             plugin_name,
         ))
 

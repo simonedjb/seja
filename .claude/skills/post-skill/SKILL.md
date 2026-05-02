@@ -16,6 +16,30 @@ metadata:
 
 > Rationale for design choices and historical context: see `SKILL-rationale.md` in this directory.
 
+## Worktree Deferred Mode
+
+When `--deferred` is passed (by the roadmap parallel-wave orchestrator after merging a worktree branch back to main), post-skill runs a reduced pipeline. The orchestrator handles wave-level briefs, QA, and commits; `--deferred` handles only the per-plan state alignment that requires the merged code on main.
+
+| Step | Normal | `--deferred` |
+|------|--------|--------------|
+| 0 (checkpoint recovery) | run | run |
+| 1 (brief-log) | run | **skip** -- orchestrator writes wave-level brief |
+| 1b (telemetry prep) | run | run (flushed at 8b) |
+| 2 (as-coded alignment) | run | run -- merged code is now on main |
+| 2b (documentation auto-run) | run | **skip** -- orchestrator handles wave-level docs |
+| 2c (design intent reminder) | run | run |
+| 2d (eager implement entry) | run | **skip** -- not from /plan |
+| 3 (QA log) | run | **skip** -- orchestrator handles wave-level QA |
+| 4-6 (commit message, safety, scope) | run | **skip** -- orchestrator commits atomically |
+| 6b-6c (preflight, markers check) | run | **skip** -- orchestrator runs these once for the wave |
+| 7 (index regeneration) | run | run |
+| 7g (pending action creation) | run | run |
+| 8 (commit) | run | **skip** -- orchestrator commits |
+| 8b (telemetry flush) | run | run (appended; orchestrator includes in wave commit) |
+| 9-13 (wrap-up, next-step) | run | **skip** |
+
+When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Skip all others silently.
+
 ## Skill-specific Instructions
 
 0. **Checkpoint recovery**: if `${OUTPUT_DIR}/.post-skill-checkpoint` exists, read it (`<step> | <datetime> | <skill-id>`). If `<skill-id>` matches $ARGUMENTS[0], resume from the step AFTER `<step>`. Otherwise delete the stale file and proceed normally. Also read SKILL-reference.md for schema definitions.

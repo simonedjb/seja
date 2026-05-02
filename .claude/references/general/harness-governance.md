@@ -82,6 +82,18 @@ A selection framework for how a mode-heavy wrapper skill factors its per-mode wo
 
 - **Maintenance discipline**: when promoting a mode from C > A or C > B, the wrapper SKILL.md loses the mode's prose and gains a one-paragraph dispatch block. The extracted prose moves verbatim (A: into the agent prompt; B: into the internal SKILL.md body) with no semantic change in the first commit -- behavior-preserving refactor first, content revisions later.
 
+### Parallel worktree execution
+
+Roadmap wave execution (Wave 1+) uses Claude Code's `isolation: "worktree"` Agent parameter to run independent plans in parallel git worktrees. The pattern extends the batch execution pattern's "bookend lifecycle hooks" principle to code-producing subagents.
+
+- **When used**: roadmap mode (`/implement --roadmap <id>`), Wave 1+ plans whose `Files:` lists do not overlap (including call-graph edge check). Wave 0 is always sequential (migration chain safety).
+- **Isolation model**: each plan runs in a `general-purpose` subagent with `isolation: "worktree"`. The Agent tool creates a temporary git worktree per plan; the subagent commits within its worktree branch.
+- **Deferred-write contract**: worktree subagents operate in worktree mode (see `/implement` Definitions table) -- they skip `pre-skill` brief-log and `post-skill` entirely, writing only per-plan files (progress file, plan status, source code). Shared mutable state (`pending.jsonl`, `briefs.md`, `INDEX.md`, `telemetry.jsonl`) is updated post-merge by the orchestrator via `/post-skill --deferred`, serialized on the main branch.
+- **Merge protocol**: after all worktree agents complete, the orchestrator merges results sequentially in plan-ID order. For each: rebase onto current HEAD; fast-forward merge on success; pause for user resolution on conflict (resolve, skip, or abort wave). Sequential rebase produces linear history compatible with `git bisect`.
+- **Rollback semantics**: `pre-wave-<N>-<roadmap-id>` branch created before each wave. On abort: `git checkout pre-wave-<N>-<roadmap-id>`. Completed plans are preserved; only the current wave is rolled back.
+- **Failure modes**: single-plan FAILED does not abort the wave (logged, not merged). Merge conflicts pause for user resolution. Worktree cleanup retries with exponential backoff (2s/4s/8s) on Windows locked-file failures; persistent orphans are logged for manual cleanup.
+- **Health check**: `check_worktree_health.py` detects orphaned worktrees; wired into `/check health`.
+
 ## Governance
 
 ### Skill Count
@@ -178,7 +190,7 @@ Advisory 000366 evaluated moving to a physically-separated pair of repositories 
 
 - Editing codebase half → affects downstream consumers at the next release. Edit only the `seja-priv` sources (`.claude/`, `project-design/`); do NOT recreate `seja-public/.claude/` on disk. The `/publish` skill generates `.claude/` ephemerally into a temp clone (`_output/tmp/publish-workspace/`) via `sync_to_public.py --target`, so there is no on-disk mirror to hand-edit.
 - Editing workspace half → visible only inside `seja-priv`. Safe to iterate, reorganize, or delete without consumer impact.
-- Editing a shared `.md` file that carries priv-only markers → the codebase half is the public-visible portion (post-strip); the workspace half is the markered region. Run `python .claude/skills/scripts/check_no_private_leaks.py` after the change to verify the stripper handles it correctly.
+- Editing a shared `.md` file that carries priv-only markers → the codebase half is the public-visible portion (post-strip); the workspace half is the markered region. Run `python .claude/skills/scripts/priv/check_no_private_leaks.py` after the change to verify the stripper handles it correctly.
 - When in doubt, check whether the file would appear in `seja-public/` after running `tools/sync_to_public.py --dry-run`.
 
 ## Private-Only Content Convention
@@ -203,4 +215,4 @@ For scripts that are entirely private (no public use case), place them in `.clau
 
 ### Validation
 
-`check_no_private_leaks.py` operates in three modes: (1) default mode scans only authored prose in `seja-public/` (top-level `*.md` and `docs/**/*.md`), (2) `--candidate DIR` runs the full leak scan against a publish workspace (used by `pre_publish_smoke.py` during `/publish`), and (3) `--staged`/`--files` for the pre-commit gate. Registered in `run_preflight_fast.py` and runs as part of `/check validate`.
+`priv/check_no_private_leaks.py` operates in three modes: (1) default mode scans only authored prose in `seja-public/` (top-level `*.md` and `docs/**/*.md`), (2) `--candidate DIR` runs the full leak scan against a publish workspace (used by `pre_publish_smoke.py` during `/publish`), and (3) `--staged`/`--files` for the pre-commit gate. Registered in `run_preflight_fast.py` and runs as part of `/check validate`.

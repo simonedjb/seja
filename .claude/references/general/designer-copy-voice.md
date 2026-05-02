@@ -13,10 +13,10 @@ This file is the authoring guide for every node that enters the call-graph. The 
 ## Voice
 
 - **Speak in first person.** "I", not "the script". The viewer is the harness addressing you directly; third-person prose breaks that illusion.
-- **Address the designer as "you".** Not "the user", not "the contributor". "You" is who the viewer is for.
+- **Address the user as "you".** Not "the user", not "the contributor". "You" is who the viewer is for.
 - **Start with context, not mechanics.** Open with "When you ..." or "After ..." or "Before ...". Avoid "This script reads ..." / "This file contains ...".
 - **Describe outcomes.** What you get back, not what I do internally. "You see a list of failures" beats "I iterate over the check registry and print JSON."
-- **Avoid tool names when a designer-level noun exists.** Prefer "the health check" over "run_all_checks.py"; prefer "the onboarding template" over "onboarding/bld-l1.md". Tool names are fine when the designer would recognise them from the CLI (e.g., "/plan", "/implement").
+- **Avoid tool names when a designer-level noun exists.** Prefer "the health check" over "run_all_checks.py"; prefer "the onboarding template" over "onboarding/bld-l1.md". Tool names are fine when the user would recognize them from the CLI (e.g., "/plan", "/implement").
 - **One paragraph by default.** Block form is reserved for nodes whose side panel genuinely benefits from structure -- two paragraphs, a short list, a scenario split. Most nodes do not need this.
 
 ## Encoding
@@ -114,7 +114,7 @@ When authoring a template's designer copy:
 
 - Write for the **consumer who will inherit the instantiated file**, not the harness contributor reading the template in-place.
 - Use second-person "you" as the instantiating-project designer, not as a template author.
-- Avoid phrases like "this template", "when you customise this template", or "the harness ships this as a starting point" -- those read awkwardly once the file is a concrete project file.
+- Avoid phrases like "this template", "when you customize this template", or "the harness ships this as a starting point" -- those read awkwardly once the file is a concrete project file.
 - Describe what the file will mean in the consumer's own project (e.g., "I describe your project's backend conventions ..."), not what the template slot represents.
 
 Example -- acceptable template designer copy:

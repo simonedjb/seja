@@ -169,5 +169,15 @@
       "lifecycle-fact-uniqueness",
       "docs-frontmatter"
     ]
+  },
+  {
+    "script": "check_harness_drift.py",
+    "name": "Harness Drift",
+    "stack": {
+      "backend": ["any"],
+      "frontend": ["any"]
+    },
+    "scope": "harness",
+    "critical": false
   }
 ]

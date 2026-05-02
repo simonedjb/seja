@@ -1,7 +1,7 @@
 ---
 name: implement
 description: Execute a previously generated plan to add a feature, fix a bug, or refactor code. Use when user mentions "implement", "execute plan", or "run plan".
-argument-hint: "<planned-item-id> [--manual] [--roadmap <roadmap-id>] [--checkpoint wave|plan|none] [--max-iterations N] [--dry-run] [--skip-checks] [--skip-docs]"
+argument-hint: "<planned-item-id> [--manual] [--roadmap <roadmap-id>] [--pending] [--checkpoint wave|plan|none] [--max-iterations N] [--dry-run] [--skip-checks] [--skip-docs]"
 compatibility: "Designed for Claude Code with the SEJA harness"
 metadata:
   last-updated: 2026-03-27 12:00 UTC
@@ -38,6 +38,7 @@ metadata:
 | `--checkpoint <wave\|plan\|none>` | No | Checkpoint granularity for roadmap mode. Default: `wave` |
 | `--skip-checks` | No | Skip the automatic quality checks (`/check validate` + `/check review`) at the end |
 | `--skip-docs` | No | Skip the automatic documentation generation at post-skill step 2b. Files an `update-documentation` pending entry instead |
+| `--pending` | No | Execute all pending plans by generating a lightweight roadmap and running roadmap mode. Mutually exclusive with `<planned-item-id>` and `--roadmap` |
 
 # Execute a plan
 
@@ -50,6 +51,7 @@ If no argument was provided, ask the user for the planned item id.
 | Plan file | Resolve `$ARGUMENTS[0]` via `${OUTPUT_DIR}/INDEX.md` (run `python .claude/skills/scripts/generate_macro_index.py` if missing); construct `${PLANS_DIR}/plan-<id>-<slug>.md`. Abort if the ID is not in the index. |
 | Progress file | `${PLANS_DIR}/plan-<id>-progress.md` -- append-only cross-iteration learnings. Created at start of auto mode; each subagent reads it and appends. |
 | Rollback branch | `git branch pre-plan-<id>` from current HEAD before executing. Inform the user; undo via `git checkout pre-plan-<id>`. |
+| Worktree mode | When the orchestrator spawns a subagent with `isolation: "worktree"`, the subagent operates in deferred-write mode: skip `pre-skill` brief-log writes, skip `post-skill` entirely, write only to per-plan files (progress file, plan status, source code). The orchestrator handles shared-state writes (briefs, pending, index, telemetry) in the serialized merge phase after the worktree is merged back. |
 
 After each step (or iteration in auto mode), output the updated to-do list, update and save the plan-file to-do list immediately.
 
@@ -75,13 +77,14 @@ Auto mode runs a bounded retry loop for critical code-review findings. Manual mo
 
 ## Execution Modes
 
-Dispatch: `--roadmap` -> roadmap; else `--manual` -> manual; else auto (default).
+Dispatch: `--pending` -> pending; else `--roadmap` -> roadmap; else `--manual` -> manual; else auto (default).
 
 | Mode | Recommended when | Topology |
 |------|------------------|----------|
 | Auto (default) | Most plans, especially >6 steps where context degradation is a risk. | Each step runs in a fresh `general-purpose` subagent (Ralph pattern); state via the progress file. |
 | Manual (`--manual`) | Small plans (<=6 steps) or when per-step confirmation is needed. | Sequential in the current context. |
 | Roadmap (`--roadmap <id>`) | Executing every plan in a roadmap without per-plan invocation. | Each plan runs auto mode in a fresh subagent; pauses between waves per `--checkpoint`. |
+| Pending (`--pending`) | Clearing all pending implement entries in one go. | Generates a lightweight roadmap from pending entries, then dispatches to roadmap mode. |
 
 **Flags.** `--max-iterations N` caps auto-mode iterations (default 20; ignored in manual). `--dry-run` previews per-step file creates/modifies without writing. `--skip-checks` skips the final quality gate. `--skip-docs` suppresses the post-skill step 2b auto-doc `AskUserQuestion` (goes straight to Skip; files an `update-documentation` pending entry) -- use when documenting in a separate session or for harness-internal-only plans.
 
@@ -203,7 +206,26 @@ For each wave (Wave 0, Wave 1, ...) with incomplete plans:
 
 9. **Identify plans in this wave** and determine parallelism: Wave 0 is always sequential (migration chain safety); Wave 1+ may run in parallel when plans' Files lists do not overlap, otherwise sequentially.
 
-10. **Execute plans** (sequentially or in parallel per step 9). For each: launch a `general-purpose` subagent with a self-contained prompt that runs `/implement <plan-id> --roadmap <roadmap-id>` in auto mode. The `--roadmap` pass-through activates per-plan roadmap-file maintenance: Auto Mode step 15 / Manual Mode step 11 flips this plan's Wave Summary Status to `done` **before** `/post-skill`, so the roadmap edit lands in the same commit as the plan rename. Include plan path, roadmap path, project conventions, coding standards. Subagent reports SUCCESS / PARTIAL / FAILED. Pass through `--skip-checks` and `--max-iterations` if provided. Wait for each subagent before moving on.
+   **Enhanced overlap check**: after the Files-list comparison, load `.claude/references/general/call-graph.json` (skip with warning if absent or stale). For each pair of plans in the wave, check if any file in Plan A's `Files:` scope has an import/call edge to any file in Plan B's scope. If any edge exists, treat as overlapping (conservative default) and downgrade to sequential. Log: "Plans X and Y have call-graph dependency via <file-A> -> <file-B>; running sequentially."
+
+10. **Execute plans** per the parallelism decision from step 9.
+
+    **Sequential execution** (Wave 0, or overlapping Files): for each plan, launch a `general-purpose` subagent with a self-contained prompt that runs `/implement <plan-id> --roadmap <roadmap-id>` in auto mode. The `--roadmap` pass-through activates per-plan roadmap-file maintenance: Auto Mode step 15 / Manual Mode step 11 flips this plan's Wave Summary Status to `done` **before** `/post-skill`, so the roadmap edit lands in the same commit as the plan rename. Include plan path, roadmap path, project conventions, coding standards. Subagent reports SUCCESS / PARTIAL / FAILED. Pass through `--skip-checks` and `--max-iterations` if provided. Wait for each subagent before moving on.
+
+    **Parallel execution** (Wave 1+ with non-overlapping Files): use worktree isolation to run plans concurrently.
+
+    a. For each plan in the wave, spawn: `Agent(subagent_type="general-purpose", isolation="worktree", prompt=<implement-plan-prompt with worktree_mode=true>)`. The subagent prompt includes plan path, roadmap path, project conventions, coding standards, and the worktree-mode contract (skip pre-skill brief-log, skip post-skill entirely, commit within the worktree branch). Pass through `--skip-checks` and `--max-iterations`.
+    b. Launch **all agents in a single message** so they execute in parallel.
+    c. Wait for all agents to complete. Each returns SUCCESS / PARTIAL / FAILED plus worktree path and branch name (auto-cleaned if no changes).
+    d. Enter the **serialized merge phase** (step 10e-10h).
+    e. For each completed worktree in plan-ID order (deterministic): if FAILED, log and skip (do not merge). Otherwise: `git rebase main <worktree-branch>`.
+    f. If rebase succeeds: `git merge --ff-only <worktree-branch>`, then `git worktree remove <path>`.
+    g. If rebase fails (conflicts): pause via AskUserQuestion:
+       - **Resolve manually** -- Recommended when conflicts are in source code you understand.
+       - **Skip this plan** -- Recommended when the conflicting plan can be re-run after other plans merge. NOT recommended when the plan's changes are critical to this wave.
+       - **Abort wave** -- Recommended when conflicts indicate the plans were not truly independent. Resets to `pre-wave-<N>-<roadmap-id>`.
+    h. After all merges: run deferred post-skill operations. For each successfully merged plan, run `/post-skill <plan-id> --deferred` on the main branch (shared-state writes: briefs, pending entries, index updates, telemetry). Then flip each merged plan's Wave Summary Status to `done` in the roadmap file.
+    i. **Worktree cleanup**: run `git worktree list`; for each worktree not matching the main working tree, attempt `git worktree remove <path>` (retry up to 3 times with 2s/4s/8s delays on failure); run `git worktree prune`.
 
 11. **Process wave results**:
     a. Count SUCCESS / PARTIAL / FAILED.
@@ -240,3 +262,29 @@ For each wave (Wave 0, Wave 1, ...) with incomplete plans:
 ### Constraints
 
 Each plan runs in auto mode via a fresh subagent; manual mode is not supported for roadmap execution. `--skip-checks` applies only to per-plan quality gates (the roadmap-level final gate at step 13 is never skipped). `--max-iterations` applies to each plan's auto-mode iteration cap. `--dry-run` previews all plans without executing; output is shown sequentially, wave by wave. Resumable: re-running `/implement --roadmap <id>` on a partially-complete roadmap picks up from the first incomplete item; completed plans are not re-executed.
+
+## Pending Mode -- Skill-specific Instructions
+
+> Used when `--pending` is present. A thin wrapper that generates a roadmap from pending implement entries and dispatches to Roadmap Mode.
+
+1. Run /pre-skill "implement" --pending to add general instructions to the context window.
+
+2. **Reserve roadmap ID**: run `python .claude/skills/scripts/reserve_id.py --type roadmap --title "pending plans auto-roadmap"` and capture the returned ID.
+
+3. **Generate roadmap**: run `python .claude/skills/scripts/generate_pending_roadmap.py --roadmap-id <id>`. Handle exit codes:
+   - Exit 0: roadmap generated successfully; continue.
+   - Exit 1: no pending implement entries found. Inform the user: "No pending implement entries found." and exit.
+   - Exit 2: script error. Show the stderr message and exit.
+
+4. **Display wave summary**: read the generated roadmap file (`${ROADMAP_DIR}/roadmap-<id>-*.md`) and display the Wave Summary section to the user.
+
+5. **Confirmation gate**: ask the user to confirm before executing:
+   - **Execute** -- Recommended when the wave summary correctly groups the pending plans and you are ready to run them all.
+   - **Review roadmap** -- Recommended when you want to inspect or edit the generated roadmap file before executing. NOT recommended when the plans are simple and non-overlapping.
+   - **Abort** -- Recommended when the pending plans need replanning or are not ready for execution.
+
+6. On "Execute": dispatch to [Roadmap Mode Phase 0 step 2](#phase-0-setup-2) with the generated roadmap ID. Pass through `--skip-checks`, `--max-iterations`, and `--checkpoint` if provided by the user.
+
+7. On "Review roadmap": display the roadmap file path and wait for the user to confirm they are ready to proceed. On confirmation, dispatch to Roadmap Mode Phase 0 step 2 as in step 6.
+
+8. On "Abort": exit without executing.
