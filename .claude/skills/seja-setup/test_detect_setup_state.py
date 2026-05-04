@@ -48,8 +48,8 @@ def make_claude_skills(tmpdir: Path) -> None:
 
 
 def make_project_conventions(tmpdir: Path) -> None:
-    """Create project-design/conventions.md with minimal content (new layout)."""
-    project_dir = tmpdir / "project-design"
+    """Create product-design/conventions.md with minimal content (new layout)."""
+    project_dir = tmpdir / "product-design"
     project_dir.mkdir(parents=True, exist_ok=True)
     (project_dir / "conventions.md").write_text(
         "# project conventions\n\nMinimal.\n", encoding="utf-8"

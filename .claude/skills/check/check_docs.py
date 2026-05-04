@@ -367,7 +367,7 @@ def plugin_env_vars(root: Path, verbose: bool) -> list[Finding]:
     # Collect documented env vars from .md files
     env_doc_re = re.compile(r"`([A-Z][A-Z0-9_]{2,})`")
     documented_vars: set[str] = set()
-    _ref_scan_dirs_env = [root / ".claude" / "references", root / "project-design"]
+    _ref_scan_dirs_env = [root / ".claude" / "references", root / "product-design"]
     md_files = [p for d in _ref_scan_dirs_env if d.is_dir() for p in d.rglob("*.md")]
     md_files.extend(root.glob("*.md"))
     for md_file in md_files:
@@ -530,7 +530,7 @@ def plugin_command_refs(root: Path, verbose: bool) -> list[Finding]:
     fenced_end_re = re.compile(r"^```\s*$")
     cmd_prefixes = ("npm run ", "yarn ", "pnpm ", "make ", "python ", "flask ", "django-admin ")
 
-    _ref_scan_dirs_cmd = [root / ".claude" / "references", root / "project-design"]
+    _ref_scan_dirs_cmd = [root / ".claude" / "references", root / "product-design"]
     md_files = [p for d in _ref_scan_dirs_cmd if d.is_dir() for p in d.rglob("*.md")]
     md_files.extend(root.glob("*.md"))
     md_files.extend((root / ".claude").rglob("*.md") if (root / ".claude").is_dir() else [])
@@ -641,7 +641,7 @@ def plugin_terminology(root: Path, verbose: bool) -> list[Finding]:
         return findings
 
     # Scan .md files
-    scan_dirs = [root / ".claude", root / ".claude" / "references", root / "project-design"]
+    scan_dirs = [root / ".claude", root / ".claude" / "references", root / "product-design"]
     scan_files = list(root.glob("*.md"))
     for d in scan_dirs:
         if d.is_dir():
@@ -690,7 +690,7 @@ def plugin_structural_completeness(root: Path, verbose: bool) -> list[Finding]:
     findings: list[Finding] = []
 
     template_docs_dir = root / ".claude" / "references" / "template" / "docs"
-    project_docs_dir = root / "project-design" / "docs"
+    project_docs_dir = root / "product-design" / "docs"
 
     if not project_docs_dir.is_dir():
         findings.append(Finding(
@@ -1604,7 +1604,7 @@ def plugin_internal_reference_leakage(root: Path, verbose: bool) -> list[Finding
     scan_dirs = [
         root / ".claude",
         root / ".claude" / "references",
-        root / "project-design",
+        root / "product-design",
         root / "docs",
     ]
 

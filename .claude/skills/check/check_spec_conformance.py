@@ -148,7 +148,7 @@ def main() -> int:
 
     root = Path(args.root) if args.root else REPO_ROOT
     # Locate spec-checks.yaml
-    spec_checks_path = root / "project-design" / "agent" / "spec-checks.yaml"
+    spec_checks_path = root / "product-design" / "agent" / "spec-checks.yaml"
     if not spec_checks_path.exists():
         print("No spec checks configured (project/agent/spec-checks.yaml not found). Skipping.")
         return 0

@@ -158,7 +158,7 @@ If a batch spec is incomplete (e.g., missing level), resolve all incomplete spec
    - `area`: the focus area (if `--area` was passed)
    - `role_file_paths`: `.claude/references/general/onboarding/<role>.md` for each role tag
    - `level_file_path`: `.claude/references/general/onboarding/<level>.md`
-   - `project_context`: paths to `project-design/product-design-as-coded.md`, `project-design/conventions.md` (or template fallback)
+   - `project_context`: paths to `product-design/product-design-as-coded.md`, `product-design/conventions.md` (or template fallback)
    - `output_path`: the full path computed in step 3
    - `output_id`: the reserved ID from step 3
    - `format`: the `--format` flag value (default: `both`)

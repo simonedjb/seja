@@ -88,7 +88,7 @@ If there are no arguments, ask the user what they need documented.
 
 3. **Launch generator agent(s):**
 
-   Resolve the template path for each documentation type: check `project-design/docs/<type>.md` first; fall back to `.claude/references/template/docs/<type>.md`.
+   Resolve the template path for each documentation type: check `product-design/docs/<type>.md` first; fall back to `.claude/references/template/docs/<type>.md`.
 
    **Single doc type** (bare scope, --type, or --auto-detect with one result):
    Launch the `document-generator` agent (Agent tool, subagent_type=`general-purpose`, using the prompt from `.claude/agents/document-generator.md`) with:
@@ -96,7 +96,7 @@ If there are no arguments, ask the user what they need documented.
    - `scope`: the scope from arguments or auto-detection
    - `template_path`: the resolved template file path
    - `quality_guide_path`: `.claude/references/general/documentation-quality.md`
-   - `project_context`: paths to `project-design/conventions.md` (or template fallback), `project-design/product-design-as-coded.md`
+   - `project_context`: paths to `product-design/conventions.md` (or template fallback), `product-design/product-design-as-coded.md`
    - `output_path`: the appropriate project location for this doc type
 
    **Multiple doc types** (--plan with multiple non-N/A Docs: fields, or --auto-detect with multiple results):

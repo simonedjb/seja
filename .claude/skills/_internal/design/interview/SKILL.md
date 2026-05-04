@@ -62,7 +62,7 @@ Critical constraint: Phase B MUST enumerate fields from `## Field Classification
 
 3. **Gap-filling**: for fields with no answer and no default, ask a single focused question per gap.
 
-4. **D-NNN decision extraction**: detect trade-off discussions that arose during Phase A or Phase C Q&A. Offer to create D-NNN entries via `apply_marker.py --marker DECISION_APPEND` (same mechanism as /research step 9b). Requires `project-design/product-design-as-intended.md` to exist; inform user if absent.
+4. **D-NNN decision extraction**: detect trade-off discussions that arose during Phase A or Phase C Q&A. Offer to create D-NNN entries via `apply_marker.py --marker DECISION_APPEND` (same mechanism as /research step 9b). Requires `product-design/product-design-as-intended.md` to exist; inform user if absent.
 
 5. Announce transition to Phase D (template instantiation -- same as Mode 1 step 7 onward).
 

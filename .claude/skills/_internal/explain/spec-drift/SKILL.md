@@ -120,13 +120,13 @@ The promote workflow has two phases so the designer owns every word of the Decis
 
 2. Read `_output/promote-proposals/promote-proposal-plan-<id>.md`. Extract the list of drafted `D-NNN` IDs.
 
-3. **Heading-only grep** `project-design/product-design-as-intended.md` for each D-NNN: regex `^###\s+D-NNN(?::|\s*$)`. Do NOT match title text, Context prose, or body -- the designer may have rewritten the prose (designer-voice preservation). Split results into `present` and `missing`.
+3. **Heading-only grep** `product-design/product-design-as-intended.md` for each D-NNN: regex `^###\s+D-NNN(?::|\s*$)`. Do NOT match title text, Context prose, or body -- the designer may have rewritten the prose (designer-voice preservation). Split results into `present` and `missing`.
    - `present` empty: abort with "No D-NNN entries from the proposal found in `product-design-as-intended.md`. Copy the draft entries from `_output/promote-proposals/promote-proposal-plan-<id>.md` first, then re-run `/explain spec-drift --promote --apply-markers plan-<id>`."
    - `present` non-empty: proceed with present set; at end of phase, report `missing` set to the designer.
 
 4. For each D-NNN in both the proposal and the file, AskUserQuestion: "Flip STATUS from implemented to established for D-NNN?" (per-item confirmation).
 
-5. For confirmed items, invoke `python .claude/skills/scripts/apply_marker.py --file project-design/product-design-as-intended.md --id D-<NNN> --marker STATUS --value established --plan plan-<id> --date <today>`. Legacy `STATUS: IMPLEMENTED` is detected by the widened regex and REPLACED (not stacked) by the lowercase form.
+5. For confirmed items, invoke `python .claude/skills/scripts/apply_marker.py --file product-design/product-design-as-intended.md --id D-<NNN> --marker STATUS --value established --plan plan-<id> --date <today>`. Legacy `STATUS: IMPLEMENTED` is detected by the widened regex and REPLACED (not stacked) by the lowercase form.
 
 6. **Pending ledger lifecycle updates** (2-branch closure):
    - All proposed `D-NNN` entries present in the intent file AND every present item was flipped successfully: invoke `python .claude/skills/scripts/pending.py done --source plan-<id> --type apply-promote-markers`.

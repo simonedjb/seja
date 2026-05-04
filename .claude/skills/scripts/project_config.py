@@ -30,7 +30,8 @@ from pathlib import Path
 # Repo root discovery
 # ---------------------------------------------------------------------------
 
-_CONVENTIONS_REL = Path("project-design", "conventions.md")
+_CONVENTIONS_REL = Path("product-design", "conventions.md")
+_CONVENTIONS_REL_LEGACY = Path("project-design", "conventions.md")  # pre-migration-0003 name
 _TEMPLATE_REL = Path(".claude", "references", "template", "conventions.md")
 _ROW_RE = re.compile(
     r"^\|\s*`([^`]+)`\s*\|\s*`([^`]+)`\s*\|", re.MULTILINE
@@ -54,7 +55,9 @@ def _find_repo_root() -> Path:
 REPO_ROOT = _find_repo_root()
 GENERAL_REFS_DIR = REPO_ROOT / ".claude" / "references" / "general"
 TEMPLATE_REFS_DIR = REPO_ROOT / ".claude" / "references" / "template"
-PROJECT_REFS_DIR = REPO_ROOT / "project-design"
+_pd_new = REPO_ROOT / "product-design"
+_pd_legacy = REPO_ROOT / "project-design"
+PROJECT_REFS_DIR = _pd_new if _pd_new.is_dir() else _pd_legacy
 
 # ---------------------------------------------------------------------------
 # Config parsing (lazy, cached at module level)
@@ -69,6 +72,11 @@ def _parse_config() -> dict[str, str]:
     global _warned_missing
 
     conventions = REPO_ROOT / _CONVENTIONS_REL
+    if not conventions.is_file():
+        # Fall back to pre-migration-0003 directory name.
+        legacy = REPO_ROOT / _CONVENTIONS_REL_LEGACY
+        if legacy.is_file():
+            conventions = legacy
     if not conventions.is_file():
         template = REPO_ROOT / _TEMPLATE_REL
         if template.is_file():

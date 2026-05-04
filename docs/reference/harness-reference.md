@@ -1,7 +1,7 @@
 ---
 diataxis: reference
 freshness: release-bound
-last-reviewed: 2026-05-02
+last-reviewed: 2026-05-03
 ---
 
 <!--
@@ -14,7 +14,7 @@ Do not edit by hand. To regenerate:
 
 # SEJA harness reference
 
-Generated 2026-05-02T03:13:33Z from seja-priv harness state.
+Generated 2026-05-03T20:23:48Z from seja-priv harness state.
 
 ## Skills
 
@@ -81,6 +81,7 @@ Generated 2026-05-02T03:13:33Z from seja-priv harness state.
 | check_docs.py | Documentation consistency checker with plugin-based scanners. | agent-invoked, hook-ci, user-cli | active | `.claude/skills/check/check_docs.py` | `concepts/call-graph.md`, `how-to/quality-gates.md` |
 | check_git_freshness.py | Best-effort git upstream freshness report. | skill-invoked, user-cli | active | `.claude/skills/check/check_git_freshness.py` | `concepts/call-graph.md`, `how-to/quality-gates.md` |
 | check_harness_drift.py | Compare a canonical harness source against a target | skill-invoked, user-cli | active | `.claude/skills/scripts/check_harness_drift.py` |  |
+| conversation_trace.py | Append-only conversation trace log for SEJA. | skill-invoked, user-cli | active | `.claude/skills/scripts/conversation_trace.py` |  |
 | count_loc.py | Local source line counter for this workspace. | user-cli | active | `.claude/skills/scripts/count_loc.py` | `concepts/call-graph.md` |
 | create_workspace.py | Create a project workspace from the foundational SEJA | user-cli | active | `.claude/skills/scripts/create_workspace.py` | `concepts/call-graph.md`, `how-to/brownfield-workspace.md` |
 | cut_tag.py | Cut a release tag on seja-priv and file a pending publish entry. | user-cli | active | `tools/cut_tag.py` |  |
@@ -100,10 +101,13 @@ Generated 2026-05-02T03:13:33Z from seja-priv harness state.
 | priv_report.py | Private-surface metric report. | user-cli | active | `tools/priv_report.py` |  |
 | publish.py | Single-command launcher for the seja-priv release pipeline. | user-cli | active | `tools/publish.py` |  |
 | reflect_decision_reversals.py | surface accepted decisions that were later undone. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_decision_reversals.py` | `concepts/call-graph.md` |
+| reflect_deep_scope.py | scope resolution and filtering for /reflect --deep. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_deep_scope.py` |  |
 | reflect_duration_anomalies.py | surface skill runs whose duration is anomalously long. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_duration_anomalies.py` | `concepts/call-graph.md` |
+| reflect_event_matrix.py | Vega-Lite event matrix for /reflect --deep. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_event_matrix.py` |  |
 | reflect_revision_rate.py | per-skill rate of user-revised outputs. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_revision_rate.py` | `concepts/call-graph.md` |
 | reflect_sequence_mining.py | first-order and second-order skill transition frequencies. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_sequence_mining.py` | `concepts/call-graph.md` |
 | reflect_stuck_loops.py | detect sessions where the same skill runs repeatedly on similar briefs. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_stuck_loops.py` | `concepts/call-graph.md` |
+| reflect_transition_graph.py | directed skill-transition graph visualization. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_transition_graph.py` |  |
 | resolve_seja_version.py | Resolve the public seja release tag to pin against. | skill-invoked, user-cli | active | `.claude/skills/seja-setup/resolve_seja_version.py` | `concepts/call-graph.md`, `how-to/greenfield-collocated.md`, `how-to/upgrade.md` |
 | run_migrations.py | Run pending SEJA harness migrations. | script-invoked, user-cli | active | `.claude/skills/scripts/run_migrations.py` | `concepts/call-graph.md` |
 | sync_to_public.py | Sync toolkit files from seja-priv to a target directory. | user-cli | active | `tools/sync_to_public.py` |  |
@@ -152,8 +156,10 @@ Generated 2026-05-02T03:13:33Z from seja-priv harness state.
 | human_markers_registry.py | Shared registry for Human (markers) files and allowed marker patterns. | library | active | `.claude/skills/scripts/human_markers_registry.py` | `concepts/call-graph.md` |
 | load_quickguide.py | Shared loader for SKILL-quickguide.md sibling files. | library | active | `.claude/skills/scripts/load_quickguide.py` | `concepts/call-graph.md` |
 | project_config.py | Central configuration for SEJA helper scripts. | library | active | `.claude/skills/scripts/project_config.py` | `concepts/call-graph.md` |
+| reflect_colors.py | shared color palette for /reflect --deep visualizations. | library | active | `.claude/skills/reflect/reflect_colors.py` |  |
 | smoke_test_core.py | Smoke Test Core — generic framework for registry-driven API smoke testing. | library | active | `.claude/skills/scripts/smoke_test_core.py` | `concepts/call-graph.md` |
 | test_detect_setup_state.py | Tests for detect_setup_state.py. | test | active | `.claude/skills/seja-setup/test_detect_setup_state.py` | `concepts/call-graph.md` |
+| test_reflect_deep.py | Tests for /reflect --deep mode modules. | test | active | `.claude/skills/reflect/test_reflect_deep.py` |  |
 
 ### Archived migrations
 
@@ -195,6 +201,7 @@ Generated 2026-05-02T03:13:33Z from seja-priv harness state.
 - **check_version_changelog_sync.py** (primary: Skill- or agent-invoked) -- also classified as: hook-ci; see [Hook and CI](#hook-and-ci)
 - **check_vuln_patterns.py** (primary: Skill- or agent-invoked) -- also classified as: hook-ci; see [Hook and CI](#hook-and-ci)
 - **check_worktree_health.py** (primary: Skill- or agent-invoked) -- also classified as: hook-ci; see [Hook and CI](#hook-and-ci)
+- **conversation_trace.py** (primary: User-invocable) -- also classified as: skill-invoked; see [Skill- or agent-invoked](#skill--or-agent-invoked)
 - **detect_setup_state.py** (primary: User-invocable) -- also classified as: skill-invoked; see [Skill- or agent-invoked](#skill--or-agent-invoked)
 - **generate_briefs_index.py** (primary: User-invocable) -- also classified as: skill-invoked; see [Skill- or agent-invoked](#skill--or-agent-invoked)
 - **generate_decision_digest.py** (primary: User-invocable) -- also classified as: skill-invoked; see [Skill- or agent-invoked](#skill--or-agent-invoked)
@@ -205,10 +212,13 @@ Generated 2026-05-02T03:13:33Z from seja-priv harness state.
 - **migrate_qa_logs_to_parent_dirs.py** (primary: Archived migrations) -- also classified as: skill-invoked, user-cli; see [Skill- or agent-invoked](#skill--or-agent-invoked); see [User-invocable](#user-invocable)
 - **pending.py** (primary: User-invocable) -- also classified as: skill-invoked; see [Skill- or agent-invoked](#skill--or-agent-invoked)
 - **reflect_decision_reversals.py** (primary: User-invocable) -- also classified as: script-invoked; 
+- **reflect_deep_scope.py** (primary: User-invocable) -- also classified as: script-invoked; 
 - **reflect_duration_anomalies.py** (primary: User-invocable) -- also classified as: script-invoked; 
+- **reflect_event_matrix.py** (primary: User-invocable) -- also classified as: script-invoked; 
 - **reflect_revision_rate.py** (primary: User-invocable) -- also classified as: script-invoked; 
 - **reflect_sequence_mining.py** (primary: User-invocable) -- also classified as: script-invoked; 
 - **reflect_stuck_loops.py** (primary: User-invocable) -- also classified as: script-invoked; 
+- **reflect_transition_graph.py** (primary: User-invocable) -- also classified as: script-invoked; 
 - **resolve_seja_version.py** (primary: User-invocable) -- also classified as: skill-invoked; see [Skill- or agent-invoked](#skill--or-agent-invoked)
 - **run_migrations.py** (primary: User-invocable) -- also classified as: script-invoked; 
 - **run_preflight_fast.py** (primary: Skill- or agent-invoked) -- also classified as: hook-ci; see [Hook and CI](#hook-and-ci)

@@ -262,11 +262,11 @@ def compute_coverage(
         plans_dir_var = "_output/plans"
 
     # Resolve design-intent path.
-    # New layout: project-specific files live under project-design/ at root.
+    # New layout: project-specific files live under product-design/ at root.
     # The DESIGN_INTENT convention value may carry a "project/" prefix from the
-    # old _references/project/ layout; strip it and resolve under project-design/.
+    # old _references/project/ layout; strip it and resolve under product-design/.
     _di_stripped = design_intent_var.removeprefix("project/") if design_intent_var else design_intent_var
-    spec_path = root / "project-design" / _di_stripped
+    spec_path = root / "product-design" / _di_stripped
     # Legacy fallback for workspaces not yet upgraded.
     if not spec_path.is_file():
         spec_path = root / "_references" / design_intent_var

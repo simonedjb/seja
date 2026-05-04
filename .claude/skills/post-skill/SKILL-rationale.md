@@ -12,6 +12,7 @@ The telemetry record written at step 8b has grown twice under an additive, backw
 
 - **14 -> 17 fields** (plan-000295): introduced `qa_type`, `user_revised_output`, and `decision_points` to capture interaction shape, lazy post-hoc revision detection, and per-`AskUserQuestion` rationale-presentation flags.
 - **17 -> 18 fields** (plan-000321): introduced `advisory_decisions` so `/research` can record the substance of HIGH/MEDIUM recommendations as structured entries (separate from the `decision_points` list, which only records `AskUserQuestion` interactions).
+- **20 -> 21 fields** (plan-000568): introduced `session_id` (Claude Code session UUID from `CLAUDE_SESSION_ID`) to enable correlation of skill invocations within the same conversation session.
 
 Backwards-compatibility invariant (carried verbatim from the SKILL.md body prior to plan-000458 step 8): the new fields are additive. JSON field order is non-significant; well-behaved readers ignore unknown keys. No field has ever been renamed, removed, or retyped. Any telemetry reader that expected the previous 14-field or 17-field record continues to parse newer records as a JSON object and can safely ignore the new keys. This invariant is what lets `/reflect` and future downstream tools run against a mixed telemetry stream without version gates.
 

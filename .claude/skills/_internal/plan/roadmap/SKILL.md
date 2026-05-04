@@ -45,7 +45,7 @@ Steps 1-11 below. Common-step reuse: step 1 = C1; step 8 = C2+C3 with `--type ro
    - `project/standards.md § i18n` (locales, translation scope)
    - `project/security-checklists.md` (validation, auth)
 
-2b. **Requirements extraction pass**: if `project-design/product-design-as-intended.md` contains REQ markers (`<!-- REQ-*-NNN -->`), launch a `general-purpose` agent (Agent tool) with fresh context to extract a requirements index. The agent:
+2b. **Requirements extraction pass**: if `product-design/product-design-as-intended.md` contains REQ markers (`<!-- REQ-*-NNN -->`), launch a `general-purpose` agent (Agent tool) with fresh context to extract a requirements index. The agent:
    1. Reads `product-design-as-intended.md` in full.
    2. For each REQ marker extracts: ID, section number, heading/title, classification (per type prefix in `general/shared-definitions.md` -- PERM/VAL -> security; UX/MC/JM -> ux; ENT/DELTA -> technical; I18N -> cross-cutting).
    3. Outputs a flat markdown table:

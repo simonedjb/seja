@@ -46,11 +46,11 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
 1. Obtain UTC time via `date -u +"%Y-%m-%d %H:%M UTC"`; use the exact output as `<datetime>` (do not estimate).
 
-   Prepend `DONE | <datetime> | ` to the brief related to the execution (keep the start time intact). If a plan was generated, append ` | PLAN | <plan id>`.
+   Run `python .claude/skills/scripts/mark_brief_done.py --brief-pattern "<brief text>" --done-time "<datetime>" [--plan-id <id>]` to mark the matching STARTED entry as DONE.
 
    Checkpoint: `1 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
 
-1b. **Telemetry recording** -- prepare a record in context (flushed to disk at step 8b). Prepare a telemetry record per the schema in SKILL-reference.md (Telemetry Schema). Fields and qa_type enum are defined there.
+1b. **Telemetry recording** -- prepare a record in context (flushed to disk at step 8b). Prepare a telemetry record per the schema in SKILL-reference.md (Telemetry Schema). Fields and qa_type enum are defined there. Populate `session_id` from the `CLAUDE_SESSION_ID` environment variable if available in the conversation context; otherwise set to `null`.
 
 2. **As-Coded alignment** -- run when parent skill is `implement` (brief skill field). Skip when parent is `plan` (no code yet).
 
@@ -91,7 +91,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
    d. **Journey maps -- `product-design-as-coded.md § Journey Maps`** (inherit branch from 2b; branch 3 -> no-op): skip silently if `## Journey Maps` is a placeholder or `product-design-as-intended.md §15` is absent. Otherwise update incrementally: for each plan-added/modified feature, match against `JM-TB-NNN` in `product-design-as-intended.md §15 (Designed User Journeys)` and update status under `### JM-TB-NNN: ...`; for `JM-E-NNN`, cross-reference `project/ux-research-results.md §5`; update `### Delta from As-Intended`; append changelog to `### Changelog`. Tag `source: agent (post-skill)`. Anchor `Edit` on H3 text; stay within `## Journey Maps`; multi-section updates require multiple Edits (enforced by `check_section_boundary_writes.py` at 6c).
 
    e. **DONE marker proposal** -- if the plan implemented any user-facing features or journey steps:
-      1. Read the as-intended/as-coded registry from `project/conventions.md` (or `template/conventions.md`); for each as-intended file listed, scan `project-design/` for sections/rows matching features implemented by this plan (step descriptions + Files). Ignore items already carrying `STATUS: implemented` / `STATUS: IMPLEMENTED` / `ESTABLISHED`. Prepare a proposal listing: file path (rel to `project-design/`), heading/row id, and the marker `<!-- STATUS: implemented | plan-NNNNNN | YYYY-MM-DD -->`.
+      1. Read the as-intended/as-coded registry from `project/conventions.md` (or `template/conventions.md`); for each as-intended file listed, scan `product-design/` for sections/rows matching features implemented by this plan (step descriptions + Files). Ignore items already carrying `STATUS: implemented` / `STATUS: IMPLEMENTED` / `ESTABLISHED`. Prepare a proposal listing: file path (rel to `product-design/`), heading/row id, and the marker `<!-- STATUS: implemented | plan-NNNNNN | YYYY-MM-DD -->`.
       2. Present via AskUserQuestion: "The following as-intended items appear to have been implemented by this plan. Apply markers now, defer for later review, or skip?" Options (rationale per `.claude/references/general/constraints.md`):
          - **Apply now** -- I flip STATUS markers to `implemented` now, while the mapping is fresh. Recommended when the implementation has been verified in this session. NOT recommended when you are unsure whether every candidate item matches what shipped.
          - **Defer for later review** -- I add each candidate to the pending ledger for verification later. Recommended when the implementation looks right but you want a cool-down period. NOT recommended when the candidates are trivially correct and deferring is pure procrastination.
@@ -105,7 +105,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
    f. Include updated as-coded files and as-intended files with DONE markers in the commit scope (step 8).
 
    g. **Pending action creation from plan metadata** (same gate as step 2). Each invocation is silent on success; one-line `Warning: could not create pending action <type>: <reason>` on failure; never block.
-      i. Count Modified + Created in the plan's Files. If count >= `Verify-as-coded file threshold` from `## Periodic Triggers` in conventions.md (default 5): `python .claude/skills/scripts/pending.py add --type verify-as-coded --source plan-<id> --description "Review project-design/product-design-as-coded.md against the real implementation of plan-<id>"`.
+      i. Count Modified + Created in the plan's Files. If count >= `Verify-as-coded file threshold` from `## Periodic Triggers` in conventions.md (default 5): `python .claude/skills/scripts/pending.py add --type verify-as-coded --source plan-<id> --description "Review product-design/product-design-as-coded.md against the real implementation of plan-<id>"`.
       ii. If the plan has a non-empty `## Test plan` / `## Test Plan`: `python .claude/skills/scripts/pending.py add --type test-implementation --source plan-<id> --description "Run manual tests per plan-<id>'s Test plan section"`.
       iii. If step 2b's opt-out branch was taken (parent `/implement` had `--skip-docs` per 2b.c, or user chose "Skip" on 2b.d) AND the plan has any non-N/A `Docs:` step: `python .claude/skills/scripts/pending.py add --type update-documentation --source plan-<id> --description "Run /document --plan plan-<id>"`.
       iv. **Implement mark-done safety net**: `python .claude/skills/scripts/pending.py done --source plan-<id> --type implement` unconditionally. Closes the entry filed at `/plan` step 7h; idempotent (no-op if absent or already done). Also recovers when a crash occurred between `/implement`'s rename and its own mark-done call.
@@ -150,13 +150,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
 5. **Git-state safety check**: run `git status`. Do NOT commit if a rebase is in progress (`rebase-merge` / `rebase-apply` in `.git/`), an unmerged conflict exists, or HEAD is detached -- inform the user and output the commit message for manual use. On `main`/`master`: warn and ask for confirmation.
 
-6. **Commit scope verification**: `git diff --cached --name-only` lists pre-staged files. Expected paths (priority order):
-   a. If a plan was produced (plan ID argument), read the plan's Files (Modified + Created); also include `project/product-design-as-coded.md` from `project-design/`.
-   b. Otherwise, parent's output directory from project/conventions.md (e.g., `/research` -> `${ADVISORY_DIR}`; `/explain` -> matching `${EXPLAINED_*_DIR}`).
-   c. Always include `${BRIEFS_FILE}`, `${BRIEFS_INDEX_FILE}`, `${ARTIFACT_INDEX_FILE}`, the QA log file (parent-collocated path from step 3, not `${QA_LOGS_DIR}`; omit when `skip_qa_log: true`), and `${OUTPUT_DIR}/telemetry.jsonl` (written at 8b).
-   d. If `--roadmap <roadmap-id>` is present in the parent's `$ARGUMENTS` (conversation-context channel -- `/implement --roadmap <id>` is the canonical producer), resolve the roadmap file via `${OUTPUT_DIR}/INDEX.md` lookup and add it. Prevents the Status flip (`/implement` Auto step 15 / Manual step 11) from being flagged.
-
-   Files under `_loom/` and `.claude/` matching the skill's output convention are always allowed. Unexpected pre-staged files -> warn, list, output the commit message for manual use. Otherwise stage and commit.
+6. **Commit scope verification**: run `python .claude/skills/scripts/verify_commit_scope.py --skill-type <type> --artifact-id <id> [--plan-id <id>] --always-include <paths>` to check staged files against expected paths. Pass `--roadmap-id <id>` when `--roadmap` was supplied to the parent skill. The script outputs JSON with `expected`, `staged`, `unexpected`, `missing`, and `pass` keys. Unexpected pre-staged files -> warn, list, output the commit message for manual use. Otherwise stage and commit.
 
 6b. **Fast preflight gate** -- `python .claude/skills/scripts/run_preflight_fast.py`. Exit 0 -> proceed silently. Non-zero -> display failures; ask whether to proceed or abort (advisory, not blocking -- post-skill runs after lengthy work; `.githooks/pre-commit` is the hard gate). Script not found -> skip silently.
 
@@ -165,7 +159,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 7. **Index regeneration**:
    a. `python .claude/skills/scripts/generate_briefs_index.py` -- refreshes `${BRIEFS_INDEX_FILE}`.
    b. `python .claude/skills/scripts/generate_macro_index.py` -- refreshes `${ARTIFACT_INDEX_FILE}` (`${OUTPUT_DIR}/INDEX.md`).
-   c. **Cross-reference update**: if the produced artifact has a `source: <type>-<id>` header, open the source and append the new artifact's ID to its `spawned:` field (comma-separated; create if absent).
+   c. **Cross-reference update**: run `python .claude/skills/scripts/update_cross_refs.py --artifact <path>` on the produced artifact. The script reads the `source:` header and updates the `spawned:` field on the source artifact automatically.
    d. **Decision digest regeneration** (conditional): if the completed skill was `/research` with HIGH/MEDIUM recommendations, OR a plan applied DECISION_APPEND markers: `python .claude/skills/post-skill/generate_decision_digest.py` to regenerate `${DECISION_DIGEST_FILE}` (`${OUTPUT_DIR}/decision-digest.jsonl`); include in commit scope. Skip silently if not found.
 
    Checkpoint: `7 | <current datetime UTC> | $ARGUMENTS[0]`.
@@ -174,9 +168,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
 8. Stage the affected files (including regenerated indexes and updated as-coded files) and commit using the message from step 4. Checkpoint: `8 | <current datetime UTC> | $ARGUMENTS[0]`. Then delete `${OUTPUT_DIR}/.post-skill-checkpoint` -- post-skill completed successfully.
 
-8b. **Telemetry flush** -- enrich the step-1b record and write it. Populate the 3 commit-dependent fields left `null` at 1b: `git_commit_sha` via `git rev-parse HEAD`, `files_changed` via `git diff-tree --no-commit-id --name-only -r HEAD | wc -l`, `parent_skill` from conversation context (each `null` if commit skipped or unknown). Carry `qa_type`, `user_revised_output` (always `null`; `/reflect` populates lazily), `decision_points`, `advisory_decisions`, `research_decisions` forward from 1b unchanged. Append the complete record as one JSON line to `${OUTPUT_DIR}/telemetry.jsonl` (create if missing); example:
-
-    See SKILL-reference.md (Telemetry Flush Example) for the complete record shape.
+8b. **Telemetry flush** -- enrich the step-1b record and write it. Populate the 3 commit-dependent fields left `null` at 1b: `git_commit_sha` via `git rev-parse HEAD`, `files_changed` via `git diff-tree --no-commit-id --name-only -r HEAD | wc -l`, `parent_skill` from conversation context (each `null` if commit skipped or unknown). Run `python .claude/skills/scripts/build_telemetry.py --skill <skill> --id <id> --outcome <outcome> --timestamp <ISO> --duration-seconds <N> [all other fields]` to construct and append the complete record. See SKILL-reference.md (Telemetry Flush Example) for the complete record shape.
 
     **Gate**: compare `git rev-parse HEAD` now against the SHA captured before step 8. If they are equal (step 8 produced no commit), log `'telemetry deferred: no primary commit at <datetime>'` and skip the remainder of this step -- the pending telemetry record is dropped.
 
@@ -188,9 +180,17 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
 11. Output a link to the generated file within `${OUTPUT_DIR}` (see project/conventions.md).
 
-12. When done with the skill and Q&A, output `"<brief> (if available)\n<links to files (ex: plan id.md)>\n**--- SKILL COMPLETE: <skill name> <plan|roadmap|research|...> <id> ---**"`.
+12. When done with the skill and Q&A, output the following:
 
-13. **Contextual next-step suggestions**: read `.claude/references/general/skill-graph.md` and look up the completed skill in the "After" column. Only nudge when the skill has entries there; if the file is absent, skip silently. When matched: first output `"<brief> (if available)\n<links to files (ex: plan id.md)>"`, then present the user with numbered options (one per suggested skill). Question text:
+```
+<brief> (if available)
+<links to files (ex: plan id.md)>
+
+**--- SKILL COMPLETE: <skill name> <plan|roadmap|research|...> <id> ---**
+
+```
+
+13. **Contextual next-step suggestions**: read `.claude/references/general/skill-graph.md` and look up the completed skill in the "After" column. Only nudge when the skill has entries there; if the file is absent, skip silently. When matched: first output the numbered options as plain text (if skill invocations, include the entire call, with arguments as needed), then present the user with numbered options (one per suggested skill). Question text:
 
     > "You might want to try next:"
 

@@ -11,7 +11,7 @@ tools: Read, Glob, Grep, Write
 
 You are a semiotic inspector. Your task is to conduct a Semiotic Inspection Method (SIM) evaluation of a project's interface communicability.
 
-**Before starting**, read `project-design/conventions.md` if it exists (otherwise fall back to `.claude/references/template/conventions.md`) for project paths.
+**Before starting**, read `product-design/conventions.md` if it exists (otherwise fall back to `.claude/references/template/conventions.md`) for project paths.
 
 ## Input
 

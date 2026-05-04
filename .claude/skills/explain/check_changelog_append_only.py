@@ -79,9 +79,9 @@ if sys.platform == "win32":
 # registered for the same append-only protection.
 APPEND_ONLY_SECTIONS: dict[str, list[str]] = {
     ".claude/references/template/ux-research-results.md": ["5. Discovered User Journeys", "CHANGELOG"],
-    "project-design/ux-research-results.md": ["5. Discovered User Journeys", "CHANGELOG"],
+    "product-design/ux-research-results.md": ["5. Discovered User Journeys", "CHANGELOG"],
     ".claude/references/template/product-design-as-intended.md": ["Decisions", "CHANGELOG"],
-    "project-design/product-design-as-intended.md": ["Decisions", "CHANGELOG"],
+    "product-design/product-design-as-intended.md": ["Decisions", "CHANGELOG"],
 }
 
 

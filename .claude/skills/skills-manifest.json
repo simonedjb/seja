@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-02T03:13:57Z",
+  "generated": "2026-05-03T17:09:45Z",
   "count": 15,
   "skills": [
     {
@@ -89,7 +89,7 @@
     {
       "name": "reflect",
       "description": "On-demand reflection anchored on specific plans, research reports, or other artifacts. I summarize the artifacts you choose, ask what stands out, and record your reflection.",
-      "argument_hint": "[--telemetry [--since 30d] [--skill <name>] [--dry-run]]",
+      "argument_hint": "[--telemetry [--since 30d] [--skill <name>] [--dry-run]] | [--deep [scope] [--since 30d]]",
       "category": "analysis",
       "version": "2.0.0"
     },

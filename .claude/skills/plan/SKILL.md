@@ -56,7 +56,7 @@ metadata:
 
 ## Design Guard
 
-Before planning, verify `project/conventions.md` exists in `project-design/`. If missing, stop and tell the user: "No project design found. Run `/design` first to define your project's stack, conventions, and domain model." If present, proceed.
+Before planning, verify `project/conventions.md` exists in `product-design/`. If missing, stop and tell the user: "No project design found. Run `/design` first to define your project's stack, conventions, and domain model." If present, proceed.
 
 If there are no arguments, ask for the brief.
 
@@ -99,7 +99,7 @@ See [Metacomm framing -- additional context](#metacomm-framing--additional-conte
 
 ### Metacomm framing -- additional context
 
-1. **Read existing intentions**: if `project-design/product-design-as-intended.md` exists, read it before generating the plan -- it holds per-feature metacommunication intentions.
+1. **Read existing intentions**: if `product-design/product-design-as-intended.md` exists, read it before generating the plan -- it holds per-feature metacommunication intentions.
 
 2. **Contradiction detection**: if the new brief contradicts an existing intention (e.g., brief says "remove tagging" but an existing intention describes tagging), emit a `Metacomm contradiction` warning listing the brief's directive, the conflicting intention (quoted), and a recommendation (update the intention, or confirm the brief supersedes it).
 

@@ -111,12 +111,12 @@ class TestComputeDriftRemove:
         _make_harness(source, _skill_file("plan"))
         _make_harness(target, {
             **_skill_file("plan"),
-            "project-design/conventions.md": "custom",
+            "product-design/conventions.md": "custom",
         })
 
         report = chd.compute_drift(source, target)
         remove_paths = [e.rel_path for e in report.remove]
-        assert not any("project-design" in p for p in remove_paths)
+        assert not any("product-design" in p for p in remove_paths)
 
 
 class TestComputeDriftRevise:

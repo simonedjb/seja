@@ -271,7 +271,7 @@ def run_create(
 
     # --- 5. Generate project/conventions.md ---
     template_path = source_root / ".claude" / "references" / "template" / "conventions.md"
-    conventions_dest = workspace / "project-design" / "conventions.md"
+    conventions_dest = workspace / "product-design" / "conventions.md"
 
     if template_path.is_file():
         conventions_content, backend_dir, frontend_dir = generate_conventions(template_path, workspace, target)
@@ -329,7 +329,7 @@ def run_create(
         "Start a session: ./launch.sh (Unix/Git Bash) or launch.bat (Windows)."
     )
     report_manual.append(
-        "Review project-design/conventions.md and fill in remaining "
+        "Review product-design/conventions.md and fill in remaining "
         "{{PLACEHOLDER}} values."
     )
     report_manual.append(

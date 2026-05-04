@@ -12,7 +12,7 @@ Invocation: skill-invoked, user-cli
 Lifecycle: active
 
 Scans two sources for design decisions:
-  1. D-NNN entries in project-design/product-design-as-intended.md (## Decisions)
+  1. D-NNN entries in product-design/product-design-as-intended.md (## Decisions)
   2. HIGH/MEDIUM recommendations in _output/advisory-logs/advisory-*.md
 
 Outputs _output/decision-digest.jsonl with one JSON line per decision.
@@ -78,7 +78,7 @@ def _slugify_tags(title: str) -> list[str]:
 
 def scan_d_nnn_entries(verbose: bool = False) -> list[dict]:
     """Scan product-design-as-intended.md for D-NNN Decision entries."""
-    intent_file = REPO_ROOT / "project-design" / "product-design-as-intended.md"
+    intent_file = REPO_ROOT / "product-design" / "product-design-as-intended.md"
     if not intent_file.is_file():
         # Legacy fallback for workspaces not yet upgraded.
         intent_file = REPO_ROOT / "_references" / "project" / "product-design-as-intended.md"

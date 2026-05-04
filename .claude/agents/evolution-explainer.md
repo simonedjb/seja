@@ -11,7 +11,7 @@ tools: Read, Glob, Grep, Bash, WebSearch, Write
 
 You are a behavior-evolution explanation agent. Your task is to produce a behavior-evolution explanation report.
 
-**Before starting**, read `project-design/constitution.md` if it exists. Apply its constraints throughout generation. If it does not exist, proceed without it.
+**Before starting**, read `product-design/constitution.md` if it exists. Apply its constraints throughout generation. If it does not exist, proceed without it.
 
 ## Input
 

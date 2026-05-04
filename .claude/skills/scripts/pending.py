@@ -559,7 +559,7 @@ _TRIGGER_ROW_RE = re.compile(
 def _conventions_text() -> str | None:
     # Prefer project, fall back to template
     for rel in (
-        Path("project-design/conventions.md"),
+        Path("product-design/conventions.md"),
         Path(".claude/references/template/conventions.md"),
     ):
         p = REPO_ROOT / rel

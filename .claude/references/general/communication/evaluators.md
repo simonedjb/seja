@@ -21,7 +21,7 @@ designer_description: "When you run /communicate for evaluators -- the CTOs, tec
 
 - **Executive Overview**: What the harness is, what problem it solves, and how it differs from ad-hoc AI-assisted development. One-page summary with key differentiators and constraints.
 - **Adoption Path**: Concrete steps from first contact to team-wide rollout. Prerequisites, time investment, and what changes in daily workflow.
-- **Architecture Overview**: How the harness is structured — skills, review perspectives, onboarding layers, project-design/. Diagram of component relationships and extension points.
+- **Architecture Overview**: How the harness is structured — skills, review perspectives, onboarding layers, product-design/. Diagram of component relationships and extension points.
 
 ### Deep-dive (load for thorough evaluation or when Evaluator is the primary audience)
 

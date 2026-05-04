@@ -16,11 +16,11 @@ This mode extends the install internal. Before executing demo-specific steps bel
 
 > **Incompatible with `--workspace` and `--upgrade`.** If combined, reject with an error.
 
-Demo mode uses `.claude/references/template/demo/conventions.md` as the pre-answered questionnaire output; Section 1 basic-definitions is **not** shown to the user. Step 4b detects `--demo` and skips the questionnaire entirely (see its inline "Skip entirely when `--demo` is active" clause). Step 9 below then copies the pre-filled demo `conventions.md` into `project-design/conventions.md`. The post-questionnaire scaffolding steps (`Scaffold-CLAUDE.md` at 7c, `Scaffold-Rules` at 7d, `Scaffold-SmokeTestInfra` at 7e) run per their usual logic against the pre-populated `conventions.md`, producing `CLAUDE.md`, rule files, and smoke-test infrastructure flavored for the TaskFlow demo stack. `Scaffold-SmokeTestInfra` is gated on backend presence as usual -- it emits files only when the demo `conventions.md` carries a non-`none` `BACKEND_FRAMEWORK`.
+Demo mode uses `.claude/references/template/demo/conventions.md` as the pre-answered questionnaire output; Section 1 basic-definitions is **not** shown to the user. Step 4b detects `--demo` and skips the questionnaire entirely (see its inline "Skip entirely when `--demo` is active" clause). Step 9 below then copies the pre-filled demo `conventions.md` into `product-design/conventions.md`. The post-questionnaire scaffolding steps (`Scaffold-CLAUDE.md` at 7c, `Scaffold-Rules` at 7d, `Scaffold-SmokeTestInfra` at 7e) run per their usual logic against the pre-populated `conventions.md`, producing `CLAUDE.md`, rule files, and smoke-test infrastructure flavored for the TaskFlow demo stack. `Scaffold-SmokeTestInfra` is gated on backend presence as usual -- it emits files only when the demo `conventions.md` carries a non-`none` `BACKEND_FRAMEWORK`.
 
 Runs Standard Install steps 1-7 (skipping 7b -- deferred to after step 10), then:
 
-9. **Copy demo design files** from `.claude/references/template/demo/` (except `WALKTHROUGH.md`) into `project-design/`:
+9. **Copy demo design files** from `.claude/references/template/demo/` (except `WALKTHROUGH.md`) into `product-design/`:
    - `conventions.md` -- TypeScript + React conventions (TaskFlow)
    - `constitution.md` -- accessibility, simplicity, test-coverage principles
    - `product-design-as-intended.md` -- Task and Category entities, task-creation and category-filtering intents

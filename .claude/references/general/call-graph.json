@@ -1,7 +1,7 @@
 {
-  "generated": "2026-05-02T03:13:32Z",
-  "node_count": 213,
-  "edge_count": 463,
+  "generated": "2026-05-03T17:49:49Z",
+  "node_count": 219,
+  "edge_count": 475,
   "nodes": [
     {
       "id": "agent:architecture-explainer",
@@ -1212,6 +1212,14 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:epistemic_trace.py",
+      "type": "script",
+      "label": "epistemic_trace.py",
+      "path": ".claude/skills/scripts/epistemic_trace.py",
+      "description": "When a freeform Q&A exchange happens outside a skill, I'm the\nappend-only ledger that records each question-answer pair with session\nlinkage, event chaining, and automatic sensitivity masking so the\nepistemic history of the project is preserved without leaking secrets.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:generate_briefs_index.py",
       "type": "script",
       "label": "generate_briefs_index.py",
@@ -1356,6 +1364,14 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:reflect_colors.py",
+      "type": "script",
+      "label": "reflect_colors.py",
+      "path": ".claude/skills/reflect/reflect_colors.py",
+      "description": "When /reflect --deep renders an event matrix or transition graph,\nI'm the shared palette everyone pulls from -- a Viridis 7-class scale for\nthe seven lifecycle skills and four warm tones for mode variants, so every\nchart speaks the same color language without each visualizer reinventing\nits own mapping.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:reflect_decision_reversals.py",
       "type": "script",
       "label": "reflect_decision_reversals.py",
@@ -1364,11 +1380,27 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:reflect_deep_scope.py",
+      "type": "script",
+      "label": "reflect_deep_scope.py",
+      "path": ".claude/skills/reflect/reflect_deep_scope.py",
+      "description": "When /reflect --deep needs to know which records match a scope\nkeyword and/or date range, I'm the resolver that searches across briefs,\ntelemetry, and output file tags to build the filtered window -- grouping\nmatches by provenance so you see what matched and why.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:reflect_duration_anomalies.py",
       "type": "script",
       "label": "reflect_duration_anomalies.py",
       "path": ".claude/skills/reflect/reflect_duration_anomalies.py",
       "description": "When /reflect walks your recent sessions, I'm the pattern extractor\nthat notices when a skill ran much longer than its own history would\npredict -- a /plan that usually takes three minutes suddenly taking\nfifteen, for example. You see the outlier runs called out in your\nreflection so you can investigate whether the brief was heavier than\nusual, whether something slowed down, or whether the skill is drifting\nout of its comfort zone.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "script:reflect_event_matrix.py",
+      "type": "script",
+      "label": "reflect_event_matrix.py",
+      "path": ".claude/skills/reflect/reflect_event_matrix.py",
+      "description": "When /reflect --deep renders a timeline of what happened and when,\nI'm the event matrix builder that lays every skill invocation on a temporal\naxis with width proportional to duration, packing up to three lanes per\nskill so overlapping sessions stay visible instead of hiding behind each\nother -- producing a Vega-Lite spec, a static SVG, and a self-contained\nHTML page that all share the same Viridis color language.",
       "description_source": "designer-description"
     },
     {
@@ -1393,6 +1425,14 @@
       "label": "reflect_stuck_loops.py",
       "path": ".claude/skills/reflect/reflect_stuck_loops.py",
       "description": "When /reflect walks your recent sessions, I'm the pattern extractor\nthat catches the \"I ran the same skill on the same kind of brief three\ntimes in half an hour\" shape -- a stuck loop where you kept retrying\ninstead of stepping back. You see those loops called out in your\nreflection so you can notice the pattern the next time it starts, and\nswitch tactic before the third retry instead of after it.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "script:reflect_transition_graph.py",
+      "type": "script",
+      "label": "reflect_transition_graph.py",
+      "path": ".claude/skills/reflect/reflect_transition_graph.py",
+      "description": "When /reflect --deep maps out how you actually move between skills,\nI'm the renderer that turns that movement into a directed graph -- nodes\nsized by how often you invoked each skill, edges weighted by how often one\nskill followed another, all painted with the shared Viridis palette. You\nget a DOT source for Graphviz, a static SVG if the `dot` binary is around,\nand a self-contained HTML page that renders the graph in-browser via viz.js,\nso the picture travels wherever you send it.",
       "description_source": "designer-description"
     },
     {
@@ -1466,6 +1506,14 @@
       "path": ".claude/skills/seja-setup/test_detect_setup_state.py",
       "description": "When /seja-setup inspects a directory to decide whether it is a fresh\ndownload, a partially initialised project, a finalised one, or the SEJA\ndev repo itself, I'm the test suite that pins each of those verdicts\nagainst a fixture directory. You get confidence that the state-detection\nlogic keeps returning the right enum for the right shape, so /seja-setup does\nnot one day agree to seed into a directory it should have refused.",
       "description_source": "designer-description"
+    },
+    {
+      "id": "script:test_reflect_deep.py",
+      "type": "script",
+      "label": "test_reflect_deep.py",
+      "path": ".claude/skills/reflect/test_reflect_deep.py",
+      "description": "Tests for /reflect --deep mode modules.\n\nInvocation: test\nLifecycle: active\n\nCovers reflect_colors, reflect_deep_scope, reflect_event_matrix, and\nreflect_transition_graph with synthetic data.  Also enforces the\nnon-prescriptive rule across all .py source files in this directory.",
+      "description_source": "developer-fallback"
     },
     {
       "id": "script:upgrade_harness.py",
@@ -1607,7 +1655,7 @@
       "label": "/reflect",
       "path": ".claude/skills/reflect/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Helps you reflect on specific work you have done. Two modes: **conversational** (default) where you pick artifacts and write your reflection in your own words, and **telemetry** (`--telemetry`) for statistical pattern mining across weeks of usage data.\n\nIn conversational mode, you choose a scope (recent plans, recent research, specific artifact by ID, time window, or free-form), I summarize the artifacts, ask one open-ended question, and save your reflection to `_output/reflections/reflection-<id>-<slug>.md`.\n\nIn telemetry mode, I read `telemetry.jsonl` and run 5 analysis primitives: sequence frequency, duration outliers, revision density, stuck-loop detection, and decision-reversal tracking.\n\n**Examples**:\n> `/reflect`\n> Asks which scope you want (recent plans, recent research, specific ID, time window, or free-form). You pick artifacts, I summarize them, ask what stands out, and write your reflection.\n\n> `/reflect --telemetry`\n> Reads the last 30 days of telemetry data, runs all 5 analysis primitives, and writes a statistical reflection report.\n\n> `/reflect --telemetry --since 14d`\n> Same as above but scoped to the last 14 days.\n\n> `/reflect --telemetry --skill research`\n> Filters telemetry analysis to only `/research` invocations.\n\n> `/reflect --telemetry --dry-run`\n> Prints the telemetry report to stdout without writing to disk.\n\n**When to use**: You want to step back and look at specific work you have done -- what you decided, what surprised you, what you would do differently. The conversational output is your own words anchored on real artifacts. Use `--telemetry` when you want statistical pattern mining instead of narrative reflection.\n\n**Next step**: `/research` for a prescriptive take on any pattern surfaced here, `/design` to turn a surfaced pattern into new design intents, or `/plan` to turn it into new work.\n\n**See also**: `/research` -- prescriptive follow-up for any insight that emerges from your reflection.",
+      "description": "**What it does**: Helps you reflect on specific work you have done. Three modes: **conversational** (default) where you pick artifacts and write your reflection in your own words, **deep** (`--deep`) for visualization-backed practice evolution narrative, and **telemetry** (`--telemetry`) for statistical pattern mining across weeks of usage data.\n\nIn conversational mode, you choose a scope (recent plans, recent research, specific artifact by ID, time window, or free-form), I summarize the artifacts, ask one open-ended question, and save your reflection to `_output/reflections/reflection-<id>-<slug>.md`.\n\nIn deep mode, I read telemetry and briefs within a time window, optionally filtered by a scope keyword, and produce an event matrix visualization (Vega-Lite), a transition graph (Graphviz DOT), and a past-tense practice evolution narrative. All output lands in `_output/reflections/` as a markdown report with companion visualization files.\n\nIn telemetry mode, I read `telemetry.jsonl` and run 5 analysis primitives: sequence frequency, duration outliers, revision density, stuck-loop detection, and decision-reversal tracking.\n\n**Examples**:\n> `/reflect`\n> Asks which scope you want (recent plans, recent research, specific ID, time window, or free-form). You pick artifacts, I summarize them, ask what stands out, and write your reflection.\n\n> `/reflect --deep publish`\n> Scopes to \"publish\" topic over the last 30 days. Produces event matrix, transition graph, and practice evolution narrative.\n\n> `/reflect --deep --since 14d`\n> All topics, last 14 days. Produces the full deep reflection with visualizations.\n\n> `/reflect --deep semiotic --since 7d`\n> Scopes to \"semiotic\" topic over the last 7 days.\n\n> `/reflect --telemetry`\n> Reads the last 30 days of telemetry data, runs all 5 analysis primitives, and writes a statistical reflection report.\n\n> `/reflect --telemetry --since 14d`\n> Same as above but scoped to the last 14 days.\n\n> `/reflect --telemetry --skill research`\n> Filters telemetry analysis to only `/research` invocations.\n\n> `/reflect --telemetry --dry-run`\n> Prints the telemetry report to stdout without writing to disk.\n\n**When to use**: You want to step back and look at specific work you have done -- what you decided, what surprised you, what you would do differently. The conversational output is your own words anchored on real artifacts. Use `--deep` when you want a visual timeline and narrative chronicle of practice evolution across a period. Use `--telemetry` when you want statistical pattern mining instead of narrative reflection.\n\n**Next step**: `/research` for a prescriptive take on any pattern surfaced here, `/design` to turn a surfaced pattern into new design intents, or `/plan` to turn it into new work.\n\n**See also**: `/research` -- prescriptive follow-up for any insight that emerges from your reflection.",
       "description_source": "quick-guide"
     },
     {
@@ -1625,7 +1673,7 @@
       "label": "/seja-setup",
       "path": ".claude/skills/seja-setup/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Manages SEJA's state in this project. Single entry point for every harness-lifecycle operation: install, finalise in place, companion workspace, demo bootstrap, and upgrade. On first install it scaffolds `CLAUDE.md` with stack-dependent content, populates `.claude/rules/` with stack-flavored rule files, and fills `project-design/conventions.md` with basic definitions. With no arguments, it inspects the current directory via `detect_setup_state.py` and routes to the correct action.\n\nState detection recognizes four project states: **no-harness** (fresh install target), **fresh-download** (SEJA cloned into project, needs finalisation), **partial-init** (conventions.md exists but design intent absent), and **finalised** (full project, offers upgrade).\n\n**Examples**:\n> `/seja-setup /path/to/my-project`\n> Detects the scenario (greenfield/existing), copies all harness files, populates conventions.md with stack definitions via the Section 1 questionnaire, scaffolds CLAUDE.md and rules, and tells you to run `/design` next.\n\n> `/seja-setup --here`\n> Detects you downloaded SEJA into your project folder; finalises setup in place. Prompts for git-history handling and cleanup of harness-dev artefacts.\n\n> `/seja-setup /path/to/my-project --workspace`\n> Creates a companion workspace directory alongside an existing codebase. The workspace is its own git repo with version-controlled design history.\n\n> `/seja-setup /path/to/taskflow-demo --demo`\n> Sets up the harness with the pre-configured TaskFlow demo project (pre-filled conventions, constitution, conceptual design, and walkthrough).\n\n> `/seja-setup --upgrade`\n> Upgrades harness files in the current project to the latest SemVer tag without touching project-specific files.\n\n> `/seja-setup --upgrade --version v0.2.0`\n> Pins the upgrade to a specific release tag instead of latest.\n\n> `/seja-setup --upgrade --dry-run`\n> Previews what the upgrade would change without applying anything.\n\n> `/seja-setup`\n> No args: inspects cwd, reports the detected state, and routes to install, finalise, upgrade menu, or refuse as appropriate.\n\n**When to use**: Every time you touch SEJA's state in a project -- first install, in-place finalisation, companion-workspace creation, demo bootstrap, or later harness upgrade. After the first iteration, you rarely run `/seja-setup` unless upgrading.\n\nStack-presence modes determine what gets scaffolded: **full-stack** (backend + frontend), **API-only** (`FRONTEND_FRAMEWORK=none`), **frontend-only** (`BACKEND_FRAMEWORK=none`), and **CLI / library** (both `none`). Each mode emits only the appropriate rows in `conventions.md`, sections in `CLAUDE.md`, rule files, and smoke-test infrastructure.\n\n**Next step**: `/design` after a fresh install to define design intent (entities, permissions, metacommunication, personas, standards). If you are new to SEJA, read `general/getting-started.md` first. After `--upgrade`: `/check health` to verify harness integrity, then `/explain spec-drift` to catch changed conventions.\n\n**Merge background**: This skill merges the former `/setup` and `/upgrade` into a unified harness-state command.",
+      "description": "**What it does**: Manages SEJA's state in this project. Single entry point for every harness-lifecycle operation: install, finalise in place, companion workspace, demo bootstrap, and upgrade. On first install it scaffolds `CLAUDE.md` with stack-dependent content, populates `.claude/rules/` with stack-flavored rule files, and fills `product-design/conventions.md` with basic definitions. With no arguments, it inspects the current directory via `detect_setup_state.py` and routes to the correct action.\n\nState detection recognizes four project states: **no-harness** (fresh install target), **fresh-download** (SEJA cloned into project, needs finalisation), **partial-init** (conventions.md exists but design intent absent), and **finalised** (full project, offers upgrade).\n\n**Examples**:\n> `/seja-setup /path/to/my-project`\n> Detects the scenario (greenfield/existing), copies all harness files, populates conventions.md with stack definitions via the Section 1 questionnaire, scaffolds CLAUDE.md and rules, and tells you to run `/design` next.\n\n> `/seja-setup --here`\n> Detects you downloaded SEJA into your project folder; finalises setup in place. Prompts for git-history handling and cleanup of harness-dev artefacts.\n\n> `/seja-setup /path/to/my-project --workspace`\n> Creates a companion workspace directory alongside an existing codebase. The workspace is its own git repo with version-controlled design history.\n\n> `/seja-setup /path/to/taskflow-demo --demo`\n> Sets up the harness with the pre-configured TaskFlow demo project (pre-filled conventions, constitution, conceptual design, and walkthrough).\n\n> `/seja-setup --upgrade`\n> Upgrades harness files in the current project to the latest SemVer tag without touching project-specific files.\n\n> `/seja-setup --upgrade --version v0.2.0`\n> Pins the upgrade to a specific release tag instead of latest.\n\n> `/seja-setup --upgrade --dry-run`\n> Previews what the upgrade would change without applying anything.\n\n> `/seja-setup`\n> No args: inspects cwd, reports the detected state, and routes to install, finalise, upgrade menu, or refuse as appropriate.\n\n**When to use**: Every time you touch SEJA's state in a project -- first install, in-place finalisation, companion-workspace creation, demo bootstrap, or later harness upgrade. After the first iteration, you rarely run `/seja-setup` unless upgrading.\n\nStack-presence modes determine what gets scaffolded: **full-stack** (backend + frontend), **API-only** (`FRONTEND_FRAMEWORK=none`), **frontend-only** (`BACKEND_FRAMEWORK=none`), and **CLI / library** (both `none`). Each mode emits only the appropriate rows in `conventions.md`, sections in `CLAUDE.md`, rule files, and smoke-test infrastructure.\n\n**Next step**: `/design` after a fresh install to define design intent (entities, permissions, metacommunication, personas, standards). If you are new to SEJA, read `general/getting-started.md` first. After `--upgrade`: `/check health` to verify harness integrity, then `/explain spec-drift` to catch changed conventions.\n\n**Merge background**: This skill merges the former `/setup` and `/upgrade` into a unified harness-state command.",
       "description_source": "quick-guide"
     },
     {
@@ -2765,6 +2813,18 @@
       "label": ""
     },
     {
+      "source": "script:epistemic_trace.py",
+      "target": "script:check_secrets.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:epistemic_trace.py",
+      "target": "script:project_config.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
       "source": "script:generate_briefs_index.py",
       "target": "script:project_config.py",
       "type": "imports",
@@ -2915,8 +2975,20 @@
       "label": ""
     },
     {
+      "source": "script:reflect_event_matrix.py",
+      "target": "script:reflect_colors.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
       "source": "script:reflect_stuck_loops.py",
       "target": "script:project_config.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:reflect_transition_graph.py",
+      "target": "script:reflect_colors.py",
       "type": "imports",
       "label": ""
     },
@@ -3037,6 +3109,30 @@
     {
       "source": "script:test_detect_setup_state.py",
       "target": "script:detect_setup_state.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:test_reflect_deep.py",
+      "target": "script:reflect_colors.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:test_reflect_deep.py",
+      "target": "script:reflect_deep_scope.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:test_reflect_deep.py",
+      "target": "script:reflect_event_matrix.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:test_reflect_deep.py",
+      "target": "script:reflect_transition_graph.py",
       "type": "imports",
       "label": ""
     },
@@ -4203,6 +4299,12 @@
     },
     {
       "source": "skill:pre-skill",
+      "target": "script:epistemic_trace.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:pre-skill",
       "target": "script:generate_briefs_index.py",
       "type": "invokes",
       "label": ""
@@ -4284,6 +4386,24 @@
     {
       "source": "skill:reflect",
       "target": "script:generate_reflection_report.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:reflect",
+      "target": "script:reflect_deep_scope.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:reflect",
+      "target": "script:reflect_event_matrix.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:reflect",
+      "target": "script:reflect_transition_graph.py",
       "type": "invokes",
       "label": ""
     },

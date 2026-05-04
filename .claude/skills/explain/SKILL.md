@@ -77,7 +77,7 @@ If the explanation type (architecture, behavior, behavior-evolution, code, data-
 
 ### spec-drift
 
-If mode is `spec-drift`: load design-spec references on demand -- read and inject `project-design/product-design-as-intended.md` and `project-design/product-design-as-coded.md` (skip silently if absent -- workspace mode).
+If mode is `spec-drift`: load design-spec references on demand -- read and inject `product-design/product-design-as-intended.md` and `product-design/product-design-as-coded.md` (skip silently if absent -- workspace mode).
 
 Read `.claude/skills/_internal/explain/spec-drift/SKILL.md` via the Read tool and execute its instructions inline as part of this skill's flow.
 

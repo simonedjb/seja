@@ -47,7 +47,7 @@ CLAUDE_DIR = REPO_ROOT / ".claude"
 SKILLS_DIR = CLAUDE_DIR / "skills"
 REFERENCES_DIR = REPO_ROOT / ".claude" / "references"
 
-_CONVENTIONS_REL = REPO_ROOT / "project-design" / "conventions.md"
+_CONVENTIONS_REL = REPO_ROOT / "product-design" / "conventions.md"
 _TEMPLATE_REL = REFERENCES_DIR / "template" / "conventions.md"
 
 # Regex to extract variable definitions from markdown table rows:

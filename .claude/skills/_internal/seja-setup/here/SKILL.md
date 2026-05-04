@@ -39,7 +39,7 @@ Create in cwd, in order:
 
 1. `_output/` with subdirs `plans/`, `advisory-logs/`, `qa-logs/`, `check-logs/`.
 2. `_output/briefs.md` with header `# Briefs\n\nExecution log of all skill invocations.\n\n---\n`.
-3. Empty `project-design/` (ready for `/design` to populate).
+3. Empty `product-design/` (ready for `/design` to populate).
 4. Copy `.claude/references/template/settings.json` -> `.claude/settings.json` (skip if exists; never overwrite user settings).
 5. Write `.seja-version` with the Step 3 value (one line, no trailing whitespace).
 
@@ -50,17 +50,17 @@ If any target already exists (common in `partial-init`), log and skip rather tha
 Run the Section 1 basic-definitions scaffolding questionnaire against cwd, using the same logic as Standard Install Flow step 4b + 4c:
 
 1. Run `.claude/references/template/questionnaire.md` with `section-include: "stack-only"` (Q 0.1 metacomm-message + all of Section 1). Gate the i18n prompts on parent-stack presence as in Standard Install step 4c: `I18N_FRONTEND_FILES` only when frontend is present; `I18N_BACKEND_CATALOGS` only when backend is present.
-2. Instantiate `project-design/conventions.md` from `.claude/references/template/conventions.md` using the answers, applying the same conditional-stack population rules from Standard Install Flow step 4c -- all four modes (full-stack, API-only, frontend-only, CLI / library) handled: omit `BACKEND_*` rows (including `I18N_BACKEND_CATALOGS`) when `framework: none` for backend; omit `FRONTEND_*` rows, `FRONTEND_I18N_DIR`, and `I18N_FRONTEND_FILES` when `framework: none` for frontend; emit a minimal valid file when both are `none`; never leave an unresolved `{{VAR}}` placeholder.
+2. Instantiate `product-design/conventions.md` from `.claude/references/template/conventions.md` using the answers, applying the same conditional-stack population rules from Standard Install Flow step 4c -- all four modes (full-stack, API-only, frontend-only, CLI / library) handled: omit `BACKEND_*` rows (including `I18N_BACKEND_CATALOGS`) when `framework: none` for backend; omit `FRONTEND_*` rows, `FRONTEND_I18N_DIR`, and `I18N_FRONTEND_FILES` when `framework: none` for frontend; emit a minimal valid file when both are `none`; never leave an unresolved `{{VAR}}` placeholder.
 
 **Brownfield pre-fill**: before presenting Section 1, run the same auto-detection sub-step as Standard Install Flow step 4b.i (scan `${CODEBASE_DIR}` for `package.json`, `requirements.txt`, `pyproject.toml`, etc.; map detected dependencies to `BACKEND_FRAMEWORK`, `FRONTEND_FRAMEWORK`, `DATABASE`, `BACKEND_TEST`/`FRONTEND_TEST`, directory vars; present confirmation prompts for Q1.4, Q1.5, Q1.6, Q1.9). Fall back to standard manual entry for ambiguous or undetected fields.
 
 This step closes the first-run gap symmetrically for users who ran `git clone https://github.com/simonedjb/seja my-project` and then `/seja-setup --here`: they now end up with a populated `conventions.md` in one invocation rather than having to run `/design` afterwards just to get a bootable stack scaffold.
 
-When `project-design/conventions.md` already exists and is fully populated (no `{{VAR}}` placeholders), skip this step rather than re-prompt -- reconciliation-first semantics apply here as elsewhere in `--here`.
+When `product-design/conventions.md` already exists and is fully populated (no `{{VAR}}` placeholders), skip this step rather than re-prompt -- reconciliation-first semantics apply here as elsewhere in `--here`.
 
 ### Step 4c -- Scaffold CLAUDE.md
 
-Apply the `Scaffold-CLAUDE.md` anchor body from Standard Install Flow step 7c against cwd. Same semantics: scaffolded CLAUDE.md carries project name, stack summary, build/run commands, conditional architecture summaries (Backend / Frontend / pure-CLI fallback), conditional i18n block, and `@`-references to `.claude/rules/` and `project-design/conventions.md` -- explicitly OMIT design-intent `@`-references. If `CLAUDE.md` already exists in cwd (common for `partial-init` or a prior `--here` reconciliation), skip rather than overwrite; `/design` will amend it in place afterwards.
+Apply the `Scaffold-CLAUDE.md` anchor body from Standard Install Flow step 7c against cwd. Same semantics: scaffolded CLAUDE.md carries project name, stack summary, build/run commands, conditional architecture summaries (Backend / Frontend / pure-CLI fallback), conditional i18n block, and `@`-references to `.claude/rules/` and `product-design/conventions.md` -- explicitly OMIT design-intent `@`-references. If `CLAUDE.md` already exists in cwd (common for `partial-init` or a prior `--here` reconciliation), skip rather than overwrite; `/design` will amend it in place afterwards.
 
 ### Step 4d -- Scaffold `.claude/rules/`
 

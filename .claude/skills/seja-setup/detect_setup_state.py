@@ -177,11 +177,17 @@ def _collect_signals(cwd: Path) -> dict:
     # legacy projects still detect as installed before their first upgrade.
     setup_skill = claude_dir / "skills" / "seja-setup" / "SKILL.md"
     legacy_setup_skill = claude_dir / "skills" / "setup" / "SKILL.md"
-    project_dir_new = cwd / "project-design"
+    project_dir_new = cwd / "product-design"
+    project_dir_pre_rename = cwd / "project-design"  # pre-migration-0003 name
     project_dir_old = cwd / "_references" / "project"
-    project_dir = project_dir_new if project_dir_new.is_dir() else project_dir_old
+    project_dir = (
+        project_dir_new if project_dir_new.is_dir()
+        else project_dir_pre_rename if project_dir_pre_rename.is_dir()
+        else project_dir_old
+    )
     project_conventions_exists = (
         (project_dir_new / "conventions.md").is_file()
+        or (project_dir_pre_rename / "conventions.md").is_file()
         or (project_dir_old / "conventions.md").is_file()
     )
     output_dir = cwd / "_output"

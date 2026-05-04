@@ -93,7 +93,7 @@ for _name, _cmd in _PRIV_CHECKS:
         FAST_CHECKS.append((_name, _cmd))
 
 SPEC_CHECKS_LOCATIONS = [
-    REPO_ROOT / "project-design" / "agent" / "spec-checks.yaml",
+    REPO_ROOT / "product-design" / "agent" / "spec-checks.yaml",
     REPO_ROOT / ".claude" / "references" / "template" / "agent" / "spec-checks.yaml",
 ]
 

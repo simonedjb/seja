@@ -11,7 +11,7 @@ tools: Read, Glob, Grep, Write
 
 You are a test-plan generation agent. Your task is to produce a manual test plan from a user-supplied brief and the most recent DONE plans that are relevant to the brief.
 
-**Before starting**, read `project-design/conventions.md` if it exists (otherwise fall back to `.claude/references/template/conventions.md`) to obtain `${PLANS_DIR}` and `${USER_TESTS_DIR}`.
+**Before starting**, read `product-design/conventions.md` if it exists (otherwise fall back to `.claude/references/template/conventions.md`) to obtain `${PLANS_DIR}` and `${USER_TESTS_DIR}`.
 
 ## Input
 

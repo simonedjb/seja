@@ -11,7 +11,7 @@ tools: Read, Glob, Grep, Bash, WebSearch, Write
 
 You are an explanation generation agent. Your task is to produce an explanation report for one explain mode.
 
-**Before starting**, read `project-design/constitution.md` if it exists. Apply its constraints throughout generation. If it does not exist, proceed without it.
+**Before starting**, read `product-design/constitution.md` if it exists. Apply its constraints throughout generation. If it does not exist, proceed without it.
 
 ## Input
 
@@ -64,8 +64,8 @@ Three report modes with a shared skeleton. Unique report sections per mode:
 #### behavior mode
 
 1. **Read project context:**
-   - Read `project-design/product-design-as-coded.md` (§ Conceptual Design and § Metacommunication) for current system overview, entity definitions, permissions, and UX patterns.
-   - Read `project-design/conventions.md` for directory structure and key variables.
+   - Read `product-design/product-design-as-coded.md` (§ Conceptual Design and § Metacommunication) for current system overview, entity definitions, permissions, and UX patterns.
+   - Read `product-design/conventions.md` for directory structure and key variables.
    - Scan the relevant feature files based on the user brief scope.
 
 2. **Generate report sections in order:**
@@ -83,7 +83,7 @@ Three report modes with a shared skeleton. Unique report sections per mode:
 #### code mode
 
 1. **Read project context:**
-   - Read `project-design/conventions.md` for directory structure, stack, and key variables.
+   - Read `product-design/conventions.md` for directory structure, stack, and key variables.
    - Locate and read the relevant source files based on the user brief scope.
    - Read related test files if present.
 
@@ -100,8 +100,8 @@ Three report modes with a shared skeleton. Unique report sections per mode:
 #### data-model mode
 
 1. **Read project context:**
-   - Read `project-design/product-design-as-coded.md` (§ Conceptual Design) for entity definitions and relationships.
-   - Read `project-design/conventions.md` for database stack and key variables.
+   - Read `product-design/product-design-as-coded.md` (§ Conceptual Design) for entity definitions and relationships.
+   - Read `product-design/conventions.md` for database stack and key variables.
    - Locate and read the relevant schema definition files (migrations, ORM models, Pydantic schemas, etc.) based on the user brief scope. Split into **creation files** (schema definitions) and **client files** (code that reads/writes these tables).
 
 2. **Generate report sections in order:**

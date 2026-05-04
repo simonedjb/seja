@@ -53,7 +53,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 CLAUDE_DIR = REPO_ROOT / ".claude"
 SKILLS_DIR = CLAUDE_DIR / "skills"
 HARNESS_REFS_DIR = REPO_ROOT / ".claude" / "references"
-PROJECT_REFS_DIR = REPO_ROOT / "project-design"
+PROJECT_REFS_DIR = REPO_ROOT / "product-design"
 AGENTS_DIR = CLAUDE_DIR / "agents"
 
 ALLOWED_CATEGORIES = {"planning", "analysis", "code", "utility", "internal"}
@@ -424,7 +424,7 @@ def check_references(verbose: bool = False) -> tuple[list[str], list[str]]:
         if verbose:
             for ref_file in project_ref_files:
                 rel = ref_file.relative_to(PROJECT_REFS_DIR)
-                print(f"  OK: project-design/{rel}")
+                print(f"  OK: product-design/{rel}")
 
     total = harness_refs_found + project_refs_found
     print(f"## References ({harness_refs_found} harness, {project_refs_found} project, {total} total)\n")

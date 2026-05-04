@@ -30,7 +30,7 @@ def _run(fake_repo: Path, *args: str) -> subprocess.CompletedProcess:
     output_dir.mkdir(exist_ok=True)
     plans_dir = output_dir / "plans"
     plans_dir.mkdir(exist_ok=True)
-    proj_dir = fake_repo / "project-design"
+    proj_dir = fake_repo / "product-design"
     proj_dir.mkdir(parents=True, exist_ok=True)
     (proj_dir / "conventions.md").write_text(CONVENTIONS, encoding="utf-8")
 

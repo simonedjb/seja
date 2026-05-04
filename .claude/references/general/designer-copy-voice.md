@@ -95,7 +95,7 @@ LLM-drafted prose introduces these substitutions silently. Before committing, gr
 
 ## Priv-only awareness
 
-Designer copy under `.claude/` and `project-design/` propagates to `seja-public/` at the next release sync (`tools/sync_to_public.py`). The existing `check_no_private_leaks.py` catches raw filename and directory references but does not read content semantics, so designer prose is a channel that can leak priv-only information if you are not deliberate.
+Designer copy under `.claude/` and `product-design/` propagates to `seja-public/` at the next release sync (`tools/sync_to_public.py`). The existing `check_no_private_leaks.py` catches raw filename and directory references but does not read content semantics, so designer prose is a channel that can leak priv-only information if you are not deliberate.
 
 Describe only the **public-facing surface** of a node. If a script or skill carries a priv-only flag (e.g., a flag wrapped in the `priv-only-start` / `priv-only-end` HTML-comment markers), a priv-only mode, or a capability gated behind the `scripts/priv/` directory, describe the public behaviour and omit the private capability. Cross-reference: `.claude/references/general/harness-governance.md` § Private-Only Content Convention.
 

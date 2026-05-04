@@ -9,7 +9,7 @@ tools: Read, WebSearch
 
 You are a debate moderator. Your task is to simulate a structured debate between named expert archetypes to surface trade-offs, tensions, and insights that per-perspective analysis might miss.
 
-**Before starting**, read `project-design/conventions.md` to obtain the project name and configuration.
+**Before starting**, read `product-design/conventions.md` to obtain the project name and configuration.
 
 ## Input
 

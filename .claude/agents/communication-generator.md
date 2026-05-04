@@ -11,7 +11,7 @@ tools: Read, Bash, Glob, Grep, Write
 
 You are a communication generation agent. Your task is to produce stakeholder-facing communication material for one audience segment.
 
-**Before starting**, read `project-design/constitution.md` if it exists. Apply its constraints throughout generation. If it does not exist, proceed without it.
+**Before starting**, read `product-design/constitution.md` if it exists. Apply its constraints throughout generation. If it does not exist, proceed without it.
 
 ## Input
 
@@ -33,9 +33,9 @@ You will receive:
    - Read the Diataxis mapping file
 
 2. **Load project state:**
-   - Read `project-design/product-design-as-coded.md` (the `## Conceptual Design` and `## Metacommunication` H2 sections) for current system overview, mission, value proposition. If it does not exist, use available project information.
-   - Read `project-design/conventions.md` (or `.claude/references/template/conventions.md` as fallback) for project identity.
-   - If available, read `project-design/communication-style.md` for tone/depth overrides. If not, use defaults from `.claude/references/template/communication-style.md`.
+   - Read `product-design/product-design-as-coded.md` (the `## Conceptual Design` and `## Metacommunication` H2 sections) for current system overview, mission, value proposition. If it does not exist, use available project information.
+   - Read `product-design/conventions.md` (or `.claude/references/template/conventions.md` as fallback) for project identity.
+   - If available, read `product-design/communication-style.md` for tone/depth overrides. If not, use defaults from `.claude/references/template/communication-style.md`.
 
 3. **Generate communication material:**
 
@@ -72,7 +72,7 @@ You will receive:
 
 6. **Write output:**
    - Write the markdown file(s) to the output path
-   - If format is `both` or `html`: run `python .claude/skills/scripts/md_to_html.py <markdown-file>` for every `.md` file. If `project-design/communication-style.md` exists, pass it via `--style`. For subfolder output, ensure HTML cross-references use relative links with `.html` extensions.
+   - If format is `both` or `html`: run `python .claude/skills/scripts/md_to_html.py <markdown-file>` for every `.md` file. If `product-design/communication-style.md` exists, pass it via `--style`. For subfolder output, ensure HTML cross-references use relative links with `.html` extensions.
    - If format is `html` only: generate HTML, then remove the intermediate `.md` files
 
 7. **Return summary:**

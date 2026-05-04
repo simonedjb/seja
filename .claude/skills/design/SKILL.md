@@ -33,11 +33,11 @@ metadata:
 
 ## Overview
 
-Manages `project-design/` design foundations: stack, conventions, conceptual design, metacommunication, standards. Serves initial configuration (after `/seja-setup`) and ongoing design evolution.
+Manages `product-design/` design foundations: stack, conventions, conceptual design, metacommunication, standards. Serves initial configuration (after `/seja-setup`) and ongoing design evolution.
 
 ## Detection Logic
 
-Dispatch on invocation arguments and the state of `project-design/` files:
+Dispatch on invocation arguments and the state of `product-design/` files:
 
 | Condition | Route |
 |---|---|
@@ -67,7 +67,7 @@ Valid slugs: `stack`, `conceptual`, `metacomm`, `backend-standards`, `frontend-s
 
 Triggered when `--add-docs` is passed.
 
-1. **Verify project exists**: `project/conventions.md` must exist in `project-design/`, else abort "No project design found. Run `/design` first."
+1. **Verify project exists**: `project/conventions.md` must exist in `product-design/`, else abort "No project design found. Run `/design` first."
 
 2. **Check existing docs**: If `project/docs/` already exists, list instantiated templates and ask "Some documentation templates are already set up. Add more, or replace all?"
 

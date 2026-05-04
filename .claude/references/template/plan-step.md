@@ -31,7 +31,7 @@ Include enough context that the step makes sense in isolation: what the code sho
 
 - Each step must be completable in one subagent context window (rule of thumb: touches <=5 files). Split larger steps.
 - **Files**: every path the step reads, creates, modifies, or deletes. Verify existing files during planning.
-- **References**: only `project-design/` files relevant to this step (e.g., `project/standards.md § Backend` for Python; `project/standards.md § Frontend` for React). Omit irrelevant refs.
+- **References**: only `product-design/` files relevant to this step (e.g., `project/standards.md § Backend` for Python; `project/standards.md § Frontend` for React). Omit irrelevant refs.
 - **Depends on**: step numbers whose output this step requires. Omit the field entirely for independent steps (absent = no dependencies). Orchestrators use this to avoid executing before dependencies complete.
 - **Interface**: populate for steps that create modules, services, or functions consumed by downstream steps in the same plan. List the expected public surface (function names, class names, exported types with signatures). `N/A` for leaf steps or steps with no downstream consumers within the plan. When present and `Tests:` is non-N/A, auto-mode subagents use this as a type contract when writing the TDD failing test (TDD is triggered by non-N/A `Tests:`, not by `Interface:`).
 - **Verify**: a concrete, testable condition. Prefer automated checks ("tests pass", "linter clean") over subjective ones.

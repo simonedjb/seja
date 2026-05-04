@@ -121,7 +121,7 @@ This mode follows the [Batch Execution Pattern](../../../.claude/references/gene
    - `audience_tag`: the resolved canonical tag (EVL/CLT/USR/ACD)
    - `audience_file_path`: `.claude/references/general/communication/<audience>.md`
    - `diataxis_mapping_path`: `.claude/references/general/communication/diataxis-mapping.md`
-   - `project_context`: paths to `project-design/product-design-as-coded.md`, `project-design/conventions.md` (or template fallback), `project-design/communication-style.md` (or template fallback)
+   - `project_context`: paths to `product-design/product-design-as-coded.md`, `product-design/conventions.md` (or template fallback), `product-design/communication-style.md` (or template fallback)
    - `output_path`: the full path computed in step 3
    - `output_id`: the reserved ID from step 3
    - `format`: the `--format` flag value (default: `both`)

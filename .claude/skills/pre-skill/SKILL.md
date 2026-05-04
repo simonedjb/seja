@@ -41,6 +41,8 @@ Without asking for authorization, insert into `${BRIEFS_FILE}` (see project/conv
 
 Without asking for authorization, save `${BRIEFS_FILE}` before continuing, so the user can see a log of the requests if the system crashes after this.
 
+**Sub-step: Conversation trace linkage** (after brief-log entry is saved): call `python .claude/skills/scripts/conversation_trace.py last-evt-id --session-id $CLAUDE_SESSION_ID` (env var value, or "null" if unavailable). If the output is not "null", call `python .claude/skills/scripts/conversation_trace.py backfill-skill --evt-id <last_evt_id> --skill-id "<skill-name> <brief>"` to link the preceding conversation exchange to this skill invocation. The last entry for a session is the agent's response entry (emitter=claude), which is the natural anchor for "what skill followed this exchange." Skip silently if no conversation trace entries exist for the session or if the script is not found.
+
 ### Stage: budget-eval
 
 Read the calling skill's SKILL.md file at `.claude/skills/$ARGUMENTS[0]/SKILL.md` and parse its YAML frontmatter. Determine the **context budget** from `metadata.context_budget` (default: `standard` if not specified). Act per the tier:
@@ -67,7 +69,7 @@ Run `python .claude/skills/scripts/pending.py status --overdue-days 14 --format 
 Load reference files (applies to standard and heavy tiers only):
 
 Always include:
-- Read and inject `project-design/conventions.md`. If it does not exist, read and inject `.claude/references/template/conventions.md` instead.
+- Read and inject `product-design/conventions.md`. If it does not exist, read and inject `.claude/references/template/conventions.md` instead.
 - Read and inject `.claude/references/general/permissions.md`
 - Read and inject `.claude/references/general/constraints.md`
 
@@ -82,13 +84,13 @@ Always include:
 An empty `eager_references: []` is valid (all skill-specific refs lazy; only mandatory refs loaded upfront).
 
 **Available references block (demand-pull mode only):**
-After loading eager refs, emit a compact numbered list: each lazy ref's path followed by a trigger hint derived from its filename and subdirectory (e.g., `project/security-checklists.md` -> "reviewing security concerns"). Routing: `general/` -> `.claude/references/general/`, `template/` -> `.claude/references/template/`, `project/` -> `project-design/`.
+After loading eager refs, emit a compact numbered list: each lazy ref's path followed by a trigger hint derived from its filename and subdirectory (e.g., `project/security-checklists.md` -> "reviewing security concerns"). Routing: `general/` -> `.claude/references/general/`, `template/` -> `.claude/references/template/`, `project/` -> `product-design/`.
 
 If the calling skill's SKILL.md **does not** contain a `metadata.references` field at all, log a warning: "Skill <name> has no metadata.references -- cannot load skill-specific references." All skills are expected to declare their references in frontmatter.
 
 ### Stage: constitution
 
-Read and inject `project-design/constitution.md`. If it does not exist, skip silently (constitution is optional for backwards compatibility with projects that haven't generated one yet).
+Read and inject `product-design/constitution.md`. If it does not exist, skip silently (constitution is optional for backwards compatibility with projects that haven't generated one yet).
 
 ### Util scripts
 

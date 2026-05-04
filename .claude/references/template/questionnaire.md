@@ -143,7 +143,7 @@ Answer:
 | 1.9 | Name your backend and frontend source directories (e.g., `backend`, `frontend`) | `{{BACKEND_DIR}}`, `{{FRONTEND_DIR}}` | |
 | 1.10 | Who is available on your team? (check all that apply: just me / + architect / + engineer(s) / + UX designer / + graphic/UI designer / + data engineer / + tester(s)) | Team composition | |
 
-> *Agent hint: If the codebase directory contains existing source files (beyond framework files like `.claude/`, `project-design/`, `_output/`), suggest "brownfield" as the default answer for question 1.3.*
+> *Agent hint: If the codebase directory contains existing source files (beyond framework files like `.claude/`, `product-design/`, `_output/`), suggest "brownfield" as the default answer for question 1.3.*
 
 ---
 
@@ -943,7 +943,7 @@ After completing all sections:
 - [ ] Section `security-checklists` (11) -- has validation constants
 
 **Next step:** Give this file to an agent with:
-> *"Read template/questionnaire.md and instantiate all template/\* files in `project-design/` into corresponding project/\* files using my answers."*
+> *"Read template/questionnaire.md and instantiate all template/\* files in `product-design/` into corresponding project/\* files using my answers."*
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: reflect
 description: "On-demand reflection anchored on specific plans, research reports, or other artifacts. I summarize the artifacts you choose, ask what stands out, and record your reflection."
-argument-hint: "[--telemetry [--since 30d] [--skill <name>] [--dry-run]]"
+argument-hint: "[--telemetry [--since 30d] [--skill <name>] [--dry-run]] | [--deep [scope] [--since 30d]]"
 compatibility: "Designed for Claude Code with the SEJA harness"
 metadata:
   last-updated: 2026-04-12 02:12 UTC
@@ -26,7 +26,9 @@ metadata:
 | Argument | Required | Description |
 |----------|----------|-------------|
 | `--telemetry` | No | Switch to statistical telemetry mining mode (legacy V1 flow). |
-| `--since <duration>` | No | Time window for `--telemetry` mode. Accepts ISO datetime or `Nd` suffix. Default: `30d`. |
+| `--deep` | No | Switch to deep reflection mode with visualization and narrative. |
+| `--scope <keyword>` | No | Free-text scope keyword for `--deep` mode. Filters by skill name, brief text, tags, filenames. |
+| `--since <duration>` | No | Time window for `--telemetry` or `--deep` mode. Accepts ISO datetime or `Nd` suffix. Default: `30d`. |
 | `--skill <name>` | No | Filter telemetry to a single skill in `--telemetry` mode. |
 | `--dry-run` | No | Print report to stdout without writing to disk (applies to `--telemetry` mode). |
 
@@ -38,7 +40,7 @@ Header pattern: `# Reflection <id> | <current datetime> | <short title>` (macro-
 
 ## Mode detection
 
-If `--telemetry` is present in the arguments, route to the [Telemetry workflow](#telemetry-workflow---telemetry) below. Otherwise, run the conversational workflow.
+If `--deep` is present in the arguments, route to the [Deep workflow](#deep-workflow---deep) below. If `--telemetry` is present, route to the [Telemetry workflow](#telemetry-workflow---telemetry). Otherwise, run the conversational workflow.
 
 ## Conversational workflow (default)
 
@@ -100,7 +102,90 @@ If `--telemetry` is present in the arguments, route to the [Telemetry workflow](
 
 ## Strictly non-prescriptive rule
 
-`/reflect` writes observations and the user's own words, not prescriptions. The skill never writes "you should", "consider changing X", "we recommend", or similar. This convention is enforced by a test in `test_generate_reflection_report.py` that scans the generated report for forbidden substrings.
+`/reflect` writes observations and the user's own words, not prescriptions. The skill never writes "you should", "consider changing X", "we recommend", or similar. This convention is enforced by a test in `test_generate_reflection_report.py` that scans the generated report for forbidden substrings. The `--deep` narrative output is also covered: past-tense only, no "you should" / "consider" / "we recommend", ends with the "What to do with this" hand-off paragraph pointing to `/research`.
+
+---
+
+## Deep workflow (--deep)
+
+> Deep reflection mode. Reads telemetry and briefs within a time window, optionally filtered by a scope keyword, and produces an event matrix visualization, a transition graph, and a practice evolution narrative.
+
+### Skill-specific Instructions
+
+1. Run `/pre-skill "reflect" $ARGUMENTS` to add general instructions to the context window.
+
+2. Reserve the next global ID by running `python .claude/skills/scripts/reserve_id.py --type reflection --title '<short title synthesized from scope>'`. Capture the returned 6-digit ID.
+
+3. Parse arguments: `--deep [scope] [--since <duration>]`. Scope is an optional free-text keyword; `--since` accepts `Nd` or ISO datetime (default: `30d`).
+
+4. Run scope resolution:
+
+   ```text
+   python .claude/skills/reflect/reflect_deep_scope.py \
+       --scope <keyword> \
+       --since <duration> \
+       --briefs <briefs_path> \
+       --telemetry <telemetry_path> \
+       --output-dir <output_dir>
+   ```
+
+   Capture the `ScopeResult` JSON from stdout.
+
+5. Present scope resolution summary to user: match counts by provenance, total records in window, date range. If zero matches, ask user to refine scope (do not proceed with empty data).
+
+6. Run the event matrix visualization:
+
+   ```text
+   python .claude/skills/reflect/reflect_event_matrix.py \
+       --input <filtered_window_json> \
+       --output-prefix ${REFLECTIONS_DIR}/reflection-<id>-event-matrix \
+       --scope <label> \
+       --date-range <start>,<end>
+   ```
+
+   Writes `${REFLECTIONS_DIR}/reflection-<id>-event-matrix.{vl.json,svg,html}`.
+
+7. Run the transition graph visualization:
+
+   ```text
+   python .claude/skills/reflect/reflect_transition_graph.py \
+       --input <filtered_window_json> \
+       --output-prefix ${REFLECTIONS_DIR}/reflection-<id>-transitions \
+       --scope <label> \
+       --date-range <start>,<end>
+   ```
+
+   Writes `${REFLECTIONS_DIR}/reflection-<id>-transitions.{dot,svg,html}`.
+
+8. Compose the practice evolution narrative from the filtered data. Use past-tense chronicle form. Include anchored markdown links `[<artifact-id>](<relative-path>)` to referenced output files. End with the "What to do with this" hand-off paragraph pointing to `/research`.
+
+9. Write `${REFLECTIONS_DIR}/reflection-<id>-<slug>.md` with:
+
+   ```markdown
+   # Reflection <id> | <current datetime> | <short title>
+
+   ## Scope and window
+
+   <scope keyword, date range, match counts by provenance>
+
+   ## Event matrix
+
+   [event-matrix.html](reflection-<id>-event-matrix.html) | [event-matrix.svg](reflection-<id>-event-matrix.svg)
+
+   ## Transition graph
+
+   [transitions.html](reflection-<id>-transitions.html) | [transitions.svg](reflection-<id>-transitions.svg)
+
+   ## Practice evolution
+
+   <past-tense narrative from step 8>
+
+   ## Companion files
+
+   <bullet list of all companion visualization files with relative links>
+   ```
+
+10. Run `/post-skill <reflection-id>` to commit the reflection report.
 
 ---
 

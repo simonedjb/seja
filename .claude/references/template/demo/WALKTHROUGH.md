@@ -12,9 +12,9 @@ This walkthrough guides you through the core SEJA skills using the pre-configure
 
 You are working in a project that has been set up with the SEJA harness and pre-filled with demo design files. The key files are:
 
-- `project-design/conventions.md` -- project identity and directory layout
-- `project-design/constitution.md` -- immutable quality principles
-- `project-design/product-design-as-intended.md` -- the domain model (Task and Category entities) and designer-to-user communication intentions
+- `product-design/conventions.md` -- project identity and directory layout
+- `product-design/constitution.md` -- immutable quality principles
+- `product-design/product-design-as-intended.md` -- the domain model (Task and Category entities) and designer-to-user communication intentions
 
 Browse these files now to see what a configured SEJA project looks like.
 

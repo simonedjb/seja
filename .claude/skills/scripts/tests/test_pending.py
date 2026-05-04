@@ -63,8 +63,8 @@ def _run_pending(
     output_dir = fake_repo / "_output"
     output_dir.mkdir(exist_ok=True)
 
-    # Write minimal conventions.md in project-design/ if provided
-    proj_dir = fake_repo / "project-design"
+    # Write minimal conventions.md in product-design/ if provided
+    proj_dir = fake_repo / "product-design"
     proj_dir.mkdir(parents=True, exist_ok=True)
     if conventions is not None:
         (proj_dir / "conventions.md").write_text(conventions, encoding="utf-8")

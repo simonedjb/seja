@@ -11,7 +11,7 @@ tools: Read, Bash, Glob, Grep, Write
 
 You are an onboarding plan generation agent. Your task is to produce a personalized onboarding plan for one new team member.
 
-**Before starting**, read `project-design/constitution.md` if it exists. Apply its constraints throughout generation. If it does not exist, proceed without it.
+**Before starting**, read `product-design/constitution.md` if it exists. Apply its constraints throughout generation. If it does not exist, proceed without it.
 
 ## Input
 
@@ -37,8 +37,8 @@ You will receive:
 2. **Load project state:**
    To make the onboarding plan concrete and project-specific, **default to the codebase** (i.e., `${BACKEND_DIR}` / `${FRONTEND_DIR}` from conventions) as the scan target -- not the workspace root. In workspace deployments these point to the actual source code via absolute paths.
 
-   - Read `project-design/product-design-as-coded.md` (the `## Conceptual Design` H2 section) for current system overview. If it does not exist, use available project information.
-   - Read `project-design/conventions.md` (or `.claude/references/template/conventions.md` as fallback) for directory structure and key variables.
+   - Read `product-design/product-design-as-coded.md` (the `## Conceptual Design` H2 section) for current system overview. If it does not exist, use available project information.
+   - Read `product-design/conventions.md` (or `.claude/references/template/conventions.md` as fallback) for directory structure and key variables.
    - If Builder role: scan codebase source directories, read relevant coding standards and rules.
    - If Shaper role: read metacommunication files and conceptual design files.
    - If Guardian role: read review perspectives and validation scripts inventory.
@@ -105,7 +105,7 @@ You will receive:
 
 4. **Write output:**
    - Write the markdown file to the provided output path.
-   - If format is `both` or `html`: run `python .claude/skills/scripts/md_to_html.py <markdown-file>`. If `project-design/communication-style.md` exists, pass it via `--style project-design/communication-style.md`; otherwise run the script without `--style` (it will use its default).
+   - If format is `both` or `html`: run `python .claude/skills/scripts/md_to_html.py <markdown-file>`. If `product-design/communication-style.md` exists, pass it via `--style product-design/communication-style.md`; otherwise run the script without `--style` (it will use its default).
    - If format is `html` only: after the HTML is generated, remove the intermediate `.md` file.
 
 5. **Return summary:**

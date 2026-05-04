@@ -41,7 +41,7 @@ metadata:
 
     Brownfield stack auto-detection has moved to `/seja-setup` step 4b (sub-step 4b.i). Run `/seja-setup --upgrade` or `/seja-setup <target>` for stack re-detection; `/design` no longer performs stack-level codebase scanning.
 
-    **Legacy pre-scaffolding fallback (Amendment A4)**: when `/design` enters the partial-design state (see step 8 below) and `project-design/conventions.md` exists with no populated `BACKEND_FRAMEWORK` row (regardless of `PROJECT_MODE` -- legacy greenfield and legacy brownfield both route here), re-run the detection inline as a compatibility fallback. Emit the one-line note:
+    **Legacy pre-scaffolding fallback (Amendment A4)**: when `/design` enters the partial-design state (see step 8 below) and `product-design/conventions.md` exists with no populated `BACKEND_FRAMEWORK` row (regardless of `PROJECT_MODE` -- legacy greenfield and legacy brownfield both route here), re-run the detection inline as a compatibility fallback. Emit the one-line note:
 
     > Legacy pre-scaffolding project detected (PROJECT_MODE=`<value>`); running Section 1 inline. Future upgrades will carry `.seja-version` for a cleaner path.
 
@@ -134,14 +134,14 @@ metadata:
 
    > **Registry note:** For each row in the As-Intended / As-Coded Registry (see conventions.md), ensure the as-intended template is copied during project setup; as-coded templates are copied for brownfield projects per the branch above. When new rows are added in future harness versions, add their template copies here.
 
-8. **Amend CLAUDE.md** with design-intent references. `CLAUDE.md` was scaffolded by `/seja-setup` step 7c (anchor: `Scaffold-CLAUDE.md`) and already carries project name, stack summary, build/run commands, conditional architecture summaries, and `@`-references to `.claude/rules/` + `project-design/conventions.md`. Do NOT regenerate from scratch; append a new `## Project design` section to the existing file containing `@`-references to the design-intent artifacts produced by this Mode 1 run:
+8. **Amend CLAUDE.md** with design-intent references. `CLAUDE.md` was scaffolded by `/seja-setup` step 7c (anchor: `Scaffold-CLAUDE.md`) and already carries project name, stack summary, build/run commands, conditional architecture summaries, and `@`-references to `.claude/rules/` + `product-design/conventions.md`. Do NOT regenerate from scratch; append a new `## Project design` section to the existing file containing `@`-references to the design-intent artifacts produced by this Mode 1 run:
 
-   - `@project-design/product-design-as-intended.md`
-   - `@project-design/ux-research-results.md`
-   - `@project-design/standards.md`
-   - `@project-design/design-standards.md`
-   - `@project-design/security-checklists.md`
-   - `@project-design/constitution.md`
+   - `@product-design/product-design-as-intended.md`
+   - `@product-design/ux-research-results.md`
+   - `@product-design/standards.md`
+   - `@product-design/design-standards.md`
+   - `@product-design/security-checklists.md`
+   - `@product-design/constitution.md`
    - plus any project-specific conventions Section 6 (T2) declared (e.g., additional rule files or per-domain references).
 
    If CLAUDE.md is missing (legacy project that predates the scaffolding move), fall through to the legacy-regenerate path: apply the `Scaffold-CLAUDE.md` anchor body from `/seja-setup` step 7c first to produce a baseline, then append the `## Project design` section.

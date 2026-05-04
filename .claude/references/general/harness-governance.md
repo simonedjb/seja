@@ -188,7 +188,7 @@ Advisory 000366 evaluated moving to a physically-separated pair of repositories 
 
 ### Implications for contributors
 
-- Editing codebase half → affects downstream consumers at the next release. Edit only the `seja-priv` sources (`.claude/`, `project-design/`); do NOT recreate `seja-public/.claude/` on disk. The `/publish` skill generates `.claude/` ephemerally into a temp clone (`_output/tmp/publish-workspace/`) via `sync_to_public.py --target`, so there is no on-disk mirror to hand-edit.
+- Editing codebase half → affects downstream consumers at the next release. Edit only the `seja-priv` sources (`.claude/`, `product-design/`); do NOT recreate `seja-public/.claude/` on disk. The `/publish` skill generates `.claude/` ephemerally into a temp clone (`_output/tmp/publish-workspace/`) via `sync_to_public.py --target`, so there is no on-disk mirror to hand-edit.
 - Editing workspace half → visible only inside `seja-priv`. Safe to iterate, reorganize, or delete without consumer impact.
 - Editing a shared `.md` file that carries priv-only markers → the codebase half is the public-visible portion (post-strip); the workspace half is the markered region. Run `python .claude/skills/scripts/priv/check_no_private_leaks.py` after the change to verify the stripper handles it correctly.
 - When in doubt, check whether the file would appear in `seja-public/` after running `tools/sync_to_public.py --dry-run`.

@@ -32,7 +32,7 @@ def _setup_fake_repo(tmp_path: Path, conventions: str | None = None) -> Path:
     (tmp_path / "_output").mkdir(exist_ok=True)
     (tmp_path / "_output" / "plans").mkdir(parents=True, exist_ok=True)
     (tmp_path / "_output" / "roadmaps").mkdir(parents=True, exist_ok=True)
-    proj_dir = tmp_path / "project-design"
+    proj_dir = tmp_path / "product-design"
     proj_dir.mkdir(parents=True, exist_ok=True)
     (proj_dir / "conventions.md").write_text(
         conventions or MINIMAL_CONVENTIONS, encoding="utf-8"

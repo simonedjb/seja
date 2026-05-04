@@ -131,7 +131,7 @@ Output folder: `${RESEARCH_DIR}` (see project/conventions.md). Filename pattern:
 
    1. For each detected design decision, draft a D-NNN entry using the proposal shape above.
 
-   1b. Render the before/after diff preview before each proposal's AskUserQuestion. Read the last 2 `### D-NNN:` entries from `project-design/product-design-as-intended.md`'s `## Decisions` section as the *before* context; render `(no prior decisions)` if empty, or `(no design-intent file yet -- D-NNN entries require running /design first)` if the file is missing. One diff block per proposal. Diff rendering rules:
+   1b. Render the before/after diff preview before each proposal's AskUserQuestion. Read the last 2 `### D-NNN:` entries from `product-design/product-design-as-intended.md`'s `## Decisions` section as the *before* context; render `(no prior decisions)` if empty, or `(no design-intent file yet -- D-NNN entries require running /design first)` if the file is missing. One diff block per proposal. Diff rendering rules:
       - Unified-diff conventions: leading space = unchanged, leading `+` = added. No `-` lines (DECISION_APPEND is strictly append-only).
       - Do not abbreviate the proposed entry text; the designer must see it in full.
       - For multiple D-NNN proposals, render one diff block per proposal; each gets its own AskUserQuestion.
@@ -141,10 +141,10 @@ Output folder: `${RESEARCH_DIR}` (see project/conventions.md). Filename pattern:
       - **Defer** -- Recommended when you want to review the wording later. NOT recommended when the entry will get stale before you return to it.
       - **Skip** -- Recommended when the research was informational, not decisional.
 
-   3. On **Create now**: if `project-design/product-design-as-intended.md` exists and is Human (markers)-classified, invoke:
+   3. On **Create now**: if `product-design/product-design-as-intended.md` exists and is Human (markers)-classified, invoke:
       ```
       python .claude/skills/scripts/apply_marker.py \
-        --file project-design/product-design-as-intended.md \
+        --file product-design/product-design-as-intended.md \
         --id D-NEXT --marker DECISION_APPEND \
         --value "<draft text>" --plan manual \
         --note "from <source-id>"

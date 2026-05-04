@@ -255,8 +255,9 @@ def is_preserved(rel_path: str) -> bool:
     parts = Path(rel_path).parts
     filename = parts[-1] if parts else ""
 
-    # project-design/ directory (v3 layout: consumer-specific design files)
-    if parts and parts[0] == "project-design":
+    # product-design/ directory (v4 layout: renamed from project-design in v0.3.0)
+    # Also guard the old name during the upgrade window before migration 0003 runs.
+    if parts and parts[0] in ("product-design", "project-design"):
         return True
     # project/ subdirectory in _references/ (v2 legacy layout)
     if len(parts) >= 2 and parts[0] == "_references" and parts[1] == "project":
@@ -275,7 +276,7 @@ def is_preserved(rel_path: str) -> bool:
 
 
 def scan_old_path_references(target: Path) -> list[tuple[str, int, str]]:
-    """Scan project-design/*.md and CLAUDE.md for v2 layout path references (_references/).
+    """Scan product-design/*.md and CLAUDE.md for v2 layout path references (_references/).
 
     Called after a v2→v3 migration to surface remaining _references/ strings
     in consumer-owned files that need manual updating.
@@ -286,8 +287,8 @@ def scan_old_path_references(target: Path) -> list[tuple[str, int, str]]:
     hits: list[tuple[str, int, str]] = []
     files_to_scan: list[Path] = []
 
-    # project-design/*.md (v3 consumer-specific design files)
-    project_dir = target / "project-design"
+    # product-design/*.md (v3 consumer-specific design files)
+    project_dir = target / "product-design"
     if project_dir.is_dir():
         for f in sorted(project_dir.iterdir()):
             if f.is_file() and f.name.endswith(".md"):
@@ -312,7 +313,7 @@ def scan_old_path_references(target: Path) -> list[tuple[str, int, str]]:
 
 
 # ---------------------------------------------------------------------------
-# Consumer project migration: v2 (_references/) → v3 (.claude/references/ + project-design/)
+# Consumer project migration: v2 (_references/) → v3 (.claude/references/ + product-design/)
 # ---------------------------------------------------------------------------
 
 
@@ -322,7 +323,7 @@ def migrate_references_split(target: Path, dry_run: bool) -> list[str]:
     v3 layout:
       _references/general/   → .claude/references/general/
       _references/template/  → .claude/references/template/
-      _references/project/   → project-design/
+      _references/project/   → product-design/
 
     Migration is per-subdir guarded (Amendment D1): each subdir is only moved
     if it exists.  The function is idempotent -- safe to call on a v3 project.
@@ -331,8 +332,8 @@ def migrate_references_split(target: Path, dry_run: bool) -> list[str]:
     ``shutil.move()`` when the target is not a git repo or ``git mv`` exits
     non-zero (e.g., dry-run mode, files not staged, etc.).
 
-    Pre-existing ``project-design/`` guard (Amendment D3): if
-    ``project-design/`` already exists and is non-empty, the function aborts
+    Pre-existing ``product-design/`` guard (Amendment D3): if
+    ``product-design/`` already exists and is non-empty, the function aborts
     rather than clobbering existing design work.
 
     Returns a list of human-readable action strings (empty list when nothing
@@ -390,14 +391,14 @@ def migrate_references_split(target: Path, dry_run: bool) -> list[str]:
         _move(src_template, dst_template)
         actions.append(f"{prefix}Moved _references/template/ → .claude/references/template/")
 
-    # --- project/ → project-design/ (Amendment D3: guard pre-existing non-empty target) ---
+    # --- project/ → product-design/ (Amendment D3: guard pre-existing non-empty target) ---
     src_project = refs_v2 / "project"
     if src_project.is_dir():
-        dst_project = target / "project-design"
+        dst_project = target / "product-design"
         if dst_project.is_dir() and any(dst_project.iterdir()):
             msg = (
-                f"ERROR: Cannot migrate _references/project/ → project-design/ because "
-                f"project-design/ already exists and is non-empty. "
+                f"ERROR: Cannot migrate _references/project/ → product-design/ because "
+                f"product-design/ already exists and is non-empty. "
                 f"Resolve the conflict manually before upgrading."
             )
             print(msg, file=sys.stderr)
@@ -406,7 +407,7 @@ def migrate_references_split(target: Path, dry_run: bool) -> list[str]:
                 return actions
             raise SystemExit(1)
         _move(src_project, dst_project)
-        actions.append(f"{prefix}Moved _references/project/ → project-design/")
+        actions.append(f"{prefix}Moved _references/project/ → product-design/")
 
     # --- Remove _references/ if now empty ---
     if not dry_run:
@@ -640,13 +641,16 @@ def run_upgrade(
         if "_output/" not in report_preserved:
             report_preserved.append("_output/ (entire directory)")
 
-    # project-design/*.md files (v3 layout)
-    project_design_dir = target / "project-design"
-    if project_design_dir.is_dir():
-        for f in sorted(project_design_dir.rglob("*.md")):
-            rel = f.relative_to(target).as_posix()
-            if rel not in report_preserved:
-                report_preserved.append(rel)
+    # product-design/*.md files (v4 layout: renamed from project-design in v0.3.0)
+    # Fall back to project-design/ for installations where migration 0003 has not yet run.
+    for _pd_name in ("product-design", "project-design"):
+        project_design_dir = target / _pd_name
+        if project_design_dir.is_dir():
+            for f in sorted(project_design_dir.rglob("*.md")):
+                rel = f.relative_to(target).as_posix()
+                if rel not in report_preserved:
+                    report_preserved.append(rel)
+            break
 
     # project/*.md files in _references/ (v2 legacy layout)
     project_dir = target / _REFERENCES_V2_REL / "project"
@@ -657,10 +661,15 @@ def run_upgrade(
                 report_preserved.append(rel)
 
     # --- Convention schema diff ---
-    # Try v3 layout (project-design/) first, fall back to v2 (_references/project/)
+    # Try v4 layout (product-design/) first, fall back to v3 (project-design/), then v2.
+    project_conv_v4 = target / "product-design" / "conventions.md"
     project_conv_v3 = target / "project-design" / "conventions.md"
     project_conv_v2 = target / _REFERENCES_V2_REL / "project" / "conventions.md"
-    project_conv = project_conv_v3 if project_conv_v3.is_file() else project_conv_v2
+    project_conv = (
+        project_conv_v4 if project_conv_v4.is_file()
+        else project_conv_v3 if project_conv_v3.is_file()
+        else project_conv_v2
+    )
     template_conv = target / _REFERENCES_REL / "template" / "conventions.md"
 
     if project_conv.is_file() and template_conv.is_file():

@@ -9,12 +9,12 @@ tools: Read, Bash, Glob, Grep
 
 You are a migration validation agent. Your task is to validate the Alembic migration chain and inspect migration files for common issues.
 
-**Before starting**, read `project-design/conventions.md` to obtain:
+**Before starting**, read `product-design/conventions.md` to obtain:
 - `${MIGRATIONS_DIR}` — directory containing migration files
 - `${MODELS_DIR}` — directory containing ORM model definitions
 - `${MIGRATION_CHAIN_SCRIPT}` — script that validates the migration chain
 
-Also read `project-design/standards.md § Backend` for ORM conventions (e.g., soft delete patterns, FK conventions).
+Also read `product-design/standards.md § Backend` for ORM conventions (e.g., soft delete patterns, FK conventions).
 
 ## Input
 

@@ -43,7 +43,7 @@ Shared execution pattern across the 10 modes. Each mode below names which common
 
 **C1. Pre-skill.** Run /pre-skill "check" $ARGUMENTS to add general instructions to the context window. Parse the first argument to determine the mode; remaining arguments are the scope.
 
-**C2. Stack filtering** (validate + preflight only). Read `BACKEND_FRAMEWORK` and `FRONTEND_FRAMEWORK` from `project-design/conventions.md` (via `project_config.py`), then load `.claude/skills/scripts/check_plugin_registry.json` and keep each plugin entry where both `stack.backend` and `stack.frontend` are either empty (stack-agnostic) or contain the project's value. Run only the matching scripts; skip non-matching silently.
+**C2. Stack filtering** (validate + preflight only). Read `BACKEND_FRAMEWORK` and `FRONTEND_FRAMEWORK` from `product-design/conventions.md` (via `project_config.py`), then load `.claude/skills/scripts/check_plugin_registry.json` and keep each plugin entry where both `stack.backend` and `stack.frontend` are either empty (stack-agnostic) or contain the project's value. Run only the matching scripts; skip non-matching silently.
 
 Fallback (legacy projects): if `conventions.md` has no stack variables and they cannot be inferred from the codebase, run all scripts and include this warning in the report:
 

@@ -94,9 +94,9 @@ if sys.platform == "win32":
 # dual-path pattern for template and project references.
 SECTION_BOUNDARY_FILES: dict[str, None] = {
     ".claude/references/template/product-design-as-coded.md": None,
-    "project-design/product-design-as-coded.md": None,
+    "product-design/product-design-as-coded.md": None,
     # Legacy pre-unification path; remove after workspace /seja-setup --upgrade landing or SEJA 2.9.x, whichever first.
-    "project-design/as-coded.md": None,
+    "product-design/as-coded.md": None,
 }
 
 

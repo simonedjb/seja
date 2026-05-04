@@ -11,7 +11,7 @@ tools: Read, Bash, Glob, Grep, Write
 
 You are a documentation generation agent. Your task is to produce or update project documentation for one specific documentation type.
 
-**Before starting**, read `project-design/constitution.md` if it exists. Apply its constraints throughout generation. If it does not exist, proceed without it.
+**Before starting**, read `product-design/constitution.md` if it exists. Apply its constraints throughout generation. If it does not exist, proceed without it.
 
 ## Input
 

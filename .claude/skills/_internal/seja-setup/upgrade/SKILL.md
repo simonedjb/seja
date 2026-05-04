@@ -12,11 +12,11 @@ metadata:
 
 ## Upgrade Flow
 
-> **Precondition**: target is in `finalised` (or user-confirmed `partial-init`) state with `.claude/`, `project-design/conventions.md`, and `.seja-version` (or legacy no-pin fallback). Entry-point routing has already redirected or refused `dev-repo-refuse`, `no-harness`, and `fresh-download`.
+> **Precondition**: target is in `finalised` (or user-confirmed `partial-init`) state with `.claude/`, `product-design/conventions.md`, and `.seja-version` (or legacy no-pin fallback). Entry-point routing has already redirected or refused `dev-repo-refuse`, `no-harness`, and `fresh-download`.
 
 Runs from the **target project** (not the source repo). Applies safe updates to project-independent files and preserves project-specific customizations.
 
-> **Scaffolding-migration note**: Upgrade never re-runs the Section 1 scaffolding questionnaire. Per the File Classification table below, `project-design/**` is classified "Never overwrite" -- your existing `conventions.md` is preserved unchanged. Projects finalised before the scaffolding move (those whose `conventions.md` still carries `{{VAR}}` placeholders) will retain those placeholders through the upgrade; run `/design update stack` afterwards to fill them and regenerate downstream artifacts (CLAUDE.md, rules, smoke-test infra) via the named scaffolding anchors. Greenfield and brownfield legacy projects both route through the same migration path.
+> **Scaffolding-migration note**: Upgrade never re-runs the Section 1 scaffolding questionnaire. Per the File Classification table below, `product-design/**` is classified "Never overwrite" -- your existing `conventions.md` is preserved unchanged. Projects finalised before the scaffolding move (those whose `conventions.md` still carries `{{VAR}}` placeholders) will retain those placeholders through the upgrade; run `/design update stack` afterwards to fill them and regenerate downstream artifacts (CLAUDE.md, rules, smoke-test infra) via the named scaffolding anchors. Greenfield and brownfield legacy projects both route through the same migration path.
 
 ### File Classification
 
@@ -29,7 +29,7 @@ Runs from the **target project** (not the source repo). Applies safe updates to 
 | Scripts | `.claude/skills/scripts/*.py` | No -- hardcoded project paths | Show diff, manual merge |
 | Agents | `.claude/agents/*.md` | Mostly -- may have local tweaks | Show diff, ask per file |
 | Rules | `.claude/rules/*.md` | No -- project-specific conventions | Show diff, manual merge |
-| Project definitions | `project-design/**` | Never | Skip |
+| Project definitions | `product-design/**` | Never | Skip |
 | Settings | `.claude/settings.json`, `settings.local.json` | Never | Skip |
 | Output directory | `_output/` (or configured) | Never | Skip |
 | CLAUDE.md | `CLAUDE.md` | Never | Skip |
@@ -40,7 +40,7 @@ Runs from the **target project** (not the source repo). Applies safe updates to 
 
 2. **Locate SEJA source repo**: if a path is provided, trust the user has it at the desired tag. Otherwise `git clone --depth 1 --branch <resolved-tag> https://github.com/simonedjb/seja <temp-dir>` (drop `--branch` if resolved ref is `HEAD`). On clone failure, ask for a local path.
 
-3. **Validate source repo**: confirm it contains `.claude/skills/` with skill definitions and `project-design/` with reference files.
+3. **Validate source repo**: confirm it contains `.claude/skills/` with skill definitions and `product-design/` with reference files.
 
 4. **Read project conventions**: read `project/conventions.md` for output-directory name and other project-specific paths.
 

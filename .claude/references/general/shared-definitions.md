@@ -179,7 +179,7 @@ Stable, machine-parseable identifiers for design-intent requirements, enabling s
 
 ## File Maintainer Classification
 
-Four-value scheme applied to all reference files in `project-design/` (principally `project/`). Used as the "Maintained by" column in `project/conventions.md` Key Files table, and summarized in `.claude/references/general/harness-governance.md`.
+Four-value scheme applied to all reference files in `product-design/` (principally `project/`). Used as the "Maintained by" column in `project/conventions.md` Key Files table, and summarized in `.claude/references/general/harness-governance.md`.
 
 | Value | Meaning | Agent rule |
 |-------|---------|-----------|

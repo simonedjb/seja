@@ -16,6 +16,27 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   preserved as-is; do not alter them.
 -->
 
+## [0.5.0] -- 2026-05-04 14:11 UTC
+
+### Added
+
+- **`/reflect --deep` interactive transition graph**: replaces the static viz.js renderer with a Cytoscape.js graph (cdnjs UMD, no ES-module import). Nodes are sized proportionally to invocation count with rounded-rectangle shape; edges are weighted by transition frequency. Interactions: drag nodes, scroll/pinch to zoom, pan, hover tooltips (invocation count on nodes; source→target transition count on edges), click-to-highlight neighbourhood, Reset view button. Self-loops use the `loop` curve style.
+- **Tol 2012 "muted" qualitative palette** covering all 13 SEJA skills (`research`, `plan`, `implement`, `check`, `document`, `communicate`, `reflect`, `pending`, `publish`, `explain`, `design`, `advise`, `seja-setup`). Replaces the 7-class Viridis sequential scale that left six skills encoded in `#999999`. Every entry is verified WCAG 2.0 AA compliant (≥ 4.5:1 text contrast at 11 px) and validated colorblind-safe for deuteranopia, protanopia, and tritanopia. `LIGHT_FILL_SKILLS` frozenset exported from `reflect_colors.py` as the single source of truth for dark-text skills.
+- **Event-matrix x-axis gap compression**: when consecutive events are separated by more than 24 hours, the gap is collapsed to a 120-minute stub on the compressed quantitative axis. Each collapsed gap is marked with a vertical gray dashed rule and a small rotated duration label (e.g., "2d 3h"). Session-date labels appear at the left edge of each activity cluster via `axis.values` + `axis.labelExpr` (nested ternary, valid Vega expression syntax). Labels for sessions narrower than 60 compressed minutes are suppressed to prevent overflow. Gap compression activates automatically; windows with no gaps fall through to the original temporal axis unchanged.
+
+### Changed
+
+- Transition graph node shape changed from circle to `round-rectangle`. Node width scales with invocation count (floor set per-node from label character width; `_label_min_width()` measures both label lines). Height is fixed at 46 px (2 × line-height + padding). A monotonicity sweep after sizing ensures that any node with more invocations is at least as wide as every lower-count node regardless of label length or rounding.
+- Event-matrix HTML page no longer emits a `<title>` element or `<h1>` tag; the Vega-Lite chart's own `title` field is the sole title.
+- Harness metrics: 51 scripts, 558 unit tests, 17 skills, 16 agents.
+
+### Fixed
+
+- Transition graph HTML previously used `<script type="module">` to import viz.js from the `@viz-js/viz` CDN — blocked by browsers when opening local `file://` URLs due to CORS. Replaced with viz.js 2.x UMD via cdnjs plain `<script>` tags, then superseded by the Cytoscape.js rewrite.
+- `axis.labelExpr` in the gapped event-matrix spec previously used a JavaScript object-literal lookup (`{...}[key]`) which is not valid Vega expression syntax, causing a silent compile error that left the chart blank. Fixed by replacing with a nested ternary chain (`datum.value == N ? 'date' : ...`).
+- Session date labels overlapped chart bars (positioned at `y: {value: 0}` inside the plot area). Moved to the x-axis label row via `axis.values` + `axis.labelExpr`.
+- Gap duration labels were invisible (clipped inside chart, `angle: -90`). Replaced with `angle: 0`, `clip: false`, `y: {value: -4}` floating above the plot in a 20 px top-padding strip.
+
 ## [0.4.1] -- 2026-05-02 03:20 UTC
 
 ### Added
@@ -330,7 +351,7 @@ For existing projects that already ran `/design` before 2.8.4, three options are
 ### Added
 
 - `.claude/references/template/design-intent.md` -- unified design-intent template merging the former `design-intent-to-be.md` (working intent) and `design-intent-established.md` (validated archive) into a single file. 446 lines, 20 H2 sections (§0 Planned Changes through §17 plus `## Decisions` ADR section and `## CHANGELOG`). Preserves all 8 REQ markers from the source files and seeds a `D-001` Decision template entry demonstrating the Nygard shape (Context / Decision / Consequences / optional Supersedes) with a `STATUS: proposed` marker. Classified `Human (markers)` -- prose (working intent, entity hierarchies, metacomm intentions, designed user journeys, Decision rationale) is strictly human-authored; agents write only `STATUS`, `ESTABLISHED`, and `CHANGELOG_APPEND` markers via `apply_marker.py`.
-- `.claude/references/template/design-intent.md` AND `project-design/design-intent.md` both registered in `HUMAN_MARKERS_FILES` and `APPEND_ONLY_SECTIONS` per plan-000268 Step 2. Dual-path pattern mirrors the plan-000267 ux-research registration.
+- `.claude/references/template/design-intent.md` AND `product-design/design-intent.md` both registered in `HUMAN_MARKERS_FILES` and `APPEND_ONLY_SECTIONS` per plan-000268 Step 2. Dual-path pattern mirrors the plan-000267 ux-research registration.
 - `### Decision entries (ADR)` subsection in `general/shared-definitions.md` documenting the `D-NNN` namespace (orthogonal to `REQ-TYPE-NNN`), the Nygard shape, and the Phase 3a/3b promote workflow. REQ taxonomy table gets a footnote making the orthogonality explicit.
 - Phase 3a / Phase 3b promote workflow in `/explain spec-drift --promote`: Phase 3a (`/explain spec-drift --promote`) drafts ADR-shaped Decision entries from plan metadata, writes them to `_output/promote-proposals/promote-proposal-plan-<id>.md`, and queues paired `apply-promote-proposal` + `apply-promote-markers` pending actions (deduped against existing pending pairs for the same plan). Phase 3b (`/explain spec-drift --promote --apply-markers plan-NNNNNN`) heading-only greps `design-intent.md § Decisions` for each proposed D-NNN (`^###\s+D-NNN(?::|\s*$)`, never matching prose), runs per-item `AskUserQuestion` confirmation, invokes `apply_marker.py` on confirmed items to flip STATUS from `implemented` to `established`, and applies precise lifecycle updates (marks `apply-promote-proposal` done only when all proposed entries are present; marks `apply-promote-markers` done only when every present item was flipped successfully). Partial completion leaves `apply-promote-proposal` pending with a "N of M applied" message.
 - `test_explain_promote_phase3a_phase3b.py` -- 8 integration tests covering Phase 3a proposal generation, paired pending-action creation, heading-only grep verification, marker flip on present entries, partial-completion lifecycle (Amendment A3), legacy uppercase marker replacement (Amendment A1 + A5), duplicate Phase 3a invocation idempotency (Amendment A3), and non-colon heading form rejection (Amendment A4).
@@ -346,7 +367,7 @@ For existing projects that already ran `/design` before 2.8.4, three options are
 - `/pending` skill dispatch text for `apply-promote-proposal` and `apply-promote-markers` rewritten to reference the actual Phase 3b command (`/explain spec-drift --promote --apply-markers <source>`) instead of the plan-000265 forward-declaration hedge.
 - `apply_marker.py` `_STATUS_MARKER_RE` widened from `[a-z]+` to `[A-Za-z]+` so legacy `STATUS: IMPLEMENTED` markers are detected. `_apply_status` normalizes `IMPLEMENTED` to `implemented` before the transition-allowed lookup, so a flip `implemented -> established` against a legacy marker REPLACES it (not stacks). (Amendment A1)
 - `check_plan_coverage.py` now reads the `DESIGN_INTENT` variable from conventions.md with a silent backward-compat fallback to `DESIGN_INTENT_TO_BE` for workspace-mode deployments. Error messages updated to reference `design-intent.md`. (Amendment A2 + A6)
-- `check_design_output.py` phrasing-rule scanner now reads `project-design/design-intent.md` with a backward-compat fallback to the legacy path.
+- `check_design_output.py` phrasing-rule scanner now reads `product-design/design-intent.md` with a backward-compat fallback to the legacy path.
 - `.claude/references/template/conventions.md` Key Files table: `DESIGN_INTENT_TO_BE` and `DESIGN_INTENT_ESTABLISHED` rows replaced with a single `DESIGN_INTENT` row pointing at `project/design-intent.md` classified `Human (markers)`. `DESIGN_INTENT_TO_BE` retained as a legacy alias row for workspace-mode compatibility (Amendment A6). To-Be / As-Is Registry two design-intent rows collapsed to two `${DESIGN_INTENT}` rows (one for §0-§17 + Decisions + CHANGELOG, one for §15 designed journeys).
 - `harness-structure.md`: Group A table two design-intent rows collapsed to one `project/design-intent.md | Human (markers)` row. Narrative paragraph updated to reflect the merge. The "Human (markers) is carried by ux-research.md" note now lists both ux-research.md (since 2.8.2) and design-intent.md (since 2.8.3).
 - `shared-definitions.md` Lifecycle Markers: existing "legacy + lowercase STATUS coexistence" paragraph extended to document the widened regex and the design-intent.md lowercase-primary convention.
@@ -376,7 +397,7 @@ Manual integration check performed during implementation: the already-committed 
 
 - `.claude/references/template/ux-research.md` -- unified UX research template with stable paragraph IDs (R-P-NNN personas, R-PS-NNN problem scenarios, existing JM-E-NNN discovered journeys) and an embedded `## CHANGELOG` section. Replaces two separate ux-research-new.md and ux-research-established.md files. 161 lines, 6 H2 sections. First real file classified as `Human (markers)` (plan-000265's test fixture is still registered but is not a real harness artifact).
 - `.claude/skills/explain/check_changelog_append_only.py` -- post-skill validator that enforces append-only discipline on designated sections. Two-rule system per plan-000267 Amendment 2: CHANGELOG sections use strict line-level prefix-preserving extension (no middle insertion allowed); §5 Discovered User Journeys uses prose-only prefix-preserving extension (lines matching ALLOWED_MARKERS are filtered out before comparison so apply_marker.py may legally insert INCORPORATED markers above existing JM-E-NNN headings). Registered as the `changelog-append-only` FAST_CHECKS entry in run_preflight_fast.py. 8 unit tests cover the happy path, historical-line modification/removal/middle-insertion rejection, new-file-in-diff silent pass, empty-registry loud warning, marker-line inserted mid-section (prose-only rule), and prose-line inserted mid-section (rejected).
-- `.claude/references/template/ux-research.md` AND `project-design/ux-research.md` both registered in `HUMAN_MARKERS_FILES` per plan-000267 Amendment 1. Dual-path pattern: the template path is what `/design` seeds (and harness-level tests touch); the project path is what designer commits exercise via post-skill step 2e. `apply_marker.py` and `check_human_markers_only.py` perform exact-string repo-relative path matching, so both forms must be present. Same dual-path pattern applied to `APPEND_ONLY_SECTIONS` in the new validator.
+- `.claude/references/template/ux-research.md` AND `product-design/ux-research.md` both registered in `HUMAN_MARKERS_FILES` per plan-000267 Amendment 1. Dual-path pattern: the template path is what `/design` seeds (and harness-level tests touch); the project path is what designer commits exercise via post-skill step 2e. `apply_marker.py` and `check_human_markers_only.py` perform exact-string repo-relative path matching, so both forms must be present. Same dual-path pattern applied to `APPEND_ONLY_SECTIONS` in the new validator.
 
 ### Changed
 
@@ -405,7 +426,7 @@ For existing projects that already ran `/design` before 2.8.2, three options are
 
 The `INCORPORATED` marker scheme is new and only applies to projects that migrate to the unified layout. Projects on the two-file layout continue to use the manual "move entries from new to established" workflow (or no workflow).
 
-Manual integration check performed during implementation: created a scratch `project-design/ux-research.md` with two JM-E-NNN entries in §5, committed the baseline, invoked `apply_marker.py --file project-design/ux-research.md --id JM-E-001 --marker INCORPORATED --value stamp --plan plan-000267 --date 2026-04-10` to insert a marker in the middle of §5, and confirmed both `check_human_markers_only.py --staged` and `check_changelog_append_only.py --staged` exit 0. The scratch file was then reverted. The end-to-end path validates Amendment 1 (dual-path registry) and Amendment 2 (prose-only §5 rule) on live content.
+Manual integration check performed during implementation: created a scratch `product-design/ux-research.md` with two JM-E-NNN entries in §5, committed the baseline, invoked `apply_marker.py --file product-design/ux-research.md --id JM-E-001 --marker INCORPORATED --value stamp --plan plan-000267 --date 2026-04-10` to insert a marker in the middle of §5, and confirmed both `check_human_markers_only.py --staged` and `check_changelog_append_only.py --staged` exit 0. The scratch file was then reverted. The end-to-end path validates Amendment 1 (dual-path registry) and Amendment 2 (prose-only §5 rule) on live content.
 
 ## [2.8.1] -- 2026-04-10 14:50 UTC
 
@@ -646,7 +667,7 @@ No existing files are reclassified as `Human (markers)` in this release. `HUMAN_
 
 ## [2.0.1] -- 2026-03-30 00:00 UTC
 
-- Renamed `project-design/` internal structure: files now organized into `general/`, `template/`, and `project/` subdirectories instead of flat files with `general-`, `template-`, `project-` prefixes. Metadata references, scripts, and documentation updated throughout.
+- Renamed `product-design/` internal structure: files now organized into `general/`, `template/`, and `project/` subdirectories instead of flat files with `general-`, `template-`, `project-` prefixes. Metadata references, scripts, and documentation updated throughout.
 - `/implement` quality gate now runs all checks by default (validate, review, test-runner). Previous `--skip-preflight` flag replaced with `--skip-checks`. Roadmap-conclusion gate runs full checks when the last roadmap item completes.
 - `/communication` now outputs stakeholder-facing content with dual format: Markdown plus styled HTML, both generated by default (`--format md|html|both`). Next-step recommendations are refined into the content rather than listed. Multi-file subfolder support for audiences with distinct topics. Date-folder index auto-generated when multiple artifacts share the same date.
 - `/upgrade` now fetches the foundational SEJA harness directly from GitHub instead of requiring a local copy.
@@ -668,7 +689,7 @@ No existing files are reclassified as `Human (markers)` in this release. `HUMAN_
 - Version-bump protocol documentation
 
 ### Changed
-- References relocated from `.claude/skills/references/` to `project-design/` (migration handled by upgrade script)
+- References relocated from `.claude/skills/references/` to `product-design/` (migration handled by upgrade script)
 - VERSION format changed from plain `version: 1` to semver `version: 2.0.0`
 
 ### Removed
@@ -680,7 +701,7 @@ No existing files are reclassified as `Human (markers)` in this release. `HUMAN_
 
 ### Added
 - Initial SEJA-Claude harness: 19 skills, 24 scripts, 5 agents, 6 rules
-- References system in `.claude/skills/references/` (later moved to `project-design/`)
+- References system in `.claude/skills/references/` (later moved to `product-design/`)
 - Template and general reference files
 - Project bootstrapping via `/quickstart`
 - Packaging via `/quickstart --package`

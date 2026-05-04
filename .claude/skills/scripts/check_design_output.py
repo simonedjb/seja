@@ -126,13 +126,13 @@ def register_plugin(name: str, description: str):
 @register_plugin("placeholder", "Detect unsubstituted {{VARIABLE}} placeholders in project files")
 def plugin_placeholder(root: Path, verbose: bool) -> list[Finding]:
     findings: list[Finding] = []
-    project_dir = root / "project-design"
+    project_dir = root / "product-design"
 
     if not project_dir.is_dir():
         if verbose:
             findings.append(Finding(
                 "", 0, "info",
-                "Skipped placeholder plugin: no project-design/ directory",
+                "Skipped placeholder plugin: no product-design/ directory",
                 "placeholder",
             ))
         return findings
@@ -188,10 +188,10 @@ def plugin_phrasing_rule(root: Path, verbose: bool) -> list[Finding]:
         as_coded_var = "project/product-design-as-coded.md"
 
     # --- Scan design intent (Part II, sections 11-15 only) ---
-    di = root / "project-design" / design_intent_var
+    di = root / "product-design" / design_intent_var
     if not di.is_file():
         # Backward-compat: pre-2.8.3 projects may still carry the old split file.
-        legacy = root / "project-design" / "design-intent-to-be.md"
+        legacy = root / "product-design" / "design-intent-to-be.md"
         if legacy.is_file():
             di = legacy
 
@@ -222,7 +222,7 @@ def plugin_phrasing_rule(root: Path, verbose: bool) -> list[Finding]:
         ))
 
     # --- Scan as-coded § Metacommunication (SEJA 2.8.4 unified file) ---
-    as_coded = root / "project-design" / as_coded_var
+    as_coded = root / "product-design" / as_coded_var
     if as_coded.is_file():
         try:
             text = as_coded.read_text(encoding="utf-8", errors="replace")
@@ -317,13 +317,13 @@ def _check_phrasing_line(findings: list[Finding], line: str, line_no: int, file_
 @register_plugin("cross-file-consistency", "Check PROJECT_NAME and locale consistency across project files")
 def plugin_cross_file_consistency(root: Path, verbose: bool) -> list[Finding]:
     findings: list[Finding] = []
-    project_dir = root / "project-design"
+    project_dir = root / "product-design"
 
     if not project_dir.is_dir():
         if verbose:
             findings.append(Finding(
                 "", 0, "info",
-                "Skipped cross-file-consistency plugin: no project-design/ directory",
+                "Skipped cross-file-consistency plugin: no product-design/ directory",
                 "cross-file-consistency",
             ))
         return findings
@@ -409,7 +409,7 @@ def plugin_cross_file_consistency(root: Path, verbose: bool) -> list[Finding]:
 @register_plugin("field-presence", "Check conventions.md for remaining template placeholder values")
 def plugin_field_presence(root: Path, verbose: bool) -> list[Finding]:
     findings: list[Finding] = []
-    conventions = root / "project-design" / "conventions.md"
+    conventions = root / "product-design" / "conventions.md"
 
     if not conventions.is_file():
         if verbose:
@@ -488,7 +488,7 @@ def _extract_h2_section(text: str, heading: str) -> str:
 @register_plugin("value-propagation", "Cross-check conventions.md values against standards files")
 def plugin_value_propagation(root: Path, verbose: bool) -> list[Finding]:
     findings: list[Finding] = []
-    conventions = root / "project-design" / "conventions.md"
+    conventions = root / "product-design" / "conventions.md"
 
     if not conventions.is_file():
         if verbose:
@@ -511,9 +511,9 @@ def plugin_value_propagation(root: Path, verbose: bool) -> list[Finding]:
     # Standards file paths. Since SEJA 2.8.1 the merged standards.md is preferred;
     # the legacy per-domain files are read as a fallback for projects that have not
     # migrated to the unified layout yet.
-    standards_file = root / "project-design" / "standards.md"
-    legacy_backend_standards = root / "project-design" / "backend-standards.md"
-    legacy_frontend_standards = root / "project-design" / "frontend-standards.md"
+    standards_file = root / "product-design" / "standards.md"
+    legacy_backend_standards = root / "product-design" / "backend-standards.md"
+    legacy_frontend_standards = root / "product-design" / "frontend-standards.md"
 
     # Check backend framework propagation
     if backend_fw and "{{" not in backend_fw:

@@ -71,7 +71,7 @@ def _has_priv_markers(repo_root: Path) -> bool:
 
 def _project_conventions_exists(repo_root: Path) -> bool:
     return (
-        (repo_root / "project-design/conventions.md").is_file()
+        (repo_root / "product-design/conventions.md").is_file()
         or (repo_root / "_references/project/conventions.md").is_file()
     )
 
@@ -212,7 +212,7 @@ def _resolve_repositories(repos_override: str | None) -> tuple[list[Path], str |
     if not _project_conventions_exists(repo_root):
         return (
             [],
-            "INFO: project-design/conventions.md not found; freshness-check skipped",
+            "INFO: product-design/conventions.md not found; freshness-check skipped",
         )
 
     paths = [repo_root]
