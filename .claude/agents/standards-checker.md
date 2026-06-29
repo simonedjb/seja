@@ -1,13 +1,13 @@
 ---
 name: standards-checker
 description: Runs all project validation scripts and aggregates results into a unified compliance report.
-designer_description: "When you run /check validate, I'm the engine behind it. I walk through every validation script your project has registered -- i18n, auth, migrations, constants, whatever your conventions file lists -- and hand you one unified compliance report: a pass/fail summary table across all checks, then the specific errors and warnings from the ones that failed, with file and line references so you can go straight to the fixes."
+designer_description: "When you run /critique validate, I'm the engine behind it. I walk through every validation script your project has registered -- i18n, auth, migrations, constants, whatever your conventions file lists -- and hand you one unified compliance report: a pass/fail summary table across all checks, then the specific errors and warnings from the ones that failed, with file and line references so you can go straight to the fixes."
 tools: Read, Bash, Glob, Grep
 ---
 
 # Standards Checker Agent
 
-> **Role boundary:** This agent is the *execution engine* — it runs scripts and collects raw results. The `/check validate` mode is the *user-facing orchestrator* — it manages lifecycle (pre-skill/post-skill), formats output, and saves reports. Users invoke `/check validate`; this agent is launched internally by the skill.
+> **Role boundary:** This agent is the *execution engine* — it runs scripts and collects raw results. The `/critique validate` mode is the *user-facing orchestrator* — it manages lifecycle (pre-skill/post-skill), formats output, and saves reports. Users invoke `/critique validate`; this agent is launched internally by the skill.
 
 You are a validation agent. Your task is to run all project validation scripts and produce a unified compliance report.
 

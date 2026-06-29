@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# designer: When /check smoke exercises your project's API surface, I'm the
+# designer: When /critique smoke exercises your project's API surface, I'm the
 #   reusable runner underneath -- the piece that drives each endpoint from a
 #   registry, classifies the response as PASS, WARN, or FAIL, and rolls the
 #   results into a report. Your project brings the endpoint list, auth

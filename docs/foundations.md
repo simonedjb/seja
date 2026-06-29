@@ -119,10 +119,11 @@ When one of the heavier skills finishes, we write a brief reflection-on-action n
 The note is short on purpose.
 It is not a postmortem; it is the smallest possible act of looking back before the next turn begins.
 
-**The `/reflect` skill for cross-session pattern analysis.**
+**The `/reflect` skill for anchored reflection and cross-session pattern analysis.**
 Reflection-on-practice is the longest-horizon register and it needs its own surface.
-The `/reflect` skill scans recent briefs, QA logs, and pending-ledger entries to surface patterns across sessions -- what kinds of questions keep coming back, where confirmations stall, where the same drift recurs between intent and code.
-This is the reflective register that cannot run inside a single turn; it needs the trail of many turns to see anything.
+In its default conversational mode, `/reflect` anchors a session on artifacts you choose, then asks which lens you are reflecting through: the **product lens** (examining what was built -- reflection-on-action on the artifact) or the **practice lens** (examining how you worked -- reflection-on-practice at the level of a session).
+It records your words verbatim without prescribing what to change.
+For the longer-horizon register -- patterns you cannot see inside a single turn -- `--telemetry` mines briefs, QA logs, and pending-ledger entries to surface sequences, durations, and recurring drift across sessions; `--deep` adds a visualization layer.
 
 Each scaffold is deliberately minimal.
 The point is not to ritualize reflection into a ceremony you will skip; the point is to put one small, structured pause at each of Schon's three registers so reflective practice becomes a habit you do not have to remember to adopt.

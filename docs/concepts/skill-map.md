@@ -19,7 +19,7 @@ flowchart TD
     plan["/plan"]
 
     %% Analysis
-    check["/check"]
+    check["/critique"]
     explain["/explain"]
     research["/research"]
 
@@ -109,24 +109,24 @@ flowchart TD
 - `/research` -> `/design`: Recommendations indicate the design intent should change -- update the project design before planning implementation
 - `/research --inventory` -> `/explain`: Want a deeper explanation of any of these
 - `/explain` -> `/research`: Have questions about what you just learned
-- `/check review` -> `/plan`: Want to plan fixes for the review findings
-- `/check validate` -> `/plan`: Found issues? Plan and fix them
-- `/check validate` -> `/check health`: Also check framework health
-- `/check validate` -> `/pending`: Check and address outstanding pending actions
-- `/check validate` -> `/reflect`: After quality checks, surface patterns across recent runs
-- `/check smoke` -> `/plan`: Found failures? Plan and fix them
-- `/check health` -> `/plan`: Found issues? Plan and fix them
-- `/check preflight` -> `/check review`: Want a detailed code review of the changes
-- `/check telemetry` -> `/research`: Want to discuss usage patterns
-- `/check telemetry` -> `/reflect`: Surface descriptive patterns over the last 30 days
+- `/critique review` -> `/plan`: Want to plan fixes for the review findings
+- `/critique validate` -> `/plan`: Found issues? Plan and fix them
+- `/critique validate` -> `/critique health`: Also check framework health
+- `/critique validate` -> `/pending`: Check and address outstanding pending actions
+- `/critique validate` -> `/reflect`: After quality checks, surface patterns across recent runs
+- `/critique smoke` -> `/plan`: Found failures? Plan and fix them
+- `/critique health` -> `/plan`: Found issues? Plan and fix them
+- `/critique preflight` -> `/critique review`: Want a detailed code review of the changes
+- `/critique telemetry` -> `/research`: Want to discuss usage patterns
+- `/critique telemetry` -> `/reflect`: Surface descriptive patterns over the last 30 days
 - `/reflect` -> `/research`: Want an assessment and recommendations on any pattern surfaced here
 - `/reflect` -> `/design`: Want to turn a surfaced pattern into new design intents
 - `/reflect` -> `/plan`: Want to turn a surfaced pattern into new work
-- `/check test-plan` -> `/communicate`: Share the test plan with stakeholders
-- `/check preflight` -> `/onboard`: Need to onboard someone to the project
-- `/seja-setup --upgrade` -> `/check health`: Verify framework health after upgrading
+- `/critique test-plan` -> `/communicate`: Share the test plan with stakeholders
+- `/critique preflight` -> `/onboard`: Need to onboard someone to the project
+- `/seja-setup --upgrade` -> `/critique health`: Verify framework health after upgrading
 - `/seja-setup --upgrade` -> `/explain spec-drift`: Re-run spec drift after framework upgrade to catch changed conventions
-- `/document` -> `/check docs`: Validate documentation consistency
+- `/document` -> `/critique docs`: Validate documentation consistency
 - `/communicate` -> `/onboard`: Need to onboard someone to the project
 - `/onboard` -> `/communicate`: Want to generate stakeholder material as well
 - `/help` -> `/help --browse`: Browse all available skills

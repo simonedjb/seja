@@ -22,9 +22,9 @@ Exit codes: 0 = all checks pass, 1 = one or more errors found.
 
 Usage
 -----
-    python .claude/skills/check/check_spec_conformance.py
-    python .claude/skills/check/check_spec_conformance.py --root /path/to/project
-    python .claude/skills/check/check_spec_conformance.py --verbose
+    python .claude/skills/critique/check_spec_conformance.py
+    python .claude/skills/critique/check_spec_conformance.py --root /path/to/project
+    python .claude/skills/critique/check_spec_conformance.py --verbose
 """
 from __future__ import annotations
 

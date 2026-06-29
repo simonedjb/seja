@@ -1,12 +1,12 @@
 ---
 diataxis: how-to
 freshness: release-bound
-last-reviewed: 2026-04-26
+last-reviewed: 2026-05-05
 ---
 
 # Upgrade how-to
 
-This how-to is for you when you want to pull harness updates into your project or workspace without touching your project data. By the end of it you will have a refreshed `.claude/` and `project-design/` tree, a regenerated `harness-reference.md`, and a clean `/check health` report. Plan on a few minutes for the upgrade itself, plus whatever time you need to read the CHANGELOG.
+This how-to is for you when you want to pull harness updates into your project or workspace without touching your project data. By the end of it you will have a refreshed `.claude/` and `product-design/` tree, a regenerated `harness-reference.md`, and a clean `/critique health` report. Plan on a few minutes for the upgrade itself, plus whatever time you need to read the CHANGELOG.
 
 ## Before you start
 
@@ -22,7 +22,7 @@ We commit or stash any pending work before we upgrade. An upgrade can overwrite 
 
 We invoke `/seja-setup --upgrade` from the project root. For workspace installs that live alongside a codebase, we can also call the script directly: `python .claude/skills/scripts/upgrade_harness.py --from <foundational-framework> --target <project-or-workspace>`. The slash form is the one we reach for in day-to-day work; the script form is what we use when we want to script an upgrade across several workspaces in one pass.
 
-**Harness:** See [concepts.md -- Harness lifecycle](../concepts.md#harness-lifecycle) for the full definition of the pre/post-skill pipeline, pending ledger, marker model, and constitution. `upgrade_harness.py` copies harness files from the source-of-truth harness repo into the target, explicitly skipping `project-design/`, `_output/`, and any files classified as Human or Human (markers) in the reference-file maintainer summary. Your `project/constitution.md`, `project/product-design-as-intended.md`, and `project/product-design-as-coded.md` are never touched. See also [harness-reference.md#upgrade](../reference/harness-reference.md#upgrade).
+**Harness:** See [concepts.md -- Harness lifecycle](../concepts.md#harness-lifecycle) for the full definition of the pre/post-skill pipeline, pending ledger, marker model, and constitution. `upgrade_harness.py` copies harness files from the source-of-truth harness repo into the target, explicitly skipping `product-design/`, `_output/`, and any files classified as Human or Human (markers) in the reference-file maintainer summary. Your `project/constitution.md`, `project/product-design-as-intended.md`, and `project/product-design-as-coded.md` are never touched. See also [harness-reference.md#upgrade](../reference/harness-reference.md#upgrade).
 
 > **Sidebar -- workspace vs in-project:** a workspace install is a separate repo that sits next to an existing codebase and drives it through SEJA without modifying it. In workspace mode we run the upgrade inside the workspace repo, not inside the codebase it drives. If we maintain several workspaces (for example, one per client project), we upgrade each one independently -- there is no fan-out mode, and each workspace's `project/` tree is its own island.
 
@@ -32,11 +32,11 @@ After the copy finishes, we let the post-skill pipeline run to completion before
 
 **Harness:** `/seja-setup --upgrade`'s post-skill invokes `generate_harness_reference.py` against the refreshed harness state and writes the result to `seja-public/docs/reference/harness-reference.md` (or the configured public-docs root). This keeps the reference file in sync with the harness source every time we upgrade, so we never have to wonder whether the row for a given skill or script has drifted from what the skill actually does. If the generator detects a breaking rename (a skill renamed, a script moved), it logs the rename in `_output/upgrade-reports/` so we can update any prose that referred to the old name.
 
-## Step 4: Run `/check health`
+## Step 4: Run `/critique health`
 
-We run `/check health` to verify the upgrade left everything coherent. A clean `/check health` report is our green light that the upgrade landed cleanly.
+We run `/critique health` to verify the upgrade left everything coherent. A clean `/critique health` report is our green light that the upgrade landed cleanly.
 
-**Harness:** `/check health` validates skill spec conformance, agent count justifications against `agent_count_policy.md`, and reference file liveness across the refreshed `project-design/` tree. If anything is missing or inconsistent -- a skill whose spec does not match the catalog, a reference file that no longer exists on disk, an agent file whose line count exceeds the policy -- it reports the gap before we start using the new harness for real work.
+**Harness:** `/critique health` validates skill spec conformance, agent count justifications against `agent_count_policy.md`, and reference file liveness across the refreshed `product-design/` tree. If anything is missing or inconsistent -- a skill whose spec does not match the catalog, a reference file that no longer exists on disk, an agent file whose line count exceeds the policy -- it reports the gap before we start using the new harness for real work.
 
 ## Step 5: Review the CHANGELOG
 
@@ -56,13 +56,25 @@ The resolved tag is recorded in a one-line file at the project root called `.sej
 
 Implementation detail: the resolution logic lives in `.claude/skills/scripts/resolve_seja_version.py`, which queries remote tags and validates the requested version. If the remote has no SemVer tags yet (pre-`v0.1.0` state), the skill warns and falls back to HEAD.
 
+## Harness migrations
+
+<a id="harness-migrations"></a>
+
+When SEJA releases a new version, some updates require more than copying files over: they need to move, rename, or reformat harness data that already exists in your project. Those structural changes are packaged as **harness migration scripts** under `.claude/migrations/` in the foundational harness repo.
+
+When `/seja-setup --upgrade` runs, `upgrade_harness.py` calls `run_migrations.py`, which discovers every migration script whose sequence number is higher than the one last applied and runs them in order. Each migration script is idempotent: running it twice has the same effect as running it once, so an interrupted upgrade can be retried safely.
+
+Migrations are project-data–safe by design: they update harness mechanics (file layout, script APIs, reference structure) without touching your `project/`, `_output/`, or product source files. The files classified as Human or Human (markers) -- your `constitution.md`, your `product-design-as-intended.md`, your authored conventions -- are explicitly excluded from every migration's write paths.
+
+If a migration makes a change you want to inspect, the upgrade report written to `_output/upgrade-reports/` by `upgrade_harness.py` itemises what each migration did and whether any manual follow-up is needed.
+
 ## Quick-reference workflow
 
-`/seja-setup --upgrade` (pull harness file updates) -> `/check health` (verify harness integrity) -> review the CHANGELOG and resolve any conflicts.
+`/seja-setup --upgrade` (pull harness file updates) -> `/critique health` (verify harness integrity) -> review the CHANGELOG and resolve any conflicts.
 
 > **Tip:** Run `/explain spec-drift` afterward if you suspect design specs have diverged during the time between upgrades.
 
 ## What to read next
 
-- [quality-gates.md](quality-gates.md) -- detail on `/check health` and the other gates we may want to run after the upgrade.
+- [quality-gates.md](quality-gates.md) -- detail on `/critique health` and the other gates we may want to run after the upgrade.
 - [concepts.md -- Harness lifecycle](../concepts.md#harness-lifecycle) -- the canonical definitions the callouts above link back to.

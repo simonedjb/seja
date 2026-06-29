@@ -39,7 +39,7 @@ Designed for solo users who want a clean, accessible interface without account s
 ## Enforcement
 
 - These principles are loaded into every agent context via pre-skill.
-- `/check validate` verifies conformance against the agent-facing constraints.
+- `/critique validate` verifies conformance against the agent-facing constraints.
 - Violations discovered during review or preflight are classified as **blocking**.
 
 ---

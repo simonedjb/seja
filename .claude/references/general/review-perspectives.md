@@ -1,5 +1,5 @@
 ---
-designer_description: "When you evaluate a plan, a diff, or an architectural decision, I'm the reference that defines the sixteen domain lenses -- security, performance, architecture, accessibility, and the rest -- their Essential vs Deep-dive tiers, the two-stage load protocol that keeps context lean, the Adopted/Deferred/N/A status vocabulary, and the rules for resolving conflicts when two perspectives pull the review in opposite directions."
+designer_description: "When you evaluate a plan, a diff, or an architectural decision, I'm the reference that defines the sixteen domain lenses -- security, performance, architecture, accessibility, and the rest -- their Essential/Standard/Deep tiers (P0 / P1–P2 / P3–P4), the two-stage load protocol that keeps context lean, the Adopted/Deferred/N/A status vocabulary, and the rules for resolving conflicts when two perspectives pull the review in opposite directions."
 ---
 
 # FRAMEWORK - REVIEW PERSPECTIVES
@@ -14,7 +14,7 @@ Evaluate changes against each applicable perspective and record tag + status: **
 
 ### Loading Perspectives
 
-Each perspective under `general/review-perspectives/` has two tiers: **Essential** (3-7 P0 critical/blocking questions, always evaluated, load for `standard` context or default shortlist) and **Deep-dive** (8-12 P1-P4 questions for thorough review, load for `heavy` context, explicit deep-dive, or primary-focus perspectives). Questions are priority-classified (`[P0]` critical through `[P4]` informational) and sorted by priority; under time/context pressure, focus P0-P1 first.
+Each perspective under `general/review-perspectives/` has three tiers: **Essential** (P0 critical/blocking questions, always evaluated, load for `standard` context or default shortlist), **Standard** (P1–P2 questions for thorough review, load for `heavy` context or primary-focus perspectives), and **Deep** (P3–P4 questions for exhaustive analysis, optional unless the perspective is the primary focus of the review). Questions are priority-classified (`[P0]` critical through `[P4]` informational) and sorted by priority; under time/context pressure, focus P0–P1 first.
 
 ### Two-Stage Loading
 
@@ -24,7 +24,7 @@ To avoid bulk-loading all 16 files:
 2. **Select 4-6 perspectives** via the **Perspective Shortcuts by Plan Prefix** table below, or manually by change content.
 3. **Load only the selected** `review-perspectives/<tag>.md` files.
 
-Consumers (`/plan`, `/check review`) follow this protocol unless depth is **Deep** and all perspectives are needed.
+Consumers (`/plan`, `/critique review`) follow this protocol unless depth is **Deep** and all perspectives are needed.
 
 ### Resolving Perspective Conflicts
 

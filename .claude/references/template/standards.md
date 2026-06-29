@@ -1,5 +1,5 @@
 ---
-designer_description: "I list the engineering conventions your project follows -- backend layering, frontend framework and structure, testing style and coverage expectations, and i18n approach -- so every PR you open can be reviewed against one agreed baseline rather than a different reviewer's memory, and skills like /check review and /plan can anchor their judgements to the same document."
+designer_description: "I list the engineering conventions your project follows -- backend layering, frontend framework and structure, testing style and coverage expectations, and i18n approach -- so every PR you open can be reviewed against one agreed baseline rather than a different reviewer's memory, and skills like /critique review and /plan can anchor their judgements to the same document."
 ---
 
 # TEMPLATE - ENGINEERING STANDARDS REFERENCE

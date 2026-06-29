@@ -13,7 +13,7 @@
 > `/publish v0.3.0 --yes`
 > Non-interactive publish -- accepts all confirmation prompts automatically.
 
-**When to use**: When you are ready to cut a public release. Prerequisites: `seja-public/CHANGELOG.md` has content under `## Unreleased`, working tree is clean, and the remote is reachable. Run `/check preflight` beforehand if you want a quality gate.
+**When to use**: When you are ready to cut a public release. Prerequisites: `seja-public/CHANGELOG.md` has content under `## Unreleased`, working tree is clean, and the remote is reachable. Run `/critique preflight` beforehand if you want a quality gate.
 
 **Not for**: Internal harness iteration (just commit normally), changelog authoring (edit `seja-public/CHANGELOG.md` directly), or harness upgrades in consumer projects (use `/seja-setup --upgrade`).
 

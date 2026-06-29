@@ -1,7 +1,7 @@
 ---
 diataxis: tutorial
 freshness: release-bound
-last-reviewed: 2026-04-19
+last-reviewed: 2026-05-05
 ---
 
 # Quickstart
@@ -70,12 +70,12 @@ For this worked example, you answer them as if you are building a
 personal task tracker: the project name is `hello-seja`, the domain
 is `personal tasks and reminders`, the stack is `Python + SQLite`,
 and the mode is `greenfield`. SEJA then generates four project
-files under `project-design/`, customized with your answers.
+files under `product-design/`, customized with your answers.
 
 To confirm the files exist, you run:
 
 ```bash
-ls project-design/
+ls product-design/
 ```
 
 You should see four markdown files listed. If you see them, the
@@ -92,7 +92,7 @@ SEJA has been published. When you do run it, you type:
 ```
 
 SEJA pulls the latest harness files from the foundational repo
-without touching anything under `project-design/` or `_output/`.
+without touching anything under `product-design/` or `_output/`.
 Your design decisions and your plan and execution history stay
 exactly where you left them. You can run `/seja-setup --upgrade` as
 often as you like; it is non-destructive by construction.
@@ -103,7 +103,7 @@ install and upgrade modes; see [how-to/upgrade.md -- Pinning to a specific relea
 
 ## What just happened
 
-You now have a SEJA project with four files under `project-design/`:
+You now have a SEJA project with four files under `product-design/`:
 
 - `conventions.md` captures your project directory layout and the
   harness variables the agents read at the start of every skill.
@@ -143,7 +143,7 @@ document and communicate -- validate before you communicate.
 3. **`/implement`** -- execute the plan. SEJA runs the numbered
    steps, tracking progress and handling errors as it goes.
 
-4. **`/check`** -- validate before you communicate. Run the
+4. **`/critique`** -- validate before you communicate. Run the
    appropriate mode (`validate`, `review`, `preflight`, `smoke`,
    or `health`) to confirm the change is sound. This gate is
    deliberately placed before documentation so you never document

@@ -7,7 +7,7 @@ tools: Read, Glob, Grep, Write
 
 # Test Plan Generator Agent
 
-> **Role boundary:** This agent is the *test-plan generation engine* -- it synthesises a structured manual test plan from a brief and the most recent DONE plans. The `/check test-plan` skill is the *user-facing orchestrator* -- it manages lifecycle (pre-skill/post-skill), ID reservation (usertest-NNN, NOT check-NNN), and result presentation. Users invoke `/check test-plan`; this agent is launched internally by the skill.
+> **Role boundary:** This agent is the *test-plan generation engine* -- it synthesises a structured manual test plan from a brief and the most recent DONE plans. The `/critique test-plan` skill is the *user-facing orchestrator* -- it manages lifecycle (pre-skill/post-skill), ID reservation (usertest-NNN, NOT check-NNN), and result presentation. Users invoke `/critique test-plan`; this agent is launched internally by the skill.
 
 You are a test-plan generation agent. Your task is to produce a manual test plan from a user-supplied brief and the most recent DONE plans that are relevant to the brief.
 
@@ -17,7 +17,7 @@ You are a test-plan generation agent. Your task is to produce a manual test plan
 
 You will receive:
 - **brief**: the user's test-brief string describing what to test
-- **id**: the reserved `usertest-NNN` ID passed by the caller (`/check test-plan`)
+- **id**: the reserved `usertest-NNN` ID passed by the caller (`/critique test-plan`)
 - **output_path**: the target file path under `${USER_TESTS_DIR}` where the plan must be written
 - **plans_dir** (optional): override for `${PLANS_DIR}`
 - **user_tests_dir** (optional): override for `${USER_TESTS_DIR}`
@@ -36,4 +36,4 @@ You will receive:
 
 Write the user test to `output_path`. Header line (verbatim): `# User test <id> | <prefix><scope> | <current datetime> | <short title>`. Body: user brief + agent interpretation + files per `.claude/references/general/report-conventions.md`; to-do enumeration of plan steps phrased as commands to the user.
 
-Do NOT invoke `/pre-skill` or `/post-skill` -- the caller (`/check test-plan`) owns lifecycle.
+Do NOT invoke `/pre-skill` or `/post-skill` -- the caller (`/critique test-plan`) owns lifecycle.

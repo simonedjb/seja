@@ -16,9 +16,25 @@ Format: loosely based on [Keep a Changelog](https://keepachangelog.com/). SemVer
 
 ## [Unreleased]
 
+<!-- bump: minor -->
+
+### Breaking changes
+
+- **`/check` renamed to `/critique`**: the skill is now invoked as `/critique <mode>`. All prior `/check` modes (`validate`, `review`, `smoke`, `preflight`, `health`, `test-plan`, `docs`, `freshness`, `telemetry`) are preserved as-is under `/critique`. Update any saved prompts or documentation that reference `/check`. (plan-000585)
+
+### Added
+
+- **`/reflect` product/practice lens**: `/reflect` now offers a product lens (user-facing impact, metacommunication alignment) and a practice lens (team workflow, AI collaboration patterns) alongside the existing technical lens. Available in both standard and `--deep` modes.
+- **Call-graph HTML: self-contained offline viewer**: the interactive Cytoscape.js call-graph viewer now embeds the graph JSON inline in the HTML file, removing the HTTP fetch dependency. The viewer works fully offline and from `file://` URLs without a local server.
+- **`docs/concepts.md`: REQ-TYPE-NNN requirement traceability types**: new section documents the 8 requirement traceability marker types (ENT, PERM, VAL, UX, MC, JM, I18N, DELTA), their blocking/advisory classification, and how plan steps reference them via the `Traces:` field.
+- **`docs/how-to/upgrade.md`: Harness migrations section**: documents the idempotent migration scripts under `.claude/migrations/`, how `run_migrations.py` applies them during `upgrade_harness.py`, and where upgrade reports land (`_output/upgrade-reports/`).
+
 ### Fixed
 
-- `publish.py`: Unreleased-section detection now matches both `## Unreleased` and `## [Unreleased]` heading forms (bracket notation). Fixes false "empty Unreleased section" preflight errors.
+- **`pending.py`: stale `implement` entries auto-dismissed on cleanup**: `pending.py cleanup` now checks whether a plan file carries a `# DONE` header in addition to checking for deletion. Implement entries whose plan completed but whose post-skill mark-done call failed silently are automatically dismissed within 24 hours (next pre-skill run). Dismissal reason: `plan already completed`.
+- **Call-graph**: suggest-edge filter incorrectly split on the wrong token; `research`/`orchestrates` edge type false positive. Both corrected in `generate_call_graph.py`.
+- **`generate_macro_index.py`**: `/explain` output artifact types (`behavior`, `behavior-evolution`, `code`, `data-model`, `architecture`) were missing from the index; now included.
+- **`publish.py`**: Unreleased-section detection now matches both `## Unreleased` and `## [Unreleased]` heading forms (bracket notation). Fixes false "empty Unreleased section" preflight errors.
 
 ## [v0.3.0] - 2026-05-01
 
@@ -50,7 +66,7 @@ Format: loosely based on [Keep a Changelog](https://keepachangelog.com/). SemVer
 
 ### Added
 
-- Added `/check freshness` mode and `check-git-freshness` periodic trigger for git upstream-freshness checks. The mode compares local branches to their upstreams for the codebase (and companion workspace, in two-repo deployments) and reports ahead/behind counts. No automatic pulls. The periodic trigger surfaces a pending-ledger entry every 7 days (configurable; blank to disable). See `.claude/rules/framework-structure.md` Architectural Decisions for why this signal lives outside pre-skill. (plan-000479, research-000477)
+- Added `/critique freshness` mode and `check-git-freshness` periodic trigger for git upstream-freshness checks. The mode compares local branches to their upstreams for the codebase (and companion workspace, in two-repo deployments) and reports ahead/behind counts. No automatic pulls. The periodic trigger surfaces a pending-ledger entry every 7 days (configurable; blank to disable). See `.claude/rules/framework-structure.md` Architectural Decisions for why this signal lives outside pre-skill. (plan-000479, research-000477)
 
 ### Changed
 
@@ -83,7 +99,7 @@ Format: loosely based on [Keep a Changelog](https://keepachangelog.com/). SemVer
 
 ### Changed
 
-- **Canonical lifecycle path revised** (plan-000433, advisory-000431). The lifecycle narrative in `CLAUDE.md § Key workflows`, `docs/quickstart.md`, and `docs/concepts.md § Lifecycle` now presents a single canonical path -- `/research` (or `/explain`) > `/design` | `/plan` > `/implement` > `/check` > `/document` | `/communicate` > `/reflect` -- with the single gating invariant "validate before you communicate" (`/check` always comes before `/document` and `/communicate`). Replaces the prior two-path framing (first iteration vs iteration 2+) with one unified sequence; iteration-1 bootstrapping via `/seja-setup` -> `/design` is noted as the lead-in, not a separate path. `/reflect` is now explicit as the cycle-closing step in the documented flow.
+- **Canonical lifecycle path revised** (plan-000433, advisory-000431). The lifecycle narrative in `CLAUDE.md § Key workflows`, `docs/quickstart.md`, and `docs/concepts.md § Lifecycle` now presents a single canonical path -- `/research` (or `/explain`) > `/design` | `/plan` > `/implement` > `/critique` > `/document` | `/communicate` > `/reflect` -- with the single gating invariant "validate before you communicate" (`/critique` always comes before `/document` and `/communicate`). Replaces the prior two-path framing (first iteration vs iteration 2+) with one unified sequence; iteration-1 bootstrapping via `/seja-setup` -> `/design` is noted as the lead-in, not a separate path. `/reflect` is now explicit as the cycle-closing step in the documented flow.
 - **Pre-skill pending-check stage surfaces publish entries separately.** Pending-ledger entries whose description starts with `PUBLISH:` (filed by `tools/cut_tag.py` at release time) are now rendered as a dedicated banner before the generic pending notice. Entries older than 3 days escalate to a stronger "OVERDUE publish" warning. Implements the drift-prevention mechanism that closes A2's manual-sync gap (advisory-000366, roadmap-000372 Wave 1 / plan-000376).
 - `pending.py status --json` payload gains `publish` (list of publish entries), `publish_overdue_count`, and `publish_overdue_threshold_days` fields. Existing fields (`count`, `overdue_count`, `top_3`, `warnings`) are unchanged; the new fields are additive and safe for existing consumers to ignore.
 - **`implement` pending action type and overdue banner.** Post-skill now files an `implement` pending entry when `/plan` completes (via `pending.py add --if-absent` for atomic uniqueness); the entry is closed by `/implement`'s rename-to-`-done-` step and by a post-skill safety net, both using `pending.py done --source <plan-id> --type implement` (idempotent). Pre-skill's pending-check stage surfaces open entries via a new banner, with a stronger overdue warning past the `Pending plan age escalation` threshold (default 30 days; configurable in `conventions.md § Periodic Triggers`). A plan generated via `/plan` but never run via `/implement` no longer accumulates silently. `pending.py status --json` gains `implement`, `implement_overdue`, `implement_overdue_count`, and `implement_overdue_threshold_days` fields. (advisory-000407, plan-000408)

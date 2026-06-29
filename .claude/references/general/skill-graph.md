@@ -15,7 +15,7 @@ designer_description: "When one skill finishes and you are deciding what to do n
 | `/plan` | `/implement` | Ready to implement this plan? |
 | `/plan --light` | `/implement` | Ready to implement this proposal? |
 | `/plan --roadmap` | `/implement` | Ready to implement items from the roadmap? |
-| `/implement` | `/check validate`, `/check review`, `/check preflight` | All checks run by default unless --skip-checks was used. |
+| `/implement` | `/critique validate`, `/critique review`, `/critique preflight` | All checks run by default unless --skip-checks was used. |
 | `/implement` | `/document` | Runs automatically via post-skill step 2b for FEATURE/REDESIGN plans and plans with non-N/A Docs: fields; edge stays informational for `--skip-docs` and standalone `/document` modes. |
 | `/implement` | `/pending` | Review pending actions created by this implementation |
 | `/implement` | `/reflect` | Surface patterns across recent skill runs (non-prescriptive) |
@@ -36,16 +36,16 @@ designer_description: "When one skill finishes and you are deciding what to do n
 | `/research` | `/design` | Recommendations indicate the design intent should change -- update the project design before planning implementation. |
 | `/research --inventory` | `/explain` | Want a deeper explanation of any of these? |
 | `/explain` | `/research` | Have questions about what you just learned? |
-| `/check review` | `/plan` | Want to plan fixes for the review findings? |
-| `/check validate` | `/plan` | Found issues? Plan and fix them. |
-| `/check validate` | `/check health` | Also check harness health? |
-| `/check validate` | `/pending` | Check and address outstanding pending actions |
-| `/check validate` | `/reflect` | After quality checks, surface patterns across recent runs |
-| `/check smoke` | `/plan` | Found failures? Plan and fix them. |
-| `/check health` | `/plan` | Found issues? Plan and fix them. |
-| `/check preflight` | `/check review` | Want a detailed code review of the changes? |
-| `/check telemetry` | `/research` | Want to discuss usage patterns? |
-| `/check telemetry` | `/reflect` | Surface descriptive patterns over the last 30 days? |
+| `/critique review` | `/plan` | Want to plan fixes for the review findings? |
+| `/critique validate` | `/plan` | Found issues? Plan and fix them. |
+| `/critique validate` | `/critique health` | Also check harness health? |
+| `/critique validate` | `/pending` | Check and address outstanding pending actions |
+| `/critique validate` | `/reflect` | After quality checks, surface patterns across recent runs |
+| `/critique smoke` | `/plan` | Found failures? Plan and fix them. |
+| `/critique health` | `/plan` | Found issues? Plan and fix them. |
+| `/critique preflight` | `/critique review` | Want a detailed code review of the changes? |
+| `/critique telemetry` | `/research` | Want to discuss usage patterns? |
+| `/critique telemetry` | `/reflect` | Surface descriptive patterns over the last 30 days? |
 | `/reflect` | `/research` | Want an assessment and recommendations on any pattern surfaced here? |
 | `/reflect` | `/design` | Want to turn a surfaced pattern into new design intents? |
 | `/reflect` | `/plan` | Want to turn a surfaced pattern into new work? |
@@ -54,23 +54,23 @@ designer_description: "When one skill finishes and you are deciding what to do n
 
 | After | Suggest | Reason |
 | --- | --- | --- |
-| `/check test-plan` | `/communicate` | Share the test plan with stakeholders? |
-| `/check preflight` | `/onboard` |  Need to onboard someone to the project? |
+| `/critique test-plan` | `/communicate` | Share the test plan with stakeholders? |
+| `/critique preflight` | `/onboard` |  Need to onboard someone to the project? |
 
 ### Framework maintenance
 
 | After | Suggest | Reason |
 | --- | --- | --- |
-| `/seja-setup --upgrade` | `/check health` | Verify harness health after upgrading |
+| `/seja-setup --upgrade` | `/critique health` | Verify harness health after upgrading |
 | `/seja-setup --upgrade` | `/explain spec-drift` | Re-run spec drift after harness upgrade to catch changed conventions |
-| `/check preflight` | `/publish` | Preflight passed -- ready to cut a release? |
-| `/publish` | `/check health` | Verify harness health after publishing |
+| `/critique preflight` | `/publish` | Preflight passed -- ready to cut a release? |
+| `/publish` | `/critique health` | Verify harness health after publishing |
 
 ### Utilities
 
 | After | Suggest | Reason |
 | --- | --- | --- |
-| `/document` | `/check docs` | Validate documentation consistency? |
+| `/document` | `/critique docs` | Validate documentation consistency? |
 | `/communicate` | `/onboard` | Need to onboard someone to the project? |
 | `/onboard` | `/communicate` | Want to generate stakeholder material as well? |
 | `/help` | `/help --browse` | Browse all available skills? |

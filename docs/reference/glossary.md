@@ -1,7 +1,7 @@
 ---
 diataxis: reference
 freshness: release-bound
-last-reviewed: 2026-04-26
+last-reviewed: 2026-05-05
 ---
 
 # SEJA Glossary
@@ -13,7 +13,7 @@ Canonical reference for SEJA terminology. This is a lookup, not a tutorial: scan
 - **Agent** -- File classification for content auto-maintained by agents and skills (e.g., via post-skill); humans typically do not edit it directly.
 - **Human** -- File classification for content authored and updated exclusively by humans; agents may read it but must not write to it.
 - **Human (markers)** -- File classification for human-authored prose where agents may write only fixed-format structured markers via `apply_marker.py`, and only after explicit confirmation in the same turn.
-- **Human / Agent** -- File classification seeded by an agent (e.g., via `/design`), then human-owned; both may update it following the file's own rules.
+- **Human / Agent** -- File classification seeded by an agent (e.g., via `/design`), then human-owned; both may update it following the file's own rules. See `docs/concepts.md § Sign system`.
 
 ## Markers
 
@@ -21,13 +21,13 @@ Canonical reference for SEJA terminology. This is a lookup, not a tutorial: scan
 - **D-NNN** -- DRR-shaped Decision entry ID (Context / Decision / Consequences) living in `project/product-design-as-intended.md § Decisions`, orthogonal to the REQ namespace.
 - **ESTABLISHED** -- Inline HTML comment stamp recording that a human has promoted an implemented item to established status, carrying plan ID, date, and optional version.
 - **PUBLISH pending entry** -- Pending-ledger entry subtype filed by `cut_tag.py` at tag-cut to track outstanding publish-to-public work; surfaced by the pre-skill hook and escalated after 3 days overdue. See `docs/reference/release-process.md § Drift prevention`.
-- **REQ-TYPE-NNN** -- Stable machine-parseable requirement ID (ENT, PERM, VAL, UX, MC, JM, I18N, DELTA) placed as an HTML comment before the heading, row, or bullet that defines the requirement.
+- **REQ-TYPE-NNN** -- Stable machine-parseable requirement ID (ENT, PERM, VAL, UX, MC, JM, I18N, DELTA) placed as an HTML comment before the heading, row, or bullet that defines the requirement. See `docs/concepts.md § REQ-TYPE-NNN`.
 - **STATUS** -- Inline HTML comment marker above a section heading tracking its lifecycle state through `proposed -> implemented -> established -> superseded`, with plan ID and date.
 
 ## Profiles and patterns
 
 - **brownfield** -- Project profile for embedding or attaching SEJA to an existing codebase that already has source history.
-- **collocated** -- Deployment pattern where harness files (`.claude/`, `project-design/`, `_output/`) live directly inside the product codebase repository.
+- **collocated** -- Deployment pattern where harness files (`.claude/`, `product-design/`, `_output/`) live directly inside the product codebase repository.
 - **greenfield** -- Project profile for a brand-new project with no pre-existing codebase.
 - **workspace** -- Deployment pattern where harness files live in a standalone git repository alongside, not inside, the product codebase.
 
@@ -61,10 +61,10 @@ Canonical reference for SEJA terminology. This is a lookup, not a tutorial: scan
 
 ## Harness artifacts
 
-- **harness** -- The SEJA agent harness: the collection of skills, agents, rules, references, scripts, and lifecycle pipelines under `.claude/` that govern how the AI agent operates on a project. The harness wraps every skill invocation in a pre-skill / post-skill envelope, enforces trust boundaries via the constitution, and maintains the sign system that tracks design intent. "Harness files" refers to the on-disk artifacts (`.claude/`, `project-design/`, `_output/`) that the harness reads and writes.
+- **harness** -- The SEJA agent harness: the collection of skills, agents, rules, references, scripts, and lifecycle pipelines under `.claude/` that govern how the AI agent operates on a project. The harness wraps every skill invocation in a pre-skill / post-skill envelope, enforces trust boundaries via the constitution, and maintains the sign system that tracks design intent. "Harness files" refers to the on-disk artifacts (`.claude/`, `product-design/`, `_output/`) that the harness reads and writes.
 - **agent** -- Subagent prompt under `.claude/agents/` executing a single role (evaluator, generator, or executor) on one artifact type.
 - **constitution** -- Immutable project principles in `project/constitution.md`, never agent-altered, required for new projects.
-- **migration** -- Upgrade script under `.claude/migrations/` that moves a target project's harness files between SEJA versions.
+- **migration** -- Upgrade script under `.claude/migrations/` that moves a target project's harness files between SEJA versions. See `docs/how-to/upgrade.md § Harness migrations`.
 - **pending ledger** -- Append-only JSONL log at `_output/pending.jsonl` tracking outstanding human actions surfaced by skills.
 - **post-skill pipeline** -- Lifecycle hook run after every skill for briefs update, QA logging, as-coded updates, marker proposals, and git commit.
 - **pre-skill pipeline** -- Eight-stage pipeline run before every skill: help, brief-log, orphan-check, budget-eval, compaction-check, pending-check, ref-load, constitution.

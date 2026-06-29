@@ -23,7 +23,7 @@ You will receive:
 1. **Read the review framework:**
    - Read `.claude/references/general/review-perspectives.md` for the perspective index, conflict resolution rules, and plan prefix shortcuts
    - Use the two-stage loading protocol: read `.claude/references/general/review-perspectives-index.md` first, then load only the selected perspective files from `.claude/references/general/review-perspectives/`
-   - Load the **Essential** section for initial evaluation; load the **Deep-dive** section for perspectives that are central to the question or when depth is **deep**
+   - Load the **Essential** section for initial evaluation; load the **Standard** section for thorough coverage; load the **Deep** section for perspectives that are central to the question or when depth is **deep**
 
 2. **Read context files:**
    - If context file paths were provided, read them to understand the surrounding design and constraints

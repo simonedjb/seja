@@ -26,7 +26,7 @@ SEJA validates work at three layers, each with a different speed and blocking be
 
 All three layers share a single entry point: `run_preflight_fast.py`.
 
-**Harness:** the fast preflight script orchestrates the validator suite (`check_conventions.py`, `check_skill_system.py`, `check_secrets.py`, `check_spec_conformance.py`) and optionally runs `pytest` in CI mode. See also [quality-gates.md](quality-gates.md) for which `/check` mode to reach for at each stage of a local workflow.
+**Harness:** the fast preflight script orchestrates the validator suite (`check_conventions.py`, `check_skill_system.py`, `check_secrets.py`, `check_spec_conformance.py`) and optionally runs `pytest` in CI mode. See also [quality-gates.md](quality-gates.md) for which `/critique` mode to reach for at each stage of a local workflow.
 
 ## Step 1: Install git hooks (local)
 
@@ -61,7 +61,7 @@ No setup required. Step 6b in `/post-skill` automatically runs `run_preflight_fa
 The provided workflow at `.github/workflows/seja-validate.yml` runs two jobs:
 
 1. **Fast gate** (every push): `run_preflight_fast.py --ci`
-2. **Full validation** (PRs to main only): `claude -p "/check validate all"` (requires `ANTHROPIC_API_KEY` secret)
+2. **Full validation** (PRs to main only): `claude -p "/critique validate all"` (requires `ANTHROPIC_API_KEY` secret)
 
 To use, ensure the workflow file is committed and add `ANTHROPIC_API_KEY` to your repo's GitHub Actions secrets (only needed for the full validation job).
 
@@ -78,7 +78,7 @@ seja-fast-gate:
 seja-full-validation:
   stage: test
   script:
-    - claude -p "/check validate all"
+    - claude -p "/critique validate all"
   rules:
     - if: $CI_MERGE_REQUEST_ID
   allow_failure: true
@@ -95,7 +95,7 @@ python .claude/skills/scripts/run_preflight_fast.py --ci
 For full validation (requires Claude Code CLI):
 
 ```bash
-claude -p "/check validate all"
+claude -p "/critique validate all"
 ```
 
 ## Step 4: Run standalone script checks
@@ -137,11 +137,11 @@ Use these skills in local development sessions, not in CI.
 ## Troubleshooting
 
 - **Scripts fail with "project/conventions.md not found"**: This is a warning, not an error. The scripts fall back to `template/conventions.md`. In project repos (not the harness repo), ensure `/design` has been run to generate `project/conventions.md`.
-- **Claude Code invocations timeout**: Set a generous timeout (5-10 minutes) for skill invocations. `/check validate` and `/check preflight` can take several minutes on large codebases.
+- **Claude Code invocations timeout**: Set a generous timeout (5-10 minutes) for skill invocations. `/critique validate` and `/critique preflight` can take several minutes on large codebases.
 - **Index regeneration fails**: Ensure the `_output/` directory exists and the scripts have write access.
 - **Pre-commit hook not running**: Verify hooks are installed with `git config core.hooksPath`. Should show `.githooks`.
 
 ## What to read next
 
-- [quality-gates.md](quality-gates.md) -- which `/check` mode to run at each stage of a local workflow.
+- [quality-gates.md](quality-gates.md) -- which `/critique` mode to run at each stage of a local workflow.
 - [concepts.md -- Harness lifecycle](../concepts.md#harness-lifecycle) -- the canonical definitions the callouts above link back to.

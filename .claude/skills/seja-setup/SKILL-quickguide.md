@@ -31,6 +31,6 @@ State detection recognizes four project states: **no-harness** (fresh install ta
 
 Stack-presence modes determine what gets scaffolded: **full-stack** (backend + frontend), **API-only** (`FRONTEND_FRAMEWORK=none`), **frontend-only** (`BACKEND_FRAMEWORK=none`), and **CLI / library** (both `none`). Each mode emits only the appropriate rows in `conventions.md`, sections in `CLAUDE.md`, rule files, and smoke-test infrastructure.
 
-**Next step**: `/design` after a fresh install to define design intent (entities, permissions, metacommunication, personas, standards). If you are new to SEJA, read `general/getting-started.md` first. After `--upgrade`: `/check health` to verify harness integrity, then `/explain spec-drift` to catch changed conventions.
+**Next step**: `/design` after a fresh install to define design intent (entities, permissions, metacommunication, personas, standards). If you are new to SEJA, read `general/getting-started.md` first. After `--upgrade`: `/critique health` to verify harness integrity, then `/explain spec-drift` to catch changed conventions.
 
 **Merge background**: This skill merges the former `/setup` and `/upgrade` into a unified harness-state command.

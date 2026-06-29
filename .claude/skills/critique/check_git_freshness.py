@@ -8,9 +8,9 @@ Invocation: skill-invoked, user-cli
 Lifecycle: active
 
 Usage:
-    python .claude/skills/check/check_git_freshness.py
-    python .claude/skills/check/check_git_freshness.py --json
-    python .claude/skills/check/check_git_freshness.py --repos C:/repo1,C:/repo2
+    python .claude/skills/critique/check_git_freshness.py
+    python .claude/skills/critique/check_git_freshness.py --json
+    python .claude/skills/critique/check_git_freshness.py --repos C:/repo1,C:/repo2
 
 Behavior:
 - Resolves repos from harness root + CODEBASE_DIR in conventions (when available)

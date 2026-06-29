@@ -84,8 +84,8 @@ designer_description: "I'm your project's immutable principles -- the non-negoti
 ## Enforcement
 
 - These principles are loaded into every agent context via pre-skill.
-- `/check validate` verifies conformance against the agent-facing constraints derived from this document.
-- Violations discovered during `/check review` or `/check preflight` are classified as **blocking** -- they must be resolved before commit.
+- `/critique validate` verifies conformance against the agent-facing constraints derived from this document.
+- Violations discovered during `/critique review` or `/critique preflight` are classified as **blocking** -- they must be resolved before commit.
 - To amend this constitution, the change must be explicitly approved by the project lead and documented in the changelog below.
 
 ---

@@ -1,5 +1,5 @@
 // SEJA harness call graph -- interactive viewer.
-// Generated 2026-05-01T20:31:14Z by .claude/skills/scripts/generate_call_graph.py.
+// Generated 2026-06-18T11:41:13Z by .claude/skills/scripts/priv/generate_call_graph.py.
 // Do not edit by hand.
 //
 // Step 4 wires the sidebar controls scaffolded in Step 3: per-type filter
@@ -72,14 +72,10 @@
   // -----------------------------------------------------------------
   // Load graph data
   // -----------------------------------------------------------------
-  let data;
-  try {
-    const response = await fetch('./call-graph.json');
-    if (!response.ok) throw new Error('fetch failed: ' + response.status);
-    data = await response.json();
-  } catch (err) {
+  const data = window.__CALL_GRAPH_DATA__;
+  if (!data) {
     document.getElementById('cy').textContent =
-      'Could not load call-graph.json: ' + err.message;
+      'Call graph data unavailable.';
     return;
   }
 
@@ -678,7 +674,10 @@
         // endpoints in the provisionally-visible set. Hide those.
         const degree = new Map();
         cy.edges().forEach(function (edge) {
-          if (!enabledEdgeTypes.has(edge.data('type'))) return;
+          const effectiveType = edge.data('type') === 'suggests'
+            ? (edge.data('primary') ? 'suggests-primary' : 'suggests-secondary')
+            : edge.data('type');
+          if (!enabledEdgeTypes.has(effectiveType)) return;
           if (!conditionalEdgesShown && edge.data('conditional')) return;
           const s = edge.source().id();
           const t = edge.target().id();
@@ -704,7 +703,10 @@
       cy.edges().forEach(function (edge) {
         const srcHidden = edge.source().style('display') === 'none';
         const tgtHidden = edge.target().style('display') === 'none';
-        const typeDisabled = !enabledEdgeTypes.has(edge.data('type'));
+        const effectiveType = edge.data('type') === 'suggests'
+          ? (edge.data('primary') ? 'suggests-primary' : 'suggests-secondary')
+          : edge.data('type');
+        const typeDisabled = !enabledEdgeTypes.has(effectiveType);
         const conditionalHidden = !conditionalEdgesShown && edge.data('conditional');
         edge.style(
           'display',

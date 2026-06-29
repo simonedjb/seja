@@ -21,7 +21,7 @@ designer_description: "When you run /onboard for a guardian -- a QA, security, r
 - **Security policies**: Authn/authz model, input validation, secrets management, dependency auditing. Key reference: `general/review-perspectives/sec.md`.
 - **Quality gates and CI/CD**: Per-commit checks, merge blockers, deployment approval workflow.
 - **Incident response**: Detection, escalation, resolution, postmortem process.
-- **Code review process**: Expectations, turnaround, required approvals, feedback norms. Use `/check review` for structured reviews.
+- **Code review process**: Expectations, turnaround, required approvals, feedback norms. Use `/critique review` for structured reviews.
 
 ### Deep-dive (load for thorough onboarding or when Guardian is the primary role)
 
@@ -36,8 +36,8 @@ designer_description: "When you run /onboard for a guardian -- a QA, security, r
 
 | Level | First Task | Goal |
 |-------|-----------|------|
-| L1 Contributor | Write tests for an untested module (newcomer) or run `/check validate` and triage (practitioner) | Learn the test framework or current quality state |
-| L2 Expert | Conduct a structured code review using `/check review` | Learn the review perspective framework in practice |
+| L1 Contributor | Write tests for an untested module (newcomer) or run `/critique validate` and triage (practitioner) | Learn the test framework or current quality state |
+| L2 Expert | Conduct a structured code review using `/critique review` | Learn the review perspective framework in practice |
 | L3 Leader | Audit security posture (Strategist) or review team development process (Manager) | Map security boundaries or understand team dynamics |
 
 ## Key Reference Files

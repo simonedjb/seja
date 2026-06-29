@@ -29,19 +29,19 @@
     },
     {
       "after": "/implement",
-      "suggest": "/check validate",
+      "suggest": "/critique validate",
       "reason": "All checks run by default unless --skip-checks was used.",
       "category": "planning-execution"
     },
     {
       "after": "/implement",
-      "suggest": "/check review",
+      "suggest": "/critique review",
       "reason": "All checks run by default unless --skip-checks was used.",
       "category": "planning-execution"
     },
     {
       "after": "/implement",
-      "suggest": "/check preflight",
+      "suggest": "/critique preflight",
       "reason": "All checks run by default unless --skip-checks was used.",
       "category": "planning-execution"
     },
@@ -130,61 +130,61 @@
       "category": "analysis-review"
     },
     {
-      "after": "/check review",
+      "after": "/critique review",
       "suggest": "/plan",
       "reason": "Want to plan fixes for the review findings?",
       "category": "analysis-review"
     },
     {
-      "after": "/check validate",
+      "after": "/critique validate",
       "suggest": "/plan",
       "reason": "Found issues? Plan and fix them.",
       "category": "analysis-review"
     },
     {
-      "after": "/check validate",
-      "suggest": "/check health",
+      "after": "/critique validate",
+      "suggest": "/critique health",
       "reason": "Also check harness health?",
       "category": "analysis-review"
     },
     {
-      "after": "/check validate",
+      "after": "/critique validate",
       "suggest": "/pending",
       "reason": "Check and address outstanding pending actions",
       "category": "analysis-review"
     },
     {
-      "after": "/check validate",
+      "after": "/critique validate",
       "suggest": "/reflect",
       "reason": "After quality checks, surface patterns across recent runs",
       "category": "analysis-review"
     },
     {
-      "after": "/check smoke",
+      "after": "/critique smoke",
       "suggest": "/plan",
       "reason": "Found failures? Plan and fix them.",
       "category": "analysis-review"
     },
     {
-      "after": "/check health",
+      "after": "/critique health",
       "suggest": "/plan",
       "reason": "Found issues? Plan and fix them.",
       "category": "analysis-review"
     },
     {
-      "after": "/check preflight",
-      "suggest": "/check review",
+      "after": "/critique preflight",
+      "suggest": "/critique review",
       "reason": "Want a detailed code review of the changes?",
       "category": "analysis-review"
     },
     {
-      "after": "/check telemetry",
+      "after": "/critique telemetry",
       "suggest": "/research",
       "reason": "Want to discuss usage patterns?",
       "category": "analysis-review"
     },
     {
-      "after": "/check telemetry",
+      "after": "/critique telemetry",
       "suggest": "/reflect",
       "reason": "Surface descriptive patterns over the last 30 days?",
       "category": "analysis-review"
@@ -208,20 +208,20 @@
       "category": "analysis-review"
     },
     {
-      "after": "/check test-plan",
+      "after": "/critique test-plan",
       "suggest": "/communicate",
       "reason": "Share the test plan with stakeholders?",
       "category": "code-tests"
     },
     {
-      "after": "/check preflight",
+      "after": "/critique preflight",
       "suggest": "/onboard",
       "reason": "Need to onboard someone to the project?",
       "category": "code-tests"
     },
     {
       "after": "/seja-setup --upgrade",
-      "suggest": "/check health",
+      "suggest": "/critique health",
       "reason": "Verify harness health after upgrading",
       "category": "framework-maintenance"
     },
@@ -232,20 +232,20 @@
       "category": "framework-maintenance"
     },
     {
-      "after": "/check preflight",
+      "after": "/critique preflight",
       "suggest": "/publish",
       "reason": "Preflight passed -- ready to cut a release?",
       "category": "framework-maintenance"
     },
     {
       "after": "/publish",
-      "suggest": "/check health",
+      "suggest": "/critique health",
       "reason": "Verify harness health after publishing",
       "category": "framework-maintenance"
     },
     {
       "after": "/document",
-      "suggest": "/check docs",
+      "suggest": "/critique docs",
       "reason": "Validate documentation consistency?",
       "category": "utilities"
     },

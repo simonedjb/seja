@@ -1,6 +1,6 @@
 ---
 name: reflect
-description: "On-demand reflection anchored on specific plans, research reports, or other artifacts. I summarize the artifacts you choose, ask what stands out, and record your reflection."
+description: "On-demand reflection anchored on specific plans, research reports, or other artifacts. I summarize the artifacts you choose, ask whether you are reflecting on the product (what was built) or your practice (how you worked), then ask the matching question and record your words verbatim."
 argument-hint: "[--telemetry [--since 30d] [--skill <name>] [--dry-run]] | [--deep [scope] [--since 30d]]"
 compatibility: "Designed for Claude Code with the SEJA harness"
 metadata:
@@ -70,16 +70,33 @@ If `--deep` is present in the arguments, route to the [Deep workflow](#deep-work
 
 5. **Step B -- Summarize chosen artifacts.** Run `python .claude/skills/reflect/summarize_artifacts.py <id1> <id2> ...` to produce the narrative summary block. Capture the stdout output. Present it to the user so they can see what they are reflecting on.
 
-6. **Step C -- Reflection prompt.** Ask the user one open-ended question via plain text (NOT AskUserQuestion -- reflection cannot be multiple choice):
+6. **Step B2 -- Pick lens.** Ask the user which lens they are reflecting through via AskUserQuestion:
 
-   > "What stands out when you look at these now that you did not see when you wrote them?"
+   > "Are you reflecting on the product (what you built), your practice (how you worked), or both?"
 
-   Capture the user's free-text response verbatim.
+   Options:
+   - **Product lens** — What I built as a thing in the world: does it do what I intended? what did it reveal? Recommended when the artifact is a design decision, a feature, or a finished spec. NOT recommended when your main question is about your own working patterns.
+   - **Practice lens** — How I worked as a practitioner (Schön's reflection-on-practice): what patterns emerge in how I designed and built this? Recommended when you notice a pattern in your process, a habit you want to examine, or a place you got stuck. NOT recommended when the artifact has not yet been implemented.
+   - **Both** — Product and practice, in sequence. Recommended when you are uncertain which lens fits or want full coverage. NOT recommended for quick reflections where focus matters more than breadth.
 
-7. **Step D -- Write the reflection file.** Compose a report at `${REFLECTIONS_DIR}/reflection-<id>-<slug>.md` with:
+   Capture the chosen lens.
+
+7. **Step C -- Reflection prompt.** Ask the user one open-ended question via plain text (NOT AskUserQuestion -- reflection cannot be multiple choice). Use the question that matches the lens chosen in Step B2:
+
+   | Lens | Question |
+   |------|----------|
+   | Product | "Looking at these, what stands out about what you built — what worked, what surprised you, or what is missing?" |
+   | Practice | "Looking at these, what stands out about how you worked — what would you do differently as a practitioner?" |
+   | Both | Ask the product question first and capture the response; then ask the practice question and capture that response separately. |
+
+   Capture the user's free-text response(s) verbatim.
+
+8. **Step D -- Write the reflection file.** Compose a report at `${REFLECTIONS_DIR}/reflection-<id>-<slug>.md` with:
 
    ```markdown
    # Reflection <id> | <current datetime> | <short title>
+
+   **Lens**: <product | practice | both>
 
    ## Artifacts reflected on
 
@@ -98,7 +115,21 @@ If `--deep` is present in the arguments, route to the [Deep workflow](#deep-work
    <open questions for future investigation, if any>
    ```
 
-8. Run `/post-skill <reflection-id>` to commit the reflection report.
+   When the lens is **both**, expand `## Reflection` into two sub-sections:
+
+   ```markdown
+   ## Reflection
+
+   ### On what was built
+
+   <product reflection, verbatim>
+
+   ### On how I worked
+
+   <practice reflection, verbatim>
+   ```
+
+9. Run `/post-skill <reflection-id>` to commit the reflection report.
 
 ## Strictly non-prescriptive rule
 
@@ -108,7 +139,7 @@ If `--deep` is present in the arguments, route to the [Deep workflow](#deep-work
 
 ## Deep workflow (--deep)
 
-> Deep reflection mode. Reads telemetry and briefs within a time window, optionally filtered by a scope keyword, and produces an event matrix visualization, a transition graph, and a practice evolution narrative.
+> Deep reflection mode. Reads telemetry and briefs within a time window, optionally filtered by a scope keyword, and produces an event matrix visualization, a transition graph, and a practice evolution narrative. This mode is **practice-oriented** (Schön's reflection-on-practice): it surfaces how you worked over time, not what you built.
 
 ### Skill-specific Instructions
 
@@ -191,7 +222,7 @@ If `--deep` is present in the arguments, route to the [Deep workflow](#deep-work
 
 ## Telemetry workflow (--telemetry)
 
-> Statistical telemetry mining mode. Reads `${OUTPUT_DIR}/telemetry.jsonl` and surfaces patterns via five analysis primitives. This is the original V1 flow from plan-000295, preserved as an opt-in secondary mode.
+> Statistical telemetry mining mode. Reads `${OUTPUT_DIR}/telemetry.jsonl` and surfaces patterns via five analysis primitives. This is the original V1 flow from plan-000295, preserved as an opt-in secondary mode. This mode is **practice-oriented**: it reports patterns in how you work, not in what you built. The generated report carries `Lens: practice` in its Signature section.
 
 ### Skill-specific Instructions
 

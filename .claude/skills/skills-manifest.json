@@ -1,20 +1,20 @@
 {
-  "generated": "2026-05-03T17:09:45Z",
+  "generated": "2026-06-15T20:38:16Z",
   "count": 15,
   "skills": [
-    {
-      "name": "check",
-      "description": "Run quality checks: validation, code review, smoke tests, preflight, or harness health.",
-      "argument_hint": "<validate | review | smoke | preflight | health | test-plan | docs | freshness | telemetry | semiotic-inspection> [--depth <light|standard|deep>] [--source <path>] [scope]",
-      "category": "analysis",
-      "version": "1.0.0"
-    },
     {
       "name": "communicate",
       "description": "Generate tailored communication material for a specific audience segment.",
       "argument_hint": "<audience> [--format md|html|both] [--all] [--source <advisory-file>]",
       "category": "utility",
       "version": "1.1.0"
+    },
+    {
+      "name": "critique",
+      "description": "Critique quality: validation, code review, smoke tests, preflight, and harness health.",
+      "argument_hint": "<validate | review | smoke | preflight | health | test-plan | docs | freshness | telemetry | semiotic-inspection> [--depth <light|standard|deep>] [--source <path>] [scope]",
+      "category": "analysis",
+      "version": "1.0.0"
     },
     {
       "name": "design",

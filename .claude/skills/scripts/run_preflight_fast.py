@@ -59,18 +59,18 @@ FAST_CHECKS: list[tuple[str, list[str]]] = [
     ("section-boundary-writes", [sys.executable, str(SKILLS_DIR / "post-skill" / "check_section_boundary_writes.py"), "--staged"]),
     # lifecycle-fact-uniqueness is intentionally excluded from the hot path:
     # its O(N^2) comparison and 60% threshold can produce false positives
-    # during transitional doc states. It still runs under /check docs and
+    # during transitional doc states. It still runs under /critique docs and
     # run_all_checks.py.
     ("harness-reference-coverage",
-     [sys.executable, str(SKILLS_DIR / "check" / "check_docs.py"),
+     [sys.executable, str(SKILLS_DIR / "critique" / "check_docs.py"),
       "--plugins", "harness-reference-coverage",
       "--filter", "warning"]),
     ("docs-frontmatter",
-     [sys.executable, str(SKILLS_DIR / "check" / "check_docs.py"),
+     [sys.executable, str(SKILLS_DIR / "critique" / "check_docs.py"),
       "--plugins", "docs-frontmatter",
       "--filter", "warning"]),
     ("mantra-banner-consistency",
-     [sys.executable, str(SKILLS_DIR / "check" / "check_docs.py"),
+     [sys.executable, str(SKILLS_DIR / "critique" / "check_docs.py"),
       "--plugins", "mantra-banner-consistency",
       "--filter", "warning"]),
     ("skill-graph-sync",
@@ -143,7 +143,7 @@ def main() -> int:
         if spec_path.is_file():
             checks.append((
                 "spec-conformance",
-                [sys.executable, str(SKILLS_DIR / "check" / "check_spec_conformance.py")],
+                [sys.executable, str(SKILLS_DIR / "critique" / "check_spec_conformance.py")],
             ))
             break
 

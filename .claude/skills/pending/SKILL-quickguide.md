@@ -38,6 +38,6 @@ Twelve action types the harness can file:
 
 **When to use**: After `/implement` if you chose "Defer for later review" at post-skill, when pre-skill tells you there are pending actions, when the periodic curation trigger has fired, or any time you want to review what the harness is tracking for you.
 
-**Related**: `/check health` Check 9 reports the pending-ledger count (diagnostic only). Any mutation (address/add/done/snooze/dismiss) still flows through `/pending`. The two skills are intentionally separate -- see advisory-000442.
+**Related**: `/critique health` Check 9 reports the pending-ledger count (diagnostic only). Any mutation (address/add/done/snooze/dismiss) still flows through `/pending`. The two skills are intentionally separate -- see advisory-000442.
 
 **Next step**: `/explain spec-drift --promote` after addressing periodic curation items (generates a Decision proposal for promotion candidates), or `/implement` once you have reviewed the outstanding review items.

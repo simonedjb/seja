@@ -68,12 +68,12 @@ class TestComputeDriftAdd:
     def test_file_in_source_not_in_target(self, tmp_path):
         source = tmp_path / "source"
         target = tmp_path / "target"
-        _make_harness(source, {**_skill_file("plan"), **_skill_file("check")})
+        _make_harness(source, {**_skill_file("plan"), **_skill_file("critique")})
         _make_harness(target, _skill_file("plan"))
 
         report = chd.compute_drift(source, target)
         add_paths = [e.rel_path for e in report.add]
-        assert ".claude/skills/check/SKILL.md" in add_paths
+        assert ".claude/skills/critique/SKILL.md" in add_paths
 
     def test_preserved_paths_excluded_from_add(self, tmp_path):
         """is_preserved() paths should never appear in ADD."""
@@ -268,24 +268,24 @@ class TestApplyMode:
 
         _make_harness(source, {
             **_skill_file("plan", body="# Plan v2"),
-            **_skill_file("check", body="# Check v2"),
+            **_skill_file("critique", body="# Critique v2"),
             **_skill_file("new"),
         })
         _make_harness(target, {
             **_skill_file("plan", body="# Plan v1"),
-            **_skill_file("check", body="# Check v1"),
+            **_skill_file("critique", body="# Critique v1"),
             **_skill_file("stale-a"),
             **_skill_file("stale-b"),
         })
 
         plan_path = tmp_path / "plan.md"
-        # Write plan with stale-a and stale-b in REMOVE, plan and check in REVISE
+        # Write plan with stale-a and stale-b in REMOVE, plan and critique in REVISE
         # Then "delete" stale-b and check from the plan (user decision)
         self._make_plan(
             plan_path,
             add=[".claude/skills/new/SKILL.md"],
             remove=[".claude/skills/stale-a/SKILL.md"],  # stale-b intentionally absent
-            revise=[".claude/skills/plan/SKILL.md"],  # check intentionally absent
+            revise=[".claude/skills/plan/SKILL.md"],  # critique intentionally absent
         )
 
         exit_code = chd.run_apply(plan_path, source, target)
@@ -301,9 +301,9 @@ class TestApplyMode:
         plan_content = (target / ".claude/skills/plan/SKILL.md").read_text(encoding="utf-8")
         assert "Plan v2" in plan_content
 
-        # check should be untouched (user removed from plan)
-        check_content = (target / ".claude/skills/check/SKILL.md").read_text(encoding="utf-8")
-        assert "Check v1" in check_content
+        # critique should be untouched (user removed from plan)
+        critique_content = (target / ".claude/skills/critique/SKILL.md").read_text(encoding="utf-8")
+        assert "Critique v1" in critique_content
 
         # new should be copied (ADD is unconditional)
         assert (target / ".claude/skills/new/SKILL.md").is_file()

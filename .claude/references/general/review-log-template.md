@@ -1,5 +1,5 @@
 ---
-designer_description: "When /plan, /check review, or any skill that evaluates a change against the review perspectives writes its review log, I'm the reference that codifies the structure -- review depth, deep-dive budget, the perspective scan table, deep-dive entries, conflict checks, execution metrics -- so every review produces a consistent, auditable trail instead of ad-hoc prose."
+designer_description: "When /plan, /critique review, or any skill that evaluates a change against the review perspectives writes its review log, I'm the reference that codifies the structure -- review depth, deep-dive budget, the perspective scan table, deep-dive entries, conflict checks, execution metrics -- so every review produces a consistent, auditable trail instead of ad-hoc prose."
 ---
 
 # FRAMEWORK - REVIEW LOG TEMPLATE

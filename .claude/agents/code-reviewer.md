@@ -35,7 +35,7 @@ You will receive one of:
 
 2. **Read the project standards** (scope-aware — only load what is relevant):
    - Always read: `.claude/references/general/review-perspectives.md` for the perspective index, conflict resolution rules, and plan prefix shortcuts
-   - For each applicable perspective, read its file from `.claude/references/general/review-perspectives/` (e.g., `sec.md`, `perf.md`). Load the **Essential** section always; load the **Deep-dive** section when the perspective is the primary focus of the review or when thorough coverage is requested.
+   - For each applicable perspective, read its file from `.claude/references/general/review-perspectives/` (e.g., `sec.md`, `perf.md`). Load the **Essential** section always; load the **Standard** section for thorough coverage; load the **Deep** section when the perspective is the primary focus of the review.
    - Always read: `product-design/standards.md § Testing` for testing conventions
    - If files under `backend/`: read `product-design/standards.md § Backend` and `product-design/security-checklists.md`
    - If files under `frontend/src/`: read `product-design/standards.md §§ Frontend and i18n`

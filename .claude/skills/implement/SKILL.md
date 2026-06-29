@@ -36,7 +36,7 @@ metadata:
 | `--dry-run` | No | Preview what changes would be made without applying them |
 | `--roadmap <roadmap-id>` | No | Execute all plans in a roadmap, wave by wave. Mutually exclusive with `<planned-item-id>` |
 | `--checkpoint <wave\|plan\|none>` | No | Checkpoint granularity for roadmap mode. Default: `wave` |
-| `--skip-checks` | No | Skip the automatic quality checks (`/check validate` + `/check review`) at the end |
+| `--skip-checks` | No | Skip the automatic quality checks (`/critique validate` + `/critique review`) at the end |
 | `--skip-docs` | No | Skip the automatic documentation generation at post-skill step 2b. Files an `update-documentation` pending entry instead |
 | `--pending` | No | Execute all pending plans by generating a lightweight roadmap and running roadmap mode. Mutually exclusive with `<planned-item-id>` and `--roadmap` |
 
@@ -59,15 +59,15 @@ After each step (or iteration in auto mode), output the updated to-do list, upda
 
 Runs validation, code review, and tests. Skipped if `--skip-checks`.
 
-1. Run `/check validate`.
-2. Run `/check review`.
+1. Run `/critique validate`.
+2. Run `/critique review`.
 3. Launch the `test-runner` agent with scope "all".
-4. If the plan's `smoke` field is `true`, run `/check smoke api`.
+4. If the plan's `smoke` field is `true`, run `/critique smoke api`.
 5. **Critical** issues (failing tests, security findings, blocking validation errors) must be fixed before proceeding; non-critical issues become deferred items in the plan summary.
 
 ### Generator-Critic Loop (Auto Mode Only)
 
-Auto mode runs a bounded retry loop for critical code-review findings. Manual mode treats review findings as advisory (the user decides). After Quality Gate step 2: classify each finding as **critical** (security, correctness, failing tests) or **advisory** (non-blocking); set `retry_count = 0`; while critical findings exist AND `retry_count < 2`, increment, build a fix prompt per critical finding (description + file/line + plan context), launch a `general-purpose` subagent, re-run `/check review` on changed files only, re-classify. If `retry_count` hits 2 with criticals remaining, log them as **unresolved** in the plan summary and continue -- do not block. Append to the quality gate output (verbatim):
+Auto mode runs a bounded retry loop for critical code-review findings. Manual mode treats review findings as advisory (the user decides). After Quality Gate step 2: classify each finding as **critical** (security, correctness, failing tests) or **advisory** (non-blocking); set `retry_count = 0`; while critical findings exist AND `retry_count < 2`, increment, build a fix prompt per critical finding (description + file/line + plan context), launch a `general-purpose` subagent, re-run `/critique review` on changed files only, re-classify. If `retry_count` hits 2 with criticals remaining, log them as **unresolved** in the plan summary and continue -- do not block. Append to the quality gate output (verbatim):
 ```
 ### Generator-Critic Iterations
 - Iteration count: N/2

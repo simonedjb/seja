@@ -22,7 +22,7 @@ You will receive:
 
 1. **Read the review framework:**
    - Read `.claude/references/general/review-perspectives.md` for the perspective index, conflict resolution rules, and plan prefix shortcuts
-   - For each shortlisted perspective (determined in Phase 1), read its file from `.claude/references/general/review-perspectives/` (e.g., `sec.md`, `db.md`). Load the **Essential** section for Phase 1 scanning; load the **Deep-dive** section when performing Phase 2 deep-dives on that perspective.
+   - For each shortlisted perspective (determined in Phase 1), read its file from `.claude/references/general/review-perspectives/` (e.g., `sec.md`, `db.md`). Load the **Essential** section for Phase 1 scanning; load the **Standard** section (and **Deep** if the perspective is the primary focus) when performing Phase 2 deep-dives on that perspective.
    - Read `.claude/references/general/review-log-template.md` for the review log format
 
 2. **Phase 1 — Perspective triage and scan:**

@@ -27,7 +27,7 @@ designer_description: "I'm the demo conventions file /seja-setup --demo writes i
 | `SCRIPTS_DIR` | `${OUTPUT_DIR}/generated-scripts` | Script output folder |
 | `ADVISORY_DIR` | `${OUTPUT_DIR}/advisory-logs` | Advisory log output folder |
 | `PROPOSALS_DIR` | `${OUTPUT_DIR}/proposals` | Lightweight change proposals |
-| `CHECK_LOGS_DIR` | `${OUTPUT_DIR}/check-logs` | Check/preflight/review output folder |
+| `CRITIQUE_LOGS_DIR` | `${OUTPUT_DIR}/critique-logs` | Critique/preflight/review output folder |
 | `TMP_DIR` | `${OUTPUT_DIR}/tmp` | Temporary/helper scripts |
 
 ---

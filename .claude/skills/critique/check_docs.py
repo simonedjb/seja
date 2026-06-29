@@ -19,7 +19,7 @@ Exit codes: 0 = no issues, 1 = issues found, 2 = script error.
 
 Usage
 -----
-    python .claude/skills/check/check_docs.py [OPTIONS]
+    python .claude/skills/critique/check_docs.py [OPTIONS]
 
 Options:
     --root DIR       Repository root (auto-detected if omitted)
@@ -45,7 +45,7 @@ entry must resolve under ``seja-public/docs/``), and regeneration drift
 (compares against a fresh in-memory render from ``generate_harness_reference.py``).
 Run it alone with:
 
-    python .claude/skills/check/check_docs.py --plugins harness-reference-coverage
+    python .claude/skills/critique/check_docs.py --plugins harness-reference-coverage
 
 Lifecycle fact uniqueness plugin
 --------------------------------
@@ -57,7 +57,7 @@ minimum to suppress short-boilerplate noise). Paragraphs under "Before you
 start" headings are excluded as prerequisite pointers.
 Run it alone with:
 
-    python .claude/skills/check/check_docs.py --plugins lifecycle-fact-uniqueness
+    python .claude/skills/critique/check_docs.py --plugins lifecycle-fact-uniqueness
 
 Docs frontmatter plugin
 -----------------------
@@ -72,7 +72,7 @@ must be absent on ``event-frozen`` docs. ``review-by``, if present, must
 also be ISO. Unknown fields are allowed for forward compatibility.
 Run it alone with:
 
-    python .claude/skills/check/check_docs.py --plugins docs-frontmatter
+    python .claude/skills/critique/check_docs.py --plugins docs-frontmatter
 
 Skill body length plugin
 ------------------------
@@ -98,7 +98,7 @@ body suppresses the length-threshold WARNING only; the other three
 signals still fire because they cover orthogonal concerns.
 Run it alone with:
 
-    python .claude/skills/check/check_docs.py --plugins skill-body-length
+    python .claude/skills/critique/check_docs.py --plugins skill-body-length
 
 CHECK_PLUGIN_MANIFEST:
   name: Documentation Consistency

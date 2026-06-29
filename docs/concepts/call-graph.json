@@ -1,7 +1,7 @@
 {
-  "generated": "2026-05-01T20:31:14Z",
-  "node_count": 217,
-  "edge_count": 468,
+  "generated": "2026-05-05T12:56:59Z",
+  "node_count": 223,
+  "edge_count": 484,
   "nodes": [
     {
       "id": "agent:architecture-explainer",
@@ -64,7 +64,7 @@
       "type": "agent",
       "label": "harness-health-evaluator",
       "path": ".claude/agents/harness-health-evaluator.md",
-      "description": "When you run /check health, I'm the engine behind it. I run the 8 harness self-diagnosis checks -- skill system integrity, orphaned briefs, stale plans, reference completeness, conventions completeness, constitution presence, skill spec compliance, and pending ledger summary -- and hand you one Harness Health Report: an eight-row status table with PASS/WARN/FAIL per check plus the overall N/8 tally, so you can see the harness's health at a glance and drill into the checks that flagged.",
+      "description": "When you run /critique health, I'm the engine behind it. I run the 9 harness self-diagnosis checks -- skill system integrity, orphaned briefs, stale plans, reference completeness, conventions completeness, constitution presence, skill spec compliance, pending ledger summary, and harness drift -- and hand you one Harness Health Report: a nine-row status table with PASS/WARN/FAIL per check plus the overall N/9 tally (or N/8+1 when drift is INFO/skipped), so you can see the harness's health at a glance and drill into the checks that flagged.",
       "description_source": "designer-description"
     },
     {
@@ -112,7 +112,7 @@
       "type": "agent",
       "label": "standards-checker",
       "path": ".claude/agents/standards-checker.md",
-      "description": "When you run /check validate, I'm the engine behind it. I walk through every validation script your project has registered -- i18n, auth, migrations, constants, whatever your conventions file lists -- and hand you one unified compliance report: a pass/fail summary table across all checks, then the specific errors and warnings from the ones that failed, with file and line references so you can go straight to the fixes.",
+      "description": "When you run /critique validate, I'm the engine behind it. I walk through every validation script your project has registered -- i18n, auth, migrations, constants, whatever your conventions file lists -- and hand you one unified compliance report: a pass/fail summary table across all checks, then the specific errors and warnings from the ones that failed, with file and line references so you can go straight to the fixes.",
       "description_source": "designer-description"
     },
     {
@@ -224,7 +224,7 @@
       "type": "ref-general",
       "label": "documentation-quality",
       "path": ".claude/references/general/documentation-quality.md",
-      "description": "When you write or review project documentation, I'm the reference that defines what good looks like -- accuracy, completeness within declared scope, consistency, scannability, and maintainability -- paired with the writing principles (imperative mood, concrete verbs, task-first structure) that the documentation templates and the /check docs validator both rely on.",
+      "description": "When you write or review project documentation, I'm the reference that defines what good looks like -- accuracy, completeness within declared scope, consistency, scannability, and maintainability -- paired with the writing principles (imperative mood, concrete verbs, task-first structure) that the documentation templates and the /critique docs validator both rely on.",
       "description_source": "designer-description"
     },
     {
@@ -312,7 +312,7 @@
       "type": "ref-general",
       "label": "review-log-template",
       "path": ".claude/references/general/review-log-template.md",
-      "description": "When /plan, /check review, or any skill that evaluates a change against the review perspectives writes its review log, I'm the reference that codifies the structure -- review depth, deep-dive budget, the perspective scan table, deep-dive entries, conflict checks, execution metrics -- so every review produces a consistent, auditable trail instead of ad-hoc prose.",
+      "description": "When /plan, /critique review, or any skill that evaluates a change against the review perspectives writes its review log, I'm the reference that codifies the structure -- review depth, deep-dive budget, the perspective scan table, deep-dive entries, conflict checks, execution metrics -- so every review produces a consistent, auditable trail instead of ad-hoc prose.",
       "description_source": "designer-description"
     },
     {
@@ -616,7 +616,7 @@
       "type": "ref-template",
       "label": "WALKTHROUGH",
       "path": ".claude/references/template/demo/WALKTHROUGH.md",
-      "description": "I'm the demo walkthrough /seja-setup --demo writes into your scratch project -- a step-by-step tour of /research, /plan, /implement, and /check against the pre-filled TaskFlow design files, so you can exercise the core SEJA loop on a working example before pointing the harness at your own project.",
+      "description": "I'm the demo walkthrough /seja-setup --demo writes into your scratch project -- a step-by-step tour of /research, /plan, /implement, and /critique against the pre-filled TaskFlow design files, so you can exercise the core SEJA loop on a working example before pointing the harness at your own project.",
       "description_source": "designer-description"
     },
     {
@@ -872,7 +872,7 @@
       "type": "ref-template",
       "label": "standards",
       "path": ".claude/references/template/standards.md",
-      "description": "I list the engineering conventions your project follows -- backend layering, frontend framework and structure, testing style and coverage expectations, and i18n approach -- so every PR you open can be reviewed against one agreed baseline rather than a different reviewer's memory, and skills like /check review and /plan can anchor their judgements to the same document.",
+      "description": "I list the engineering conventions your project follows -- backend layering, frontend framework and structure, testing style and coverage expectations, and i18n approach -- so every PR you open can be reviewed against one agreed baseline rather than a different reviewer's memory, and skills like /critique review and /plan can anchor their judgements to the same document.",
       "description_source": "designer-description"
     },
     {
@@ -972,18 +972,18 @@
       "description_source": "designer-description"
     },
     {
-      "id": "script:bump_version.py",
+      "id": "script:build_telemetry.py",
       "type": "script",
-      "label": "bump_version.py",
-      "path": ".claude/skills/scripts/bump_version.py",
-      "description": "When you cut a new harness release, I move every version\nstamp to the number you choose in one step and refuse to proceed if\nthe changelog is missing the matching heading. You get a single\nconsistent bump instead of three files drifting apart.",
+      "label": "build_telemetry.py",
+      "path": ".claude/skills/scripts/build_telemetry.py",
+      "description": "When a skill finishes and wants to record what happened, I take\nall eighteen telemetry fields as CLI arguments, validate every enum against\nthe schema defined in check_telemetry.py, and append one JSON line to\ntelemetry.jsonl. I am the single write path for telemetry so that every\nrecord the harness produces is guaranteed to pass check_telemetry validation\nbefore it ever hits disk.",
       "description_source": "designer-description"
     },
     {
       "id": "script:check_api_auth_decorators.py",
       "type": "script",
       "label": "check_api_auth_decorators.py",
-      "path": ".claude/skills/scripts/check_api_auth_decorators.py",
+      "path": ".claude/skills/scripts/critique_api_auth_decorators.py",
       "description": "Before you ship a backend change, I walk every route in\nyour API, check each one for a login guard and an authorization\ncheck, and hand you back the list of endpoints that would be\nreachable without either. You see the gaps before a reviewer does.",
       "description_source": "designer-description"
     },
@@ -991,7 +991,7 @@
       "id": "script:check_api_contract_sync.py",
       "type": "script",
       "label": "check_api_contract_sync.py",
-      "path": ".claude/skills/scripts/check_api_contract_sync.py",
+      "path": ".claude/skills/scripts/critique_api_contract_sync.py",
       "description": "When you change a backend schema or a frontend type and\nforget to change the other side, I line them up and show you which\nfields are missing or mistyped on each side. You catch the drift\nbefore a caller hits a broken response.",
       "description_source": "designer-description"
     },
@@ -999,7 +999,7 @@
       "id": "script:check_backend_test_coverage.py",
       "type": "script",
       "label": "check_backend_test_coverage.py",
-      "path": ".claude/skills/scripts/check_backend_test_coverage.py",
+      "path": ".claude/skills/scripts/critique_backend_test_coverage.py",
       "description": "When you want to know how well your backend is tested, I\nrun the suite, measure coverage, and group the numbers by area --\nAPI, models, services, and so on. You get a single table plus a\nlist of files that nothing tests at all and files that do not even\nhave a test next to them.",
       "description_source": "designer-description"
     },
@@ -1007,7 +1007,7 @@
       "id": "script:check_changelog_append_only.py",
       "type": "script",
       "label": "check_changelog_append_only.py",
-      "path": ".claude/skills/explain/check_changelog_append_only.py",
+      "path": ".claude/skills/explain/critique_changelog_append_only.py",
       "description": "Before you commit a change to a human-authored design\nfile, I look at the sections that are meant to grow only at the\nend -- changelogs and append-only journals -- and stop the commit\nif any prior line was reordered, rewritten, or removed. You keep\nthe historical record intact without thinking about it.",
       "description_source": "designer-description"
     },
@@ -1015,7 +1015,7 @@
       "id": "script:check_conventions.py",
       "type": "script",
       "label": "check_conventions.py",
-      "path": ".claude/skills/scripts/check_conventions.py",
+      "path": ".claude/skills/scripts/critique_conventions.py",
       "description": "When a skill or reference file mentions a convention\nvariable like your backend directory or test layout, I make sure\nyou have actually defined that variable in your project\nconventions. You find out about a missing or mistyped setting\nbefore a skill tries to use it and fails.",
       "description_source": "designer-description"
     },
@@ -1023,7 +1023,7 @@
       "id": "script:check_design_output.py",
       "type": "script",
       "label": "check_design_output.py",
-      "path": ".claude/skills/scripts/check_design_output.py",
+      "path": ".claude/skills/scripts/critique_design_output.py",
       "description": "After /design generates or refreshes your project specs,\nI read them back and flag anything that looks unfinished -- stray\nplaceholders, phrasing that breaks the house rules, values that\ncontradict each other across files, missing fields. You see the\nrough edges before you hand the specs to anyone else.",
       "description_source": "designer-description"
     },
@@ -1031,7 +1031,7 @@
       "id": "script:check_docs.py",
       "type": "script",
       "label": "check_docs.py",
-      "path": ".claude/skills/check/check_docs.py",
+      "path": ".claude/skills/critique/critique_docs.py",
       "description": "When you want to trust your documentation, I run a sweep\nacross every doc file and look for the things that quietly go\nstale -- dead paths, undocumented commands, drifting terminology,\nenvironment variables the docs promise but the code does not set.\nYou get one report that tells you where the docs and the code\ndisagree.",
       "description_source": "designer-description"
     },
@@ -1039,7 +1039,7 @@
       "id": "script:check_frontend_test_coverage.py",
       "type": "script",
       "label": "check_frontend_test_coverage.py",
-      "path": ".claude/skills/scripts/check_frontend_test_coverage.py",
+      "path": ".claude/skills/scripts/critique_frontend_test_coverage.py",
       "description": "When you want to know how well your frontend is tested, I\nrun the suite, measure coverage, and group the numbers by area --\ncomponents, pages, hooks, services, and so on. You get a single\ntable plus a list of source files that nothing tests at all and\nfiles that do not even have a test next to them.",
       "description_source": "designer-description"
     },
@@ -1047,15 +1047,23 @@
       "id": "script:check_git_freshness.py",
       "type": "script",
       "label": "check_git_freshness.py",
-      "path": ".claude/skills/check/check_git_freshness.py",
+      "path": ".claude/skills/critique/critique_git_freshness.py",
       "description": "When you ask for git freshness status, I compare local branches\nagainst their upstreams for the relevant repositories and report ahead/\nbehind counts without pulling changes. I am advisory-only and best-effort.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "script:check_harness_drift.py",
+      "type": "script",
+      "label": "check_harness_drift.py",
+      "path": ".claude/skills/scripts/critique_harness_drift.py",
+      "description": "When you want to know whether a target workspace's harness files\nhave drifted from the canonical source -- new files missing, stale files\nlingering, or content diverged -- I compare the two trees, report the\ndelta, and optionally generate an editable remediation plan so you can\nreview before applying destructive changes.",
       "description_source": "designer-description"
     },
     {
       "id": "script:check_human_markers_only.py",
       "type": "script",
       "label": "check_human_markers_only.py",
-      "path": ".claude/skills/scripts/check_human_markers_only.py",
+      "path": ".claude/skills/scripts/critique_human_markers_only.py",
       "description": "Before you commit a change to a human-authored design\nfile, I look at what is actually changing. If anything other than\nan allowed lifecycle marker has moved, I stop the commit. You\nkeep those files under your own hand and block the harness from\nquietly rewriting your prose.",
       "description_source": "designer-description"
     },
@@ -1063,7 +1071,7 @@
       "id": "script:check_i18n_keys.py",
       "type": "script",
       "label": "check_i18n_keys.py",
-      "path": ".claude/skills/scripts/check_i18n_keys.py",
+      "path": ".claude/skills/scripts/critique_i18n_keys.py",
       "description": "When you add or rename a translated string, I check that\nevery key your code asks for is defined in each language, that\nneither translation has drifted ahead of the other, and that\nnothing is still sitting empty. You see the missing keys before\na user sees a blank button.",
       "description_source": "designer-description"
     },
@@ -1071,23 +1079,15 @@
       "id": "script:check_migration_chain.py",
       "type": "script",
       "label": "check_migration_chain.py",
-      "path": ".claude/skills/scripts/check_migration_chain.py",
+      "path": ".claude/skills/scripts/critique_migration_chain.py",
       "description": "Before you deploy a database change, I walk your\nmigration history end to end and call out anything that would\nblock the deploy: two branches competing for head, an orphan\nrevision, a cycle. You see the shape of the chain and the\nproblems in one place instead of finding them at boot time.",
-      "description_source": "designer-description"
-    },
-    {
-      "id": "script:check_no_private_leaks.py",
-      "type": "script",
-      "label": "check_no_private_leaks.py",
-      "path": ".claude/skills/scripts/check_no_private_leaks.py",
-      "description": "Before you publish or share a copy of this repository, I\nlook for content marked as private -- files, directories, and\nfragments between priv-only markers -- and refuse to let the\ncommit through if any of it would escape the boundary. You get a\npre-commit gate that catches leaks at your fingertips instead of\nafter the fact.",
       "description_source": "designer-description"
     },
     {
       "id": "script:check_plan_coverage.py",
       "type": "script",
       "label": "check_plan_coverage.py",
-      "path": ".claude/skills/design/check_plan_coverage.py",
+      "path": ".claude/skills/design/critique_plan_coverage.py",
       "description": "When you are deciding whether to cut a release, I line\nevery requirement in your design intent up against the plans that\nclaim to implement it and show you the ones nothing traces to.\nYou see the coverage gap grouped by area and severity, with\nsecurity gaps held to a stricter bar.",
       "description_source": "designer-description"
     },
@@ -1095,7 +1095,7 @@
       "id": "script:check_po_parity.py",
       "type": "script",
       "label": "check_po_parity.py",
-      "path": ".claude/skills/scripts/check_po_parity.py",
+      "path": ".claude/skills/scripts/critique_po_parity.py",
       "description": "When your project ships in more than one language, I compare the\ntranslation catalogs side by side and tell you which strings are missing\nfrom one locale, which have been left untranslated, which need review,\nand which message keys your code uses but no catalog defines -- so your\nnext release does not leak English into a non-English UI.",
       "description_source": "designer-description"
     },
@@ -1103,7 +1103,7 @@
       "id": "script:check_route_coverage.py",
       "type": "script",
       "label": "check_route_coverage.py",
-      "path": ".claude/skills/scripts/check_route_coverage.py",
+      "path": ".claude/skills/scripts/critique_route_coverage.py",
       "description": "When you want to know whether your frontend and backend agree on\nthe API surface, I line up the backend's declared routes against the\nfrontend's API calls and flag the endpoints that one side added without\nthe other -- so dead routes and missing callers surface before a user\nhits them.",
       "description_source": "designer-description"
     },
@@ -1111,7 +1111,7 @@
       "id": "script:check_secrets.py",
       "type": "script",
       "label": "check_secrets.py",
-      "path": ".claude/skills/design/check_secrets.py",
+      "path": ".claude/skills/design/critique_secrets.py",
       "description": "Before you push, I sweep your staged changes (or the whole tree\non request) for things that look like API keys, passwords, tokens,\nconnection strings, or AWS credentials, and refuse to let the commit\nproceed if anything shaped like a secret slipped in. You get a short\nlist of hits with file and line, not a pile of regex hex to decode.",
       "description_source": "designer-description"
     },
@@ -1119,7 +1119,7 @@
       "id": "script:check_section_boundary_writes.py",
       "type": "script",
       "label": "check_section_boundary_writes.py",
-      "path": ".claude/skills/post-skill/check_section_boundary_writes.py",
+      "path": ".claude/skills/post-skill/critique_section_boundary_writes.py",
       "description": "When a skill writes into one of the multi-section as-coded files,\nI check that each edit stays inside a single H2 domain section and\nrefuse the commit if any one change run would span two sections at\nonce. This is how the Conceptual Design, Metacommunication, and Journey\nMaps regions of your project's as-coded file stay cleanly separated\ninstead of drifting into one another.",
       "description_source": "designer-description"
     },
@@ -1127,7 +1127,7 @@
       "id": "script:check_skill_spec.py",
       "type": "script",
       "label": "check_skill_spec.py",
-      "path": ".claude/skills/scripts/check_skill_spec.py",
+      "path": ".claude/skills/scripts/critique_skill_spec.py",
       "description": "When you add or touch a skill, I check its SKILL.md frontmatter\nagainst the agentskills.io universal spec -- name shape, description\nlength, metadata shape -- and tell you exactly which line the skill\nviewer ecosystem would reject. This is the gate that keeps your skills\nportable beyond SEJA.",
       "description_source": "designer-description"
     },
@@ -1135,7 +1135,7 @@
       "id": "script:check_skill_system.py",
       "type": "script",
       "label": "check_skill_system.py",
-      "path": ".claude/skills/scripts/check_skill_system.py",
+      "path": ".claude/skills/scripts/critique_skill_system.py",
       "description": "When you want to know whether your skills, agents, and their\ndeclared references still hang together, I walk the whole .claude/\ntree and check that every reference resolves, every dependency points\nto a real skill, no cycle exists in the depends graph, and each agent\ncarries the frontmatter the harness expects. You get one report that\nsays which skills are structurally sound and which need attention.",
       "description_source": "designer-description"
     },
@@ -1143,7 +1143,7 @@
       "id": "script:check_spec_conformance.py",
       "type": "script",
       "label": "check_spec_conformance.py",
-      "path": ".claude/skills/check/check_spec_conformance.py",
+      "path": ".claude/skills/critique/critique_spec_conformance.py",
       "description": "When your project carries an agent-facing spec-checks file, I\nread each declarative check -- file-exists, grep-match, grep-absent,\nmodel-field, route-exists -- and run it against your codebase, so\nspec intent written once stays enforced automatically. You find out\nwhich specs the code still honours and which ones have drifted.",
       "description_source": "designer-description"
     },
@@ -1151,7 +1151,7 @@
       "id": "script:check_telemetry.py",
       "type": "script",
       "label": "check_telemetry.py",
-      "path": ".claude/skills/scripts/check_telemetry.py",
+      "path": ".claude/skills/scripts/critique_telemetry.py",
       "description": "When you want to trust what the harness's telemetry is\nrecording about your sessions, I read every line of telemetry.jsonl\nand confirm the required fields are present, the types are right,\nand the enum values are ones the schema actually allows. Malformed\nrows get called out with line numbers so you can fix the source.",
       "description_source": "designer-description"
     },
@@ -1159,7 +1159,7 @@
       "id": "script:check_unused_files.py",
       "type": "script",
       "label": "check_unused_files.py",
-      "path": ".claude/skills/scripts/check_unused_files.py",
+      "path": ".claude/skills/scripts/critique_unused_files.py",
       "description": "When you suspect your project is carrying dead weight, I walk\nyour source tree and list the files that nothing else imports or\nreferences -- likely abandoned modules, stale experiments, or files\nthat moved without being cleaned up. You can silence known false\npositives through an explicit whitelist, so the check stays useful\nas a standing hygiene signal.",
       "description_source": "designer-description"
     },
@@ -1167,7 +1167,7 @@
       "id": "script:check_validation_constants_sync.py",
       "type": "script",
       "label": "check_validation_constants_sync.py",
-      "path": ".claude/skills/scripts/check_validation_constants_sync.py",
+      "path": ".claude/skills/scripts/critique_validation_constants_sync.py",
       "description": "When your backend and frontend both enforce input limits, I\ncompare the two sides' validation constants and tell you which limits\ndisagree and which constants only one side knows about. This is how\na \"max 255 characters\" rule in your Python stays aligned with the\nsame rule in your TypeScript without anyone having to cross-check\nby hand.",
       "description_source": "designer-description"
     },
@@ -1175,7 +1175,7 @@
       "id": "script:check_version_changelog_sync.py",
       "type": "script",
       "label": "check_version_changelog_sync.py",
-      "path": ".claude/skills/scripts/check_version_changelog_sync.py",
+      "path": ".claude/skills/scripts/critique_version_changelog_sync.py",
       "description": "Before a release, I confirm that the VERSION file and the top\nheading of the harness's CHANGELOG name the same version number.\nIf they disagree you hear about it here instead of after a tag has\nalready shipped with the wrong label.",
       "description_source": "designer-description"
     },
@@ -1183,8 +1183,24 @@
       "id": "script:check_vuln_patterns.py",
       "type": "script",
       "label": "check_vuln_patterns.py",
-      "path": ".claude/skills/scripts/check_vuln_patterns.py",
+      "path": ".claude/skills/scripts/critique_vuln_patterns.py",
       "description": "When you are about to land generated or hand-written code, I\nscan it for the vulnerability shapes the harness's threat model\ntracks -- things like shell injection, unsafe deserialisation,\nhardcoded crypto, path traversal -- and return a list of hits with\nenough context to decide whether each one is a real problem or an\nintentional exception.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "script:check_worktree_health.py",
+      "type": "script",
+      "label": "check_worktree_health.py",
+      "path": ".claude/skills/scripts/critique_worktree_health.py",
+      "description": "When you want to confirm no orphaned git worktrees are\nlingering from parallel wave execution, I run `git worktree list`\nand flag any worktrees beyond the main one. Clean repos pass; stale\nworktrees get listed with their paths so you can remove them.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "script:conversation_trace.py",
+      "type": "script",
+      "label": "conversation_trace.py",
+      "path": ".claude/skills/scripts/conversation_trace.py",
+      "description": "When any utterance -- from the user, assistant, or tool -- happens\noutside a skill, I'm the append-only ledger that records each message with\nits emitter, type, session linkage, event chaining, and automatic\nsensitivity masking so the epistemic history of the project is preserved\nwithout leaking secrets.",
       "description_source": "designer-description"
     },
     {
@@ -1220,14 +1236,6 @@
       "description_source": "designer-description"
     },
     {
-      "id": "script:generate_call_graph.py",
-      "type": "script",
-      "label": "generate_call_graph.py",
-      "path": ".claude/skills/scripts/generate_call_graph.py",
-      "description": "When you want to see how the harness fits together -- which\nskill invokes which script, which agent each skill delegates to,\nwhich references a skill eager-loads -- I produce the call-graph\nviewer you navigate in the docs: a filterable, draggable map of\nevery skill, agent, script, rule, and reference, with a side panel\nthat tells you in plain language what each node does for you.",
-      "description_source": "designer-description"
-    },
-    {
       "id": "script:generate_cheatsheet.py",
       "type": "script",
       "label": "generate_cheatsheet.py",
@@ -1252,14 +1260,6 @@
       "description_source": "designer-description"
     },
     {
-      "id": "script:generate_harness_reference.py",
-      "type": "script",
-      "label": "generate_harness_reference.py",
-      "path": ".claude/skills/scripts/generate_harness_reference.py",
-      "description": "When you want a single catalog of every artifact the harness\nships -- skills, agents, rules, scripts, migrations, references,\ntemplates -- cross-referenced against which ones are actually mentioned\nin the public docs, I'm the generator that walks the harness roots and\nproduces `harness-reference.md`: a grouped table for the whole catalog\nplus a second view listing only the user-facing surface.",
-      "description_source": "designer-description"
-    },
-    {
       "id": "script:generate_macro_index.py",
       "type": "script",
       "label": "generate_macro_index.py",
@@ -1268,11 +1268,11 @@
       "description_source": "designer-description"
     },
     {
-      "id": "script:generate_perspectives_reference.py",
+      "id": "script:generate_pending_roadmap.py",
       "type": "script",
-      "label": "generate_perspectives_reference.py",
-      "path": ".claude/skills/scripts/generate_perspectives_reference.py",
-      "description": "When you want the public docs to show the catalog of review\nperspectives -- tag, human name, one-line purpose, optional tier -- I'm\nthe generator that walks `.claude/references/general/review-perspectives/`, reads\neach file, and writes `seja-public/docs/reference/perspectives.md` as a\nsingle alphabetised table so readers can see the full lens set at a glance.",
+      "label": "generate_pending_roadmap.py",
+      "path": ".claude/skills/scripts/generate_pending_roadmap.py",
+      "description": "When you have multiple open plans piling up in the pending ledger,\nI'm the script that reads them all, figures out which ones touch the same\nfiles, and generates a lightweight roadmap that groups independent plans\ninto parallel waves and overlapping ones into sequential waves -- so\n/implement --pending can hand off to the existing roadmap pathway.",
       "description_source": "designer-description"
     },
     {
@@ -1308,18 +1308,10 @@
       "description_source": "designer-description"
     },
     {
-      "id": "script:generate_skills_reference.py",
-      "type": "script",
-      "label": "generate_skills_reference.py",
-      "path": ".claude/skills/scripts/generate_skills_reference.py",
-      "description": "When the public docs need a human-readable catalog of every\nuser-facing skill -- grouped by category, with description and\nargument-hint -- I'm the generator that walks each SKILL.md, skips the\ninternal lifecycle hooks, and writes\n`seja-public/docs/reference/skills.md` so readers can browse the full\nskill surface without opening the harness source.",
-      "description_source": "designer-description"
-    },
-    {
       "id": "script:generate_telemetry_report.py",
       "type": "script",
       "label": "generate_telemetry_report.py",
-      "path": ".claude/skills/check/generate_telemetry_report.py",
+      "path": ".claude/skills/critique/generate_telemetry_report.py",
       "description": "When you want to see how your own use of the harness has been\ntrending -- which skills you invoke most, how long they take on average,\nwhich ones succeed or fail, and how usage has shifted week over week --\nI'm the report that reads your telemetry log and prints a markdown\nsummary with frequency tables, duration averages, outcome rates, and\nUnicode-block sparklines you can paste into any review.",
       "description_source": "designer-description"
     },
@@ -1337,6 +1329,14 @@
       "label": "load_quickguide.py",
       "path": ".claude/skills/scripts/load_quickguide.py",
       "description": "When a consumer (pre-skill help stage, /help Layer 2,\ngenerate_call_graph.py, check_docs.py) needs the designer-facing\nnarrative for a skill, I'm the single code path that reads the\nSKILL-quickguide.md sibling file and returns its body with\nYAML frontmatter stripped -- so the file location lives in exactly\none place and future layout moves are a one-site change.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "script:mark_brief_done.py",
+      "type": "script",
+      "label": "mark_brief_done.py",
+      "path": ".claude/skills/scripts/mark_brief_done.py",
+      "description": "When a skill finishes and needs to record its completion in the\nbriefs ledger, I find the STARTED entry whose brief text matches what you\ngive me and flip it to DONE -- prepending the done timestamp and optionally\ntagging the plan ID. I keep the ledger accurate without forcing you to\nhand-edit the file or worry about line offsets.",
       "description_source": "designer-description"
     },
     {
@@ -1380,6 +1380,14 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:reflect_colors.py",
+      "type": "script",
+      "label": "reflect_colors.py",
+      "path": ".claude/skills/reflect/reflect_colors.py",
+      "description": "When /reflect --deep renders an event matrix or transition graph,\nI'm the shared palette everyone pulls from -- a Tol 2012 \"muted\" qualitative\nscale covering all SEJA skills, verified WCAG 2.0 AA compliant (≥4.5:1\ntext contrast) and safe for deuteranopia, protanopia, and tritanopia, so\nevery chart speaks the same accessible color language.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:reflect_decision_reversals.py",
       "type": "script",
       "label": "reflect_decision_reversals.py",
@@ -1388,11 +1396,27 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:reflect_deep_scope.py",
+      "type": "script",
+      "label": "reflect_deep_scope.py",
+      "path": ".claude/skills/reflect/reflect_deep_scope.py",
+      "description": "When /reflect --deep needs to know which records match a scope\nkeyword and/or date range, I'm the resolver that searches across briefs,\ntelemetry, and output file tags to build the filtered window -- grouping\nmatches by provenance so you see what matched and why.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:reflect_duration_anomalies.py",
       "type": "script",
       "label": "reflect_duration_anomalies.py",
       "path": ".claude/skills/reflect/reflect_duration_anomalies.py",
       "description": "When /reflect walks your recent sessions, I'm the pattern extractor\nthat notices when a skill ran much longer than its own history would\npredict -- a /plan that usually takes three minutes suddenly taking\nfifteen, for example. You see the outlier runs called out in your\nreflection so you can investigate whether the brief was heavier than\nusual, whether something slowed down, or whether the skill is drifting\nout of its comfort zone.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "script:reflect_event_matrix.py",
+      "type": "script",
+      "label": "reflect_event_matrix.py",
+      "path": ".claude/skills/reflect/reflect_event_matrix.py",
+      "description": "When /reflect --deep renders a timeline of what happened and when,\nI'm the event matrix builder that lays every skill invocation on a temporal\naxis with width proportional to duration, packing up to three lanes per\nskill so overlapping sessions stay visible instead of hiding behind each\nother -- producing a Vega-Lite spec, a static SVG, and a self-contained\nHTML page that all share the same Viridis color language.",
       "description_source": "designer-description"
     },
     {
@@ -1417,6 +1441,14 @@
       "label": "reflect_stuck_loops.py",
       "path": ".claude/skills/reflect/reflect_stuck_loops.py",
       "description": "When /reflect walks your recent sessions, I'm the pattern extractor\nthat catches the \"I ran the same skill on the same kind of brief three\ntimes in half an hour\" shape -- a stuck loop where you kept retrying\ninstead of stepping back. You see those loops called out in your\nreflection so you can notice the pattern the next time it starts, and\nswitch tactic before the third retry instead of after it.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "script:reflect_transition_graph.py",
+      "type": "script",
+      "label": "reflect_transition_graph.py",
+      "path": ".claude/skills/reflect/reflect_transition_graph.py",
+      "description": "When /reflect --deep maps out how you actually move between skills,\nI'm the renderer that turns that movement into a directed graph -- nodes\nsized by how often you invoked each skill, edges weighted by how often one\nskill followed another, all painted with the shared Viridis palette. You\nget a DOT source for Graphviz, a static SVG if the `dot` binary is around,\nand a self-contained interactive HTML page powered by Cytoscape.js --\ndrag nodes, zoom, pan, and hover for details, no server required.",
       "description_source": "designer-description"
     },
     {
@@ -1468,19 +1500,11 @@
       "description_source": "designer-description"
     },
     {
-      "id": "script:scan_public_docs_for_filenames.py",
-      "type": "script",
-      "label": "scan_public_docs_for_filenames.py",
-      "path": ".claude/skills/scripts/scan_public_docs_for_filenames.py",
-      "description": "When the harness reference needs to know which public docs\nalready mention each harness file, I'm the scanner that walks your\nharness source tree and the public docs tree and builds the mapping.\nYou get back a JSON map of harness-path to doc-paths that mention it\n-- the raw signal the harness-reference generator uses to populate its\n\"Mentioned in\" column and to flag surface that is shipping undocumented.",
-      "description_source": "designer-description"
-    },
-    {
       "id": "script:smoke_test_core.py",
       "type": "script",
       "label": "smoke_test_core.py",
       "path": ".claude/skills/scripts/smoke_test_core.py",
-      "description": "When /check smoke exercises your project's API surface, I'm the\nreusable runner underneath -- the piece that drives each endpoint from a\nregistry, classifies the response as PASS, WARN, or FAIL, and rolls the\nresults into a report. Your project brings the endpoint list, auth\nadapter, and app factory; I handle the tracking, the error shaping, and\nthe exit-code convention so every smoke test speaks the same language.",
+      "description": "When /critique smoke exercises your project's API surface, I'm the\nreusable runner underneath -- the piece that drives each endpoint from a\nregistry, classifies the response as PASS, WARN, or FAIL, and rolls the\nresults into a report. Your project brings the endpoint list, auth\nadapter, and app factory; I handle the tracking, the error shaping, and\nthe exit-code convention so every smoke test speaks the same language.",
       "description_source": "designer-description"
     },
     {
@@ -1500,6 +1524,22 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:test_reflect_deep.py",
+      "type": "script",
+      "label": "test_reflect_deep.py",
+      "path": ".claude/skills/reflect/test_reflect_deep.py",
+      "description": "Tests for /reflect --deep mode modules.\n\nInvocation: test\nLifecycle: active\n\nCovers reflect_colors, reflect_deep_scope, reflect_event_matrix, and\nreflect_transition_graph with synthetic data.  Also enforces the\nnon-prescriptive rule across all .py source files in this directory.",
+      "description_source": "developer-fallback"
+    },
+    {
+      "id": "script:update_cross_refs.py",
+      "type": "script",
+      "label": "update_cross_refs.py",
+      "path": ".claude/skills/scripts/update_cross_refs.py",
+      "description": "When a skill produces a new artifact that was spawned by an earlier\nartifact, I update the source artifact's `spawned:` field so the two are\nlinked without manual bookkeeping. Feed me the path to the new artifact;\nI read its `source:` header, locate the source file in INDEX.md, and\nappend the new artifact's type-ID token to the source's `spawned:` line\n(inserting the line if it doesn't exist yet).",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:upgrade_harness.py",
       "type": "script",
       "label": "upgrade_harness.py",
@@ -1508,12 +1548,20 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:verify_commit_scope.py",
+      "type": "script",
+      "label": "verify_commit_scope.py",
+      "path": ".claude/skills/scripts/verify_commit_scope.py",
+      "description": "When a post-skill commit is about to land, I check the staged\nfiles against the files a given skill invocation is expected to touch.\nI report what's expected, what's staged, what's unexpected, and what's\nmissing -- so the agent can decide whether the commit scope is right\nbefore anything is recorded in git history.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "skill:check",
       "type": "skill",
-      "label": "/check",
-      "path": ".claude/skills/check/SKILL.md",
+      "label": "/critique",
+      "path": ".claude/skills/critique/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Unified quality gate -- runs validation scripts, code reviews, smoke tests, preflight checks, harness health diagnostics, documentation consistency scans, git freshness checks, telemetry analysis, test plan generation, or semiotic inspection. One skill for all \"is it OK?\" questions. Ten modes, one at a time.\n\n**Examples**:\n> `/check validate`\n> Runs all project validation scripts and reports pass/fail with details.\n\n> `/check validate i18n`\n> Runs only the i18n-related validation scripts.\n\n> `/check review staged`\n> Reviews staged changes against security, accessibility, performance, and other quality perspectives.\n\n> `/check review src/components --depth deep`\n> Deep review of all files in a directory, evaluating all 16 quality perspectives.\n\n> `/check smoke api`\n> Runs API smoke tests and reports which endpoints pass or fail.\n\n> `/check preflight`\n> Combined validate + review in one pass. Go/no-go verdict for merging.\n\n> `/check preflight --depth light`\n> Lightweight preflight -- faster pass with fewer perspectives.\n\n> `/check health`\n> Harness self-diagnosis across 8 built-in checks (skill system, briefs hygiene, plans hygiene, references, conventions, constitution, spec compliance, pending ledger).\n\n> `/check health --verbose`\n> Same checks with detailed output per check.\n\n> `/check test-plan Test the new task filtering feature`\n> Produces a structured manual test plan with scenarios, step-by-step instructions, expected results, and edge cases.\n\n> `/check docs`\n> Runs 6 documentation consistency scanners (harness integrity, path liveness, env vars, command refs, terminology, structural-completeness).\n\n> `/check docs --plugins terminology,structural-completeness --filter src/`\n> Runs only the named scanners, filtered to a directory.\n\n> `/check freshness`\n> Compares local branches to upstreams for configured repos, reports ahead/behind counts. Never pulls automatically.\n\n> `/check telemetry`\n> Reads `telemetry.jsonl` and reports skill invocation statistics and usage patterns. Read-only; does not write a check log.\n\n> `/check semiotic-inspection task-filtering`\n> Conducts a 5-step Semiotic Inspection Method (SIM) evaluation of the feature's communicability. Analyzes metalinguistic, static, and dynamic signs, then collates the three metacommunication messages.\n\nAdvanced: `--depth <light|standard|deep>` overrides review depth for `review` and `preflight` modes.\n\n**When to use**: Before committing, after making changes, or when you want to verify code quality, project health, harness integrity, documentation consistency, git freshness, usage patterns, or interface communicability. Generate a manual test plan when you need structured QA scenarios.\n\n**Related**: `/pending` manages the pending-actions ledger. `/check` and `/pending` are intentionally separate -- `/check` is heavy-budget and produces diagnostic reports; `/pending` is light-budget and drives interactive ledger curation. `/check health` Check 9 surfaces the pending-ledger count as a diagnostic signal; any mutation (add/done/snooze/dismiss) still flows through `/pending`. See advisory-000442.\n\n**Next step**:\n- After `validate`: `/plan` to fix findings, `/check health` for harness diagnostics, `/pending` for outstanding actions, or `/reflect` on a clean pass.\n- After `review`: `/plan` to address review findings.\n- After `smoke`: `/plan` to fix failing endpoints.\n- After `health`: `/plan` to fix harness issues.\n- After `preflight`: `/check review` for a deeper review, or `/onboard` to onboard someone.\n- After `telemetry`: `/research` to discuss usage patterns, or `/reflect` for pattern mining.\n- After `test-plan`: `/communicate` to share the test plan with stakeholders.\n- After `docs`, `freshness`, `semiotic-inspection`: `/reflect` on a clean pass; `/plan` when findings need fixing.",
+      "description": "**What it does**: Unified quality gate -- runs validation scripts, code reviews, smoke tests, preflight checks, harness health diagnostics, documentation consistency scans, git freshness checks, telemetry analysis, test plan generation, or semiotic inspection. One skill for all \"is it OK?\" questions. Ten modes, one at a time.\n\n**Examples**:\n> `/critique validate`\n> Runs all project validation scripts and reports pass/fail with details.\n\n> `/critique validate i18n`\n> Runs only the i18n-related validation scripts.\n\n> `/critique review staged`\n> Reviews staged changes against security, accessibility, performance, and other quality perspectives.\n\n> `/critique review src/components --depth deep`\n> Deep review of all files in a directory, evaluating all 16 quality perspectives.\n\n> `/critique smoke api`\n> Runs API smoke tests and reports which endpoints pass or fail.\n\n> `/critique preflight`\n> Combined validate + review in one pass. Go/no-go verdict for merging.\n\n> `/critique preflight --depth light`\n> Lightweight preflight -- faster pass with fewer perspectives.\n\n> `/critique health`\n> Harness self-diagnosis across 8 built-in checks (skill system, briefs hygiene, plans hygiene, references, conventions, constitution, spec compliance, pending ledger).\n\n> `/critique health --verbose`\n> Same checks with detailed output per check.\n\n> `/critique test-plan Test the new task filtering feature`\n> Produces a structured manual test plan with scenarios, step-by-step instructions, expected results, and edge cases.\n\n> `/critique docs`\n> Runs 6 documentation consistency scanners (harness integrity, path liveness, env vars, command refs, terminology, structural-completeness).\n\n> `/critique docs --plugins terminology,structural-completeness --filter src/`\n> Runs only the named scanners, filtered to a directory.\n\n> `/critique freshness`\n> Compares local branches to upstreams for configured repos, reports ahead/behind counts. Never pulls automatically.\n\n> `/critique telemetry`\n> Reads `telemetry.jsonl` and reports skill invocation statistics and usage patterns. Read-only; does not write a check log.\n\n> `/critique semiotic-inspection task-filtering`\n> Conducts a 5-step Semiotic Inspection Method (SIM) evaluation of the feature's communicability. Analyzes metalinguistic, static, and dynamic signs, then collates the three metacommunication messages.\n\nAdvanced: `--depth <light|standard|deep>` overrides review depth for `review` and `preflight` modes.\n\n**When to use**: Before committing, after making changes, or when you want to verify code quality, project health, harness integrity, documentation consistency, git freshness, usage patterns, or interface communicability. Generate a manual test plan when you need structured QA scenarios.\n\n**Related**: `/pending` manages the pending-actions ledger. `/critique` and `/pending` are intentionally separate -- `/critique` is heavy-budget and produces diagnostic reports; `/pending` is light-budget and drives interactive ledger curation. `/critique health` Check 9 surfaces the pending-ledger count as a diagnostic signal; any mutation (add/done/snooze/dismiss) still flows through `/pending`. See advisory-000442.\n\n**Next step**:\n- After `validate`: `/plan` to fix findings, `/critique health` for harness diagnostics, `/pending` for outstanding actions, or `/reflect` on a clean pass.\n- After `review`: `/plan` to address review findings.\n- After `smoke`: `/plan` to fix failing endpoints.\n- After `health`: `/plan` to fix harness issues.\n- After `preflight`: `/critique review` for a deeper review, or `/onboard` to onboard someone.\n- After `telemetry`: `/research` to discuss usage patterns, or `/reflect` for pattern mining.\n- After `test-plan`: `/communicate` to share the test plan with stakeholders.\n- After `docs`, `freshness`, `semiotic-inspection`: `/reflect` on a clean pass; `/plan` when findings need fixing.",
       "description_source": "quick-guide"
     },
     {
@@ -1540,7 +1588,7 @@
       "label": "/document",
       "path": ".claude/skills/document/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Generate or update documentation for your project. Four invocation modes: plan-driven (reads Docs: fields from a plan), auto-detect (scans recent git changes), type-targeted (you pick the doc type), or bare scope (you name a file/module/feature). Uses project templates and the documentation-quality writing guide for structured generation. Supports 6 documentation types: readme, contextual-help, api-reference, drr, help-center, and changelog.\n\n**Examples**:\n> `/document --plan 000130`\n> Reads the plan's Docs: fields and generates the appropriate documentation for each identified need.\n\n> `/document --auto-detect`\n> Analyzes recent git changes using 6 heuristic patterns (new API routes, changed models, new UI components, config changes, architectural shifts, breaking changes) and generates matching documentation types.\n\n> `/document --auto-detect --since 2026-04-01`\n> Same as above but bounds the git scan to changes since a specific date.\n\n> `/document --auto-detect --since last`\n> Scans only changes since the last `/document` run of any kind.\n\n> `/document --auto-detect --full-history`\n> Ignores per-doc-type bounding windows and scans the full recent git history.\n\n> `/document --type readme`\n> Generates or updates the project README.\n\n> `/document --type api-reference`\n> Generates API reference documentation from your routes and handlers.\n\n> `/document --type changelog`\n> Generates a changelog entry from recent changes.\n\n<!-- priv-only-start -->\n> `/document --type changelog --harness`\n> Generates a harness changelog entry in `.claude/CHANGELOG.md` using structured git history extraction.\n<!-- priv-only-end -->\n\n> `/document --type drr`\n> Creates a Design Rationale Record for a recent decision.\n\n> `/document --type contextual-help`\n> Generates contextual help content for UI features.\n\n> `/document --type help-center`\n> Generates help-center articles for end users.\n\n> `/document src/auth`\n> Documents the auth module -- infers the most appropriate doc type from the scope content.\n\n**When to use**: After implementing a feature or fix that affects user-facing behavior, API contracts, or architectural decisions. Automatically suggested by post-skill for FEATURE and REDESIGN plans and plans with non-N/A Docs: fields. Use `--plan` when documentation needs are already specified in a plan; use `--auto-detect` for a broad scan of what changed; use `--type` when you know exactly which doc type you need; use bare scope for ad-hoc documentation of a specific area.\n\n**Not for**: stakeholder updates (use `/communicate`) or personalized onboarding plans (use `/onboard`). See `docs/how-to/which-communicative-skill.md` for the audience routing table.\n\n**Next step**: `/check docs` to validate documentation consistency.\n\n**See also**: `/explain` -- understand existing system behavior, architecture, data model, or design spec drift.",
+      "description": "**What it does**: Generate or update documentation for your project. Four invocation modes: plan-driven (reads Docs: fields from a plan), auto-detect (scans recent git changes), type-targeted (you pick the doc type), or bare scope (you name a file/module/feature). Uses project templates and the documentation-quality writing guide for structured generation. Supports 6 documentation types: readme, contextual-help, api-reference, drr, help-center, and changelog.\n\n**Examples**:\n> `/document --plan 000130`\n> Reads the plan's Docs: fields and generates the appropriate documentation for each identified need.\n\n> `/document --auto-detect`\n> Analyzes recent git changes using 6 heuristic patterns (new API routes, changed models, new UI components, config changes, architectural shifts, breaking changes) and generates matching documentation types.\n\n> `/document --auto-detect --since 2026-04-01`\n> Same as above but bounds the git scan to changes since a specific date.\n\n> `/document --auto-detect --since last`\n> Scans only changes since the last `/document` run of any kind.\n\n> `/document --auto-detect --full-history`\n> Ignores per-doc-type bounding windows and scans the full recent git history.\n\n> `/document --type readme`\n> Generates or updates the project README.\n\n> `/document --type api-reference`\n> Generates API reference documentation from your routes and handlers.\n\n> `/document --type changelog`\n> Generates a changelog entry from recent changes.\n\n<!-- priv-only-start -->\n> `/document --type changelog --harness`\n> Generates a harness changelog entry in `.claude/CHANGELOG.md` using structured git history extraction.\n<!-- priv-only-end -->\n\n> `/document --type drr`\n> Creates a Design Rationale Record for a recent decision.\n\n> `/document --type contextual-help`\n> Generates contextual help content for UI features.\n\n> `/document --type help-center`\n> Generates help-center articles for end users.\n\n> `/document src/auth`\n> Documents the auth module -- infers the most appropriate doc type from the scope content.\n\n**When to use**: After implementing a feature or fix that affects user-facing behavior, API contracts, or architectural decisions. Automatically suggested by post-skill for FEATURE and REDESIGN plans and plans with non-N/A Docs: fields. Use `--plan` when documentation needs are already specified in a plan; use `--auto-detect` for a broad scan of what changed; use `--type` when you know exactly which doc type you need; use bare scope for ad-hoc documentation of a specific area.\n\n**Not for**: stakeholder updates (use `/communicate`) or personalized onboarding plans (use `/onboard`). See `docs/how-to/which-communicative-skill.md` for the audience routing table.\n\n**Next step**: `/critique docs` to validate documentation consistency.\n\n**See also**: `/explain` -- understand existing system behavior, architecture, data model, or design spec drift.",
       "description_source": "quick-guide"
     },
     {
@@ -1567,7 +1615,7 @@
       "label": "/implement",
       "path": ".claude/skills/implement/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Runs a previously approved plan step by step. Three execution modes: **auto** (default) dispatches each step to a fresh subagent with isolated context, **manual** runs sequentially in your current context with per-step confirmation, and **roadmap** executes all plans in a roadmap wave by wave. Creates a rollback branch before starting. Includes a Quality Gate at the end (validation, code review, tests, and smoke tests if configured).\n\n**Examples**:\n> `/implement 000042`\n> Auto mode (default): executes each step of Plan 000042 in a fresh subagent. Reports progress between iterations. Quality Gate runs at the end.\n\n> `/implement 000042 --manual`\n> Manual mode: executes steps sequentially in the current context. You confirm each step before it proceeds.\n\n> `/implement --roadmap 000316`\n> Reads roadmap 000316, identifies plans across waves. Executes Wave 0 sequentially, pauses for review, then proceeds through remaining waves.\n\n> `/implement --roadmap 000316 --checkpoint plan --max-iterations 10`\n> Roadmap mode with per-plan pauses and a 10-iteration cap per plan's auto mode.\n\n> `/implement 000042 --dry-run`\n> Previews what each step would create or modify without writing any files.\n\nAdvanced: `--skip-checks` skips the Quality Gate; `--skip-docs` suppresses the automatic documentation prompt (files a pending entry instead); `--checkpoint wave|plan|none` controls roadmap pause granularity.\n\n**When to use**: You have reviewed a plan (created by `/plan`) and are ready to have the agent carry it out. Use auto mode (default) for most plans, especially those with more than 6 steps. Use `--manual` for small plans or when you want per-step confirmation. Use `--roadmap` when you want to execute all plans in a roadmap wave-by-wave without manually triggering each one.\n\nAuto mode follows a TDD red-green cycle for steps with explicit `Tests:` fields (write failing test first, then implement until it passes) and includes a generator-critic loop (max 2 retries) for critical code-review findings. Manual mode retains test-after ordering -- the user's presence is the quality checkpoint.\n\n**Next step**: `/check` (validate, review, and tests run automatically unless `--skip-checks` was used). Documentation generation for qualifying plans runs automatically via post-skill unless `--skip-docs` was passed. After that: `/pending` to review pending actions, or `/reflect` to surface patterns across recent work.\n\n**See also**: `/plan` to create a plan first, `/check` for standalone quality checks, `/document` for standalone documentation.",
+      "description": "**What it does**: Runs a previously approved plan step by step. Three execution modes: **auto** (default) dispatches each step to a fresh subagent with isolated context, **manual** runs sequentially in your current context with per-step confirmation, and **roadmap** executes all plans in a roadmap wave by wave. Creates a rollback branch before starting. Includes a Quality Gate at the end (validation, code review, tests, and smoke tests if configured).\n\n**Examples**:\n> `/implement 000042`\n> Auto mode (default): executes each step of Plan 000042 in a fresh subagent. Reports progress between iterations. Quality Gate runs at the end.\n\n> `/implement 000042 --manual`\n> Manual mode: executes steps sequentially in the current context. You confirm each step before it proceeds.\n\n> `/implement --roadmap 000316`\n> Reads roadmap 000316, identifies plans across waves. Executes Wave 0 sequentially, pauses for review, then proceeds through remaining waves.\n\n> `/implement --roadmap 000316 --checkpoint plan --max-iterations 10`\n> Roadmap mode with per-plan pauses and a 10-iteration cap per plan's auto mode.\n\n> `/implement 000042 --dry-run`\n> Previews what each step would create or modify without writing any files.\n\nAdvanced: `--skip-checks` skips the Quality Gate; `--skip-docs` suppresses the automatic documentation prompt (files a pending entry instead); `--checkpoint wave|plan|none` controls roadmap pause granularity.\n\n**When to use**: You have reviewed a plan (created by `/plan`) and are ready to have the agent carry it out. Use auto mode (default) for most plans, especially those with more than 6 steps. Use `--manual` for small plans or when you want per-step confirmation. Use `--roadmap` when you want to execute all plans in a roadmap wave-by-wave without manually triggering each one.\n\nAuto mode follows a TDD red-green cycle for steps with explicit `Tests:` fields (write failing test first, then implement until it passes) and includes a generator-critic loop (max 2 retries) for critical code-review findings. Manual mode retains test-after ordering -- the user's presence is the quality checkpoint.\n\n**Next step**: `/critique` (validate, review, and tests run automatically unless `--skip-checks` was used). Documentation generation for qualifying plans runs automatically via post-skill unless `--skip-docs` was passed. After that: `/pending` to review pending actions, or `/reflect` to surface patterns across recent work.\n\n**See also**: `/plan` to create a plan first, `/critique` for standalone quality checks, `/document` for standalone documentation.",
       "description_source": "quick-guide"
     },
     {
@@ -1585,7 +1633,7 @@
       "label": "/pending",
       "path": ".claude/skills/pending/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Lists outstanding human actions the harness is tracking for you, showing each one with type-specific advice on how to resolve it, then stops. Six subcommands cover the full lifecycle: list (read-only listing with advice), address (guided resolution for marker-flip types), add, done, snooze, and dismiss. The ledger lives at `_output/pending.jsonl` and is append-only, so you never lose history.\n\nTwelve action types the harness can file:\n\n| Type | Filed by | Typical resolution |\n|------|----------|--------------------|\n| `mark-implemented` | post-skill | Flip STATUS markers via `/pending` dispatch |\n| `test-implementation` | post-skill | Run the plan's test plan manually |\n| `verify-as-coded` | post-skill | Run `/explain spec-drift` to confirm |\n| `update-documentation` | post-skill / `--skip-docs` | Run `/document --plan <source>` |\n| `apply-promote-markers` | `/explain spec-drift --promote` | Write Decision entries, then `--apply-markers` |\n| `spec-drift-check` | periodic trigger | Run `/explain spec-drift` |\n| `periodic-curation` | periodic trigger | Review and triage the ledger |\n| `incorporate-research-markers` | post-skill | Flip INCORPORATED markers in UX research |\n| `implement` | post-skill (after `/plan`) | Run `/implement <plan-id>` |\n| `review-downstream-plan` | `/implement` (file-overlap check) | Review affected plan for assumption drift |\n| `create-decision-entry` | `/research` (decision-extract) | Create a D-NNN entry in as-intended |\n| `user-defined` | `/pending add` | Whatever you described |\n\n**Examples**:\n> `/pending`\n> Lists all pending items grouped by type, each with advice on how to resolve it (e.g., which skill to run, which file to open). Prints a footer showing available subcommands, then stops.\n\n> `/pending address pa-000003`\n> Runs the guided resolution workflow for item pa-000003. For mark-implemented and incorporate-research-markers types, walks you through per-candidate marker flips with confirmation. For other types, prints the type-specific advice.\n\n> `/pending add --type user-defined --source plan-000042 --description \"review CSRF middleware\"`\n> Appends a custom reminder to the ledger. Pre-skill will surface it at the top of every skill invocation until resolved.\n\n> `/pending done pa-000003`\n> Marks item pa-000003 as done.\n\n> `/pending snooze pa-000005 --until 2026-05-01`\n> Hides item pa-000005 until May 1st, then resurfaces it.\n\n> `/pending dismiss pa-000007 --reason \"no longer relevant after redesign\"`\n> Dismisses an item without completing it. The reason is recorded in the ledger.\n\n**When to use**: After `/implement` if you chose \"Defer for later review\" at post-skill, when pre-skill tells you there are pending actions, when the periodic curation trigger has fired, or any time you want to review what the harness is tracking for you.\n\n**Related**: `/check health` Check 9 reports the pending-ledger count (diagnostic only). Any mutation (address/add/done/snooze/dismiss) still flows through `/pending`. The two skills are intentionally separate -- see advisory-000442.\n\n**Next step**: `/explain spec-drift --promote` after addressing periodic curation items (generates a Decision proposal for promotion candidates), or `/implement` once you have reviewed the outstanding review items.",
+      "description": "**What it does**: Lists outstanding human actions the harness is tracking for you, showing each one with type-specific advice on how to resolve it, then stops. Six subcommands cover the full lifecycle: list (read-only listing with advice), address (guided resolution for marker-flip types), add, done, snooze, and dismiss. The ledger lives at `_output/pending.jsonl` and is append-only, so you never lose history.\n\nTwelve action types the harness can file:\n\n| Type | Filed by | Typical resolution |\n|------|----------|--------------------|\n| `mark-implemented` | post-skill | Flip STATUS markers via `/pending` dispatch |\n| `test-implementation` | post-skill | Run the plan's test plan manually |\n| `verify-as-coded` | post-skill | Run `/explain spec-drift` to confirm |\n| `update-documentation` | post-skill / `--skip-docs` | Run `/document --plan <source>` |\n| `apply-promote-markers` | `/explain spec-drift --promote` | Write Decision entries, then `--apply-markers` |\n| `spec-drift-check` | periodic trigger | Run `/explain spec-drift` |\n| `periodic-curation` | periodic trigger | Review and triage the ledger |\n| `incorporate-research-markers` | post-skill | Flip INCORPORATED markers in UX research |\n| `implement` | post-skill (after `/plan`) | Run `/implement <plan-id>` |\n| `review-downstream-plan` | `/implement` (file-overlap check) | Review affected plan for assumption drift |\n| `create-decision-entry` | `/research` (decision-extract) | Create a D-NNN entry in as-intended |\n| `user-defined` | `/pending add` | Whatever you described |\n\n**Examples**:\n> `/pending`\n> Lists all pending items grouped by type, each with advice on how to resolve it (e.g., which skill to run, which file to open). Prints a footer showing available subcommands, then stops.\n\n> `/pending address pa-000003`\n> Runs the guided resolution workflow for item pa-000003. For mark-implemented and incorporate-research-markers types, walks you through per-candidate marker flips with confirmation. For other types, prints the type-specific advice.\n\n> `/pending add --type user-defined --source plan-000042 --description \"review CSRF middleware\"`\n> Appends a custom reminder to the ledger. Pre-skill will surface it at the top of every skill invocation until resolved.\n\n> `/pending done pa-000003`\n> Marks item pa-000003 as done.\n\n> `/pending snooze pa-000005 --until 2026-05-01`\n> Hides item pa-000005 until May 1st, then resurfaces it.\n\n> `/pending dismiss pa-000007 --reason \"no longer relevant after redesign\"`\n> Dismisses an item without completing it. The reason is recorded in the ledger.\n\n**When to use**: After `/implement` if you chose \"Defer for later review\" at post-skill, when pre-skill tells you there are pending actions, when the periodic curation trigger has fired, or any time you want to review what the harness is tracking for you.\n\n**Related**: `/critique health` Check 9 reports the pending-ledger count (diagnostic only). Any mutation (address/add/done/snooze/dismiss) still flows through `/pending`. The two skills are intentionally separate -- see advisory-000442.\n\n**Next step**: `/explain spec-drift --promote` after addressing periodic curation items (generates a Decision proposal for promotion candidates), or `/implement` once you have reviewed the outstanding review items.",
       "description_source": "quick-guide"
     },
     {
@@ -1603,7 +1651,7 @@
       "label": "/post-skill",
       "path": ".claude/skills/post-skill/SKILL.md",
       "user_invocable": false,
-      "description": "Post skill\n\n0.",
+      "description": "Post skill\n\nWhen `--deferred` is passed (by the roadmap parallel-wave orchestrator after merging a worktree branch back to main), post-skill runs a reduced pipeline.",
       "description_source": "developer-fallback"
     },
     {
@@ -1621,7 +1669,7 @@
       "label": "/publish",
       "path": ".claude/skills/publish/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Publishes a tagged release to the public SEJA repository. Wraps `tools/publish.py`, which handles the full lifecycle: preflight checks, tag creation, cloning the public repo, syncing harness files, running smoke tests, committing, pushing, and closing the pending PUBLISH: entry. Supports version inference from CHANGELOG.md heuristics (bump hints, subsection analysis) or an explicit version argument.\n\n**Examples**:\n> `/publish v0.3.0`\n> Publishes version v0.3.0 -- runs preflight, cuts the tag, clones the public repo, syncs, smoke-tests, commits, and pushes.\n\n> `/publish`\n> Infers the next version from CHANGELOG.md and git tags, confirms with you, then runs the full pipeline.\n\n> `/publish --dry-run`\n> Previews the full command sequence without executing any destructive actions. Useful for verifying the pipeline before a live run.\n\n> `/publish v0.3.0 --yes`\n> Non-interactive publish -- accepts all confirmation prompts automatically.\n\n**When to use**: When you are ready to cut a public release. Prerequisites: `seja-public/CHANGELOG.md` has content under `## Unreleased`, working tree is clean, and the remote is reachable. Run `/check preflight` beforehand if you want a quality gate.\n\n**Not for**: Internal harness iteration (just commit normally), changelog authoring (edit `seja-public/CHANGELOG.md` directly), or harness upgrades in consumer projects (use `/seja-setup --upgrade`).\n\n**Next step**: Verify the release on GitHub, then optionally graduate `.claude/CHANGELOG.md`'s `[Unreleased]` section to a new internal version heading.",
+      "description": "**What it does**: Publishes a tagged release to the public SEJA repository. Wraps `tools/publish.py`, which handles the full lifecycle: preflight checks, tag creation, cloning the public repo, syncing harness files, running smoke tests, committing, pushing, and closing the pending PUBLISH: entry. Supports version inference from CHANGELOG.md heuristics (bump hints, subsection analysis) or an explicit version argument.\n\n**Examples**:\n> `/publish v0.3.0`\n> Publishes version v0.3.0 -- runs preflight, cuts the tag, clones the public repo, syncs, smoke-tests, commits, and pushes.\n\n> `/publish`\n> Infers the next version from CHANGELOG.md and git tags, confirms with you, then runs the full pipeline.\n\n> `/publish --dry-run`\n> Previews the full command sequence without executing any destructive actions. Useful for verifying the pipeline before a live run.\n\n> `/publish v0.3.0 --yes`\n> Non-interactive publish -- accepts all confirmation prompts automatically.\n\n**When to use**: When you are ready to cut a public release. Prerequisites: `seja-public/CHANGELOG.md` has content under `## Unreleased`, working tree is clean, and the remote is reachable. Run `/critique preflight` beforehand if you want a quality gate.\n\n**Not for**: Internal harness iteration (just commit normally), changelog authoring (edit `seja-public/CHANGELOG.md` directly), or harness upgrades in consumer projects (use `/seja-setup --upgrade`).\n\n**Next step**: Verify the release on GitHub, then optionally graduate `.claude/CHANGELOG.md`'s `[Unreleased]` section to a new internal version heading.",
       "description_source": "quick-guide"
     },
     {
@@ -1639,7 +1687,7 @@
       "label": "/reflect",
       "path": ".claude/skills/reflect/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Helps you reflect on specific work you have done. Two modes: **conversational** (default) where you pick artifacts and write your reflection in your own words, and **telemetry** (`--telemetry`) for statistical pattern mining across weeks of usage data.\n\nIn conversational mode, you choose a scope (recent plans, recent research, specific artifact by ID, time window, or free-form), I summarize the artifacts, ask one open-ended question, and save your reflection to `_output/reflections/reflection-<id>-<slug>.md`.\n\nIn telemetry mode, I read `telemetry.jsonl` and run 5 analysis primitives: sequence frequency, duration outliers, revision density, stuck-loop detection, and decision-reversal tracking.\n\n**Examples**:\n> `/reflect`\n> Asks which scope you want (recent plans, recent research, specific ID, time window, or free-form). You pick artifacts, I summarize them, ask what stands out, and write your reflection.\n\n> `/reflect --telemetry`\n> Reads the last 30 days of telemetry data, runs all 5 analysis primitives, and writes a statistical reflection report.\n\n> `/reflect --telemetry --since 14d`\n> Same as above but scoped to the last 14 days.\n\n> `/reflect --telemetry --skill research`\n> Filters telemetry analysis to only `/research` invocations.\n\n> `/reflect --telemetry --dry-run`\n> Prints the telemetry report to stdout without writing to disk.\n\n**When to use**: You want to step back and look at specific work you have done -- what you decided, what surprised you, what you would do differently. The conversational output is your own words anchored on real artifacts. Use `--telemetry` when you want statistical pattern mining instead of narrative reflection.\n\n**Next step**: `/research` for a prescriptive take on any pattern surfaced here, `/design` to turn a surfaced pattern into new design intents, or `/plan` to turn it into new work.\n\n**See also**: `/research` -- prescriptive follow-up for any insight that emerges from your reflection.",
+      "description": "**What it does**: Helps you reflect on specific work you have done. Three modes: **conversational** (default) where you pick artifacts and write your reflection in your own words, **deep** (`--deep`) for visualization-backed practice evolution narrative, and **telemetry** (`--telemetry`) for statistical pattern mining across weeks of usage data.\n\nIn conversational mode, you choose a scope (recent plans, recent research, specific artifact by ID, time window, or free-form), I summarize the artifacts, ask one open-ended question, and save your reflection to `_output/reflections/reflection-<id>-<slug>.md`.\n\nIn deep mode, I read telemetry and briefs within a time window, optionally filtered by a scope keyword, and produce an event matrix visualization (Vega-Lite), a transition graph (Graphviz DOT), and a past-tense practice evolution narrative. All output lands in `_output/reflections/` as a markdown report with companion visualization files.\n\nIn telemetry mode, I read `telemetry.jsonl` and run 5 analysis primitives: sequence frequency, duration outliers, revision density, stuck-loop detection, and decision-reversal tracking.\n\n**Examples**:\n> `/reflect`\n> Asks which scope you want (recent plans, recent research, specific ID, time window, or free-form). You pick artifacts, I summarize them, ask what stands out, and write your reflection.\n\n> `/reflect --deep publish`\n> Scopes to \"publish\" topic over the last 30 days. Produces event matrix, transition graph, and practice evolution narrative.\n\n> `/reflect --deep --since 14d`\n> All topics, last 14 days. Produces the full deep reflection with visualizations.\n\n> `/reflect --deep semiotic --since 7d`\n> Scopes to \"semiotic\" topic over the last 7 days.\n\n> `/reflect --telemetry`\n> Reads the last 30 days of telemetry data, runs all 5 analysis primitives, and writes a statistical reflection report.\n\n> `/reflect --telemetry --since 14d`\n> Same as above but scoped to the last 14 days.\n\n> `/reflect --telemetry --skill research`\n> Filters telemetry analysis to only `/research` invocations.\n\n> `/reflect --telemetry --dry-run`\n> Prints the telemetry report to stdout without writing to disk.\n\n**When to use**: You want to step back and look at specific work you have done -- what you decided, what surprised you, what you would do differently. The conversational output is your own words anchored on real artifacts. Use `--deep` when you want a visual timeline and narrative chronicle of practice evolution across a period. Use `--telemetry` when you want statistical pattern mining instead of narrative reflection.\n\n**Next step**: `/research` for a prescriptive take on any pattern surfaced here, `/design` to turn a surfaced pattern into new design intents, or `/plan` to turn it into new work.\n\n**See also**: `/research` -- prescriptive follow-up for any insight that emerges from your reflection.",
       "description_source": "quick-guide"
     },
     {
@@ -1657,7 +1705,7 @@
       "label": "/seja-setup",
       "path": ".claude/skills/seja-setup/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Manages SEJA's state in this project. Single entry point for every harness-lifecycle operation: install, finalise in place, companion workspace, demo bootstrap, and upgrade. On first install it scaffolds `CLAUDE.md` with stack-dependent content, populates `.claude/rules/` with stack-flavored rule files, and fills `project-design/conventions.md` with basic definitions. With no arguments, it inspects the current directory via `detect_setup_state.py` and routes to the correct action.\n\nState detection recognizes four project states: **no-harness** (fresh install target), **fresh-download** (SEJA cloned into project, needs finalisation), **partial-init** (conventions.md exists but design intent absent), and **finalised** (full project, offers upgrade).\n\n**Examples**:\n> `/seja-setup /path/to/my-project`\n> Detects the scenario (greenfield/existing), copies all harness files, populates conventions.md with stack definitions via the Section 1 questionnaire, scaffolds CLAUDE.md and rules, and tells you to run `/design` next.\n\n> `/seja-setup --here`\n> Detects you downloaded SEJA into your project folder; finalises setup in place. Prompts for git-history handling and cleanup of harness-dev artefacts.\n\n> `/seja-setup /path/to/my-project --workspace`\n> Creates a companion workspace directory alongside an existing codebase. The workspace is its own git repo with version-controlled design history.\n\n> `/seja-setup /path/to/taskflow-demo --demo`\n> Sets up the harness with the pre-configured TaskFlow demo project (pre-filled conventions, constitution, conceptual design, and walkthrough).\n\n> `/seja-setup --upgrade`\n> Upgrades harness files in the current project to the latest SemVer tag without touching project-specific files.\n\n> `/seja-setup --upgrade --version v0.2.0`\n> Pins the upgrade to a specific release tag instead of latest.\n\n> `/seja-setup --upgrade --dry-run`\n> Previews what the upgrade would change without applying anything.\n\n> `/seja-setup`\n> No args: inspects cwd, reports the detected state, and routes to install, finalise, upgrade menu, or refuse as appropriate.\n\n**When to use**: Every time you touch SEJA's state in a project -- first install, in-place finalisation, companion-workspace creation, demo bootstrap, or later harness upgrade. After the first iteration, you rarely run `/seja-setup` unless upgrading.\n\nStack-presence modes determine what gets scaffolded: **full-stack** (backend + frontend), **API-only** (`FRONTEND_FRAMEWORK=none`), **frontend-only** (`BACKEND_FRAMEWORK=none`), and **CLI / library** (both `none`). Each mode emits only the appropriate rows in `conventions.md`, sections in `CLAUDE.md`, rule files, and smoke-test infrastructure.\n\n**Next step**: `/design` after a fresh install to define design intent (entities, permissions, metacommunication, personas, standards). If you are new to SEJA, read `general/getting-started.md` first. After `--upgrade`: `/check health` to verify harness integrity, then `/explain spec-drift` to catch changed conventions.\n\n**Merge background**: This skill merges the former `/setup` and `/upgrade` into a unified harness-state command.",
+      "description": "**What it does**: Manages SEJA's state in this project. Single entry point for every harness-lifecycle operation: install, finalise in place, companion workspace, demo bootstrap, and upgrade. On first install it scaffolds `CLAUDE.md` with stack-dependent content, populates `.claude/rules/` with stack-flavored rule files, and fills `product-design/conventions.md` with basic definitions. With no arguments, it inspects the current directory via `detect_setup_state.py` and routes to the correct action.\n\nState detection recognizes four project states: **no-harness** (fresh install target), **fresh-download** (SEJA cloned into project, needs finalisation), **partial-init** (conventions.md exists but design intent absent), and **finalised** (full project, offers upgrade).\n\n**Examples**:\n> `/seja-setup /path/to/my-project`\n> Detects the scenario (greenfield/existing), copies all harness files, populates conventions.md with stack definitions via the Section 1 questionnaire, scaffolds CLAUDE.md and rules, and tells you to run `/design` next.\n\n> `/seja-setup --here`\n> Detects you downloaded SEJA into your project folder; finalises setup in place. Prompts for git-history handling and cleanup of harness-dev artefacts.\n\n> `/seja-setup /path/to/my-project --workspace`\n> Creates a companion workspace directory alongside an existing codebase. The workspace is its own git repo with version-controlled design history.\n\n> `/seja-setup /path/to/taskflow-demo --demo`\n> Sets up the harness with the pre-configured TaskFlow demo project (pre-filled conventions, constitution, conceptual design, and walkthrough).\n\n> `/seja-setup --upgrade`\n> Upgrades harness files in the current project to the latest SemVer tag without touching project-specific files.\n\n> `/seja-setup --upgrade --version v0.2.0`\n> Pins the upgrade to a specific release tag instead of latest.\n\n> `/seja-setup --upgrade --dry-run`\n> Previews what the upgrade would change without applying anything.\n\n> `/seja-setup`\n> No args: inspects cwd, reports the detected state, and routes to install, finalise, upgrade menu, or refuse as appropriate.\n\n**When to use**: Every time you touch SEJA's state in a project -- first install, in-place finalisation, companion-workspace creation, demo bootstrap, or later harness upgrade. After the first iteration, you rarely run `/seja-setup` unless upgrading.\n\nStack-presence modes determine what gets scaffolded: **full-stack** (backend + frontend), **API-only** (`FRONTEND_FRAMEWORK=none`), **frontend-only** (`BACKEND_FRAMEWORK=none`), and **CLI / library** (both `none`). Each mode emits only the appropriate rows in `conventions.md`, sections in `CLAUDE.md`, rule files, and smoke-test infrastructure.\n\n**Next step**: `/design` after a fresh install to define design intent (entities, permissions, metacommunication, personas, standards). If you are new to SEJA, read `general/getting-started.md` first. After `--upgrade`: `/critique health` to verify harness integrity, then `/explain spec-drift` to catch changed conventions.\n\n**Merge background**: This skill merges the former `/setup` and `/upgrade` into a unified harness-state command.",
       "description_source": "quick-guide"
     },
     {
@@ -2629,9 +2677,15 @@
       "label": ""
     },
     {
-      "source": "script:bump_version.py",
-      "target": "script:check_version_changelog_sync.py",
-      "type": "invokes",
+      "source": "script:build_telemetry.py",
+      "target": "script:check_telemetry.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:build_telemetry.py",
+      "target": "script:project_config.py",
+      "type": "imports",
       "label": ""
     },
     {
@@ -2707,6 +2761,12 @@
       "label": ""
     },
     {
+      "source": "script:check_harness_drift.py",
+      "target": "script:upgrade_harness.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
       "source": "script:check_human_markers_only.py",
       "target": "script:human_markers_registry.py",
       "type": "imports",
@@ -2720,12 +2780,6 @@
     },
     {
       "source": "script:check_migration_chain.py",
-      "target": "script:project_config.py",
-      "type": "imports",
-      "label": ""
-    },
-    {
-      "source": "script:check_no_private_leaks.py",
       "target": "script:project_config.py",
       "type": "imports",
       "label": ""
@@ -2785,6 +2839,24 @@
       "label": ""
     },
     {
+      "source": "script:check_worktree_health.py",
+      "target": "script:project_config.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:conversation_trace.py",
+      "target": "script:check_secrets.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:conversation_trace.py",
+      "target": "script:project_config.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
       "source": "script:count_loc.py",
       "target": "script:project_config.py",
       "type": "imports",
@@ -2803,18 +2875,6 @@
       "label": ""
     },
     {
-      "source": "script:generate_call_graph.py",
-      "target": "script:load_quickguide.py",
-      "type": "imports",
-      "label": ""
-    },
-    {
-      "source": "script:generate_call_graph.py",
-      "target": "ref-general:skill-graph.md",
-      "type": "reads",
-      "label": ""
-    },
-    {
       "source": "script:generate_decision_digest.py",
       "target": "script:project_config.py",
       "type": "imports",
@@ -2827,27 +2887,21 @@
       "label": ""
     },
     {
-      "source": "script:generate_harness_reference.py",
-      "target": "script:scan_public_docs_for_filenames.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "script:generate_harness_reference.py",
-      "target": "ref-general:script-header-convention.md",
-      "type": "reads",
-      "label": ""
-    },
-    {
       "source": "script:generate_macro_index.py",
       "target": "script:project_config.py",
       "type": "imports",
       "label": ""
     },
     {
-      "source": "script:generate_perspectives_reference.py",
-      "target": "script:generate_harness_reference.py",
+      "source": "script:generate_pending_roadmap.py",
+      "target": "script:project_config.py",
       "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:generate_pending_roadmap.py",
+      "target": "script:pending.py",
+      "type": "invokes",
       "label": ""
     },
     {
@@ -2905,12 +2959,6 @@
       "label": ""
     },
     {
-      "source": "script:generate_skills_reference.py",
-      "target": "script:generate_skills_manifest.py",
-      "type": "imports",
-      "label": ""
-    },
-    {
       "source": "script:generate_telemetry_report.py",
       "target": "script:project_config.py",
       "type": "imports",
@@ -2932,6 +2980,12 @@
       "source": "script:load_quickguide.py",
       "target": "ref-general:harness-governance.md",
       "type": "reads",
+      "label": ""
+    },
+    {
+      "source": "script:mark_brief_done.py",
+      "target": "script:project_config.py",
+      "type": "imports",
       "label": ""
     },
     {
@@ -2971,8 +3025,20 @@
       "label": ""
     },
     {
+      "source": "script:reflect_event_matrix.py",
+      "target": "script:reflect_colors.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
       "source": "script:reflect_stuck_loops.py",
       "target": "script:project_config.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:reflect_transition_graph.py",
+      "target": "script:reflect_colors.py",
       "type": "imports",
       "label": ""
     },
@@ -3026,12 +3092,6 @@
     },
     {
       "source": "script:run_preflight_fast.py",
-      "target": "script:check_no_private_leaks.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "script:run_preflight_fast.py",
       "target": "script:check_plan_coverage.py",
       "type": "invokes",
       "label": ""
@@ -3074,18 +3134,6 @@
     },
     {
       "source": "script:run_preflight_fast.py",
-      "target": "script:generate_call_graph.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "script:run_preflight_fast.py",
-      "target": "script:generate_harness_reference.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "script:run_preflight_fast.py",
       "target": "script:generate_skill_graph.py",
       "type": "invokes",
       "label": ""
@@ -3115,6 +3163,36 @@
       "label": ""
     },
     {
+      "source": "script:test_reflect_deep.py",
+      "target": "script:reflect_colors.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:test_reflect_deep.py",
+      "target": "script:reflect_deep_scope.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:test_reflect_deep.py",
+      "target": "script:reflect_event_matrix.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:test_reflect_deep.py",
+      "target": "script:reflect_transition_graph.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:update_cross_refs.py",
+      "target": "script:project_config.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
       "source": "script:upgrade_harness.py",
       "target": "script:project_config.py",
       "type": "imports",
@@ -3123,6 +3201,12 @@
     {
       "source": "script:upgrade_harness.py",
       "target": "script:run_migrations.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:verify_commit_scope.py",
+      "target": "script:project_config.py",
       "type": "imports",
       "label": ""
     },
@@ -3883,7 +3967,19 @@
     },
     {
       "source": "skill:implement",
+      "target": "script:generate_pending_roadmap.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:implement",
       "target": "script:pending.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:implement",
+      "target": "script:reserve_id.py",
       "type": "invokes",
       "label": ""
     },
@@ -4199,6 +4295,12 @@
     },
     {
       "source": "skill:post-skill",
+      "target": "script:build_telemetry.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:post-skill",
       "target": "script:check_human_markers_only.py",
       "type": "invokes",
       "label": ""
@@ -4223,6 +4325,12 @@
     },
     {
       "source": "skill:post-skill",
+      "target": "script:mark_brief_done.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:post-skill",
       "target": "script:pending.py",
       "type": "invokes",
       "label": ""
@@ -4230,6 +4338,18 @@
     {
       "source": "skill:post-skill",
       "target": "script:run_preflight_fast.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:post-skill",
+      "target": "script:update_cross_refs.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:post-skill",
+      "target": "script:verify_commit_scope.py",
       "type": "invokes",
       "label": ""
     },
@@ -4262,6 +4382,12 @@
       "target": "rule:harness-structure",
       "type": "auto-loads",
       "label": ".claude/**"
+    },
+    {
+      "source": "skill:pre-skill",
+      "target": "script:conversation_trace.py",
+      "type": "invokes",
+      "label": ""
     },
     {
       "source": "skill:pre-skill",
@@ -4346,6 +4472,24 @@
     {
       "source": "skill:reflect",
       "target": "script:generate_reflection_report.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:reflect",
+      "target": "script:reflect_deep_scope.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:reflect",
+      "target": "script:reflect_event_matrix.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:reflect",
+      "target": "script:reflect_transition_graph.py",
       "type": "invokes",
       "label": ""
     },

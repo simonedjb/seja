@@ -24,7 +24,7 @@ Sections:
 
 Usage
 -----
-    python .claude/skills/check/generate_telemetry_report.py
+    python .claude/skills/critique/generate_telemetry_report.py
 """
 from __future__ import annotations
 

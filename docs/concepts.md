@@ -1,7 +1,7 @@
 ---
 diataxis: explanation
 freshness: on-structural-change
-last-reviewed: 2026-04-26
+last-reviewed: 2026-05-05
 ---
 
 # Concepts
@@ -18,12 +18,12 @@ With that in mind, here is the sign system we use to classify files and track in
 
 ## Sign system
 
-We treat your project as a communication medium. Every file in it either carries your voice, our voice, or a narrow seam of structured markers through which we are allowed to record lifecycle events on your behalf. The sign system is how we keep those voices from bleeding into each other: three file classifications tell us who may write to a file, and three marker types track how design intent moves from "proposed" to "established" without anyone having to rewrite prose to reflect the change. If you want to know why we treat conventions as a sign system at all -- rather than as arbitrary stylistic rules -- the short primer at [foundations.md](foundations.md) walks through the grounding. The glossary holds the one-line definitions; this chapter narrates the underlying model so you can recognize the signs when you open the repo.
+We treat your project as a communication medium. Every file in it either carries your voice, our voice, or a narrow seam of structured markers through which we are allowed to record lifecycle events on your behalf. The sign system is how we keep those voices from bleeding into each other: four file classifications tell us who may write to a file; three lifecycle markers (STATUS, ESTABLISHED, CHANGELOG_APPEND) track how design intent moves from "proposed" to "established" without anyone having to rewrite prose to reflect the change; and eight requirement-traceability markers (REQ-TYPE-NNN) link individual requirements in your design spec to the plan steps that satisfy them. If you want to know why we treat conventions as a sign system at all -- rather than as arbitrary stylistic rules -- the short primer at [foundations.md](foundations.md) walks through the grounding. The glossary holds the one-line definitions; this chapter narrates the underlying model so you can recognize the signs when you open the repo.
 
 <a id="human-human-markers-agent"></a>
-### Human, Human (markers), Agent
+### Human, Human (markers), Agent, Human / Agent
 
-Three classifications, one per author. **Human** -- File classification for content authored and updated exclusively by humans; agents may read it but must not write to it. We treat Human files as read-only reference. Your `project/constitution.md` is the canonical example: we load it at the start of every skill so we stay inside the principles you committed to, but we never edit a word of it. **Human (markers)** -- File classification for human-authored prose where agents may write only fixed-format structured markers via `apply_marker.py`, and only after explicit confirmation in the same turn. Your `project/product-design-as-intended.md` is the canonical example: you author the design intent in your voice, and we may only stamp STATUS, ESTABLISHED, or CHANGELOG_APPEND markers into it after you have confirmed the edit in the same turn. The guardrail is `check_human_markers_only.py`, which rejects any write that is not a recognized marker pattern. **Agent** -- File classification for content auto-maintained by agents and skills (e.g., via post-skill); humans typically do not edit it directly. `project/product-design-as-coded.md` is the canonical example: we reconstruct and refresh it after implementation, and `check_section_boundary_writes.py` keeps our edits inside its declared H2 sections so we cannot accidentally spill across Conceptual Design, Metacommunication, and Journey Maps.
+Four classifications. Three are strictly author-scoped; the fourth is jointly owned. **Human** -- File classification for content authored and updated exclusively by humans; agents may read it but must not write to it. We treat Human files as read-only reference. Your `project/constitution.md` is the canonical example: we load it at the start of every skill so we stay inside the principles you committed to, but we never edit a word of it. **Human (markers)** -- File classification for human-authored prose where agents may write only fixed-format structured markers via `apply_marker.py`, and only after explicit confirmation in the same turn. Your `project/product-design-as-intended.md` is the canonical example: you author the design intent in your voice, and we may only stamp STATUS, ESTABLISHED, or CHANGELOG_APPEND markers into it after you have confirmed the edit in the same turn. The guardrail is `check_human_markers_only.py`, which rejects any write that is not a recognized marker pattern. **Agent** -- File classification for content auto-maintained by agents and skills (e.g., via post-skill); humans typically do not edit it directly. `project/product-design-as-coded.md` is the canonical example: we reconstruct and refresh it after implementation, and `check_section_boundary_writes.py` keeps our edits inside its declared H2 sections so we cannot accidentally spill across Conceptual Design, Metacommunication, and Journey Maps. **Human / Agent** -- File classification for files seeded by an agent (e.g., via `/design`) and then jointly maintained; you own the voice and intent, and we update harness-managed sections when they drift from the current harness state. `project/conventions.md` is the canonical example: `/design` generates the initial file keyed to your project's stack and your constitution's principles, but you refine the project-specific rules and we keep sections such as the review-perspectives table in sync.
 
 <a id="status-established-changelog-append"></a>
 ### STATUS, ESTABLISHED, CHANGELOG_APPEND
@@ -39,6 +39,37 @@ A STATUS marker looks like this above the heading it annotates:
 
 The comment is invisible in the rendered markdown but machine-parseable by `apply_marker.py` and `check_human_markers_only.py`, which is how the sign system stays out of your way while still giving us something reliable to read and write.
 
+<a id="req-type-nnn"></a>
+### REQ-TYPE-NNN
+
+Eight requirement-traceability markers, one per requirement class. Where STATUS, ESTABLISHED, and CHANGELOG_APPEND track lifecycle state, REQ-TYPE-NNN markers do something orthogonal: they tag individual requirements in `product-design-as-intended.md` with stable, machine-parseable IDs so that plan steps can declare which requirements they satisfy and `check_plan_coverage.py` can verify that nothing was silently skipped.
+
+Each marker is an HTML comment placed immediately before the heading, table row, or bullet that defines the requirement:
+
+```markdown
+<!-- REQ-PERM-003 -->
+| Admin | Can delete any record | ...
+```
+
+The eight types, grouped by concern:
+
+| Type | Covers | Classification |
+|------|--------|----------------|
+| ENT | Entity hierarchy | technical, advisory |
+| PERM | Permission model | security, **blocking** |
+| VAL | Validation constants | security, **blocking** |
+| UX | UX requirements | ux, advisory |
+| MC | Metacommunication | ux, advisory |
+| JM | Designed user journeys | ux, advisory |
+| I18N | Internationalisation | technical, advisory |
+| DELTA | Deltas and breaking changes | technical, advisory |
+
+**Blocking vs. advisory.** PERM and VAL are security-classified and blocking at preflight: a plan that touches a permission model or a validation constant must include a step that traces those requirements, or the preflight gate rejects the plan. All other types produce warnings but do not block.
+
+**Plan step tracing.** A plan step declares the requirements it satisfies via the `Traces` metadata field: `- **Traces**: REQ-ENT-001, REQ-PERM-003`. This is the link between a design decision recorded in `product-design-as-intended.md` and the implementation step that brings it to life; `check_plan_coverage.py` walks the plan and verifies every blocking requirement has a trace.
+
+**Orthogonality with D-NNN.** REQ-TYPE-NNN requirement markers and D-NNN Decision entries are separate namespaces and must never be intermixed: a Decision captures the rationale and trade-offs behind a choice; a requirement marker tags the requirement that drove it. One Decision may touch many requirements; one requirement may be shaped by more than one Decision over its lifetime.
+
 Now that you can read the signs, here is how we choose what to do for you next. The profile x pattern chapter is where we describe the two-axis picker we run through at the start of every engagement to decide which how-to guide fits your situation, which deployment layout we should propose, and which skills you should expect to lean on first.
 
 ## Profile x pattern
@@ -53,7 +84,7 @@ The first half of the profile axis is about your code. **greenfield** is the pro
 <a id="collocated-workspace"></a>
 ### Collocated and workspace
 
-The second half of the profile axis is about where SEJA's files live. **collocated** is the deployment pattern where harness files (`.claude/`, `project-design/`, `_output/`) live directly inside the product codebase repository: the simplest layout, ideal when one person is doing both design and implementation and there is no reason to version the two streams separately. **workspace** is the deployment pattern where harness files live in a standalone git repository alongside, not inside, the product codebase: design history gets its own git log, multiple people can iterate on specs without touching product code, and the launcher scripts we generate point our session at the product codebase through `claude --add-dir`. We choose workspace when design and code have different review cadences, different contributors, or different release rhythms.
+The second half of the profile axis is about where SEJA's files live. **collocated** is the deployment pattern where harness files (`.claude/`, `product-design/`, `_output/`) live directly inside the product codebase repository: the simplest layout, ideal when one person is doing both design and implementation and there is no reason to version the two streams separately. **workspace** is the deployment pattern where harness files live in a standalone git repository alongside, not inside, the product codebase: design history gets its own git log, multiple people can iterate on specs without touching product code, and the launcher scripts we generate point our session at the product codebase through `claude --add-dir`. We choose workspace when design and code have different review cadences, different contributors, or different release rhythms.
 
 The pattern axis is about the team shape: solo designer working alone, engineering team where several contributors share the harness, or a mixed setup where a designer and a small engineering team collaborate on the same project. The pattern does not change which files we copy, but it does change how we frame `/design`, `/onboard`, and `/communicate` output for you.
 
@@ -73,7 +104,7 @@ Picking a cell in this matrix is how we interpret "which SEJA are you running" f
 Four ways to run `/seja-setup`, all the same verb, none of them implying that SEJA must be copied somewhere else before you use it. The verb is location-agnostic; the mode you pick reflects how the harness files are already arranged when you start, or whether you are refreshing an already-installed project.
 
 - **`/seja-setup <target>`** -- copy the harness into a new or empty project directory. We create the directory if needed, copy skills, rules, and references into place, initialize git, and hand off to `/design`. Use this when the harness source is in a separate clone and your project is a new location.
-- **`/seja-setup --here`** -- finalize setup in place in the current directory. We assume the harness files are already present (typically because you ran `git clone https://github.com/simonedjb/seja my-project` into this folder), and we complete the initialization: `_output/` skeleton, `project-design/` placeholder, `.claude/settings.json`, `.seja-version` pin, and an optional cleanup of harness-dev artefacts. Use this when you downloaded SEJA directly into your project folder.
+- **`/seja-setup --here`** -- finalize setup in place in the current directory. We assume the harness files are already present (typically because you ran `git clone https://github.com/simonedjb/seja my-project` into this folder), and we complete the initialization: `_output/` skeleton, `product-design/` placeholder, `.claude/settings.json`, `.seja-version` pin, and an optional cleanup of harness-dev artefacts. Use this when you downloaded SEJA directly into your project folder.
 - **`/seja-setup --workspace`** -- create a companion workspace alongside an existing codebase. We keep design and code in separate git repos, generate launcher scripts that point our session at the codebase via `claude --add-dir`, and leave your codebase untouched. Use this when design and code have different review cadences or different contributors.
 - **`/seja-setup --upgrade`** -- refresh harness files in an already-installed project to the latest release (or a specific `--version <tag>`). Preserves project-specific files, settings, and output. Use this when a newer version of SEJA has been published and you want to pull it in.
 
@@ -101,7 +132,7 @@ The same skill surface has to address very different readers. We use role famili
 <a id="bld-shp-grd"></a>
 ### BLD, SHP, GRD
 
-A **role family** in SEJA is one of three coarse groupings that cover everyone a project involves. **BLD (Builders)** is the role family for developers, DevOps engineers, and infrastructure engineers who write, deploy, and maintain code: they read architecture diagrams, coding standards, CI pipelines, and data-model references, and they learn best when we hand them annotated code and convention files. **SHP (Shapers)** is the role family for product managers, UX and UI designers, researchers, and analysts who define what gets built and how: they read `product-design-as-intended.md`, journey maps, metacommunication, and the design system, and they learn best when we narrate a persona's path through a feature without dragging them into source code. **GRD (Guardians)** is the role family for QA engineers, security engineers, tech leads, and engineering managers who ensure quality, alignment, and governance: they read the review-perspective framework, test strategy, security policies, and quality-gate configuration, and they learn best when we hand them the `/check review` surface and the perspective catalog as their working toolkit. When you run `/onboard bld L2 Alice` or `/communicate clt`, the first token is what we branch on to pick the right reference files.
+A **role family** in SEJA is one of three coarse groupings that cover everyone a project involves. **BLD (Builders)** is the role family for developers, DevOps engineers, and infrastructure engineers who write, deploy, and maintain code: they read architecture diagrams, coding standards, CI pipelines, and data-model references, and they learn best when we hand them annotated code and convention files. **SHP (Shapers)** is the role family for product managers, UX and UI designers, researchers, and analysts who define what gets built and how: they read `product-design-as-intended.md`, journey maps, metacommunication, and the design system, and they learn best when we narrate a persona's path through a feature without dragging them into source code. **GRD (Guardians)** is the role family for QA engineers, security engineers, tech leads, and engineering managers who ensure quality, alignment, and governance: they read the review-perspective framework, test strategy, security policies, and quality-gate configuration, and they learn best when we hand them the `/critique review` surface and the perspective catalog as their working toolkit. When you run `/onboard bld L2 Alice` or `/communicate clt`, the first token is what we branch on to pick the right reference files.
 
 <a id="expertise-levels"></a>
 ### Expertise levels L1 through L3
@@ -139,7 +170,7 @@ Two-stage loading keeps the review focused. We shortlist the 3 to 6 perspectives
 
 ## Skills overview
 
-A **skill** is a `SKILL.md` file under `.claude/skills/<name>/` that defines an agent-invocable capability and is invoked via a slash command. We expose 14 user-facing skills plus 2 internal lifecycle hooks we run on your behalf. For a standalone catalog of every skill with its one-line intent, see [docs/reference/skills.md](reference/skills.md). The 14 user-facing skills group into five purposes:
+A **skill** is a `SKILL.md` file under `.claude/skills/<name>/` that defines an agent-invocable capability and is invoked via a slash command. We expose 15 user-facing skills plus 2 internal lifecycle hooks we run on your behalf. For a standalone catalog of every skill with its one-line intent, see [docs/reference/skills.md](reference/skills.md). The 15 user-facing skills group into five purposes:
 
 **Design and planning**
 
@@ -149,7 +180,7 @@ A **skill** is a `SKILL.md` file under `.claude/skills/<name>/` that defines an 
 
 **Quality and maintenance**
 
-- `/check` is the unified quality gate that runs validation scripts, code reviews, smoke tests, preflight checks, harness health diagnostics, or user test plan generation: one skill for all "is it OK?" questions.
+- `/critique` is the unified quality gate that runs validation scripts, code reviews, smoke tests, preflight checks, harness health diagnostics, or user test plan generation: one skill for all "is it OK?" questions.
 - `/explain` gives you a clear explanation of how something works (a feature's behavior, the data model, the overall architecture, or the drift between your design specs) with diagrams and analogies, and its spec-drift mode also offers an interactive sync workflow to realign diverged specs.
 - `/document` generates or updates documentation for your project, reading plan `Docs:` fields, detecting changes from git history, or targeting a specific documentation type, and uses project templates plus the documentation-quality writing guide for structured generation.
 
@@ -158,7 +189,7 @@ A **skill** is a `SKILL.md` file under `.claude/skills/<name>/` that defines an 
 - `/research` answers any question about the project (architecture, design decisions, trade-offs) by researching your codebase, analyzing from multiple perspectives, and giving you actionable recommendations; with `--inventory` it catalogs all codebase elements matching a pattern.
 - `/communicate` generates tailored communication material for a specific audience (evaluators, clients, end users, or academics), each in their language and focused on what matters to them.
 - `/onboard` creates a personalized onboarding plan based on role and experience level, covering what to learn, in what order, and where to find things, so you can onboard a new teammate or yourself.
-- `/reflect` surfaces descriptive patterns across weeks of telemetry, such as skill sequences, durations, revisions, and stuck loops, so you can see how your practice has actually been running; it is strictly non-prescriptive, and `/research` is the follow-up skill when you want recommendations on what to change.
+- `/reflect` anchors a reflection session on specific artifacts you choose; in its default conversational mode it summarizes the artifacts, asks whether you are reflecting on the **product** (what was built — reflection-on-action on the artifact) or your **practice** (how you worked — Schön's reflection-on-practice), then asks the matching question and records your own words verbatim; it is strictly non-prescriptive, and `/research` is the follow-up skill when you want recommendations on what to change. With `--deep`, it produces an event-matrix heat map, a skill-transition graph, and a practice-evolution narrative across a chosen time window; with `--telemetry`, it mines usage patterns across weeks (sequences, durations, revisions, stuck loops, decision reversals).
 
 **State management**
 
@@ -175,18 +206,18 @@ Two more skills, `pre-skill` and `post-skill`, run on our behalf around every us
 <a id="lifecycle-two-paths"></a>
 ## Lifecycle: canonical path
 
-SEJA runs a single canonical lifecycle path around every engagement, and the one gating invariant is "validate before you communicate": `/check` always comes before `/document` and `/communicate`, so nothing leaves the envelope until it has been validated. The canonical sequence is:
+SEJA runs a single canonical lifecycle path around every engagement, and the one gating invariant is "validate before you communicate": `/critique` always comes before `/document` and `/communicate`, so nothing leaves the envelope until it has been validated. The canonical sequence is:
 
-`/research` (or `/explain`) > `/design` | `/plan` > `/implement` > `/check` > `/document` | `/communicate` > `/reflect`
+`/research` (or `/explain`) > `/design` | `/plan` > `/implement` > `/critique` > `/document` | `/communicate` > `/reflect`
 
-Read the `|` as "choose one, depending on intent" and the `>` as "and then." You enter at `/research` when you have a research question or at `/explain` when you want to understand how something works; the answer either flows into `/design` (if intent needs to change) or into `/plan` (if intent is settled and you are ready to build). After `/plan` the build cycle runs through `/implement` and `/check`, and only once `/check` has validated the work do you hand off to `/document` or `/communicate` for the reader-facing artifacts. `/reflect` closes the cycle.
+Read the `|` as "choose one, depending on intent" and the `>` as "and then." You enter at `/research` when you have a research question or at `/explain` when you want to understand how something works; the answer either flows into `/design` (if intent needs to change) or into `/plan` (if intent is settled and you are ready to build). After `/plan` the build cycle runs through `/implement` and `/critique`, and only once `/critique` has validated the work do you hand off to `/document` or `/communicate` for the reader-facing artifacts. `/reflect` closes the cycle.
 
 | Stage | Skills | Purpose |
 |---|---|---|
 | **Research** | `/research` or `/explain` | ask a question or understand how something works |
 | **Shape the work** | `/design` or `/plan` | change intent (design) or commit to a build (plan) |
 | **Build** | `/implement` | execute an approved plan |
-| **Validate** | `/check` | run the quality gate before anything reader-facing ships |
+| **Validate** | `/critique` | run the quality gate before anything reader-facing ships |
 | **Communicate** | `/document` or `/communicate` | write reader-facing artifacts only after validation |
 | **Close the cycle** | `/reflect` | record what the turn taught you before the next one starts |
 
@@ -224,7 +255,7 @@ Now that you know which skill to reach for, let us show you the envelope every o
 
 Everything in the previous chapters -- the signs, the profile x pattern picker, the role families and expertise levels, the review perspectives, the skill portfolio, and the decision matrix -- is wrapped in a lifecycle envelope we run on your behalf. Every slash command you invoke flows through a `pre-skill -> skill body -> post-skill` envelope, so the way a skill loads references, logs what it is doing, evaluates context budget, injects your constitution, updates the as-coded files, and proposes a commit is the same across the catalog. When something in this envelope misbehaves -- an orphaned brief, a pending ledger you cannot reconcile, a stuck loop -- see [docs/troubleshooting.md](troubleshooting.md) for common failure modes and their fixes.
 
-This chapter is the canonical home for that envelope. The first three H3s below cover the envelope itself: the overall skill lifecycle, then the pre-skill 8-stage pipeline, then the post-skill 13-step pipeline. The next three cover the state the envelope reads from and writes to: the pending ledger, the constitution, and the section boundaries that keep multi-section files safe to edit. The final two cover the reconciliation surface: the two specs files (`product-design-as-intended.md` and `product-design-as-coded.md`) and the D-NNN Decision entries that record the rationale whenever intent and code need to be brought back into alignment. Later how-to guides link back to these anchors instead of redefining the mechanics inline, so if you are reading a how-to and you hit an unfamiliar reference to a pipeline stage, a marker type, or a Decision ID, the link almost always points here.
+This chapter is the canonical home for that envelope. The first three H3s below cover the envelope itself: the overall skill lifecycle, then the pre-skill 6-stage pipeline, then the post-skill pipeline. The next three cover the state the envelope reads from and writes to: the pending ledger, the constitution, and the section boundaries that keep multi-section files safe to edit. The final two cover the reconciliation surface: the two specs files (`product-design-as-intended.md` and `product-design-as-coded.md`) and the D-NNN Decision entries that record the rationale whenever intent and code need to be brought back into alignment. Later how-to guides link back to these anchors instead of redefining the mechanics inline, so if you are reading a how-to and you hit an unfamiliar reference to a pipeline stage, a marker type, or a Decision ID, the link almost always points here.
 
 ### Skill lifecycle
 
@@ -241,18 +272,16 @@ It is also why we can resume a turn in a fresh session without losing the thread
 The specific stages and steps of each hook are covered in the next two sections.
 
 <a id="pre-skill-pipeline"></a>
-### Pre-skill 8-stage pipeline
+### Pre-skill 6-stage pipeline
 
-The **pre-skill pipeline** is the eight-stage pipeline run before every skill: help, brief-log, orphan-check, budget-eval, compaction-check, pending-check, ref-load, constitution. Three of those stages are **critical** and always run; the other five are **non-critical** and error-isolated, which means a failure in any one of them is logged but does not block the skill body. The stages in order:
+The **pre-skill pipeline** is the six-stage pipeline run before every skill: help, brief-log, budget-eval, pending-check, ref-load, constitution. Three of those stages are **critical** and always run; the other three are **non-critical** and error-isolated, which means a failure in any one of them is logged but does not block the skill body. The stages in order:
 
 1. `help` -- intercepts `--help` and prints the Quick Guide for the calling skill, then exits before the skill body runs.
 2. `brief-log` -- records the STARTED entry in the briefs file so you can see what we are doing even if the session crashes mid-turn.
-3. `orphan-check` -- detects STARTED entries without a matching DONE from a previous crashed turn and offers to clean them up.
-4. `budget-eval` -- picks the light, standard, or heavy context budget tier and loads the recent briefs window sized to that tier.
-5. `compaction-check` -- warns when the session has accumulated many skill invocations and may be about to summarize older context.
-6. `pending-check` -- surfaces the count of outstanding items from the pending ledger and runs lazy periodic triggers when they come due.
-7. `ref-load` -- loads conventions, permissions, constraints, and the skill-specific references the calling skill declares in its SKILL.md metadata.
-8. `constitution` -- injects your project constitution into the skill's prompt so trust boundaries are enforced before any generation happens.
+3. `budget-eval` -- picks the light, standard, or heavy context budget tier and loads the recent briefs window sized to that tier; sub-steps within budget-eval include orphan detection (detecting STARTED entries without a matching DONE from a previous crashed turn) and compaction warning (warning when the session has accumulated many skill invocations and may be about to summarize older context).
+4. `pending-check` -- surfaces the count of outstanding items from the pending ledger and runs lazy periodic triggers when they come due.
+5. `ref-load` -- loads conventions, permissions, constraints, and the skill-specific references the calling skill declares in its SKILL.md metadata.
+6. `constitution` -- injects your project constitution into the skill's prompt so trust boundaries are enforced before any generation happens.
 
 `brief-log`, `budget-eval`, and `ref-load` are the three critical stages. A skill may opt out of any non-critical stage by listing the stage ID in `metadata.skip_stages` in its SKILL.md frontmatter; critical stages cannot be skipped.
 
@@ -266,7 +295,7 @@ The **post-skill pipeline** is the lifecycle hook run after every skill for brie
 - **Safety and marker proposals** (steps 7-10: preflight-gate, human-markers-verify, pending-append, status-marker-propose): run the fast preflight gate and the human-markers verifier before staging so a bad write never reaches the commit, write any deferred actions into `_output/pending.jsonl`, and propose STATUS marker flips to you through `AskUserQuestion` so any write into a Human (markers) file is confirmed in the same turn.
 - **Commit and handoff** (steps 11-13: stage-and-commit, next-step-suggest, contextual-handoff): stage and commit the affected files with a message keyed to the skill and invocation ID for auditability, then surface contextual next-step suggestions through `AskUserQuestion` once the commit lands so the next turn starts from a known good state.
 
-The key artifacts touched every turn are the briefs file (`_output/briefs/*.md`), the `_output/qa-logs/` directory, the `INDEX.md` files under `_output/`, the pending ledger at `_output/pending.jsonl`, proposed STATUS markers in `project/product-design-as-intended.md`, the reconciled sections of `project/product-design-as-coded.md`, and the git commit itself. Every one of these is addressable after the fact, so you can reconstruct what happened on any turn by reading the brief, the QA log, and the commit diff side by side.
+The key artifacts touched every turn are the briefs file (`_output/briefs.md`), the `_output/qa-logs/` directory, the `INDEX.md` files under `_output/`, the pending ledger at `_output/pending.jsonl`, proposed STATUS markers in `project/product-design-as-intended.md`, the reconciled sections of `project/product-design-as-coded.md`, and the git commit itself. Every one of these is addressable after the fact, so you can reconstruct what happened on any turn by reading the brief, the QA log, and the commit diff side by side.
 
 ### Pending ledger
 
@@ -284,11 +313,11 @@ Two workflows illustrate how the ledger fits into practice:
 
 ### Path-scoped rules
 
-Seven rule files live under `.claude/rules/` and are auto-loaded when Claude edits files matching the rule's path scope. Rules for `backend`, `frontend`, `e2e`, `i18n`, `migrations`, and `tests` point the agent at the review perspectives most relevant to each file type, while the `framework-structure` meta-rule provides the full component inventory when editing `.claude/` files. Rules provide contextual guidance, not permissions -- they do not grant or restrict write access. They are distinct from the project-wide conventions in `project/conventions.md`, which declare paths, variables, and project-level settings rather than file-scoped review guidance.
+Seven rule files live under `.claude/rules/` and are auto-loaded when Claude edits files matching the rule's path scope. Rules for `backend`, `frontend`, `e2e`, `i18n`, `migrations`, and `tests` point the agent at the review perspectives most relevant to each file type, while the `harness-structure` meta-rule provides the full component inventory when editing `.claude/` files. Rules provide contextual guidance, not permissions -- they do not grant or restrict write access. They are distinct from the project-wide conventions in `project/conventions.md`, which declare paths, variables, and project-level settings rather than file-scoped review guidance.
 
 ### Constitution
 
-The **constitution** is the immutable project principles in `project/constitution.md`, never agent-altered, required for new projects. It is copied in by `/seja-setup` from `.claude/references/template/constitution.md`, instantiated by `/design`, and classified Human -- we load it on every turn but we never edit a word of it. We inject its contents into the prompts of generator agents (like `communication-generator`, `onboarding-generator`, and `document-generator`) so their output stays inside the principles you committed to. `/check health` validates that the constitution is present as one of its checks, and a new project without a constitution is blocked from proceeding past `/design`. The constitution is the one file whose wording is load-bearing for trust boundary enforcement across the catalog.
+The **constitution** is the immutable project principles in `project/constitution.md`, never agent-altered, required for new projects. It is copied in by `/seja-setup` from `.claude/references/template/constitution.md`, instantiated by `/design`, and classified Human -- we load it on every turn but we never edit a word of it. We inject its contents into the prompts of generator agents (like `communication-generator`, `onboarding-generator`, and `document-generator`) so their output stays inside the principles you committed to. `/critique health` validates that the constitution is present as one of its checks, and a new project without a constitution is blocked from proceeding past `/design`. The constitution is the one file whose wording is load-bearing for trust boundary enforcement across the catalog.
 
 ### Section boundaries
 

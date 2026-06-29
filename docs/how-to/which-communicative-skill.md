@@ -29,4 +29,4 @@ If two rows feel plausible, the audience test breaks the tie: `/document` writes
 
 - [team-and-stakeholders.md](team-and-stakeholders.md) -- step-by-step walkthroughs for `/onboard` and `/communicate`, with quick-reference workflow sequences.
 - [plan-and-execute.md](plan-and-execute.md) -- workflow sequences that chain communicative skills with planning and validation.
-- [concepts.md -- Harness lifecycle](../concepts.md#harness-lifecycle) -- where the communicative skills sit in the canonical loop (after `/check`, before `/reflect`).
+- [concepts.md -- Harness lifecycle](../concepts.md#harness-lifecycle) -- where the communicative skills sit in the canonical loop (after `/critique`, before `/reflect`).

@@ -35,7 +35,7 @@ designer_description: "When you run /onboard for a level-2 expert -- a senior wh
 ### AI-Assisted Development Guidance
 
 - **Rapid codebase comprehension**: "Trace the data flow from [entry] to [database]", "Who calls [function]?"
-- **Design sounding board**: "Trade-offs of approach A vs B for [problem]?"; **code reviews**: `/check review` with full perspective framework
+- **Design sounding board**: "Trade-offs of approach A vs B for [problem]?"; **code reviews**: `/critique review` with full perspective framework
 - **AI workflow improvement**: identify where AI helps and where it falls short in this project
 
 ### Onboarding Milestones

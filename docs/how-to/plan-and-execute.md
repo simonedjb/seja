@@ -1,7 +1,7 @@
 ---
 diataxis: how-to
 freshness: release-bound
-last-reviewed: 2026-04-26
+last-reviewed: 2026-05-05
 ---
 
 # Plan and execute how-to
@@ -18,7 +18,7 @@ This how-to is for you when you have a design intent (captured in `project/produ
 
 We decide up front which mode fits the work. Standard `/plan` is the default for a multi-step feature where we want a full plan with perspective review. `/plan --light` is for a surgical one-to-three-step change where a full review cycle would be overkill. `/plan --roadmap` is for multi-plan work that spans waves and needs dependency ordering across several plans. The mode choice is the single decision that most shapes how the next hour of our work will go, so we make it deliberately rather than defaulting.
 
-**Harness:** See [concepts.md -- Harness lifecycle](../concepts.md#harness-lifecycle) for the full definition of the pre/post-skill pipeline, pending ledger, marker model, and constitution. The pre-skill 8-stage pipeline (help, brief-log, orphan-check, budget-eval, compaction-check, pending-check, ref-load, constitution) runs before the planning body begins, so by the time `/plan` reads our brief it has already loaded our `project/constitution.md` and any pending-ledger items that might constrain the plan. See also [harness-reference.md#plan](../reference/harness-reference.md#plan).
+**Harness:** See [concepts.md -- Harness lifecycle](../concepts.md#harness-lifecycle) for the full definition of the pre/post-skill pipeline, pending ledger, marker model, and constitution. The pre-skill 6-stage pipeline (help, brief-log, budget-eval, pending-check, ref-load, constitution) runs before the planning body begins, so by the time `/plan` reads our brief it has already loaded our `project/constitution.md` and any pending-ledger items that might constrain the plan. See also [harness-reference.md#plan](../reference/harness-reference.md#plan).
 
 > **Sidebar -- when to use `--light`:** reach for `--light` when we know exactly which file to touch and the change is obvious (a typo fix, a single config bump, a renamed variable). `--light` skips the `plan-reviewer` subagent and produces a one-page proposal without a perspective review cycle.
 
@@ -56,9 +56,9 @@ After the last step runs, we let `/implement`'s post-skill pipeline finish befor
 
 **Harness:** post-skill runs the 13-step pipeline. It updates `project/product-design-as-coded.md` within its H2 section boundaries (`check_section_boundary_writes.py` enforces that no single edit crosses between Conceptual Design, Metacommunication, and Journey Maps -- see the dedicated callout in the quality-gates how-to). It appends to the pending ledger if any step deferred an action with regression risk. It drafts `D-NNN` Decision entries against `project/product-design-as-intended.md` when the plan introduced or changed design intent, leaving the entries under `_output/explained-NNNNNN/` for us to review before they are applied via `apply_marker.py`. It refreshes the briefs and artifact indices, logs a QA transcript under `_output/qa-logs/`, and proposes a single commit covering the whole plan.
 
-## Step 6: Run `/check` before pushing
+## Step 6: Run `/critique` before pushing
 
-Once the plan is committed locally, we run the right `/check` mode for the change before we push or merge. The callout that narrates each mode lives in the quality-gates how-to -- we follow the link at the bottom of this page. For a typical plan we run `/check preflight`, which parallelizes validate and review; for a documentation-only plan we run `/check docs`; for a plan that touches telemetry we run `/check telemetry`. The natural flow is `/plan -> /implement -> /check -> git push`, and each arrow in that flow is a deliberate pause, not a reflex.
+Once the plan is committed locally, we run the right `/critique` mode for the change before we push or merge. The callout that narrates each mode lives in the quality-gates how-to -- we follow the link at the bottom of this page. For a typical plan we run `/critique preflight`, which parallelizes validate and review; for a documentation-only plan we run `/critique docs`; for a plan that touches telemetry we run `/critique telemetry`. The natural flow is `/plan -> /implement -> /critique -> git push`, and each arrow in that flow is a deliberate pause, not a reflex.
 
 ## Quick-reference workflows
 
@@ -66,21 +66,21 @@ Compact command sequences for common planning scenarios. Each links back to the 
 
 ### Add a new feature
 
-`/research` (explore the design space) -> `/plan` (turn the approach into a step-by-step plan) -> `/implement` (execute the plan) -> `/check validate` (confirm nothing is broken).
+`/research` (explore the design space) -> `/plan` (turn the approach into a step-by-step plan) -> `/implement` (execute the plan) -> `/critique validate` (confirm nothing is broken).
 
 > **Tip:** For large features, run `/plan --roadmap` first to break work into smaller plans.
 
 ### Fix a bug
 
-`/research` (describe the symptom; get root cause analysis) -> `/plan --light` (create a lightweight fix proposal) -> `/implement` (apply the fix) -> `/check validate` (verify the fix and ensure no regressions).
+`/research` (describe the symptom; get root cause analysis) -> `/plan --light` (create a lightweight fix proposal) -> `/implement` (apply the fix) -> `/critique validate` (verify the fix and ensure no regressions).
 
 > **Tip:** If the bug is in test-covered code, `/implement` automatically generates tests when the plan step has a non-N/A Tests field.
 
 ### Review and improve existing code
 
-`/check review` (get a detailed code review with actionable findings) -> `/plan` (create a plan to address the findings) -> `/implement` (execute the improvements).
+`/critique review` (get a detailed code review with actionable findings) -> `/plan` (create a plan to address the findings) -> `/implement` (execute the improvements).
 
-> **Tip:** Use `/check review` with deep depth for a more thorough analysis.
+> **Tip:** Use `/critique review` with deep depth for a more thorough analysis.
 
 ### Run a design review
 
@@ -96,7 +96,7 @@ When you have a Figma Make prototype and want to bring it into SEJA-managed prod
 2. `/research` -- evaluate the prototype against project standards and identify decomposition needs.
 3. `/plan` -- plan the architectural decomposition and integration.
 4. `/implement` -- execute the plan (includes decomposing monolithic output into modular components).
-5. `/check validate` -- verify the integrated code meets all quality standards.
+5. `/critique validate` -- verify the integrated code meets all quality standards.
 
 **Intake checklist** -- verify these before any Figma Make output enters the codebase:
 
@@ -105,10 +105,10 @@ When you have a Figma Make prototype and want to bring it into SEJA-managed prod
 - **Accessibility audit** -- Figma Make does not guarantee A11Y compliance. Audit the generated markup against WCAG requirements.
 - **Test scaffold creation** -- Define component boundaries and create test stubs before integrating.
 
-**Feeding SEJA conventions into Figma Make** -- use Figma Make's Attachments feature to attach these reference files to your prompts: `.claude/references/general/coding-standards.md`, `project-design/standards.md` (focus on the Frontend section), and existing component files as examples.
+**Feeding SEJA conventions into Figma Make** -- use Figma Make's Attachments feature to attach these reference files to your prompts: `.claude/references/general/coding-standards.md`, `product-design/standards.md` (focus on the Frontend section), and existing component files as examples.
 
 ## What to read next
 
-- [quality-gates.md](quality-gates.md) -- which `/check` mode to run after `/implement` and before pushing.
+- [quality-gates.md](quality-gates.md) -- which `/critique` mode to run after `/implement` and before pushing.
 - [concepts.md -- Harness lifecycle](../concepts.md#harness-lifecycle) -- the canonical definitions the callouts above link back to.
 - [team-and-stakeholders.md](team-and-stakeholders.md) -- useful when a `/plan --roadmap` decomposition lands work on a teammate who needs onboarding.

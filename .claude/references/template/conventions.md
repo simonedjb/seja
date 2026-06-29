@@ -46,7 +46,7 @@ designer_description: "I'm your project's single source of truth for directory s
 | `COMMUNICATION_DIR` | `${OUTPUT_DIR}/communication` | Communication material output folder |
 | `ROADMAP_DIR` | `${OUTPUT_DIR}/roadmaps` | Roadmap output folder |
 | `QA_LOGS_DIR` | `${OUTPUT_DIR}/qa-logs` | QA session log output folder |
-| `CHECK_LOGS_DIR` | `${OUTPUT_DIR}/check-logs` | Check/preflight/review output folder |
+| `CRITIQUE_LOGS_DIR` | `${OUTPUT_DIR}/critique-logs` | Critique/preflight/review output folder |
 | `TMP_DIR` | `${OUTPUT_DIR}/tmp` | Temporary/helper scripts |
 | `CODEBASE_DIR` | {{CODEBASE_DIR}} | Root directory of the project codebase (`.` for embedded, absolute path for workspace mode) |
 
@@ -107,7 +107,7 @@ designer_description: "I'm your project's single source of truth for directory s
 |---------|-----------------|-------------|-------------|
 | Periodic curation | 30 | `periodic-curation` | Review `product-design-as-intended.md` for items ready to promote from `implemented` to `established` |
 | Spec-drift check | 14 | `spec-drift-check` | Run `/explain spec-drift` to surface drift between design intent and as-coded state |
-| Git freshness check | 7 | `check-git-freshness` | Compare each project git repo to its upstream; surface behind/ahead counts. Resolve via `/check freshness`. Default: 7; blank to disable. |
+| Git freshness check | 7 | `check-git-freshness` | Compare each project git repo to its upstream; surface behind/ahead counts. Resolve via `/critique freshness`. Default: 7; blank to disable. |
 
 | Threshold | Value | Description |
 |-----------|-------|-------------|

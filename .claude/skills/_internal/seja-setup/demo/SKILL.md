@@ -32,6 +32,6 @@ Runs Standard Install steps 1-7 (skipping 7b -- deferred to after step 10), then
 11. **Print walkthrough message**:
     > Your demo project "TaskFlow" has been set up at `<target>` with pre-filled design files.
     >
-    > Open `WALKTHROUGH.md` for a guided tour of the core SEJA skills (/research, /plan, /implement, /check).
+    > Open `WALKTHROUGH.md` for a guided tour of the core SEJA skills (/research, /plan, /implement, /critique).
     >
     > To start fresh with your own project instead, run `/design` to replace the demo configuration.

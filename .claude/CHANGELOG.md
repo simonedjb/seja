@@ -16,6 +16,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   preserved as-is; do not alter them.
 -->
 
+## [0.6.0] -- 2026-06-29 20:35 UTC
+
+### Breaking changes
+
+- **`/check` renamed to `/critique`**: all prior `/check` modes (`validate`, `review`, `smoke`, `preflight`, `health`, `test-plan`, `docs`, `freshness`, `telemetry`) are preserved as modes under `/critique`. Update any saved prompts or documentation that reference `/check`. (plan-000585)
+
+### Added
+
+- **`/reflect` product/practice lens**: `/reflect` now offers a product lens (user-facing impact, metacommunication alignment) and a practice lens (team workflow, AI collaboration patterns) alongside the existing technical lens. Available in both standard and `--deep` modes.
+- **Call-graph HTML: self-contained offline viewer**: the interactive Cytoscape.js viewer now embeds the graph JSON inline in the HTML file, eliminating the HTTP fetch dependency. Works fully offline and from `file://` URLs. (`generate_call_graph.py`)
+- **`/critique semiotic-inspection` mode**: new SIM-based communicability evaluation mode backed by the `semiotic-inspector` agent. Reconstructs the designer's metacommunication message across metalinguistic, static, and dynamic sign classes; produces a communicability judgment report.
+- **`product-design/` as a first-class design directory**: SEJA can now use its own harness to govern its own design intent (`product-design/product-design-as-intended.md`, `constitution.md`, `ux-research-results.md`, `conventions.md`). `/design`, `/explain spec-drift`, and post-skill all read from `product-design/` when `project/` is absent. Downstream projects continue using `project/` unchanged.
+- **Public docs: `REQ-TYPE-NNN` requirement traceability types** (`docs/concepts.md`): 8 types (ENT, PERM, VAL, UX, MC, JM, I18N, DELTA), blocking/advisory classification, plan-step `Traces:` field.
+- **Public docs: Harness migrations section** (`docs/how-to/upgrade.md`): documents idempotent migration scripts under `.claude/migrations/`, how `run_migrations.py` applies them, and the `_output/upgrade-reports/` output location.
+
+### Fixed
+
+- **`pending.py`: stale `implement` entries auto-dismissed on cleanup**: `cleanup` now checks the plan file's first line for a `# DONE` header in addition to checking for deletion. Implement entries silently missed by post-skill step 2g.iv are auto-dismissed within 24 h. Dismissal reason: `plan already completed`.
+- **Call-graph**: suggest-edge filter incorrectly split on wrong token; `research`/`orchestrates` edge type false positive. Both corrected in `generate_call_graph.py`.
+- **`generate_macro_index.py`**: `/explain` output artifact types were missing from `_output/INDEX.md`; now included.
+- **`publish.py`**: Unreleased-section detection now matches both `## Unreleased` and `## [Unreleased]` heading forms. Fixes false "empty Unreleased section" preflight errors.
+
 ## [0.5.0] -- 2026-05-04 14:11 UTC
 
 ### Added

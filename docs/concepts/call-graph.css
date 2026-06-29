@@ -1,6 +1,6 @@
 /*
  * SEJA harness call graph viewer styles.
- * Generated 2026-05-01T20:31:14Z by .claude/skills/scripts/generate_call_graph.py.
+ * Generated 2026-06-18T11:41:13Z by .claude/skills/scripts/priv/generate_call_graph.py.
  * Do not edit by hand.
  *
  * Pastel palette matches the Mermaid palette in call-graph.md and skill-map.mmd
@@ -371,6 +371,16 @@ html, body {
   background: transparent;
   border: 0;
   border-top: 2px dashed #9a9a9a;
+  height: 0;
+  width: 16px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+.swatch-edge-suggests-secondary {
+  background: transparent;
+  border: 0;
+  border-top: 2px dotted #9a9a9a;
   height: 0;
   width: 16px;
   display: inline-block;

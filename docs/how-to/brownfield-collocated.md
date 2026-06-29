@@ -1,7 +1,7 @@
 ---
 diataxis: how-to
 freshness: release-bound
-last-reviewed: 2026-04-18
+last-reviewed: 2026-05-05
 ---
 
 # Brownfield collocated how-to
@@ -22,7 +22,7 @@ Start by cloning SEJA into your codebase root:
 
 Then open Claude Code in that directory and run `/seja-setup --here`. The `--here` flag finalises setup in place without copying harness files (the clone already provided them). Unlike a greenfield project, you are laying the harness over a tree of code that is already under version control.
 
-**Harness:** `/seja-setup --here` runs state detection via `detect_setup_state.py` to confirm this is a fresh download (rather than a SEJA dev repo or an already-finalised project), pins `.seja-version` from the downloaded tag via `git describe --tags --exact-match HEAD`, creates the `_output/` skeleton and empty `project-design/` directory, and prompts you about git history handling (re-init fresh / keep history and add a project remote / leave as-is) and cleanup of harness-dev artefacts (`docs/` moves to `docs/seja/` by default; SEJA's `README.md` and `CHANGELOG.md` are renamed with a `SEJA-` prefix; `tools/` scripts used by framework development are removed). Nothing is silently deleted. See [harness-reference.md#seja-setup](../reference/harness-reference.md#seja-setup).
+**Harness:** `/seja-setup --here` runs state detection via `detect_setup_state.py` to confirm this is a fresh download (rather than a SEJA dev repo or an already-finalised project), pins `.seja-version` from the downloaded tag via `git describe --tags --exact-match HEAD`, creates the `_output/` skeleton and empty `product-design/` directory, and prompts you about git history handling (re-init fresh / keep history and add a project remote / leave as-is) and cleanup of harness-dev artefacts (`docs/` moves to `docs/seja/` by default; SEJA's `README.md` and `CHANGELOG.md` are renamed with a `SEJA-` prefix; `tools/` scripts used by framework development are removed). Nothing is silently deleted. See [harness-reference.md#seja-setup](../reference/harness-reference.md#seja-setup).
 
 > The cloned `.git` initially points at upstream SEJA. When `/seja-setup --here` prompts for git history handling, choose *Re-init fresh* if you want your project's history to start here, *Keep history and add a project remote* if you intend to fork and track upstream SEJA updates, or *Leave as-is* for throwaway exploration.
 
@@ -62,11 +62,11 @@ Review the draft Decision entries in `_output/explained-<id>/`. If you accept th
 
 **Harness:** The marker pass invokes `apply_marker.py` to flip `STATUS: proposed` -> `STATUS: implemented` at the line level inside `project/product-design-as-intended.md`. The as-intended file is enforced by `check_human_markers_only.py` -- only marker lines may change in this operation, so prose edits and marker flips stay separated into two distinct audit events. See [harness-reference.md#apply-marker](../reference/harness-reference.md#apply-marker) and [harness-reference.md#check-human-markers-only](../reference/harness-reference.md#check-human-markers-only).
 
-## Step 7: Run `/check` before committing
+## Step 7: Run `/critique` before committing
 
-Run `/check validate` and then `/check review` for a perspective-aware code review.
+Run `/critique validate` and then `/critique review` for a perspective-aware code review.
 
-**Harness:** `/check validate` runs the validator suite; `/check review` invokes the perspective reviewers selected by your plan prefix. See [harness-reference.md#check](../reference/harness-reference.md#check).
+**Harness:** `/critique validate` runs the validator suite; `/critique review` invokes the perspective reviewers selected by your plan prefix. See [harness-reference.md#check](../reference/harness-reference.md#check).
 
 ## Step 8: Commit the cycle
 
@@ -75,4 +75,4 @@ Commit the implementation changes, the marker flip, and the updated `product-des
 ## What to read next
 
 - [plan-and-execute.md](plan-and-execute.md) -- how to turn design intent into executable plans in depth
-- [quality-gates.md](quality-gates.md) -- what `/check` does and when to run each mode
+- [quality-gates.md](quality-gates.md) -- what `/critique` does and when to run each mode

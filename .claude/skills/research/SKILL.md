@@ -160,8 +160,8 @@ Output folder: `${RESEARCH_DIR}` (see project/conventions.md). Filename pattern:
       ```
 
 10. Present the recommendations summary:
-   - **Execute now** -- Recommended when the recommendations are clear and you want to proceed in this session. Run /plan and then /implement; pass the research ID so the plan records `source: research-<id>`. NOT recommended when the plan should be reviewed offline before execution.
-   - **Plan only** -- Recommended when you want a concrete plan to review before committing to implementation. Run /plan; pass the research ID so the plan records `source: research-<id>`.
+   - **Execute now** -- Recommended when the recommendations are clear and you want to proceed in this session. Use `/plan` then `/implement`; pass the research ID so the plan records `source: research-<id>`. NOT recommended when the plan should be reviewed offline before execution.
+   - **Plan only** -- Recommended when you want a concrete plan to review before committing to implementation. Use `/plan`; pass the research ID so the plan records `source: research-<id>`.
    - **Refine research** -- Recommended when the recommendations need more research or user feedback. Returns to step 4.
    - **Save and commit** -- Recommended when the research is complete as-is.
 

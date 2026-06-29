@@ -1,12 +1,12 @@
 ---
 diataxis: how-to
 freshness: release-bound
-last-reviewed: 2026-04-18
+last-reviewed: 2026-05-05
 ---
 
 # Greenfield collocated how-to
 
-This how-to is for you when you are a solo designer or a small team starting a brand-new project from scratch and you want the SEJA harness files to live alongside your source code in the same repository. By the end of it you will have a seeded codebase, a generated design spec set, your first plan, your first implemented feature, and a clean `/check` run. It takes about 30 minutes.
+This how-to is for you when you are a solo designer or a small team starting a brand-new project from scratch and you want the SEJA harness files to live alongside your source code in the same repository. By the end of it you will have a seeded codebase, a generated design spec set, your first plan, your first implemented feature, and a clean `/critique` run. It takes about 30 minutes.
 
 ## Before you start
 
@@ -26,7 +26,7 @@ From your existing SEJA clone, run:
 
     /seja-setup <project-path>
 
-`/seja-setup` copies harness files into `<project-path>`, writes `.seja-version` (pinned to the resolved public tag, or HEAD with a warning if no tag resolves), and scaffolds `_output/` and `project-design/` for `/design` to populate. Pass `--version <tag>` to pin to a specific public `seja` release (see [upgrade.md -- Pinning to a specific release](upgrade.md#pinning-to-a-specific-release) for the full procedure).
+`/seja-setup` copies harness files into `<project-path>`, writes `.seja-version` (pinned to the resolved public tag, or HEAD with a warning if no tag resolves), and scaffolds `_output/` and `product-design/` for `/design` to populate. Pass `--version <tag>` to pin to a specific public `seja` release (see [upgrade.md -- Pinning to a specific release](upgrade.md#pinning-to-a-specific-release) for the full procedure).
 
 **Harness:** `/seja-setup <target>` resolves the target version via `resolve_seja_version.py` (latest SemVer tag by default, or the value passed to `--version`), copies harness files to the target, and writes `.seja-version` for future `/seja-setup --upgrade` runs to use as the baseline. See [harness-reference.md#seja-setup](../reference/harness-reference.md#seja-setup).
 
@@ -101,7 +101,7 @@ After cleanup, `/seja-setup --here` runs `git add . && git commit -m "chore: fin
 
 Run `/design` next to populate `project/conventions.md`, `project/standards.md`, `project/product-design-as-intended.md`, and `project/constitution.md` (see Step 2 below). The handoff message also surfaces your pinned version: "`.seja-version` is pinned to `<version>` -- `/seja-setup --upgrade` will use this as the baseline next time you want to refresh harness files."
 
-**Harness:** `/seja-setup --here` runs state detection via `detect_setup_state.py` to confirm this is a fresh download (rather than a SEJA dev repo or an already-finalised project), pins `.seja-version` from the downloaded tag via `git describe --tags --exact-match HEAD`, creates the `_output/` skeleton and empty `project-design/` directory, and prompts you about git history handling and cleanup of harness-dev artefacts. Nothing is silently deleted. See [harness-reference.md#seja-setup](../reference/harness-reference.md#seja-setup).
+**Harness:** `/seja-setup --here` runs state detection via `detect_setup_state.py` to confirm this is a fresh download (rather than a SEJA dev repo or an already-finalised project), pins `.seja-version` from the downloaded tag via `git describe --tags --exact-match HEAD`, creates the `_output/` skeleton and empty `product-design/` directory, and prompts you about git history handling and cleanup of harness-dev artefacts. Nothing is silently deleted. See [harness-reference.md#seja-setup](../reference/harness-reference.md#seja-setup).
 
 > **Warning:** `--here` cannot be combined with `--workspace` or `--demo`. Use it alone to finalise SEJA setup in the current directory.
 
@@ -129,11 +129,11 @@ Run `/implement <plan-id>`. In auto mode the harness runs the full generator-cri
 
 **Harness:** `/implement` drives the generator-critic loop step by step and then runs its post-skill pipeline, which updates `project/product-design-as-coded.md` within its section boundaries, refreshes the pending ledger with any deferred actions, and proposes marker flips or a commit message for you to confirm. See [harness-reference.md#implement](../reference/harness-reference.md#implement).
 
-## Step 6: Run `/check` before committing
+## Step 6: Run `/critique` before committing
 
-Run `/check validate` on the modified tree before you commit. Fix anything the validator flags.
+Run `/critique validate` on the modified tree before you commit. Fix anything the validator flags.
 
-**Harness:** `/check validate` runs the validator suite including `check_human_markers_only.py` and `check_section_boundary_writes.py`, so any accidental writes across Human-owned marker lines or across a section boundary in a multi-owner file are caught before the commit lands. See [harness-reference.md#check](../reference/harness-reference.md#check).
+**Harness:** `/critique validate` runs the validator suite including `check_human_markers_only.py` and `check_section_boundary_writes.py`, so any accidental writes across Human-owned marker lines or across a section boundary in a multi-owner file are caught before the commit lands. See [harness-reference.md#check](../reference/harness-reference.md#check).
 
 ## Step 7: Commit and continue
 
@@ -142,4 +142,4 @@ Commit the generated harness scaffold and the first implemented feature in whate
 ## What to read next
 
 - [plan-and-execute.md](plan-and-execute.md) -- how to turn design intent into executable plans in depth
-- [quality-gates.md](quality-gates.md) -- what `/check` does and when to run each mode
+- [quality-gates.md](quality-gates.md) -- what `/critique` does and when to run each mode

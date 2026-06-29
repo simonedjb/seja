@@ -60,7 +60,7 @@ We read the generated material, edit any passages we want to refine (the generat
 
 ### Prepare a stakeholder update
 
-`/check telemetry` (review recent activity, plan completion, and usage patterns) -> `/communicate <audience>` (generate tailored material, e.g., `/communicate EVL` for evaluators).
+`/critique telemetry` (review recent activity, plan completion, and usage patterns) -> `/communicate <audience>` (generate tailored material, e.g., `/communicate EVL` for evaluators).
 
 > **Tip:** Audience segments include EVL (evaluators), CLT (clients), USR (users), and ACD (academics). Use `--all` to generate material for every segment in one pass.
 

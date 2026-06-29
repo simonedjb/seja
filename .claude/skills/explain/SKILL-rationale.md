@@ -46,7 +46,7 @@ The flag is disjoint from `--promote`. Phase 3a/3b operate on STATUS markers alr
 
 - `advisory-000175` -- STATUS: implemented -> established lifecycle that Phase 3a/3b implements.
 - `advisory-000292` -- reflective practice convention (Decision-point rationale phrasing; informs the designer-authorship invariant by naming reflection as a distinct cognitive pass).
-- `advisory-000412` -- `/explain` owns drift, not `/check`; the skill-boundary ruling this rationale file's `spec-drift` sections inherit.
+- `advisory-000412` -- `/explain` owns drift, not `/critique`; the skill-boundary ruling this rationale file's `spec-drift` sections inherit.
 - `advisory-000431` -- harness simplification arc under which plan-000470's R1/R2/R4 collapses were prioritized.
 - `advisory-000439` -- rejected /design-into-/plan merger; narrow `/research` write path. Relevant because it established the WHAT/HOW boundary that plan-000470 preserves (R1/R2 do not cross it).
 - `advisory-000448` -- research filename rename (advis* -> research); cited for context on the terminology arc that overlapped plan-000470's authoring window.

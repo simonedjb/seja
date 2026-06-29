@@ -1,6 +1,6 @@
 ---
-name: check
-description: "Run quality checks: validation, code review, smoke tests, preflight, or harness health."
+name: critique
+description: "Critique quality: validation, code review, smoke tests, preflight, and harness health."
 argument-hint: "<validate | review | smoke | preflight | health | test-plan | docs | freshness | telemetry | semiotic-inspection> [--depth <light|standard|deep>] [--source <path>] [scope]"
 compatibility: "Designed for Claude Code with the SEJA harness"
 metadata:
@@ -41,7 +41,7 @@ metadata:
 
 Shared execution pattern across the 10 modes. Each mode below names which common steps it uses; modes with mostly-unique content list their unique steps in full.
 
-**C1. Pre-skill.** Run /pre-skill "check" $ARGUMENTS to add general instructions to the context window. Parse the first argument to determine the mode; remaining arguments are the scope.
+**C1. Pre-skill.** Run /pre-skill "critique" $ARGUMENTS to add general instructions to the context window. Parse the first argument to determine the mode; remaining arguments are the scope.
 
 **C2. Stack filtering** (validate + preflight only). Read `BACKEND_FRAMEWORK` and `FRONTEND_FRAMEWORK` from `product-design/conventions.md` (via `project_config.py`), then load `.claude/skills/scripts/check_plugin_registry.json` and keep each plugin entry where both `stack.backend` and `stack.frontend` are either empty (stack-agnostic) or contain the project's value. Run only the matching scripts; skip non-matching silently.
 
@@ -49,11 +49,11 @@ Fallback (legacy projects): if `conventions.md` has no stack variables and they 
 
 > Warning: No stack framework variables found in conventions.md. Running all check scripts. Add BACKEND_FRAMEWORK and FRONTEND_FRAMEWORK to conventions.md to enable stack filtering.
 
-**C3. Reserve ID + save report.** Output folder: `${CHECK_LOGS_DIR}` (see `project/conventions.md`). Filename: `check-<id>-<truncated short title slug>.md` (6-digit zero-padded ID). Reserve the next global ID via `python .claude/skills/scripts/reserve_id.py --type check --title '<title>'`. Save per report conventions with the mode-specific header and body described in each mode section.
+**C3. Reserve ID + save report.** Output folder: `${CRITIQUE_LOGS_DIR}` (see `project/conventions.md`). Filename: `critique-<id>-<truncated short title slug>.md` (6-digit zero-padded ID). Reserve the next global ID via `python .claude/skills/scripts/reserve_id.py --type critique --title '<title>'`. Save per report conventions with the mode-specific header and body described in each mode section.
 
 **C4. Present + post-skill.** Present the summary to the user, highlighting failures (or the mode-appropriate severity). Run /post-skill <id>.
 
-## Adding a Check Plugin
+## Adding a Critique Plugin
 
 A new plugin needs two artifacts (the orchestrator auto-discovers via the registry at runtime; no further wiring).
 
@@ -123,11 +123,11 @@ Reference prose for the shared pattern; other modes delta against this or Common
    |---|---|
    | `migrations` | Launch `standards-checker` (chain script) AND `migration-validator` (deep inspection + idempotency) |
    | `tests` | Launch `test-runner` with scope `all` |
-   | `spec` | Run `python .claude/skills/check/check_spec_conformance.py` directly (no agent) |
+   | `spec` | Run `python .claude/skills/critique/check_spec_conformance.py` directly (no agent) |
    | `all` | Launch `standards-checker` with `all`; run `check_spec_conformance.py`; ask whether to also run tests |
    | other | Launch `standards-checker` with the scope |
 
-4. C3 with header `# Check <id> | CHORE<scope> | <current datetime> | Validation Report`; body = scope, summary table (check / status PASS|FAIL|INFO / error count / warning count), per-failure details, overall `X/Y checks passed`.
+4. C3 with header `# Critique <id> | CHORE<scope> | <current datetime> | Validation Report`; body = scope, summary table (check / status PASS|FAIL|INFO / error count / warning count), per-failure details, overall `X/Y checks passed`.
 
 5. C4 (present summary, highlight failures, run /post-skill <id>).
 
@@ -143,7 +143,7 @@ Reuses C1, C3, C4. Scope options: `staged` (default) | file path | directory pat
 
 2. Launch the `code-reviewer` agent with scope and depth. The agent uses the two-stage loading protocol (see `general/review-perspectives.md` section "Two-Stage Loading"): load the index, select 4-6 relevant perspectives based on change content, load only those `review-perspectives/<tag>.md` files (load all 16 for `deep` or when explicitly requested), evaluate, and return a structured report.
 
-3. C3 with header `# Check <id> | REVIEW<scope> | <current datetime> | Code Review: <short description>`; body = scope, perspective evaluation table (Adopted/Deferred/N/A), prioritized issues (severity, perspective, description, file:line), recommendations.
+3. C3 with header `# Critique <id> | REVIEW<scope> | <current datetime> | Code Review: <short description>`; body = scope, perspective evaluation table (Adopted/Deferred/N/A), prioritized issues (severity, perspective, description, file:line), recommendations.
 
 4. C4, highlighting HIGH severity issues.
 
@@ -166,7 +166,7 @@ Reuses C1, C3, C4. Scope options: `all` (default) | `api` | `ui`.
 
 3. Parse results: API summary line (`PASS: N | WARN: N | FAIL: N`) + FAIL details; UI pass/fail + runtime error details.
 
-4. C3 with header `# Check <id> | CHORE-X | <current datetime> | Smoke Test Report`; body = scope (`api`/`ui`/`all`), API results table (if applicable), UI results table (if applicable), captured errors, overall verdict (`PASS` / `FAIL`).
+4. C3 with header `# Critique <id> | CHORE-X | <current datetime> | Smoke Test Report`; body = scope (`api`/`ui`/`all`), API results table (if applicable), UI results table (if applicable), captured errors, overall verdict (`PASS` / `FAIL`).
 
 5. Present summary, highlighting failures. If failures are found, ask whether to investigate and fix, create a plan, or dismiss. Run /post-skill <id>.
 
@@ -181,7 +181,7 @@ Reuses C1, C2, C3, C4. Combines validate + review into a single pre-merge checkp
 | 1 | -- | Resolve scope: `staged` (default) -> validate all + review staged; `all` -> validate all + review all modified (staged + unstaged); directory path -> validate all + review files in that directory |
 | 2 | C2 | Apply stack filtering before launching validation (legacy fallback: pass all scripts + include warning) |
 | 3 | -- | Parallel fan-out: launch `standards-checker` (scope `all`, filtered script list), `code-reviewer` (determined review scope), and smoke test (if plan's `smoke` is `true`) as concurrent Agent invocations, each writing to a unique output section. If one check fails (agent error, timeout), the others still produce results -- do not abort preflight |
-| 4 | C3 | Header `# Check <id> | CHORE<scope> | <current datetime> | Preflight Check`; body = validation summary table, code review perspective table, merged issues prioritized by severity, overall status (READY only if all validation checks pass and no HIGH severity review issues; otherwise NOT READY) |
+| 4 | C3 | Header `# Critique <id> | CHORE<scope> | <current datetime> | Preflight Check`; body = validation summary table, code review perspective table, merged issues prioritized by severity, overall status (READY only if all validation checks pass and no HIGH severity review issues; otherwise NOT READY) |
 | 5 | C4 | Present with a clear go/no-go recommendation |
 
 ---
@@ -190,7 +190,7 @@ Reuses C1, C2, C3, C4. Combines validate + review into a single pre-merge checkp
 
 Reuses C1, C3, C4. Flags: `[--verbose] [--source <path>]`.
 
-1. Apply C1 (pre-skill + argument parse) and C3 to reserve a `check-NNN` ID via `python .claude/skills/scripts/reserve_id.py --type check --title 'Harness Health Report'` and compute the output path `${CHECK_LOGS_DIR}/check-<id>-harness-health.md`.
+1. Apply C1 (pre-skill + argument parse) and C3 to reserve a `check-NNN` ID via `python .claude/skills/scripts/reserve_id.py --type critique --title 'Harness Health Report'` and compute the output path `${CRITIQUE_LOGS_DIR}/critique-<id>-harness-health.md`.
 
 2. Launch the `harness-health-evaluator` agent via the Agent tool with inputs `{id, output_path, verbose, source}`. When `--source <path>` is provided, pass `source` to the agent so it can run the harness drift check against the given canonical source directory. The agent runs the 9 built-in diagnostic checks (skill system integrity, orphaned briefs, stale plans, reference file completeness, conventions completeness, constitution presence, skill spec compliance, pending ledger summary, harness drift) and writes the Harness Health Report to `output_path`.
 
@@ -216,9 +216,9 @@ Reuses C1, C3, C4. Flags: `[--plugins LIST] [--verbose] [--filter SEVERITY]`. Do
 
 | Step | Common? | Delta |
 |---|---|---|
-| 1 | -- | Run `python .claude/skills/check/check_docs.py` passing through `--plugins LIST` (default: all), `--verbose` (show passing + detail), `--filter SEVERITY` (`error` / `warning` / `info`; default `info`). Available plugins: `harness-integrity` (all stacks), `path-liveness` (all), `env-vars` (django/node/next), `command-refs` (django/node/next), `terminology` (all) |
+| 1 | -- | Run `python .claude/skills/critique/check_docs.py` passing through `--plugins LIST` (default: all), `--verbose` (show passing + detail), `--filter SEVERITY` (`error` / `warning` / `info`; default `info`). Available plugins: `harness-integrity` (all stacks), `path-liveness` (all), `env-vars` (django/node/next), `command-refs` (django/node/next), `terminology` (all) |
 | 2 | -- | Parse the output. Exit 0 = no issues; 1 = issues found; 2 = script error |
-| 3 | C3 | Header `# Check <id> | CHORE-docs | <current datetime> | Documentation Consistency Report`; body = error/warning/info counts, per-plugin findings grouped by plugin (severity, location, message), overall status (PASS / ISSUES FOUND) |
+| 3 | C3 | Header `# Critique <id> | CHORE-docs | <current datetime> | Documentation Consistency Report`; body = error/warning/info counts, per-plugin findings grouped by plugin (severity, location, message), overall status (PASS / ISSUES FOUND) |
 | 4 | C4 | Present, highlighting errors or warnings |
 
 ---
@@ -227,23 +227,23 @@ Reuses C1, C3, C4. Flags: `[--plugins LIST] [--verbose] [--filter SEVERITY]`. Do
 
 Reuses C1, C3, C4. Scope is implicit (configured repos): workspace root plus CODEBASE_DIR when absolute and distinct.
 
-1. Run `python .claude/skills/check/check_git_freshness.py --json` and parse the payload.
+1. Run `python .claude/skills/critique/check_git_freshness.py --json` and parse the payload.
 2. Render one `### <abs-path>` section per repo in the check log body with branch, upstream, ahead/behind counts, fetch status, and suggested next action:
   - behind > 0 and ahead == 0: suggest `git pull --ff-only`.
   - behind > 0 and ahead > 0: suggest checking divergence via `git status` then rebase/merge strategy.
   - behind == 0 and ahead > 0: suggest `git push` when appropriate.
   - behind == 0 and ahead == 0: mark as up to date.
 3. Include the raw JSON payload as a fenced code block for downstream tooling.
-4. C3 with header `# Check <id> | CHORE-X | <current datetime> | Git Freshness Report`; body = per-repo sections + summary line from script output.
+4. C3 with header `# Critique <id> | CHORE-X | <current datetime> | Git Freshness Report`; body = per-repo sections + summary line from script output.
 5. C4 (present summary, highlight behind/diverged repos first, run /post-skill <id>).
 
 ---
 
 ### Mode: telemetry
 
-Reuses C1 only. Read-only informational mode: do NOT apply C3 (no ID reserved, no check-log file) or C4 (no /post-skill).
+Reuses C1 only. Read-only informational mode: do NOT apply C3 (no ID reserved, no critique-log file) or C4 (no /post-skill).
 
-1. Run `python .claude/skills/check/generate_telemetry_report.py` via Bash. Capture stdout.
+1. Run `python .claude/skills/critique/generate_telemetry_report.py` via Bash. Capture stdout.
 2. Display the markdown output directly to the user.
 
 ---
@@ -254,9 +254,9 @@ Reuses C1, C3, C4. Scope: a feature name, page, user flow, or `all`. If no scope
 
 Conducts a Semiotic Inspection Method (SIM) evaluation of a project's interface communicability. The agent reconstructs the designer's metacommunication message across three sign classes (metalinguistic, static, dynamic), collates them, and produces a communicability judgment. The agent acts as **evaluator-as-user-advocate** -- representing users' interests through HCI knowledge, not replacing them.
 
-1. Apply C1 (pre-skill + argument parse) and C3 to reserve a `check-NNN` ID via `python .claude/skills/scripts/reserve_id.py --type check --title 'Semiotic Inspection: <scope>'` and compute output path `${CHECK_LOGS_DIR}/check-<id>-semiotic-inspection-<scope-slug>.md`.
+1. Apply C1 (pre-skill + argument parse) and C3 to reserve a `check-NNN` ID via `python .claude/skills/scripts/reserve_id.py --type critique --title 'Semiotic Inspection: <scope>'` and compute output path `${CRITIQUE_LOGS_DIR}/critique-<id>-semiotic-inspection-<scope-slug>.md`.
 
-2. Launch the `semiotic-inspector` agent via the Agent tool with inputs `{scope, id, output_path}`. The agent reads the metacommunication files, conducts per-sign-class analysis, applies the 5 scaffold questions and the 4 SigniFYIng Interaction dimensions, and writes the SIM report with header `# Check <id> | CHORE-O | <current datetime> | Semiotic Inspection: <scope>`.
+2. Launch the `semiotic-inspector` agent via the Agent tool with inputs `{scope, id, output_path}`. The agent reads the metacommunication files, conducts per-sign-class analysis, applies the 5 scaffold questions and the 4 SigniFYIng Interaction dimensions, and writes the SIM report with header `# Critique <id> | CHORE-O | <current datetime> | Semiotic Inspection: <scope>`.
 
 3. On return, apply C4 (present summary, highlighting communicability risks), then run /post-skill <id>.
 

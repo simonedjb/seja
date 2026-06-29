@@ -1,5 +1,5 @@
 ---
-designer_description: "When you write or review project documentation, I'm the reference that defines what good looks like -- accuracy, completeness within declared scope, consistency, scannability, and maintainability -- paired with the writing principles (imperative mood, concrete verbs, task-first structure) that the documentation templates and the /check docs validator both rely on."
+designer_description: "When you write or review project documentation, I'm the reference that defines what good looks like -- accuracy, completeness within declared scope, consistency, scannability, and maintainability -- paired with the writing principles (imperative mood, concrete verbs, task-first structure) that the documentation templates and the /critique docs validator both rely on."
 ---
 
 # FRAMEWORK -- DOCUMENTATION QUALITY GUIDE

@@ -10,7 +10,7 @@
 >
 > **One-directional flow**: Research findings in `§5 Discovered User Journeys` inform `project/product-design-as-intended.md §15 Designed User Journeys` (per advisory-000264 Phase 2 design-intent merge). Section 5 is structurally append-only for prose: agents may insert managed INCORPORATED markers above existing headings, but no prose line can be removed, modified, or inserted in the middle. Enforced by `check_changelog_append_only.py`.
 >
-> **Consistency checking**: The agent can verify consistency between UX research, design intent, and the implemented solution via `/explain spec-drift` or `/check validate`. The agent does not write prose content to this file -- only the designer/researcher does.
+> **Consistency checking**: The agent can verify consistency between UX research, design intent, and the implemented solution via `/explain spec-drift` or `/critique validate`. The agent does not write prose content to this file -- only the designer/researcher does.
 
 ---
 

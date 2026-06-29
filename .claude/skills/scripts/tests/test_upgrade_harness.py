@@ -242,7 +242,7 @@ def test_collect_source_files_includes_internal_skills(tmp_path):
     skills_dir = tmp_path / ".claude" / "skills"
 
     # Top-level skill (should still work)
-    top = skills_dir / "check"
+    top = skills_dir / "critique"
     top.mkdir(parents=True)
     (top / "SKILL.md").write_text("---\nname: check\n---\n# Check\n", encoding="utf-8")
 
@@ -264,7 +264,7 @@ def test_collect_source_files_includes_internal_skills(tmp_path):
     files = upgrade_harness.collect_source_files(tmp_path)
     rel_paths = {f.relative_to(tmp_path).as_posix() for f in files}
 
-    assert ".claude/skills/check/SKILL.md" in rel_paths
+    assert ".claude/skills/critique/SKILL.md" in rel_paths
     assert ".claude/skills/_internal/plan/standard/SKILL.md" in rel_paths
     assert ".claude/skills/_internal/design/interview/SKILL.md" in rel_paths
     assert ".claude/skills/_internal/design/interview/SKILL-quickguide.md" in rel_paths
@@ -298,7 +298,7 @@ def test_collect_source_files_includes_colocated_py_scripts(tmp_path):
     """Co-located .py files in skill directories must be collected."""
     skills_dir = tmp_path / ".claude" / "skills"
 
-    check_dir = skills_dir / "check"
+    check_dir = skills_dir / "critique"
     check_dir.mkdir(parents=True)
     (check_dir / "SKILL.md").write_text("---\nname: check\n---\n# Check\n", encoding="utf-8")
     (check_dir / "check_docs.py").write_text("# check docs\n", encoding="utf-8")
@@ -312,8 +312,8 @@ def test_collect_source_files_includes_colocated_py_scripts(tmp_path):
     files = upgrade_harness.collect_source_files(tmp_path)
     rel_paths = {f.relative_to(tmp_path).as_posix() for f in files}
 
-    assert ".claude/skills/check/check_docs.py" in rel_paths
-    assert ".claude/skills/check/check_git_freshness.py" in rel_paths
+    assert ".claude/skills/critique/check_docs.py" in rel_paths
+    assert ".claude/skills/critique/check_git_freshness.py" in rel_paths
     assert ".claude/skills/seja-setup/resolve_seja_version.py" in rel_paths
 
 

@@ -2,8 +2,10 @@
 # designer: When you finish any skill run that writes an artifact, I'm the
 #   indexer that refreshes `_output/INDEX.md` so you can find the new file
 #   without scanning directories -- every plan, advisory, roadmap, proposal,
-#   communication, onboarding, and reflection appears on one chronological
-#   list, newest first, with any RESERVED rows preserved across regenerations.
+#   communication, onboarding, reflection, and explain report (behavior,
+#   behavior-evolution, dev-onboarding, data-model, architecture) appears on
+#   one chronological list, newest first, with any RESERVED rows preserved
+#   across regenerations.
 """
 generate_macro_index.py -- Unified artifact index generator.
 
@@ -177,6 +179,37 @@ _CHECK_LOG_RE = re.compile(
 # Reflection: # Reflection <id> | datetime | title
 _REFLECTION_RE = re.compile(
     r"^#\s+Reflection\s+(\d+)\s*\|\s*([\d\-: UTC]+)\s*\|\s*(.+)",
+    re.IGNORECASE,
+)
+
+# Behavior Evolution: # Behavior Evolution <id> | <PREFIX-SCOPE> | <datetime> | <title>
+_BEHAVIOR_EVOLUTION_RE = re.compile(
+    r"^#\s+Behavior\s+Evolution\s+(\d+)\s*\|\s*(\S+)\s*\|\s*([\d\-: UTC]+)\s*\|\s*(.+)",
+    re.IGNORECASE,
+)
+
+# Behavior: # Behavior <id> | <PREFIX-SCOPE> | <datetime> | <title>
+_BEHAVIOR_RE = re.compile(
+    r"^#\s+Behavior\s+(\d+)\s*\|\s*(\S+)\s*\|\s*([\d\-: UTC]+)\s*\|\s*(.+)",
+    re.IGNORECASE,
+)
+
+# Dev-Onboarding: # Dev-Onboarding <id> | <PREFIX-SCOPE> | <datetime> | <title>
+_DEV_ONBOARDING_RE = re.compile(
+    r"^#\s+Dev-Onboarding\s+(\d+)\s*\|\s*(\S+)\s*\|\s*([\d\-: UTC]+)\s*\|\s*(.+)",
+    re.IGNORECASE,
+)
+
+# Data Model: # Data Model <id> | <PREFIX-SCOPE> | <datetime> | <title>
+_DATA_MODEL_RE = re.compile(
+    r"^#\s+Data\s+Model\s+(\d+)\s*\|\s*(\S+)\s*\|\s*([\d\-: UTC]+)\s*\|\s*(.+)",
+    re.IGNORECASE,
+)
+
+# Architecture: # Architecture <id> | <scope-descriptor> | <datetime> | <title>
+# Scope is a multi-word text descriptor (e.g. "entire system"), not a PREFIX-SCOPE token.
+_ARCHITECTURE_RE = re.compile(
+    r"^#\s+Architecture\s+(\d+)\s*\|\s*(.+?)\s*\|\s*([\d\-: UTC]+)\s*\|\s*(.+)",
     re.IGNORECASE,
 )
 
@@ -441,6 +474,66 @@ def extract_artifact(filepath: Path) -> dict | None:
             "id": m.group(1).strip().zfill(6),
             "title": truncate(m.group(3).strip().rstrip("|").strip()),
             "status": "",
+            "file": str(rel_path),
+        }
+
+    # Behavior Evolution (before Behavior)
+    m = _BEHAVIOR_EVOLUTION_RE.match(header_line)
+    if m:
+        return {
+            "date": _normalize_date(m.group(3).strip()),
+            "type": "Behavior Evolution",
+            "id": m.group(1).strip().zfill(6),
+            "title": truncate(m.group(4).strip().rstrip("|").strip()),
+            "status": "DONE",
+            "file": str(rel_path),
+        }
+
+    # Behavior
+    m = _BEHAVIOR_RE.match(header_line)
+    if m:
+        return {
+            "date": _normalize_date(m.group(3).strip()),
+            "type": "Behavior",
+            "id": m.group(1).strip().zfill(6),
+            "title": truncate(m.group(4).strip().rstrip("|").strip()),
+            "status": "DONE",
+            "file": str(rel_path),
+        }
+
+    # Dev-Onboarding
+    m = _DEV_ONBOARDING_RE.match(header_line)
+    if m:
+        return {
+            "date": _normalize_date(m.group(3).strip()),
+            "type": "Dev-Onboarding",
+            "id": m.group(1).strip().zfill(6),
+            "title": truncate(m.group(4).strip().rstrip("|").strip()),
+            "status": "DONE",
+            "file": str(rel_path),
+        }
+
+    # Data Model
+    m = _DATA_MODEL_RE.match(header_line)
+    if m:
+        return {
+            "date": _normalize_date(m.group(3).strip()),
+            "type": "Data Model",
+            "id": m.group(1).strip().zfill(6),
+            "title": truncate(m.group(4).strip().rstrip("|").strip()),
+            "status": "DONE",
+            "file": str(rel_path),
+        }
+
+    # Architecture (scope is free-text descriptor, not a PREFIX-SCOPE token)
+    m = _ARCHITECTURE_RE.match(header_line)
+    if m:
+        return {
+            "date": _normalize_date(m.group(3).strip()),
+            "type": "Architecture",
+            "id": m.group(1).strip().zfill(6),
+            "title": truncate(m.group(4).strip().rstrip("|").strip()),
+            "status": "DONE",
             "file": str(rel_path),
         }
 

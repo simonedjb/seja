@@ -42,12 +42,12 @@ This mode is the reference prose -- other modes delta off of its shape. Steps 1,
    - *steps*: structured step list -- step format and decomposition guidelines: see `.claude/references/template/plan-step.md`.
    - *review log*: if applicable.
    - *outcomes*: expected outcomes.
-   - *smoke*: `true` if any step creates or modifies API route files or frontend page/component files; `false` otherwise. Consumed by `/implement` to decide whether to run `/check smoke api`.
+   - *smoke*: `true` if any step creates or modifies API route files or frontend page/component files; `false` otherwise. Consumed by `/implement` to decide whether to run `/critique smoke api`.
    - *reflection* (optional, appended post-execution): a `## Reflection` section of dated bullets appended by post-skill's reflection loop (step 11b). Absent by default; the section may be created on first use.
 
 4. Save the plan. If not overwriting, proceed without asking for authorization.
 
-4b. **Coverage check (advisory)**: if `product-design/product-design-as-intended.md` contains REQ markers (`<!-- REQ-*-NNN -->`), run `python .claude/skills/design/check_plan_coverage.py --mode advisory` and include the coverage summary in the plan after the steps. Skip silently if no REQ markers exist.
+4b. **Coverage check (advisory)**: if `product-design/product-design-as-intended.md` contains REQ markers (`<!-- REQ-*-NNN -->`), run `python .claude/skills/design/critique_plan_coverage.py --mode advisory` and include the coverage summary in the plan after the steps. Skip silently if no REQ markers exist.
 
 5. **Review the plan** using a complexity-gated, two-phase process. Use `general/review-log-template.md` for the review log format.
 

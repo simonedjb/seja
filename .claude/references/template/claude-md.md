@@ -81,7 +81,7 @@ Helper scripts in `.claude/skills/scripts/`:
 
 ## Skills & References
 
-This project uses Claude Code skills (`.claude/skills/`) and reference files (`product-design/`). Skills are invoked via `/skill-name`. Key skills: `/plan`, `/implement`, `/research`, `/check review`, `/check validate`.
+This project uses Claude Code skills (`.claude/skills/`) and reference files (`product-design/`). Skills are invoked via `/skill-name`. Key skills: `/plan`, `/implement`, `/research`, `/critique review`, `/critique validate`.
 
 @product-design/conventions.md
 @.claude/references/general/constraints.md

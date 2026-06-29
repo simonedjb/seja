@@ -1,5 +1,5 @@
 ---
-designer_description: "I'm the demo walkthrough /seja-setup --demo writes into your scratch project -- a step-by-step tour of /research, /plan, /implement, and /check against the pre-filled TaskFlow design files, so you can exercise the core SEJA loop on a working example before pointing the harness at your own project."
+designer_description: "I'm the demo walkthrough /seja-setup --demo writes into your scratch project -- a step-by-step tour of /research, /plan, /implement, and /critique against the pre-filled TaskFlow design files, so you can exercise the core SEJA loop on a working example before pointing the harness at your own project."
 ---
 
 # TaskFlow Demo Walkthrough
@@ -74,18 +74,18 @@ The agent reads the plan, implements each step, and reports progress. It follows
 
 ---
 
-## 5. /check validation demo
+## 5. /critique validation demo
 
 Run the harness health check to verify everything is wired correctly:
 
 ```
-/check health
+/critique health
 ```
 
 Then run a code review on the files you just generated:
 
 ```
-/check review
+/critique review
 ```
 
 > **What to expect:** The health check confirms that conventions, constitution, and design files are present and consistent. The code review evaluates the generated code against your constitution's quality principles (test coverage, accessibility, no magic numbers).
@@ -97,4 +97,4 @@ Then run a code review on the files you just generated:
 - Run `/help` to see all available skills
 - Run `/design` to modify the project configuration
 - Run `/explain spec-drift` to compare as-coded vs. as-intended design files
-- Edit the design files directly and re-run `/check validate` to see how the harness detects changes
+- Edit the design files directly and re-run `/critique validate` to see how the harness detects changes

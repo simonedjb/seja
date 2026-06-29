@@ -32,9 +32,9 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 PERSPECTIVES_DIR = REPO_ROOT / ".claude" / "references" / "general" / "review-perspectives"
 DEFAULT_OUTPUT = REPO_ROOT / ".claude" / "references" / "general" / "review-perspectives-essential-summary.md"
 
-# Extract content between ## Essential and ## Deep-dive (or end of file)
+# Extract content between ## Essential and ## Standard (or end of file)
 ESSENTIAL_RE = re.compile(
-    r"^## Essential\s*\n(.*?)(?=^## Deep-dive|\Z)",
+    r"^## Essential\s*\n(.*?)(?=^## Standard|\Z)",
     re.MULTILINE | re.DOTALL,
 )
 

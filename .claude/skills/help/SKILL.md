@@ -35,7 +35,7 @@ When invoked without arguments (`/help`), display a curated overview of all user
 - **Getting started** — `/seja-setup`, `/design`, `/help`
 - **Design & plan** — `/research`, `/plan`, `/implement`
 - **Understand the system** — `/explain`
-- **Quality & review** — `/check`
+- **Quality & review** — `/critique`
 - **Communicate** — `/communicate`, `/onboard`
 - **Housekeeping** — `/qa-log`
 

@@ -1,7 +1,7 @@
 ---
 diataxis: reference
 freshness: release-bound
-last-reviewed: 2026-05-03
+last-reviewed: 2026-06-15
 ---
 
 <!--
@@ -14,14 +14,14 @@ Do not edit by hand. To regenerate:
 
 # SEJA harness reference
 
-Generated 2026-05-03T20:23:48Z from seja-priv harness state.
+Generated 2026-06-15T20:39:52Z from seja-priv harness state.
 
 ## Skills
 
 | Name | Purpose | Path | Mentioned in |
 |---|---|---|---|
-| /check | Run quality checks: validation, code review, smoke tests, preflight, or harness health. | `.claude/skills/check/SKILL.md` | `concepts.md`, `how-to/greenfield-collocated.md`, `reference/glossary.md` |
 | /communicate | Generate tailored communication material for a specific audience segment. | `.claude/skills/communicate/SKILL.md` | `concepts.md`, `how-to/greenfield-collocated.md`, `reference/glossary.md` |
+| /critique | Critique quality: validation, code review, smoke tests, preflight, and harness health. | `.claude/skills/critique/SKILL.md` | `concepts.md`, `how-to/greenfield-collocated.md`, `reference/glossary.md` |
 | /design | Define or update project design — stack, conventions, domain model, conceptual design, and standards. Use when user mentions 'design', 'design project', 'configure project', 'update design', or 'project setup'. | `.claude/skills/design/SKILL.md` | `concepts.md`, `how-to/greenfield-collocated.md`, `reference/glossary.md` |
 | /document | Generate or update project documentation based on plan Docs: fields, auto-detection, or explicit type selection. | `.claude/skills/document/SKILL.md` | `concepts.md`, `how-to/greenfield-collocated.md`, `reference/glossary.md` |
 | /explain | Explains behavior, code, data model, architecture, or spec drift with visual diagrams and analogies. | `.claude/skills/explain/SKILL.md` | `concepts.md`, `how-to/greenfield-collocated.md`, `reference/glossary.md` |
@@ -78,10 +78,10 @@ Generated 2026-05-03T20:23:48Z from seja-priv harness state.
 | Name | Purpose | Invoked by | Lifecycle | Path | Mentioned in |
 |---|---|---|---|---|---|
 | apply_marker.py | Sole write path for Human (markers) files. | skill-invoked, user-cli | active | `.claude/skills/scripts/apply_marker.py` | `concepts.md`, `concepts/call-graph.md`, `foundations.md`, `how-to/brownfield-collocated.md`, `how-to/brownfield-workspace.md`, `how-to/plan-and-execute.md`, `reference/glossary.md`, `troubleshooting.md` |
-| check_docs.py | Documentation consistency checker with plugin-based scanners. | agent-invoked, hook-ci, user-cli | active | `.claude/skills/check/check_docs.py` | `concepts/call-graph.md`, `how-to/quality-gates.md` |
-| check_git_freshness.py | Best-effort git upstream freshness report. | skill-invoked, user-cli | active | `.claude/skills/check/check_git_freshness.py` | `concepts/call-graph.md`, `how-to/quality-gates.md` |
-| check_harness_drift.py | Compare a canonical harness source against a target | skill-invoked, user-cli | active | `.claude/skills/scripts/check_harness_drift.py` |  |
-| conversation_trace.py | Append-only conversation trace log for SEJA. | skill-invoked, user-cli | active | `.claude/skills/scripts/conversation_trace.py` |  |
+| check_docs.py | Documentation consistency checker with plugin-based scanners. | agent-invoked, hook-ci, user-cli | active | `.claude/skills/critique/check_docs.py` | `concepts/call-graph.md`, `how-to/quality-gates.md` |
+| check_git_freshness.py | Best-effort git upstream freshness report. | skill-invoked, user-cli | active | `.claude/skills/critique/check_git_freshness.py` | `concepts/call-graph.md`, `how-to/quality-gates.md` |
+| check_harness_drift.py | Compare a canonical harness source against a target | skill-invoked, user-cli | active | `.claude/skills/scripts/check_harness_drift.py` | `concepts/call-graph.md` |
+| conversation_trace.py | Append-only conversation trace log for SEJA. | skill-invoked, user-cli | active | `.claude/skills/scripts/conversation_trace.py` | `concepts/call-graph.md` |
 | count_loc.py | Local source line counter for this workspace. | user-cli | active | `.claude/skills/scripts/count_loc.py` | `concepts/call-graph.md` |
 | create_workspace.py | Create a project workspace from the foundational SEJA | user-cli | active | `.claude/skills/scripts/create_workspace.py` | `concepts/call-graph.md`, `how-to/brownfield-workspace.md` |
 | cut_tag.py | Cut a release tag on seja-priv and file a pending publish entry. | user-cli | active | `tools/cut_tag.py` |  |
@@ -94,20 +94,20 @@ Generated 2026-05-03T20:23:48Z from seja-priv harness state.
 | generate_skill_graph.py | Generate skill-graph.json from skill-graph.md. | user-cli | active | `.claude/skills/scripts/generate_skill_graph.py` | `concepts/call-graph.md` |
 | generate_skill_map.py | Generate a Mermaid flowchart from skill-graph.md. | skill-invoked, user-cli | active | `.claude/skills/help/generate_skill_map.py` | `concepts/call-graph.md` |
 | generate_skills_manifest.py | Generate L1 metadata manifest from SKILL.md files. | script-invoked, user-cli | active | `.claude/skills/scripts/generate_skills_manifest.py` | `concepts/call-graph.md` |
-| generate_telemetry_report.py | Aggregate telemetry.jsonl and print a markdown report. | skill-invoked, user-cli | active | `.claude/skills/check/generate_telemetry_report.py` | `concepts/call-graph.md` |
+| generate_telemetry_report.py | Aggregate telemetry.jsonl and print a markdown report. | skill-invoked, user-cli | active | `.claude/skills/critique/generate_telemetry_report.py` | `concepts/call-graph.md` |
 | md_to_html.py | Convert a markdown file to styled standalone HTML. | user-cli | active | `.claude/skills/scripts/md_to_html.py` | `concepts/call-graph.md` |
 | pending.py | Pending actions ledger for SEJA. | skill-invoked, user-cli | active | `.claude/skills/scripts/pending.py` | `concepts/call-graph.md` |
 | pre_publish_smoke.py | Pre-publish smoke test for a candidate public tree. | user-cli | active | `tools/pre_publish_smoke.py` |  |
 | priv_report.py | Private-surface metric report. | user-cli | active | `tools/priv_report.py` |  |
 | publish.py | Single-command launcher for the seja-priv release pipeline. | user-cli | active | `tools/publish.py` |  |
 | reflect_decision_reversals.py | surface accepted decisions that were later undone. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_decision_reversals.py` | `concepts/call-graph.md` |
-| reflect_deep_scope.py | scope resolution and filtering for /reflect --deep. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_deep_scope.py` |  |
+| reflect_deep_scope.py | scope resolution and filtering for /reflect --deep. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_deep_scope.py` | `concepts/call-graph.md` |
 | reflect_duration_anomalies.py | surface skill runs whose duration is anomalously long. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_duration_anomalies.py` | `concepts/call-graph.md` |
-| reflect_event_matrix.py | Vega-Lite event matrix for /reflect --deep. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_event_matrix.py` |  |
+| reflect_event_matrix.py | Vega-Lite event matrix for /reflect --deep. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_event_matrix.py` | `concepts/call-graph.md` |
 | reflect_revision_rate.py | per-skill rate of user-revised outputs. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_revision_rate.py` | `concepts/call-graph.md` |
 | reflect_sequence_mining.py | first-order and second-order skill transition frequencies. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_sequence_mining.py` | `concepts/call-graph.md` |
 | reflect_stuck_loops.py | detect sessions where the same skill runs repeatedly on similar briefs. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_stuck_loops.py` | `concepts/call-graph.md` |
-| reflect_transition_graph.py | directed skill-transition graph visualization. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_transition_graph.py` |  |
+| reflect_transition_graph.py | directed skill-transition graph visualization. | script-invoked, user-cli | active | `.claude/skills/reflect/reflect_transition_graph.py` | `concepts/call-graph.md` |
 | resolve_seja_version.py | Resolve the public seja release tag to pin against. | skill-invoked, user-cli | active | `.claude/skills/seja-setup/resolve_seja_version.py` | `concepts/call-graph.md`, `how-to/greenfield-collocated.md`, `how-to/upgrade.md` |
 | run_migrations.py | Run pending SEJA harness migrations. | script-invoked, user-cli | active | `.claude/skills/scripts/run_migrations.py` | `concepts/call-graph.md` |
 | sync_to_public.py | Sync toolkit files from seja-priv to a target directory. | user-cli | active | `tools/sync_to_public.py` |  |
@@ -117,6 +117,7 @@ Generated 2026-05-03T20:23:48Z from seja-priv harness state.
 
 | Name | Purpose | Invoked by | Lifecycle | Path | Mentioned in |
 |---|---|---|---|---|---|
+| build_telemetry.py | Construct and append a validated telemetry record. | skill-invoked | active | `.claude/skills/scripts/build_telemetry.py` | `concepts/call-graph.md` |
 | check_api_auth_decorators.py | Verify API endpoint auth coverage in dialogos. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_api_auth_decorators.py` | `concepts/call-graph.md` |
 | check_api_contract_sync.py | Check frontend/backend API contract synchronization. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_api_contract_sync.py` | `concepts/call-graph.md` |
 | check_backend_test_coverage.py | Analyse backend test coverage. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_backend_test_coverage.py` | `concepts/call-graph.md` |
@@ -134,20 +135,23 @@ Generated 2026-05-03T20:23:48Z from seja-priv harness state.
 | check_section_boundary_writes.py | Reject contiguous write regions that cross | agent-invoked, hook-ci | active | `.claude/skills/post-skill/check_section_boundary_writes.py` | `concepts.md`, `concepts/call-graph.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/quality-gates.md`, `reference/glossary.md` |
 | check_skill_spec.py | Validate SKILL.md files against the agentskills.io spec. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_skill_spec.py` | `concepts/call-graph.md` |
 | check_skill_system.py | Validate .claude skill system integrity. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_skill_system.py` | `concepts/call-graph.md`, `how-to/ci-integration.md` |
-| check_spec_conformance.py | Validate codebase against structured spec checks. | agent-invoked, hook-ci | active | `.claude/skills/check/check_spec_conformance.py` | `concepts/call-graph.md`, `how-to/ci-integration.md` |
+| check_spec_conformance.py | Validate codebase against structured spec checks. | agent-invoked, hook-ci | active | `.claude/skills/critique/check_spec_conformance.py` | `concepts/call-graph.md`, `how-to/ci-integration.md` |
 | check_telemetry.py | Validate telemetry.jsonl schema and field constraints. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_telemetry.py` | `concepts/call-graph.md` |
 | check_unused_files.py | Detect orphaned source files not imported or referenced anywhere. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_unused_files.py` | `concepts/call-graph.md` |
 | check_validation_constants_sync.py | Detect drift between backend and frontend | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_validation_constants_sync.py` | `concepts/call-graph.md` |
 | check_version_changelog_sync.py | Verify VERSION file matches latest CHANGELOG heading. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_version_changelog_sync.py` | `concepts/call-graph.md` |
 | check_vuln_patterns.py | Scan files for generated code vulnerability patterns. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_vuln_patterns.py` | `concepts/call-graph.md` |
-| check_worktree_health.py | Detect orphaned git worktrees. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_worktree_health.py` |  |
-| generate_pending_roadmap.py | Generate a roadmap from pending implement entries. | skill-invoked | active | `.claude/skills/scripts/generate_pending_roadmap.py` |  |
+| check_worktree_health.py | Detect orphaned git worktrees. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_worktree_health.py` | `concepts/call-graph.md` |
+| generate_pending_roadmap.py | Generate a roadmap from pending implement entries. | skill-invoked | active | `.claude/skills/scripts/generate_pending_roadmap.py` | `concepts/call-graph.md` |
 | generate_reflection_report.py | orchestrator for the /reflect skill. | skill-invoked | active | `.claude/skills/reflect/generate_reflection_report.py` | `concepts/call-graph.md` |
+| mark_brief_done.py | Mark a STARTED brief entry as DONE in briefs.md. | skill-invoked, agent-invoked | active | `.claude/skills/scripts/mark_brief_done.py` | `concepts/call-graph.md` |
 | reserve_id.py | ID reservation for SEJA artifacts (single-writer assumed). | skill-invoked | active | `.claude/skills/scripts/reserve_id.py` | `concepts/call-graph.md` |
 | run_all_checks.py | CI-independent validation orchestrator for SEJA checks. | agent-invoked | active | `.claude/skills/scripts/run_all_checks.py` | `concepts/call-graph.md`, `how-to/quality-gates.md` |
 | run_all_tests.py | Run backend, frontend and Playwright tests, saving results. | agent-invoked | active | `.claude/skills/scripts/run_all_tests.py` | `concepts/call-graph.md` |
 | run_preflight_fast.py | Fast preflight checks for git hooks and CI. | skill-invoked, hook-ci | active | `.claude/skills/scripts/run_preflight_fast.py` | `concepts/call-graph.md`, `how-to/ci-integration.md` |
 | summarize_artifacts.py | Summarize SEJA artifacts by ID or path for embedding in reflection reports. | skill-invoked | active | `.claude/skills/reflect/summarize_artifacts.py` | `concepts/call-graph.md` |
+| update_cross_refs.py | Cross-reference updater for SEJA artifact headers. | skill-invoked | active | `.claude/skills/scripts/update_cross_refs.py` | `concepts/call-graph.md` |
+| verify_commit_scope.py | Check staged git files against expected post-skill patterns. | agent-invoked | active | `.claude/skills/scripts/verify_commit_scope.py` | `concepts/call-graph.md` |
 
 ### Hook and CI
 
@@ -156,10 +160,10 @@ Generated 2026-05-03T20:23:48Z from seja-priv harness state.
 | human_markers_registry.py | Shared registry for Human (markers) files and allowed marker patterns. | library | active | `.claude/skills/scripts/human_markers_registry.py` | `concepts/call-graph.md` |
 | load_quickguide.py | Shared loader for SKILL-quickguide.md sibling files. | library | active | `.claude/skills/scripts/load_quickguide.py` | `concepts/call-graph.md` |
 | project_config.py | Central configuration for SEJA helper scripts. | library | active | `.claude/skills/scripts/project_config.py` | `concepts/call-graph.md` |
-| reflect_colors.py | shared color palette for /reflect --deep visualizations. | library | active | `.claude/skills/reflect/reflect_colors.py` |  |
+| reflect_colors.py | shared color palette for /reflect --deep visualizations. | library | active | `.claude/skills/reflect/reflect_colors.py` | `concepts/call-graph.md` |
 | smoke_test_core.py | Smoke Test Core — generic framework for registry-driven API smoke testing. | library | active | `.claude/skills/scripts/smoke_test_core.py` | `concepts/call-graph.md` |
 | test_detect_setup_state.py | Tests for detect_setup_state.py. | test | active | `.claude/skills/seja-setup/test_detect_setup_state.py` | `concepts/call-graph.md` |
-| test_reflect_deep.py | Tests for /reflect --deep mode modules. | test | active | `.claude/skills/reflect/test_reflect_deep.py` |  |
+| test_reflect_deep.py | Tests for /reflect --deep mode modules. | test | active | `.claude/skills/reflect/test_reflect_deep.py` | `concepts/call-graph.md` |
 
 ### Archived migrations
 
@@ -209,6 +213,7 @@ Generated 2026-05-03T20:23:48Z from seja-priv harness state.
 - **generate_skill_map.py** (primary: User-invocable) -- also classified as: skill-invoked; see [Skill- or agent-invoked](#skill--or-agent-invoked)
 - **generate_skills_manifest.py** (primary: User-invocable) -- also classified as: script-invoked; 
 - **generate_telemetry_report.py** (primary: User-invocable) -- also classified as: skill-invoked; see [Skill- or agent-invoked](#skill--or-agent-invoked)
+- **mark_brief_done.py** (primary: Skill- or agent-invoked) -- also classified as: agent-invoked; 
 - **migrate_qa_logs_to_parent_dirs.py** (primary: Archived migrations) -- also classified as: skill-invoked, user-cli; see [Skill- or agent-invoked](#skill--or-agent-invoked); see [User-invocable](#user-invocable)
 - **pending.py** (primary: User-invocable) -- also classified as: skill-invoked; see [Skill- or agent-invoked](#skill--or-agent-invoked)
 - **reflect_decision_reversals.py** (primary: User-invocable) -- also classified as: script-invoked; 
@@ -230,13 +235,13 @@ Generated 2026-05-03T20:23:48Z from seja-priv harness state.
 |---|---|---|---|
 | 0001_split_quickstart_to_seed_design_upgrade.py | Migrate references from the retired /quickstart skill to the three skills | `.claude/migrations/0001_split_quickstart_to_seed_design_upgrade.py` |  |
 | 0002_rename_seed_to_setup.py | Migrate references from the retired /seed skill to its successor /setup. | `.claude/migrations/0002_rename_seed_to_setup.py` |  |
+| 0003_rename_project_design_to_product_design.py | Rename the consumer-side project-design/ directory to product-design/ and | `.claude/migrations/0003_rename_project_design_to_product_design.py` |  |
 | README.md | SEJA Harness Migrations -- Migration scripts that run automatically during harness upgrades to transform project file... | `.claude/migrations/README.md` |  |
 
 ## Configs
 
 | Name | Purpose | Path | Mentioned in |
 |---|---|---|---|
-| check_plugin_registry.json | Registry of check_docs.py plugin scanners | `.claude/skills/scripts/check_plugin_registry.json` | `how-to/quality-gates.md` |
 | skills-manifest.json | Generated L1 skills manifest (from generate_skills_manifest.py) | `.claude/skills/skills-manifest.json` |  |
 
 ## General references
@@ -258,7 +263,7 @@ Generated 2026-05-03T20:23:48Z from seja-priv harness state.
 | review-perspectives | FRAMEWORK - REVIEW PERSPECTIVES -- --- | `.claude/references/general/review-perspectives.md` | `concepts/call-graph.md` |
 | review-perspectives-essential-summary | FRAMEWORK - ESSENTIAL REVIEW PERSPECTIVES SUMMARY -- --- | `.claude/references/general/review-perspectives-essential-summary.md` | `concepts/call-graph.md` |
 | review-perspectives-index | Review Perspectives Index -- Compact index for two-stage perspective loading. | `.claude/references/general/review-perspectives-index.md` | `concepts/call-graph.md`, `how-to/plan-and-execute.md` |
-| script-header-convention | GENERAL - SCRIPT HEADER CONVENTION -- Every Python script in the SEJA harness carries a two-line docstring header dec... | `.claude/references/general/script-header-convention.md` | `concepts/call-graph.md` |
+| script-header-convention | GENERAL - SCRIPT HEADER CONVENTION -- Every Python script in the SEJA harness carries a two-line docstring header dec... | `.claude/references/general/script-header-convention.md` |  |
 | shared-definitions | GENERAL - SHARED DEFINITIONS -- --- | `.claude/references/general/shared-definitions.md` | `concepts/call-graph.md`, `foundations-assessment.md`, `foundations.md` |
 | skill-graph | FRAMEWORK - SKILL RELATIONSHIP GRAPH | `.claude/references/general/skill-graph.md` | `concepts/call-graph.md` |
 | threat-model | SEJA Harness Threat Model -- Lightweight threat model for the SEJA agent harness. | `.claude/references/general/threat-model.md` | `concepts/call-graph.md` |
@@ -357,8 +362,8 @@ Harness artifacts mentioned at least once in `seja-public/docs`.
 
 | Name | Kind | Path | First mention |
 |---|---|---|---|
-| /check | Skills | `.claude/skills/check/SKILL.md` | `concepts.md` |
 | /communicate | Skills | `.claude/skills/communicate/SKILL.md` | `concepts.md` |
+| /critique | Skills | `.claude/skills/critique/SKILL.md` | `concepts.md` |
 | /design | Skills | `.claude/skills/design/SKILL.md` | `concepts.md` |
 | /document | Skills | `.claude/skills/document/SKILL.md` | `concepts.md` |
 | /explain | Skills | `.claude/skills/explain/SKILL.md` | `concepts.md` |
@@ -387,6 +392,7 @@ Harness artifacts mentioned at least once in `seja-public/docs`.
 | backfill_open_plans.py | Scripts | `.claude/skills/scripts/backfill_open_plans.py` | `concepts/call-graph.md` |
 | backfill_qa_dates.py | Scripts | `.claude/skills/scripts/backfill_qa_dates.py` | `concepts/call-graph.md` |
 | batch-execution-pattern | General references | `.claude/references/general/batch-execution-pattern.md` | `concepts/call-graph.md` |
+| build_telemetry.py | Scripts | `.claude/skills/scripts/build_telemetry.py` | `concepts/call-graph.md` |
 | builders | Onboarding | `.claude/references/general/onboarding/builders.md` | `concepts/call-graph.md` |
 | check_api_auth_decorators.py | Scripts | `.claude/skills/scripts/check_api_auth_decorators.py` | `concepts/call-graph.md` |
 | check_api_contract_sync.py | Scripts | `.claude/skills/scripts/check_api_contract_sync.py` | `concepts/call-graph.md` |
@@ -394,26 +400,27 @@ Harness artifacts mentioned at least once in `seja-public/docs`.
 | check_changelog_append_only.py | Scripts | `.claude/skills/explain/check_changelog_append_only.py` | `concepts/call-graph.md` |
 | check_conventions.py | Scripts | `.claude/skills/scripts/check_conventions.py` | `concepts/call-graph.md` |
 | check_design_output.py | Scripts | `.claude/skills/scripts/check_design_output.py` | `concepts/call-graph.md` |
-| check_docs.py | Scripts | `.claude/skills/check/check_docs.py` | `concepts/call-graph.md` |
+| check_docs.py | Scripts | `.claude/skills/critique/check_docs.py` | `concepts/call-graph.md` |
 | check_frontend_test_coverage.py | Scripts | `.claude/skills/scripts/check_frontend_test_coverage.py` | `concepts/call-graph.md` |
-| check_git_freshness.py | Scripts | `.claude/skills/check/check_git_freshness.py` | `concepts/call-graph.md` |
+| check_git_freshness.py | Scripts | `.claude/skills/critique/check_git_freshness.py` | `concepts/call-graph.md` |
+| check_harness_drift.py | Scripts | `.claude/skills/scripts/check_harness_drift.py` | `concepts/call-graph.md` |
 | check_human_markers_only.py | Scripts | `.claude/skills/scripts/check_human_markers_only.py` | `concepts.md` |
 | check_i18n_keys.py | Scripts | `.claude/skills/scripts/check_i18n_keys.py` | `concepts/call-graph.md` |
 | check_migration_chain.py | Scripts | `.claude/skills/scripts/check_migration_chain.py` | `concepts/call-graph.md` |
 | check_plan_coverage.py | Scripts | `.claude/skills/design/check_plan_coverage.py` | `concepts/call-graph.md` |
-| check_plugin_registry.json | Configs | `.claude/skills/scripts/check_plugin_registry.json` | `how-to/quality-gates.md` |
 | check_po_parity.py | Scripts | `.claude/skills/scripts/check_po_parity.py` | `concepts/call-graph.md` |
 | check_route_coverage.py | Scripts | `.claude/skills/scripts/check_route_coverage.py` | `concepts/call-graph.md` |
 | check_secrets.py | Scripts | `.claude/skills/design/check_secrets.py` | `concepts/call-graph.md` |
 | check_section_boundary_writes.py | Scripts | `.claude/skills/post-skill/check_section_boundary_writes.py` | `concepts.md` |
 | check_skill_spec.py | Scripts | `.claude/skills/scripts/check_skill_spec.py` | `concepts/call-graph.md` |
 | check_skill_system.py | Scripts | `.claude/skills/scripts/check_skill_system.py` | `concepts/call-graph.md` |
-| check_spec_conformance.py | Scripts | `.claude/skills/check/check_spec_conformance.py` | `concepts/call-graph.md` |
+| check_spec_conformance.py | Scripts | `.claude/skills/critique/check_spec_conformance.py` | `concepts/call-graph.md` |
 | check_telemetry.py | Scripts | `.claude/skills/scripts/check_telemetry.py` | `concepts/call-graph.md` |
 | check_unused_files.py | Scripts | `.claude/skills/scripts/check_unused_files.py` | `concepts/call-graph.md` |
 | check_validation_constants_sync.py | Scripts | `.claude/skills/scripts/check_validation_constants_sync.py` | `concepts/call-graph.md` |
 | check_version_changelog_sync.py | Scripts | `.claude/skills/scripts/check_version_changelog_sync.py` | `concepts/call-graph.md` |
 | check_vuln_patterns.py | Scripts | `.claude/skills/scripts/check_vuln_patterns.py` | `concepts/call-graph.md` |
+| check_worktree_health.py | Scripts | `.claude/skills/scripts/check_worktree_health.py` | `concepts/call-graph.md` |
 | claude-md | Templates | `.claude/references/template/claude-md.md` | `concepts/call-graph.md` |
 | clients | Communication | `.claude/references/general/communication/clients.md` | `concepts/call-graph.md` |
 | code-reviewer | Agents | `.claude/agents/code-reviewer.md` | `concepts/call-graph.md` |
@@ -425,6 +432,7 @@ Harness artifacts mentioned at least once in `seja-public/docs`.
 | constitution | Templates | `.claude/references/template/constitution.md` | `concepts.md` |
 | constraints | General references | `.claude/references/general/constraints.md` | `concepts/call-graph.md` |
 | conventions | Templates | `.claude/references/template/conventions.md` | `concepts.md` |
+| conversation_trace.py | Scripts | `.claude/skills/scripts/conversation_trace.py` | `concepts/call-graph.md` |
 | council-debate | Agents | `.claude/agents/council-debate.md` | `concepts/call-graph.md` |
 | count_loc.py | Scripts | `.claude/skills/scripts/count_loc.py` | `concepts/call-graph.md` |
 | create_workspace.py | Scripts | `.claude/skills/scripts/create_workspace.py` | `concepts/call-graph.md` |
@@ -460,11 +468,12 @@ Harness artifacts mentioned at least once in `seja-public/docs`.
 | generate_decision_digest.py | Scripts | `.claude/skills/post-skill/generate_decision_digest.py` | `concepts/call-graph.md` |
 | generate_essential_perspectives_summary.py | Scripts | `.claude/skills/scripts/generate_essential_perspectives_summary.py` | `concepts/call-graph.md` |
 | generate_macro_index.py | Scripts | `.claude/skills/scripts/generate_macro_index.py` | `concepts/call-graph.md` |
+| generate_pending_roadmap.py | Scripts | `.claude/skills/scripts/generate_pending_roadmap.py` | `concepts/call-graph.md` |
 | generate_reflection_report.py | Scripts | `.claude/skills/reflect/generate_reflection_report.py` | `concepts/call-graph.md` |
 | generate_skill_graph.py | Scripts | `.claude/skills/scripts/generate_skill_graph.py` | `concepts/call-graph.md` |
 | generate_skill_map.py | Scripts | `.claude/skills/help/generate_skill_map.py` | `concepts/call-graph.md` |
 | generate_skills_manifest.py | Scripts | `.claude/skills/scripts/generate_skills_manifest.py` | `concepts/call-graph.md` |
-| generate_telemetry_report.py | Scripts | `.claude/skills/check/generate_telemetry_report.py` | `concepts/call-graph.md` |
+| generate_telemetry_report.py | Scripts | `.claude/skills/critique/generate_telemetry_report.py` | `concepts/call-graph.md` |
 | guardians | Onboarding | `.claude/references/general/onboarding/guardians.md` | `concepts/call-graph.md` |
 | harness-governance | General references | `.claude/references/general/harness-governance.md` | `concepts/call-graph.md` |
 | harness-health-evaluator | Agents | `.claude/agents/harness-health-evaluator.md` | `concepts/call-graph.md` |
@@ -475,6 +484,7 @@ Harness artifacts mentioned at least once in `seja-public/docs`.
 | l2-expert | Onboarding | `.claude/references/general/onboarding/l2-expert.md` | `concepts/call-graph.md` |
 | l3-leader | Onboarding | `.claude/references/general/onboarding/l3-leader.md` | `concepts/call-graph.md` |
 | load_quickguide.py | Scripts | `.claude/skills/scripts/load_quickguide.py` | `concepts/call-graph.md` |
+| mark_brief_done.py | Scripts | `.claude/skills/scripts/mark_brief_done.py` | `concepts/call-graph.md` |
 | md_to_html.py | Scripts | `.claude/skills/scripts/md_to_html.py` | `concepts/call-graph.md` |
 | micro | Perspectives | `.claude/references/general/review-perspectives/micro.md` | `concepts/call-graph.md` |
 | migrate_qa_logs_to_parent_dirs.py | Scripts | `.claude/skills/seja-setup/migrate_qa_logs_to_parent_dirs.py` | `concepts/call-graph.md` |
@@ -494,11 +504,15 @@ Harness artifacts mentioned at least once in `seja-public/docs`.
 | project_config.py | Scripts | `.claude/skills/scripts/project_config.py` | `concepts/call-graph.md` |
 | proposal | Templates | `.claude/references/template/proposal.md` | `concepts/call-graph.md` |
 | questionnaire | Templates | `.claude/references/template/questionnaire.md` | `concepts/call-graph.md` |
+| reflect_colors.py | Scripts | `.claude/skills/reflect/reflect_colors.py` | `concepts/call-graph.md` |
 | reflect_decision_reversals.py | Scripts | `.claude/skills/reflect/reflect_decision_reversals.py` | `concepts/call-graph.md` |
+| reflect_deep_scope.py | Scripts | `.claude/skills/reflect/reflect_deep_scope.py` | `concepts/call-graph.md` |
 | reflect_duration_anomalies.py | Scripts | `.claude/skills/reflect/reflect_duration_anomalies.py` | `concepts/call-graph.md` |
+| reflect_event_matrix.py | Scripts | `.claude/skills/reflect/reflect_event_matrix.py` | `concepts/call-graph.md` |
 | reflect_revision_rate.py | Scripts | `.claude/skills/reflect/reflect_revision_rate.py` | `concepts/call-graph.md` |
 | reflect_sequence_mining.py | Scripts | `.claude/skills/reflect/reflect_sequence_mining.py` | `concepts/call-graph.md` |
 | reflect_stuck_loops.py | Scripts | `.claude/skills/reflect/reflect_stuck_loops.py` | `concepts/call-graph.md` |
+| reflect_transition_graph.py | Scripts | `.claude/skills/reflect/reflect_transition_graph.py` | `concepts/call-graph.md` |
 | report-conventions | General references | `.claude/references/general/report-conventions.md` | `concepts/call-graph.md` |
 | research-reviewer | Agents | `.claude/agents/research-reviewer.md` | `concepts/call-graph.md` |
 | reserve_id.py | Scripts | `.claude/skills/scripts/reserve_id.py` | `concepts/call-graph.md` |
@@ -520,7 +534,6 @@ Harness artifacts mentioned at least once in `seja-public/docs`.
 | run_all_tests.py | Scripts | `.claude/skills/scripts/run_all_tests.py` | `concepts/call-graph.md` |
 | run_migrations.py | Scripts | `.claude/skills/scripts/run_migrations.py` | `concepts/call-graph.md` |
 | run_preflight_fast.py | Scripts | `.claude/skills/scripts/run_preflight_fast.py` | `concepts/call-graph.md` |
-| script-header-convention | General references | `.claude/references/general/script-header-convention.md` | `concepts/call-graph.md` |
 | sec | Perspectives | `.claude/references/general/review-perspectives/sec.md` | `concepts/call-graph.md` |
 | semiotic-inspector | Agents | `.claude/agents/semiotic-inspector.md` | `concepts/call-graph.md` |
 | shapers | Onboarding | `.claude/references/general/onboarding/shapers.md` | `concepts/call-graph.md` |
@@ -534,9 +547,12 @@ Harness artifacts mentioned at least once in `seja-public/docs`.
 | test-plan-generator | Agents | `.claude/agents/test-plan-generator.md` | `concepts/call-graph.md` |
 | test-runner | Agents | `.claude/agents/test-runner.md` | `concepts/call-graph.md` |
 | test_detect_setup_state.py | Scripts | `.claude/skills/seja-setup/test_detect_setup_state.py` | `concepts/call-graph.md` |
+| test_reflect_deep.py | Scripts | `.claude/skills/reflect/test_reflect_deep.py` | `concepts/call-graph.md` |
 | tests | Rules | `.claude/rules/tests.md` | `concepts/call-graph.md` |
 | threat-model | General references | `.claude/references/general/threat-model.md` | `concepts/call-graph.md` |
+| update_cross_refs.py | Scripts | `.claude/skills/scripts/update_cross_refs.py` | `concepts/call-graph.md` |
 | upgrade_harness.py | Scripts | `.claude/skills/scripts/upgrade_harness.py` | `concepts/call-graph.md` |
 | ux | Perspectives | `.claude/references/general/review-perspectives/ux.md` | `concepts/call-graph.md` |
 | ux-research-results | Templates | `.claude/references/template/ux-research-results.md` | `concepts/call-graph.md` |
+| verify_commit_scope.py | Scripts | `.claude/skills/scripts/verify_commit_scope.py` | `concepts/call-graph.md` |
 | vis | Perspectives | `.claude/references/general/review-perspectives/vis.md` | `concepts/call-graph.md` |

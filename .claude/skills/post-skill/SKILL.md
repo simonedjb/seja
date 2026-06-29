@@ -154,7 +154,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
 6b. **Fast preflight gate** -- `python .claude/skills/scripts/run_preflight_fast.py`. Exit 0 -> proceed silently. Non-zero -> display failures; ask whether to proceed or abort (advisory, not blocking -- post-skill runs after lengthy work; `.githooks/pre-commit` is the hard gate). Script not found -> skip silently.
 
-6c. **Human markers verifier** -- `python .claude/skills/scripts/check_human_markers_only.py --staged`. Exit 0 -> proceed silently. Exit 1 (prose mutation in a Human (markers) file) -> display the violation; ask via AskUserQuestion whether to abort or proceed. Default recommendation: abort (unauthorized edit should go through `apply_marker.py`). Script not found -> skip silently.
+6c. **Human markers verifier** -- `python .claude/skills/scripts/critique_human_markers_only.py --staged`. Exit 0 -> proceed silently. Exit 1 (prose mutation in a Human (markers) file) -> display the violation; ask via AskUserQuestion whether to abort or proceed. Default recommendation: abort (unauthorized edit should go through `apply_marker.py`). Script not found -> skip silently.
 
 7. **Index regeneration**:
    a. `python .claude/skills/scripts/generate_briefs_index.py` -- refreshes `${BRIEFS_INDEX_FILE}`.
@@ -195,7 +195,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
     > "You might want to try next:"
 
     **Suppression rules** -- omit a suggestion when any of these conditions hold:
-    1. If check modes ran at step 6b or 6c in this post-skill invocation, omit `/check validate`, `/check review`, and `/check preflight` (already covered).
+    1. If check modes ran at step 6b or 6c in this post-skill invocation, omit `/critique validate`, `/critique review`, and `/critique preflight` (already covered).
     2. If `/document` was offered or ran at step 2b, omit `/document` (already covered).
     3. If the brief's plan prefix is CHORE or DOCUMENT, omit `/reflect` (low-value reflection target).
 

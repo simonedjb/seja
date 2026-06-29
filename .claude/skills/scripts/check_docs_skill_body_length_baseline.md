@@ -20,7 +20,7 @@ the world, not the lint (see plan-000458 step 1).
 
 Body line count is the agent-facing body from the first heading after
 `## Arguments` through EOF, as reported by
-`python .claude/skills/check/check_docs.py --plugins skill-body-length --verbose`.
+`python .claude/skills/critique/check_docs.py --plugins skill-body-length --verbose`.
 
 | Skill | Tier | Body lines | Threshold | Delta | Status |
 |---|---|---|---|---|---|

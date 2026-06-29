@@ -42,6 +42,6 @@
 
 **Not for**: stakeholder updates (use `/communicate`) or personalized onboarding plans (use `/onboard`). See `docs/how-to/which-communicative-skill.md` for the audience routing table.
 
-**Next step**: `/check docs` to validate documentation consistency.
+**Next step**: `/critique docs` to validate documentation consistency.
 
 **See also**: `/explain` -- understand existing system behavior, architecture, data model, or design spec drift.

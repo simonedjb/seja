@@ -62,7 +62,7 @@ SKILL_CATEGORIES: dict[str, str] = {
     "/implement": "planning",
     "/explain": "analysis",
     "/research": "analysis",
-    "/check": "analysis",
+    "/critique": "analysis",
     "/communicate": "utility",
     "/onboard": "utility",
     "/help": "utility",
@@ -103,7 +103,7 @@ CATEGORY_LABELS = {
 
 
 def _sanitize_id(skill_name: str) -> str:
-    """Convert a skill name like `/check validate` to a safe Mermaid node id."""
+    """Convert a skill name like `/critique validate` to a safe Mermaid node id."""
     return skill_name.lstrip("/").replace(" ", "_").replace("-", "_")
 
 

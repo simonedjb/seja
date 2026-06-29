@@ -22,6 +22,6 @@ Advanced: `--skip-checks` skips the Quality Gate; `--skip-docs` suppresses the a
 
 Auto mode follows a TDD red-green cycle for steps with explicit `Tests:` fields (write failing test first, then implement until it passes) and includes a generator-critic loop (max 2 retries) for critical code-review findings. Manual mode retains test-after ordering -- the user's presence is the quality checkpoint.
 
-**Next step**: `/check` (validate, review, and tests run automatically unless `--skip-checks` was used). Documentation generation for qualifying plans runs automatically via post-skill unless `--skip-docs` was passed. After that: `/pending` to review pending actions, or `/reflect` to surface patterns across recent work.
+**Next step**: `/critique` (validate, review, and tests run automatically unless `--skip-checks` was used). Documentation generation for qualifying plans runs automatically via post-skill unless `--skip-docs` was passed. After that: `/pending` to review pending actions, or `/reflect` to surface patterns across recent work.
 
-**See also**: `/plan` to create a plan first, `/check` for standalone quality checks, `/document` for standalone documentation.
+**See also**: `/plan` to create a plan first, `/critique` for standalone quality checks, `/document` for standalone documentation.

@@ -470,6 +470,37 @@ def _plan_file_present(plan_id: str) -> bool:
     return False
 
 
+def _plan_file_done(plan_id: str) -> bool:
+    """Return True iff the matching plan file has a # DONE header on line 1.
+
+    Reads only the first line of the file to keep this fast. Returns False
+    when the file is absent, unreadable, or has no DONE marker -- i.e., the
+    plan is still in progress and the implement entry should remain open.
+    """
+    m = _PLAN_ID_RE.match(plan_id)
+    if not m:
+        return False
+    plans_dir = get_path("PLANS_DIR")
+    if plans_dir is None or not plans_dir.is_dir():
+        return False
+    suffix_n = m.group(1)
+    prefix = f"plan-{suffix_n}-"
+    for p in plans_dir.glob(f"{prefix}*.md"):
+        name = p.name
+        if name.endswith("-progress.md"):
+            continue
+        rest = name[len(prefix):-3]
+        if rest.startswith("qa-") or rest.startswith("qa-log-"):
+            continue
+        try:
+            first_line = p.read_text(encoding="utf-8", errors="replace").split("\n", 1)[0]
+            if "# DONE" in first_line:
+                return True
+        except OSError:
+            pass
+    return False
+
+
 def _roadmap_file_present(roadmap_id: str) -> bool:
     """Return True iff at least one matching roadmap file exists for roadmap_id.
 
@@ -511,19 +542,28 @@ def cmd_cleanup(args: argparse.Namespace) -> int:
         eff = _effective_status(rec)
         if eff not in ("pending", "snoozed"):
             continue
-        # Orphan-cleanup for implement: dismiss if source file is gone.
+        # Orphan-cleanup for implement: dismiss if source file is gone or done.
         if rec.get("type") == _IMPLEMENT_TYPE:
             source = rec.get("source", "")
             if source:
                 # Check plan sources
-                if _PLAN_ID_RE.match(source) and not _plan_file_present(source):
-                    _append(path, {
-                        "id": rec["id"],
-                        "status": "dismissed",
-                        "closed_at": now_iso,
-                        "reason": "plan file deleted",
-                    })
-                    continue
+                if _PLAN_ID_RE.match(source):
+                    if not _plan_file_present(source):
+                        _append(path, {
+                            "id": rec["id"],
+                            "status": "dismissed",
+                            "closed_at": now_iso,
+                            "reason": "plan file deleted",
+                        })
+                        continue
+                    if _plan_file_done(source):
+                        _append(path, {
+                            "id": rec["id"],
+                            "status": "dismissed",
+                            "closed_at": now_iso,
+                            "reason": "plan already completed",
+                        })
+                        continue
                 # Check roadmap sources
                 if _ROADMAP_ID_RE.match(source) and not _roadmap_file_present(source):
                     _append(path, {

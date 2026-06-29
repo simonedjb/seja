@@ -210,7 +210,7 @@ SEJA uses three version-bearing files with distinct purposes:
 
 **Key distinction**: `.claude/skills/VERSION` tracks what the harness IS; `.seja-version` tracks what a project has been UPGRADED TO. In the harness repo, `.seja-version` is dogfooded -- should match VERSION after each release.
 
-**Validation**: `check_version_changelog_sync.py` keeps VERSION and CHANGELOG in sync (runs in `/check preflight`). Use `bump_version.py` to update all three files atomically.
+**Validation**: `check_version_changelog_sync.py` keeps VERSION and CHANGELOG in sync (runs in `/critique preflight`). Use `bump_version.py` to update all three files atomically.
 
 ---
 

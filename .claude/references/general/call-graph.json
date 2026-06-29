@@ -1,7 +1,7 @@
 {
-  "generated": "2026-05-03T17:49:49Z",
-  "node_count": 219,
-  "edge_count": 475,
+  "generated": "2026-06-18T11:41:13Z",
+  "node_count": 223,
+  "edge_count": 481,
   "nodes": [
     {
       "id": "agent:architecture-explainer",
@@ -64,7 +64,7 @@
       "type": "agent",
       "label": "harness-health-evaluator",
       "path": ".claude/agents/harness-health-evaluator.md",
-      "description": "When you run /check health, I'm the engine behind it. I run the 9 harness self-diagnosis checks -- skill system integrity, orphaned briefs, stale plans, reference completeness, conventions completeness, constitution presence, skill spec compliance, pending ledger summary, and harness drift -- and hand you one Harness Health Report: a nine-row status table with PASS/WARN/FAIL per check plus the overall N/9 tally (or N/8+1 when drift is INFO/skipped), so you can see the harness's health at a glance and drill into the checks that flagged.",
+      "description": "When you run /critique health, I'm the engine behind it. I run the 9 harness self-diagnosis checks -- skill system integrity, orphaned briefs, stale plans, reference completeness, conventions completeness, constitution presence, skill spec compliance, pending ledger summary, and harness drift -- and hand you one Harness Health Report: a nine-row status table with PASS/WARN/FAIL per check plus the overall N/9 tally (or N/8+1 when drift is INFO/skipped), so you can see the harness's health at a glance and drill into the checks that flagged.",
       "description_source": "designer-description"
     },
     {
@@ -112,7 +112,7 @@
       "type": "agent",
       "label": "standards-checker",
       "path": ".claude/agents/standards-checker.md",
-      "description": "When you run /check validate, I'm the engine behind it. I walk through every validation script your project has registered -- i18n, auth, migrations, constants, whatever your conventions file lists -- and hand you one unified compliance report: a pass/fail summary table across all checks, then the specific errors and warnings from the ones that failed, with file and line references so you can go straight to the fixes.",
+      "description": "When you run /critique validate, I'm the engine behind it. I walk through every validation script your project has registered -- i18n, auth, migrations, constants, whatever your conventions file lists -- and hand you one unified compliance report: a pass/fail summary table across all checks, then the specific errors and warnings from the ones that failed, with file and line references so you can go straight to the fixes.",
       "description_source": "designer-description"
     },
     {
@@ -224,7 +224,7 @@
       "type": "ref-general",
       "label": "documentation-quality",
       "path": ".claude/references/general/documentation-quality.md",
-      "description": "When you write or review project documentation, I'm the reference that defines what good looks like -- accuracy, completeness within declared scope, consistency, scannability, and maintainability -- paired with the writing principles (imperative mood, concrete verbs, task-first structure) that the documentation templates and the /check docs validator both rely on.",
+      "description": "When you write or review project documentation, I'm the reference that defines what good looks like -- accuracy, completeness within declared scope, consistency, scannability, and maintainability -- paired with the writing principles (imperative mood, concrete verbs, task-first structure) that the documentation templates and the /critique docs validator both rely on.",
       "description_source": "designer-description"
     },
     {
@@ -312,7 +312,7 @@
       "type": "ref-general",
       "label": "review-log-template",
       "path": ".claude/references/general/review-log-template.md",
-      "description": "When /plan, /check review, or any skill that evaluates a change against the review perspectives writes its review log, I'm the reference that codifies the structure -- review depth, deep-dive budget, the perspective scan table, deep-dive entries, conflict checks, execution metrics -- so every review produces a consistent, auditable trail instead of ad-hoc prose.",
+      "description": "When /plan, /critique review, or any skill that evaluates a change against the review perspectives writes its review log, I'm the reference that codifies the structure -- review depth, deep-dive budget, the perspective scan table, deep-dive entries, conflict checks, execution metrics -- so every review produces a consistent, auditable trail instead of ad-hoc prose.",
       "description_source": "designer-description"
     },
     {
@@ -336,7 +336,7 @@
       "type": "ref-general",
       "label": "review-perspectives",
       "path": ".claude/references/general/review-perspectives.md",
-      "description": "When you evaluate a plan, a diff, or an architectural decision, I'm the reference that defines the sixteen domain lenses -- security, performance, architecture, accessibility, and the rest -- their Essential vs Deep-dive tiers, the two-stage load protocol that keeps context lean, the Adopted/Deferred/N/A status vocabulary, and the rules for resolving conflicts when two perspectives pull the review in opposite directions.",
+      "description": "When you evaluate a plan, a diff, or an architectural decision, I'm the reference that defines the sixteen domain lenses -- security, performance, architecture, accessibility, and the rest -- their Essential/Standard/Deep tiers (P0 / P1–P2 / P3–P4), the two-stage load protocol that keeps context lean, the Adopted/Deferred/N/A status vocabulary, and the rules for resolving conflicts when two perspectives pull the review in opposite directions.",
       "description_source": "designer-description"
     },
     {
@@ -616,7 +616,7 @@
       "type": "ref-template",
       "label": "WALKTHROUGH",
       "path": ".claude/references/template/demo/WALKTHROUGH.md",
-      "description": "I'm the demo walkthrough /seja-setup --demo writes into your scratch project -- a step-by-step tour of /research, /plan, /implement, and /check against the pre-filled TaskFlow design files, so you can exercise the core SEJA loop on a working example before pointing the harness at your own project.",
+      "description": "I'm the demo walkthrough /seja-setup --demo writes into your scratch project -- a step-by-step tour of /research, /plan, /implement, and /critique against the pre-filled TaskFlow design files, so you can exercise the core SEJA loop on a working example before pointing the harness at your own project.",
       "description_source": "designer-description"
     },
     {
@@ -872,7 +872,7 @@
       "type": "ref-template",
       "label": "standards",
       "path": ".claude/references/template/standards.md",
-      "description": "I list the engineering conventions your project follows -- backend layering, frontend framework and structure, testing style and coverage expectations, and i18n approach -- so every PR you open can be reviewed against one agreed baseline rather than a different reviewer's memory, and skills like /check review and /plan can anchor their judgements to the same document.",
+      "description": "I list the engineering conventions your project follows -- backend layering, frontend framework and structure, testing style and coverage expectations, and i18n approach -- so every PR you open can be reviewed against one agreed baseline rather than a different reviewer's memory, and skills like /critique review and /plan can anchor their judgements to the same document.",
       "description_source": "designer-description"
     },
     {
@@ -972,6 +972,14 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:build_telemetry.py",
+      "type": "script",
+      "label": "build_telemetry.py",
+      "path": ".claude/skills/scripts/build_telemetry.py",
+      "description": "When a skill finishes and wants to record what happened, I take\nall eighteen telemetry fields as CLI arguments, validate every enum against\nthe schema defined in check_telemetry.py, and append one JSON line to\ntelemetry.jsonl. I am the single write path for telemetry so that every\nrecord the harness produces is guaranteed to pass check_telemetry validation\nbefore it ever hits disk.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:check_api_auth_decorators.py",
       "type": "script",
       "label": "check_api_auth_decorators.py",
@@ -1023,7 +1031,7 @@
       "id": "script:check_docs.py",
       "type": "script",
       "label": "check_docs.py",
-      "path": ".claude/skills/check/check_docs.py",
+      "path": ".claude/skills/critique/check_docs.py",
       "description": "When you want to trust your documentation, I run a sweep\nacross every doc file and look for the things that quietly go\nstale -- dead paths, undocumented commands, drifting terminology,\nenvironment variables the docs promise but the code does not set.\nYou get one report that tells you where the docs and the code\ndisagree.",
       "description_source": "designer-description"
     },
@@ -1039,7 +1047,7 @@
       "id": "script:check_git_freshness.py",
       "type": "script",
       "label": "check_git_freshness.py",
-      "path": ".claude/skills/check/check_git_freshness.py",
+      "path": ".claude/skills/critique/check_git_freshness.py",
       "description": "When you ask for git freshness status, I compare local branches\nagainst their upstreams for the relevant repositories and report ahead/\nbehind counts without pulling changes. I am advisory-only and best-effort.",
       "description_source": "designer-description"
     },
@@ -1135,7 +1143,7 @@
       "id": "script:check_spec_conformance.py",
       "type": "script",
       "label": "check_spec_conformance.py",
-      "path": ".claude/skills/check/check_spec_conformance.py",
+      "path": ".claude/skills/critique/check_spec_conformance.py",
       "description": "When your project carries an agent-facing spec-checks file, I\nread each declarative check -- file-exists, grep-match, grep-absent,\nmodel-field, route-exists -- and run it against your codebase, so\nspec intent written once stays enforced automatically. You find out\nwhich specs the code still honours and which ones have drifted.",
       "description_source": "designer-description"
     },
@@ -1188,6 +1196,14 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:conversation_trace.py",
+      "type": "script",
+      "label": "conversation_trace.py",
+      "path": ".claude/skills/scripts/conversation_trace.py",
+      "description": "When any utterance -- from the user, assistant, or tool -- happens\noutside a skill, I'm the append-only ledger that records each message with\nits emitter, type, session linkage, event chaining, and automatic\nsensitivity masking so the epistemic history of the project is preserved\nwithout leaking secrets.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:count_loc.py",
       "type": "script",
       "label": "count_loc.py",
@@ -1209,14 +1225,6 @@
       "label": "detect_setup_state.py",
       "path": ".claude/skills/seja-setup/detect_setup_state.py",
       "description": "When /seja-setup lands in your directory, I look around\nfirst and tell the skill what kind of place it is -- a fresh\ndownload, a half-initialised project, a fully configured project,\nor the SEJA development repo itself -- so the skill can pick the\nright path and refuse to overwrite something it shouldn't. You see\nthe verdict as a short recommendation, not raw file inventory.",
-      "description_source": "designer-description"
-    },
-    {
-      "id": "script:epistemic_trace.py",
-      "type": "script",
-      "label": "epistemic_trace.py",
-      "path": ".claude/skills/scripts/epistemic_trace.py",
-      "description": "When a freeform Q&A exchange happens outside a skill, I'm the\nappend-only ledger that records each question-answer pair with session\nlinkage, event chaining, and automatic sensitivity masking so the\nepistemic history of the project is preserved without leaking secrets.",
       "description_source": "designer-description"
     },
     {
@@ -1256,7 +1264,7 @@
       "type": "script",
       "label": "generate_macro_index.py",
       "path": ".claude/skills/scripts/generate_macro_index.py",
-      "description": "When you finish any skill run that writes an artifact, I'm the\nindexer that refreshes `_output/INDEX.md` so you can find the new file\nwithout scanning directories -- every plan, advisory, roadmap, proposal,\ncommunication, onboarding, and reflection appears on one chronological\nlist, newest first, with any RESERVED rows preserved across regenerations.",
+      "description": "When you finish any skill run that writes an artifact, I'm the\nindexer that refreshes `_output/INDEX.md` so you can find the new file\nwithout scanning directories -- every plan, advisory, roadmap, proposal,\ncommunication, onboarding, reflection, and explain report (behavior,\nbehavior-evolution, dev-onboarding, data-model, architecture) appears on\none chronological list, newest first, with any RESERVED rows preserved\nacross regenerations.",
       "description_source": "designer-description"
     },
     {
@@ -1303,7 +1311,7 @@
       "id": "script:generate_telemetry_report.py",
       "type": "script",
       "label": "generate_telemetry_report.py",
-      "path": ".claude/skills/check/generate_telemetry_report.py",
+      "path": ".claude/skills/critique/generate_telemetry_report.py",
       "description": "When you want to see how your own use of the harness has been\ntrending -- which skills you invoke most, how long they take on average,\nwhich ones succeed or fail, and how usage has shifted week over week --\nI'm the report that reads your telemetry log and prints a markdown\nsummary with frequency tables, duration averages, outcome rates, and\nUnicode-block sparklines you can paste into any review.",
       "description_source": "designer-description"
     },
@@ -1321,6 +1329,14 @@
       "label": "load_quickguide.py",
       "path": ".claude/skills/scripts/load_quickguide.py",
       "description": "When a consumer (pre-skill help stage, /help Layer 2,\ngenerate_call_graph.py, check_docs.py) needs the designer-facing\nnarrative for a skill, I'm the single code path that reads the\nSKILL-quickguide.md sibling file and returns its body with\nYAML frontmatter stripped -- so the file location lives in exactly\none place and future layout moves are a one-site change.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "script:mark_brief_done.py",
+      "type": "script",
+      "label": "mark_brief_done.py",
+      "path": ".claude/skills/scripts/mark_brief_done.py",
+      "description": "When a skill finishes and needs to record its completion in the\nbriefs ledger, I find the STARTED entry whose brief text matches what you\ngive me and flip it to DONE -- prepending the done timestamp and optionally\ntagging the plan ID. I keep the ledger accurate without forcing you to\nhand-edit the file or worry about line offsets.",
       "description_source": "designer-description"
     },
     {
@@ -1368,7 +1384,7 @@
       "type": "script",
       "label": "reflect_colors.py",
       "path": ".claude/skills/reflect/reflect_colors.py",
-      "description": "When /reflect --deep renders an event matrix or transition graph,\nI'm the shared palette everyone pulls from -- a Viridis 7-class scale for\nthe seven lifecycle skills and four warm tones for mode variants, so every\nchart speaks the same color language without each visualizer reinventing\nits own mapping.",
+      "description": "When /reflect --deep renders an event matrix or transition graph,\nI'm the shared palette everyone pulls from -- a Tol 2012 \"muted\" qualitative\nscale covering all SEJA skills, verified WCAG 2.0 AA compliant (≥4.5:1\ntext contrast) and safe for deuteranopia, protanopia, and tritanopia, so\nevery chart speaks the same accessible color language.",
       "description_source": "designer-description"
     },
     {
@@ -1432,7 +1448,7 @@
       "type": "script",
       "label": "reflect_transition_graph.py",
       "path": ".claude/skills/reflect/reflect_transition_graph.py",
-      "description": "When /reflect --deep maps out how you actually move between skills,\nI'm the renderer that turns that movement into a directed graph -- nodes\nsized by how often you invoked each skill, edges weighted by how often one\nskill followed another, all painted with the shared Viridis palette. You\nget a DOT source for Graphviz, a static SVG if the `dot` binary is around,\nand a self-contained HTML page that renders the graph in-browser via viz.js,\nso the picture travels wherever you send it.",
+      "description": "When /reflect --deep maps out how you actually move between skills,\nI'm the renderer that turns that movement into a directed graph -- nodes\nsized by how often you invoked each skill, edges weighted by how often one\nskill followed another, all painted with the shared Viridis palette. You\nget a DOT source for Graphviz, a static SVG if the `dot` binary is around,\nand a self-contained interactive HTML page powered by Cytoscape.js --\ndrag nodes, zoom, pan, and hover for details, no server required.",
       "description_source": "designer-description"
     },
     {
@@ -1488,7 +1504,7 @@
       "type": "script",
       "label": "smoke_test_core.py",
       "path": ".claude/skills/scripts/smoke_test_core.py",
-      "description": "When /check smoke exercises your project's API surface, I'm the\nreusable runner underneath -- the piece that drives each endpoint from a\nregistry, classifies the response as PASS, WARN, or FAIL, and rolls the\nresults into a report. Your project brings the endpoint list, auth\nadapter, and app factory; I handle the tracking, the error shaping, and\nthe exit-code convention so every smoke test speaks the same language.",
+      "description": "When /critique smoke exercises your project's API surface, I'm the\nreusable runner underneath -- the piece that drives each endpoint from a\nregistry, classifies the response as PASS, WARN, or FAIL, and rolls the\nresults into a report. Your project brings the endpoint list, auth\nadapter, and app factory; I handle the tracking, the error shaping, and\nthe exit-code convention so every smoke test speaks the same language.",
       "description_source": "designer-description"
     },
     {
@@ -1516,6 +1532,14 @@
       "description_source": "developer-fallback"
     },
     {
+      "id": "script:update_cross_refs.py",
+      "type": "script",
+      "label": "update_cross_refs.py",
+      "path": ".claude/skills/scripts/update_cross_refs.py",
+      "description": "When a skill produces a new artifact that was spawned by an earlier\nartifact, I update the source artifact's `spawned:` field so the two are\nlinked without manual bookkeeping. Feed me the path to the new artifact;\nI read its `source:` header, locate the source file in INDEX.md, and\nappend the new artifact's type-ID token to the source's `spawned:` line\n(inserting the line if it doesn't exist yet).",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:upgrade_harness.py",
       "type": "script",
       "label": "upgrade_harness.py",
@@ -1524,13 +1548,12 @@
       "description_source": "designer-description"
     },
     {
-      "id": "skill:check",
-      "type": "skill",
-      "label": "/check",
-      "path": ".claude/skills/check/SKILL.md",
-      "user_invocable": true,
-      "description": "**What it does**: Unified quality gate -- runs validation scripts, code reviews, smoke tests, preflight checks, harness health diagnostics, documentation consistency scans, git freshness checks, telemetry analysis, test plan generation, or semiotic inspection. One skill for all \"is it OK?\" questions. Ten modes, one at a time.\n\n**Examples**:\n> `/check validate`\n> Runs all project validation scripts and reports pass/fail with details.\n\n> `/check validate i18n`\n> Runs only the i18n-related validation scripts.\n\n> `/check review staged`\n> Reviews staged changes against security, accessibility, performance, and other quality perspectives.\n\n> `/check review src/components --depth deep`\n> Deep review of all files in a directory, evaluating all 16 quality perspectives.\n\n> `/check smoke api`\n> Runs API smoke tests and reports which endpoints pass or fail.\n\n> `/check preflight`\n> Combined validate + review in one pass. Go/no-go verdict for merging.\n\n> `/check preflight --depth light`\n> Lightweight preflight -- faster pass with fewer perspectives.\n\n> `/check health`\n> Harness self-diagnosis across 8 built-in checks (skill system, briefs hygiene, plans hygiene, references, conventions, constitution, spec compliance, pending ledger).\n\n> `/check health --verbose`\n> Same checks with detailed output per check.\n\n> `/check test-plan Test the new task filtering feature`\n> Produces a structured manual test plan with scenarios, step-by-step instructions, expected results, and edge cases.\n\n> `/check docs`\n> Runs 6 documentation consistency scanners (harness integrity, path liveness, env vars, command refs, terminology, structural-completeness).\n\n> `/check docs --plugins terminology,structural-completeness --filter src/`\n> Runs only the named scanners, filtered to a directory.\n\n> `/check freshness`\n> Compares local branches to upstreams for configured repos, reports ahead/behind counts. Never pulls automatically.\n\n> `/check telemetry`\n> Reads `telemetry.jsonl` and reports skill invocation statistics and usage patterns. Read-only; does not write a check log.\n\n> `/check semiotic-inspection task-filtering`\n> Conducts a 5-step Semiotic Inspection Method (SIM) evaluation of the feature's communicability. Analyzes metalinguistic, static, and dynamic signs, then collates the three metacommunication messages.\n\nAdvanced: `--depth <light|standard|deep>` overrides review depth for `review` and `preflight` modes.\n\n**When to use**: Before committing, after making changes, or when you want to verify code quality, project health, harness integrity, documentation consistency, git freshness, usage patterns, or interface communicability. Generate a manual test plan when you need structured QA scenarios.\n\n**Related**: `/pending` manages the pending-actions ledger. `/check` and `/pending` are intentionally separate -- `/check` is heavy-budget and produces diagnostic reports; `/pending` is light-budget and drives interactive ledger curation. `/check health` Check 9 surfaces the pending-ledger count as a diagnostic signal; any mutation (add/done/snooze/dismiss) still flows through `/pending`. See advisory-000442.\n\n**Next step**:\n- After `validate`: `/plan` to fix findings, `/check health` for harness diagnostics, `/pending` for outstanding actions, or `/reflect` on a clean pass.\n- After `review`: `/plan` to address review findings.\n- After `smoke`: `/plan` to fix failing endpoints.\n- After `health`: `/plan` to fix harness issues.\n- After `preflight`: `/check review` for a deeper review, or `/onboard` to onboard someone.\n- After `telemetry`: `/research` to discuss usage patterns, or `/reflect` for pattern mining.\n- After `test-plan`: `/communicate` to share the test plan with stakeholders.\n- After `docs`, `freshness`, `semiotic-inspection`: `/reflect` on a clean pass; `/plan` when findings need fixing.",
-      "description_source": "quick-guide"
+      "id": "script:verify_commit_scope.py",
+      "type": "script",
+      "label": "verify_commit_scope.py",
+      "path": ".claude/skills/scripts/verify_commit_scope.py",
+      "description": "When a post-skill commit is about to land, I check the staged\nfiles against the files a given skill invocation is expected to touch.\nI report what's expected, what's staged, what's unexpected, and what's\nmissing -- so the agent can decide whether the commit scope is right\nbefore anything is recorded in git history.",
+      "description_source": "designer-description"
     },
     {
       "id": "skill:communicate",
@@ -1539,6 +1562,15 @@
       "path": ".claude/skills/communicate/SKILL.md",
       "user_invocable": true,
       "description": "**What it does**: Generates tailored communication material for a specific audience segment. Each audience gets content in their language, focused on what matters to them.\n\n| Audience | Aliases | Focus |\n|----------|---------|-------|\n| Evaluators | `evaluator`, `evaluators`, `EVL` | Technical depth, architecture decisions, quality evidence |\n| Clients | `client`, `clients`, `CLT` | Value proposition, ROI, project outcomes |\n| End Users | `end-user`, `end-users`, `USR` | Features, benefits, how-to guidance |\n| Academics | `academic`, `academics`, `ACD` | Research context, methodology, theoretical framing |\n\n**Examples**:\n> `/communicate clients`\n> Reads your project's design vision and produces client-oriented material highlighting value proposition, ROI, and project outcomes. Generates both Markdown and HTML by default.\n\n> `/communicate ACD`\n> Same as above, using the short alias for the academic audience.\n\n> `/communicate --all`\n> Generates material for all 4 audience segments in parallel, each in its own subagent.\n\n> `/communicate evaluators --format md`\n> Produces evaluator material in Markdown only (skips HTML generation).\n\n> `/communicate USR --source _output/advisory-logs/advisory-000100.md`\n> Reformats an existing advisory log as end-user-facing material.\n\n> `/communicate clients --deep`\n> Includes Deep-dive content sections with expanded technical detail for the client audience.\n\n> `/communicate --all --format html --deep`\n> Batch generation for all audiences, HTML only, with Deep-dive sections.\n\n**When to use**: You need to present the project to a specific audience -- evaluators, clients, end users, or academics -- and want material that speaks their language.\n\n**Not for**: new team-member onboarding (use `/onboard`) or project documentation (use `/document`). See `docs/how-to/which-communicative-skill.md` for the audience routing table.\n\n**Next step**: `/onboard` -- need to onboard someone to the project as well?\n\n**References**: Audience templates (`evaluators`, `clients`, `end-users`, `academics`) and the Diataxis mapping live in [.claude/references/general/communication/](../../../.claude/references/general/communication/). Edit those files to update per-audience tone, sections, or content strategy.\n\n**Terminology note**: Output artifacts retain the `communication-NNN` prefix and live in `_output/communication/` for ID and link continuity.",
+      "description_source": "quick-guide"
+    },
+    {
+      "id": "skill:critique",
+      "type": "skill",
+      "label": "/critique",
+      "path": ".claude/skills/critique/SKILL.md",
+      "user_invocable": true,
+      "description": "**What it does**: Unified quality gate -- runs validation scripts, code reviews, smoke tests, preflight checks, harness health diagnostics, documentation consistency scans, git freshness checks, telemetry analysis, test plan generation, or semiotic inspection. One skill for all \"is it OK?\" questions. Ten modes, one at a time.\n\n**Examples**:\n> `/critique validate`\n> Runs all project validation scripts and reports pass/fail with details.\n\n> `/critique validate i18n`\n> Runs only the i18n-related validation scripts.\n\n> `/critique review staged`\n> Reviews staged changes against security, accessibility, performance, and other quality perspectives.\n\n> `/critique review src/components --depth deep`\n> Deep review of all files in a directory, evaluating all 16 quality perspectives.\n\n> `/critique smoke api`\n> Runs API smoke tests and reports which endpoints pass or fail.\n\n> `/critique preflight`\n> Combined validate + review in one pass. Go/no-go verdict for merging.\n\n> `/critique preflight --depth light`\n> Lightweight preflight -- faster pass with fewer perspectives.\n\n> `/critique health`\n> Harness self-diagnosis across 8 built-in checks (skill system, briefs hygiene, plans hygiene, references, conventions, constitution, spec compliance, pending ledger).\n\n> `/critique health --verbose`\n> Same checks with detailed output per check.\n\n> `/critique test-plan Test the new task filtering feature`\n> Produces a structured manual test plan with scenarios, step-by-step instructions, expected results, and edge cases.\n\n> `/critique docs`\n> Runs 6 documentation consistency scanners (harness integrity, path liveness, env vars, command refs, terminology, structural-completeness).\n\n> `/critique docs --plugins terminology,structural-completeness --filter src/`\n> Runs only the named scanners, filtered to a directory.\n\n> `/critique freshness`\n> Compares local branches to upstreams for configured repos, reports ahead/behind counts. Never pulls automatically.\n\n> `/critique telemetry`\n> Reads `telemetry.jsonl` and reports skill invocation statistics and usage patterns. Read-only; does not write a check log.\n\n> `/critique semiotic-inspection task-filtering`\n> Conducts a 5-step Semiotic Inspection Method (SIM) evaluation of the feature's communicability. Analyzes metalinguistic, static, and dynamic signs, then collates the three metacommunication messages.\n\nAdvanced: `--depth <light|standard|deep>` overrides review depth for `review` and `preflight` modes.\n\n**When to use**: Before committing, after making changes, or when you want to verify code quality, project health, harness integrity, documentation consistency, git freshness, usage patterns, or interface communicability. Generate a manual test plan when you need structured QA scenarios.\n\n**Related**: `/pending` manages the pending-actions ledger. `/critique` and `/pending` are intentionally separate -- `/critique` is heavy-budget and produces diagnostic reports; `/pending` is light-budget and drives interactive ledger curation. `/critique health` Check 9 surfaces the pending-ledger count as a diagnostic signal; any mutation (add/done/snooze/dismiss) still flows through `/pending`. See advisory-000442.\n\n**Next step**:\n- After `validate`: `/plan` to fix findings, `/critique health` for harness diagnostics, `/pending` for outstanding actions, or `/reflect` on a clean pass.\n- After `review`: `/plan` to address review findings.\n- After `smoke`: `/plan` to fix failing endpoints.\n- After `health`: `/plan` to fix harness issues.\n- After `preflight`: `/critique review` for a deeper review, or `/onboard` to onboard someone.\n- After `telemetry`: `/research` to discuss usage patterns, or `/reflect` for pattern mining.\n- After `test-plan`: `/communicate` to share the test plan with stakeholders.\n- After `docs`, `freshness`, `semiotic-inspection`: `/reflect` on a clean pass; `/plan` when findings need fixing.",
       "description_source": "quick-guide"
     },
     {
@@ -1556,7 +1588,7 @@
       "label": "/document",
       "path": ".claude/skills/document/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Generate or update documentation for your project. Four invocation modes: plan-driven (reads Docs: fields from a plan), auto-detect (scans recent git changes), type-targeted (you pick the doc type), or bare scope (you name a file/module/feature). Uses project templates and the documentation-quality writing guide for structured generation. Supports 6 documentation types: readme, contextual-help, api-reference, drr, help-center, and changelog.\n\n**Examples**:\n> `/document --plan 000130`\n> Reads the plan's Docs: fields and generates the appropriate documentation for each identified need.\n\n> `/document --auto-detect`\n> Analyzes recent git changes using 6 heuristic patterns (new API routes, changed models, new UI components, config changes, architectural shifts, breaking changes) and generates matching documentation types.\n\n> `/document --auto-detect --since 2026-04-01`\n> Same as above but bounds the git scan to changes since a specific date.\n\n> `/document --auto-detect --since last`\n> Scans only changes since the last `/document` run of any kind.\n\n> `/document --auto-detect --full-history`\n> Ignores per-doc-type bounding windows and scans the full recent git history.\n\n> `/document --type readme`\n> Generates or updates the project README.\n\n> `/document --type api-reference`\n> Generates API reference documentation from your routes and handlers.\n\n> `/document --type changelog`\n> Generates a changelog entry from recent changes.\n\n<!-- priv-only-start -->\n> `/document --type changelog --harness`\n> Generates a harness changelog entry in `.claude/CHANGELOG.md` using structured git history extraction.\n<!-- priv-only-end -->\n\n> `/document --type drr`\n> Creates a Design Rationale Record for a recent decision.\n\n> `/document --type contextual-help`\n> Generates contextual help content for UI features.\n\n> `/document --type help-center`\n> Generates help-center articles for end users.\n\n> `/document src/auth`\n> Documents the auth module -- infers the most appropriate doc type from the scope content.\n\n**When to use**: After implementing a feature or fix that affects user-facing behavior, API contracts, or architectural decisions. Automatically suggested by post-skill for FEATURE and REDESIGN plans and plans with non-N/A Docs: fields. Use `--plan` when documentation needs are already specified in a plan; use `--auto-detect` for a broad scan of what changed; use `--type` when you know exactly which doc type you need; use bare scope for ad-hoc documentation of a specific area.\n\n**Not for**: stakeholder updates (use `/communicate`) or personalized onboarding plans (use `/onboard`). See `docs/how-to/which-communicative-skill.md` for the audience routing table.\n\n**Next step**: `/check docs` to validate documentation consistency.\n\n**See also**: `/explain` -- understand existing system behavior, architecture, data model, or design spec drift.",
+      "description": "**What it does**: Generate or update documentation for your project. Four invocation modes: plan-driven (reads Docs: fields from a plan), auto-detect (scans recent git changes), type-targeted (you pick the doc type), or bare scope (you name a file/module/feature). Uses project templates and the documentation-quality writing guide for structured generation. Supports 6 documentation types: readme, contextual-help, api-reference, drr, help-center, and changelog.\n\n**Examples**:\n> `/document --plan 000130`\n> Reads the plan's Docs: fields and generates the appropriate documentation for each identified need.\n\n> `/document --auto-detect`\n> Analyzes recent git changes using 6 heuristic patterns (new API routes, changed models, new UI components, config changes, architectural shifts, breaking changes) and generates matching documentation types.\n\n> `/document --auto-detect --since 2026-04-01`\n> Same as above but bounds the git scan to changes since a specific date.\n\n> `/document --auto-detect --since last`\n> Scans only changes since the last `/document` run of any kind.\n\n> `/document --auto-detect --full-history`\n> Ignores per-doc-type bounding windows and scans the full recent git history.\n\n> `/document --type readme`\n> Generates or updates the project README.\n\n> `/document --type api-reference`\n> Generates API reference documentation from your routes and handlers.\n\n> `/document --type changelog`\n> Generates a changelog entry from recent changes.\n\n<!-- priv-only-start -->\n> `/document --type changelog --harness`\n> Generates a harness changelog entry in `.claude/CHANGELOG.md` using structured git history extraction.\n<!-- priv-only-end -->\n\n> `/document --type drr`\n> Creates a Design Rationale Record for a recent decision.\n\n> `/document --type contextual-help`\n> Generates contextual help content for UI features.\n\n> `/document --type help-center`\n> Generates help-center articles for end users.\n\n> `/document src/auth`\n> Documents the auth module -- infers the most appropriate doc type from the scope content.\n\n**When to use**: After implementing a feature or fix that affects user-facing behavior, API contracts, or architectural decisions. Automatically suggested by post-skill for FEATURE and REDESIGN plans and plans with non-N/A Docs: fields. Use `--plan` when documentation needs are already specified in a plan; use `--auto-detect` for a broad scan of what changed; use `--type` when you know exactly which doc type you need; use bare scope for ad-hoc documentation of a specific area.\n\n**Not for**: stakeholder updates (use `/communicate`) or personalized onboarding plans (use `/onboard`). See `docs/how-to/which-communicative-skill.md` for the audience routing table.\n\n**Next step**: `/critique docs` to validate documentation consistency.\n\n**See also**: `/explain` -- understand existing system behavior, architecture, data model, or design spec drift.",
       "description_source": "quick-guide"
     },
     {
@@ -1583,7 +1615,7 @@
       "label": "/implement",
       "path": ".claude/skills/implement/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Runs a previously approved plan step by step. Three execution modes: **auto** (default) dispatches each step to a fresh subagent with isolated context, **manual** runs sequentially in your current context with per-step confirmation, and **roadmap** executes all plans in a roadmap wave by wave. Creates a rollback branch before starting. Includes a Quality Gate at the end (validation, code review, tests, and smoke tests if configured).\n\n**Examples**:\n> `/implement 000042`\n> Auto mode (default): executes each step of Plan 000042 in a fresh subagent. Reports progress between iterations. Quality Gate runs at the end.\n\n> `/implement 000042 --manual`\n> Manual mode: executes steps sequentially in the current context. You confirm each step before it proceeds.\n\n> `/implement --roadmap 000316`\n> Reads roadmap 000316, identifies plans across waves. Executes Wave 0 sequentially, pauses for review, then proceeds through remaining waves.\n\n> `/implement --roadmap 000316 --checkpoint plan --max-iterations 10`\n> Roadmap mode with per-plan pauses and a 10-iteration cap per plan's auto mode.\n\n> `/implement 000042 --dry-run`\n> Previews what each step would create or modify without writing any files.\n\nAdvanced: `--skip-checks` skips the Quality Gate; `--skip-docs` suppresses the automatic documentation prompt (files a pending entry instead); `--checkpoint wave|plan|none` controls roadmap pause granularity.\n\n**When to use**: You have reviewed a plan (created by `/plan`) and are ready to have the agent carry it out. Use auto mode (default) for most plans, especially those with more than 6 steps. Use `--manual` for small plans or when you want per-step confirmation. Use `--roadmap` when you want to execute all plans in a roadmap wave-by-wave without manually triggering each one.\n\nAuto mode follows a TDD red-green cycle for steps with explicit `Tests:` fields (write failing test first, then implement until it passes) and includes a generator-critic loop (max 2 retries) for critical code-review findings. Manual mode retains test-after ordering -- the user's presence is the quality checkpoint.\n\n**Next step**: `/check` (validate, review, and tests run automatically unless `--skip-checks` was used). Documentation generation for qualifying plans runs automatically via post-skill unless `--skip-docs` was passed. After that: `/pending` to review pending actions, or `/reflect` to surface patterns across recent work.\n\n**See also**: `/plan` to create a plan first, `/check` for standalone quality checks, `/document` for standalone documentation.",
+      "description": "**What it does**: Runs a previously approved plan step by step. Three execution modes: **auto** (default) dispatches each step to a fresh subagent with isolated context, **manual** runs sequentially in your current context with per-step confirmation, and **roadmap** executes all plans in a roadmap wave by wave. Creates a rollback branch before starting. Includes a Quality Gate at the end (validation, code review, tests, and smoke tests if configured).\n\n**Examples**:\n> `/implement 000042`\n> Auto mode (default): executes each step of Plan 000042 in a fresh subagent. Reports progress between iterations. Quality Gate runs at the end.\n\n> `/implement 000042 --manual`\n> Manual mode: executes steps sequentially in the current context. You confirm each step before it proceeds.\n\n> `/implement --roadmap 000316`\n> Reads roadmap 000316, identifies plans across waves. Executes Wave 0 sequentially, pauses for review, then proceeds through remaining waves.\n\n> `/implement --roadmap 000316 --checkpoint plan --max-iterations 10`\n> Roadmap mode with per-plan pauses and a 10-iteration cap per plan's auto mode.\n\n> `/implement 000042 --dry-run`\n> Previews what each step would create or modify without writing any files.\n\nAdvanced: `--skip-checks` skips the Quality Gate; `--skip-docs` suppresses the automatic documentation prompt (files a pending entry instead); `--checkpoint wave|plan|none` controls roadmap pause granularity.\n\n**When to use**: You have reviewed a plan (created by `/plan`) and are ready to have the agent carry it out. Use auto mode (default) for most plans, especially those with more than 6 steps. Use `--manual` for small plans or when you want per-step confirmation. Use `--roadmap` when you want to execute all plans in a roadmap wave-by-wave without manually triggering each one.\n\nAuto mode follows a TDD red-green cycle for steps with explicit `Tests:` fields (write failing test first, then implement until it passes) and includes a generator-critic loop (max 2 retries) for critical code-review findings. Manual mode retains test-after ordering -- the user's presence is the quality checkpoint.\n\n**Next step**: `/critique` (validate, review, and tests run automatically unless `--skip-checks` was used). Documentation generation for qualifying plans runs automatically via post-skill unless `--skip-docs` was passed. After that: `/pending` to review pending actions, or `/reflect` to surface patterns across recent work.\n\n**See also**: `/plan` to create a plan first, `/critique` for standalone quality checks, `/document` for standalone documentation.",
       "description_source": "quick-guide"
     },
     {
@@ -1601,7 +1633,7 @@
       "label": "/pending",
       "path": ".claude/skills/pending/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Lists outstanding human actions the harness is tracking for you, showing each one with type-specific advice on how to resolve it, then stops. Six subcommands cover the full lifecycle: list (read-only listing with advice), address (guided resolution for marker-flip types), add, done, snooze, and dismiss. The ledger lives at `_output/pending.jsonl` and is append-only, so you never lose history.\n\nTwelve action types the harness can file:\n\n| Type | Filed by | Typical resolution |\n|------|----------|--------------------|\n| `mark-implemented` | post-skill | Flip STATUS markers via `/pending` dispatch |\n| `test-implementation` | post-skill | Run the plan's test plan manually |\n| `verify-as-coded` | post-skill | Run `/explain spec-drift` to confirm |\n| `update-documentation` | post-skill / `--skip-docs` | Run `/document --plan <source>` |\n| `apply-promote-markers` | `/explain spec-drift --promote` | Write Decision entries, then `--apply-markers` |\n| `spec-drift-check` | periodic trigger | Run `/explain spec-drift` |\n| `periodic-curation` | periodic trigger | Review and triage the ledger |\n| `incorporate-research-markers` | post-skill | Flip INCORPORATED markers in UX research |\n| `implement` | post-skill (after `/plan`) | Run `/implement <plan-id>` |\n| `review-downstream-plan` | `/implement` (file-overlap check) | Review affected plan for assumption drift |\n| `create-decision-entry` | `/research` (decision-extract) | Create a D-NNN entry in as-intended |\n| `user-defined` | `/pending add` | Whatever you described |\n\n**Examples**:\n> `/pending`\n> Lists all pending items grouped by type, each with advice on how to resolve it (e.g., which skill to run, which file to open). Prints a footer showing available subcommands, then stops.\n\n> `/pending address pa-000003`\n> Runs the guided resolution workflow for item pa-000003. For mark-implemented and incorporate-research-markers types, walks you through per-candidate marker flips with confirmation. For other types, prints the type-specific advice.\n\n> `/pending add --type user-defined --source plan-000042 --description \"review CSRF middleware\"`\n> Appends a custom reminder to the ledger. Pre-skill will surface it at the top of every skill invocation until resolved.\n\n> `/pending done pa-000003`\n> Marks item pa-000003 as done.\n\n> `/pending snooze pa-000005 --until 2026-05-01`\n> Hides item pa-000005 until May 1st, then resurfaces it.\n\n> `/pending dismiss pa-000007 --reason \"no longer relevant after redesign\"`\n> Dismisses an item without completing it. The reason is recorded in the ledger.\n\n**When to use**: After `/implement` if you chose \"Defer for later review\" at post-skill, when pre-skill tells you there are pending actions, when the periodic curation trigger has fired, or any time you want to review what the harness is tracking for you.\n\n**Related**: `/check health` Check 9 reports the pending-ledger count (diagnostic only). Any mutation (address/add/done/snooze/dismiss) still flows through `/pending`. The two skills are intentionally separate -- see advisory-000442.\n\n**Next step**: `/explain spec-drift --promote` after addressing periodic curation items (generates a Decision proposal for promotion candidates), or `/implement` once you have reviewed the outstanding review items.",
+      "description": "**What it does**: Lists outstanding human actions the harness is tracking for you, showing each one with type-specific advice on how to resolve it, then stops. Six subcommands cover the full lifecycle: list (read-only listing with advice), address (guided resolution for marker-flip types), add, done, snooze, and dismiss. The ledger lives at `_output/pending.jsonl` and is append-only, so you never lose history.\n\nTwelve action types the harness can file:\n\n| Type | Filed by | Typical resolution |\n|------|----------|--------------------|\n| `mark-implemented` | post-skill | Flip STATUS markers via `/pending` dispatch |\n| `test-implementation` | post-skill | Run the plan's test plan manually |\n| `verify-as-coded` | post-skill | Run `/explain spec-drift` to confirm |\n| `update-documentation` | post-skill / `--skip-docs` | Run `/document --plan <source>` |\n| `apply-promote-markers` | `/explain spec-drift --promote` | Write Decision entries, then `--apply-markers` |\n| `spec-drift-check` | periodic trigger | Run `/explain spec-drift` |\n| `periodic-curation` | periodic trigger | Review and triage the ledger |\n| `incorporate-research-markers` | post-skill | Flip INCORPORATED markers in UX research |\n| `implement` | post-skill (after `/plan`) | Run `/implement <plan-id>` |\n| `review-downstream-plan` | `/implement` (file-overlap check) | Review affected plan for assumption drift |\n| `create-decision-entry` | `/research` (decision-extract) | Create a D-NNN entry in as-intended |\n| `user-defined` | `/pending add` | Whatever you described |\n\n**Examples**:\n> `/pending`\n> Lists all pending items grouped by type, each with advice on how to resolve it (e.g., which skill to run, which file to open). Prints a footer showing available subcommands, then stops.\n\n> `/pending address pa-000003`\n> Runs the guided resolution workflow for item pa-000003. For mark-implemented and incorporate-research-markers types, walks you through per-candidate marker flips with confirmation. For other types, prints the type-specific advice.\n\n> `/pending add --type user-defined --source plan-000042 --description \"review CSRF middleware\"`\n> Appends a custom reminder to the ledger. Pre-skill will surface it at the top of every skill invocation until resolved.\n\n> `/pending done pa-000003`\n> Marks item pa-000003 as done.\n\n> `/pending snooze pa-000005 --until 2026-05-01`\n> Hides item pa-000005 until May 1st, then resurfaces it.\n\n> `/pending dismiss pa-000007 --reason \"no longer relevant after redesign\"`\n> Dismisses an item without completing it. The reason is recorded in the ledger.\n\n**When to use**: After `/implement` if you chose \"Defer for later review\" at post-skill, when pre-skill tells you there are pending actions, when the periodic curation trigger has fired, or any time you want to review what the harness is tracking for you.\n\n**Related**: `/critique health` Check 9 reports the pending-ledger count (diagnostic only). Any mutation (address/add/done/snooze/dismiss) still flows through `/pending`. The two skills are intentionally separate -- see advisory-000442.\n\n**Next step**: `/explain spec-drift --promote` after addressing periodic curation items (generates a Decision proposal for promotion candidates), or `/implement` once you have reviewed the outstanding review items.",
       "description_source": "quick-guide"
     },
     {
@@ -1637,7 +1669,7 @@
       "label": "/publish",
       "path": ".claude/skills/publish/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Publishes a tagged release to the public SEJA repository. Wraps `tools/publish.py`, which handles the full lifecycle: preflight checks, tag creation, cloning the public repo, syncing harness files, running smoke tests, committing, pushing, and closing the pending PUBLISH: entry. Supports version inference from CHANGELOG.md heuristics (bump hints, subsection analysis) or an explicit version argument.\n\n**Examples**:\n> `/publish v0.3.0`\n> Publishes version v0.3.0 -- runs preflight, cuts the tag, clones the public repo, syncs, smoke-tests, commits, and pushes.\n\n> `/publish`\n> Infers the next version from CHANGELOG.md and git tags, confirms with you, then runs the full pipeline.\n\n> `/publish --dry-run`\n> Previews the full command sequence without executing any destructive actions. Useful for verifying the pipeline before a live run.\n\n> `/publish v0.3.0 --yes`\n> Non-interactive publish -- accepts all confirmation prompts automatically.\n\n**When to use**: When you are ready to cut a public release. Prerequisites: `seja-public/CHANGELOG.md` has content under `## Unreleased`, working tree is clean, and the remote is reachable. Run `/check preflight` beforehand if you want a quality gate.\n\n**Not for**: Internal harness iteration (just commit normally), changelog authoring (edit `seja-public/CHANGELOG.md` directly), or harness upgrades in consumer projects (use `/seja-setup --upgrade`).\n\n**Next step**: Verify the release on GitHub, then optionally graduate `.claude/CHANGELOG.md`'s `[Unreleased]` section to a new internal version heading.",
+      "description": "**What it does**: Publishes a tagged release to the public SEJA repository. Wraps `tools/publish.py`, which handles the full lifecycle: preflight checks, tag creation, cloning the public repo, syncing harness files, running smoke tests, committing, pushing, and closing the pending PUBLISH: entry. Supports version inference from CHANGELOG.md heuristics (bump hints, subsection analysis) or an explicit version argument.\n\n**Examples**:\n> `/publish v0.3.0`\n> Publishes version v0.3.0 -- runs preflight, cuts the tag, clones the public repo, syncs, smoke-tests, commits, and pushes.\n\n> `/publish`\n> Infers the next version from CHANGELOG.md and git tags, confirms with you, then runs the full pipeline.\n\n> `/publish --dry-run`\n> Previews the full command sequence without executing any destructive actions. Useful for verifying the pipeline before a live run.\n\n> `/publish v0.3.0 --yes`\n> Non-interactive publish -- accepts all confirmation prompts automatically.\n\n**When to use**: When you are ready to cut a public release. Prerequisites: `seja-public/CHANGELOG.md` has content under `## Unreleased`, working tree is clean, and the remote is reachable. Run `/critique preflight` beforehand if you want a quality gate.\n\n**Not for**: Internal harness iteration (just commit normally), changelog authoring (edit `seja-public/CHANGELOG.md` directly), or harness upgrades in consumer projects (use `/seja-setup --upgrade`).\n\n**Next step**: Verify the release on GitHub, then optionally graduate `.claude/CHANGELOG.md`'s `[Unreleased]` section to a new internal version heading.",
       "description_source": "quick-guide"
     },
     {
@@ -1655,7 +1687,7 @@
       "label": "/reflect",
       "path": ".claude/skills/reflect/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Helps you reflect on specific work you have done. Three modes: **conversational** (default) where you pick artifacts and write your reflection in your own words, **deep** (`--deep`) for visualization-backed practice evolution narrative, and **telemetry** (`--telemetry`) for statistical pattern mining across weeks of usage data.\n\nIn conversational mode, you choose a scope (recent plans, recent research, specific artifact by ID, time window, or free-form), I summarize the artifacts, ask one open-ended question, and save your reflection to `_output/reflections/reflection-<id>-<slug>.md`.\n\nIn deep mode, I read telemetry and briefs within a time window, optionally filtered by a scope keyword, and produce an event matrix visualization (Vega-Lite), a transition graph (Graphviz DOT), and a past-tense practice evolution narrative. All output lands in `_output/reflections/` as a markdown report with companion visualization files.\n\nIn telemetry mode, I read `telemetry.jsonl` and run 5 analysis primitives: sequence frequency, duration outliers, revision density, stuck-loop detection, and decision-reversal tracking.\n\n**Examples**:\n> `/reflect`\n> Asks which scope you want (recent plans, recent research, specific ID, time window, or free-form). You pick artifacts, I summarize them, ask what stands out, and write your reflection.\n\n> `/reflect --deep publish`\n> Scopes to \"publish\" topic over the last 30 days. Produces event matrix, transition graph, and practice evolution narrative.\n\n> `/reflect --deep --since 14d`\n> All topics, last 14 days. Produces the full deep reflection with visualizations.\n\n> `/reflect --deep semiotic --since 7d`\n> Scopes to \"semiotic\" topic over the last 7 days.\n\n> `/reflect --telemetry`\n> Reads the last 30 days of telemetry data, runs all 5 analysis primitives, and writes a statistical reflection report.\n\n> `/reflect --telemetry --since 14d`\n> Same as above but scoped to the last 14 days.\n\n> `/reflect --telemetry --skill research`\n> Filters telemetry analysis to only `/research` invocations.\n\n> `/reflect --telemetry --dry-run`\n> Prints the telemetry report to stdout without writing to disk.\n\n**When to use**: You want to step back and look at specific work you have done -- what you decided, what surprised you, what you would do differently. The conversational output is your own words anchored on real artifacts. Use `--deep` when you want a visual timeline and narrative chronicle of practice evolution across a period. Use `--telemetry` when you want statistical pattern mining instead of narrative reflection.\n\n**Next step**: `/research` for a prescriptive take on any pattern surfaced here, `/design` to turn a surfaced pattern into new design intents, or `/plan` to turn it into new work.\n\n**See also**: `/research` -- prescriptive follow-up for any insight that emerges from your reflection.",
+      "description": "**What it does**: Helps you reflect on specific work you have done through two explicit lenses — the **product lens** (what you built: does it do what you intended?) and the **practice lens** (how you worked: what patterns emerge in how you designed and built it?). Three modes: **conversational** (default) where you pick artifacts, choose a lens, and write your reflection in your own words; **deep** (`--deep`) for visualization-backed practice evolution narrative; and **telemetry** (`--telemetry`) for statistical pattern mining across weeks of usage data.\n\nIn conversational mode, you choose a scope (recent plans, recent research, specific artifact by ID, time window, or free-form), I summarize the artifacts, ask which lens you are reflecting through (product, practice, or both), ask the lens-appropriate open-ended question, and save your reflection to `_output/reflections/reflection-<id>-<slug>.md`. The report records which lens was used.\n\nIn deep mode, I read telemetry and briefs within a time window, optionally filtered by a scope keyword, and produce an event matrix visualization (Vega-Lite), a transition graph (Graphviz DOT), and a past-tense practice evolution narrative. This mode is practice-oriented. All output lands in `_output/reflections/` as a markdown report with companion visualization files.\n\nIn telemetry mode, I read `telemetry.jsonl` and run 5 analysis primitives: sequence frequency, duration outliers, revision density, stuck-loop detection, and decision-reversal tracking. This mode is also practice-oriented.\n\n**Examples**:\n> `/reflect`\n> Asks which scope you want (recent plans, recent research, specific ID, time window, or free-form). You pick artifacts, I summarize them, ask whether you are reflecting on the product or your practice, ask the matching question, and write your reflection.\n\n> `/reflect --deep publish`\n> Scopes to \"publish\" topic over the last 30 days. Produces event matrix, transition graph, and practice evolution narrative.\n\n> `/reflect --deep --since 14d`\n> All topics, last 14 days. Produces the full deep reflection with visualizations.\n\n> `/reflect --deep semiotic --since 7d`\n> Scopes to \"semiotic\" topic over the last 7 days.\n\n> `/reflect --telemetry`\n> Reads the last 30 days of telemetry data, runs all 5 analysis primitives, and writes a statistical reflection report.\n\n> `/reflect --telemetry --since 14d`\n> Same as above but scoped to the last 14 days.\n\n> `/reflect --telemetry --skill research`\n> Filters telemetry analysis to only `/research` invocations.\n\n> `/reflect --telemetry --dry-run`\n> Prints the telemetry report to stdout without writing to disk.\n\n**When to use**: You want to step back and look at specific work you have done. Use the **product lens** when you want to examine what you built — a feature, a design decision, a finished spec — and ask whether it does what you intended. Use the **practice lens** (Schön's reflection-on-practice) when you want to examine how you worked — what patterns emerge, where you hesitated, what you would do differently as a practitioner. Use `--deep` when you want a visual timeline and narrative chronicle of practice evolution across a period. Use `--telemetry` when you want statistical pattern mining instead of narrative reflection.\n\n**Next step**: `/research` for a prescriptive take on any pattern surfaced here, `/design` to turn a surfaced pattern into new design intents, or `/plan` to turn it into new work.\n\n**See also**: `/research` -- prescriptive follow-up for any insight that emerges from your reflection.",
       "description_source": "quick-guide"
     },
     {
@@ -1673,7 +1705,7 @@
       "label": "/seja-setup",
       "path": ".claude/skills/seja-setup/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Manages SEJA's state in this project. Single entry point for every harness-lifecycle operation: install, finalise in place, companion workspace, demo bootstrap, and upgrade. On first install it scaffolds `CLAUDE.md` with stack-dependent content, populates `.claude/rules/` with stack-flavored rule files, and fills `product-design/conventions.md` with basic definitions. With no arguments, it inspects the current directory via `detect_setup_state.py` and routes to the correct action.\n\nState detection recognizes four project states: **no-harness** (fresh install target), **fresh-download** (SEJA cloned into project, needs finalisation), **partial-init** (conventions.md exists but design intent absent), and **finalised** (full project, offers upgrade).\n\n**Examples**:\n> `/seja-setup /path/to/my-project`\n> Detects the scenario (greenfield/existing), copies all harness files, populates conventions.md with stack definitions via the Section 1 questionnaire, scaffolds CLAUDE.md and rules, and tells you to run `/design` next.\n\n> `/seja-setup --here`\n> Detects you downloaded SEJA into your project folder; finalises setup in place. Prompts for git-history handling and cleanup of harness-dev artefacts.\n\n> `/seja-setup /path/to/my-project --workspace`\n> Creates a companion workspace directory alongside an existing codebase. The workspace is its own git repo with version-controlled design history.\n\n> `/seja-setup /path/to/taskflow-demo --demo`\n> Sets up the harness with the pre-configured TaskFlow demo project (pre-filled conventions, constitution, conceptual design, and walkthrough).\n\n> `/seja-setup --upgrade`\n> Upgrades harness files in the current project to the latest SemVer tag without touching project-specific files.\n\n> `/seja-setup --upgrade --version v0.2.0`\n> Pins the upgrade to a specific release tag instead of latest.\n\n> `/seja-setup --upgrade --dry-run`\n> Previews what the upgrade would change without applying anything.\n\n> `/seja-setup`\n> No args: inspects cwd, reports the detected state, and routes to install, finalise, upgrade menu, or refuse as appropriate.\n\n**When to use**: Every time you touch SEJA's state in a project -- first install, in-place finalisation, companion-workspace creation, demo bootstrap, or later harness upgrade. After the first iteration, you rarely run `/seja-setup` unless upgrading.\n\nStack-presence modes determine what gets scaffolded: **full-stack** (backend + frontend), **API-only** (`FRONTEND_FRAMEWORK=none`), **frontend-only** (`BACKEND_FRAMEWORK=none`), and **CLI / library** (both `none`). Each mode emits only the appropriate rows in `conventions.md`, sections in `CLAUDE.md`, rule files, and smoke-test infrastructure.\n\n**Next step**: `/design` after a fresh install to define design intent (entities, permissions, metacommunication, personas, standards). If you are new to SEJA, read `general/getting-started.md` first. After `--upgrade`: `/check health` to verify harness integrity, then `/explain spec-drift` to catch changed conventions.\n\n**Merge background**: This skill merges the former `/setup` and `/upgrade` into a unified harness-state command.",
+      "description": "**What it does**: Manages SEJA's state in this project. Single entry point for every harness-lifecycle operation: install, finalise in place, companion workspace, demo bootstrap, and upgrade. On first install it scaffolds `CLAUDE.md` with stack-dependent content, populates `.claude/rules/` with stack-flavored rule files, and fills `product-design/conventions.md` with basic definitions. With no arguments, it inspects the current directory via `detect_setup_state.py` and routes to the correct action.\n\nState detection recognizes four project states: **no-harness** (fresh install target), **fresh-download** (SEJA cloned into project, needs finalisation), **partial-init** (conventions.md exists but design intent absent), and **finalised** (full project, offers upgrade).\n\n**Examples**:\n> `/seja-setup /path/to/my-project`\n> Detects the scenario (greenfield/existing), copies all harness files, populates conventions.md with stack definitions via the Section 1 questionnaire, scaffolds CLAUDE.md and rules, and tells you to run `/design` next.\n\n> `/seja-setup --here`\n> Detects you downloaded SEJA into your project folder; finalises setup in place. Prompts for git-history handling and cleanup of harness-dev artefacts.\n\n> `/seja-setup /path/to/my-project --workspace`\n> Creates a companion workspace directory alongside an existing codebase. The workspace is its own git repo with version-controlled design history.\n\n> `/seja-setup /path/to/taskflow-demo --demo`\n> Sets up the harness with the pre-configured TaskFlow demo project (pre-filled conventions, constitution, conceptual design, and walkthrough).\n\n> `/seja-setup --upgrade`\n> Upgrades harness files in the current project to the latest SemVer tag without touching project-specific files.\n\n> `/seja-setup --upgrade --version v0.2.0`\n> Pins the upgrade to a specific release tag instead of latest.\n\n> `/seja-setup --upgrade --dry-run`\n> Previews what the upgrade would change without applying anything.\n\n> `/seja-setup`\n> No args: inspects cwd, reports the detected state, and routes to install, finalise, upgrade menu, or refuse as appropriate.\n\n**When to use**: Every time you touch SEJA's state in a project -- first install, in-place finalisation, companion-workspace creation, demo bootstrap, or later harness upgrade. After the first iteration, you rarely run `/seja-setup` unless upgrading.\n\nStack-presence modes determine what gets scaffolded: **full-stack** (backend + frontend), **API-only** (`FRONTEND_FRAMEWORK=none`), **frontend-only** (`BACKEND_FRAMEWORK=none`), and **CLI / library** (both `none`). Each mode emits only the appropriate rows in `conventions.md`, sections in `CLAUDE.md`, rule files, and smoke-test infrastructure.\n\n**Next step**: `/design` after a fresh install to define design intent (entities, permissions, metacommunication, personas, standards). If you are new to SEJA, read `general/getting-started.md` first. After `--upgrade`: `/critique health` to verify harness integrity, then `/explain spec-drift` to catch changed conventions.\n\n**Merge background**: This skill merges the former `/setup` and `/upgrade` into a unified harness-state command.",
       "description_source": "quick-guide"
     },
     {
@@ -2645,6 +2677,18 @@
       "label": ""
     },
     {
+      "source": "script:build_telemetry.py",
+      "target": "script:check_telemetry.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:build_telemetry.py",
+      "target": "script:project_config.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
       "source": "script:check_api_auth_decorators.py",
       "target": "script:project_config.py",
       "type": "imports",
@@ -2801,6 +2845,18 @@
       "label": ""
     },
     {
+      "source": "script:conversation_trace.py",
+      "target": "script:check_secrets.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:conversation_trace.py",
+      "target": "script:project_config.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
       "source": "script:count_loc.py",
       "target": "script:project_config.py",
       "type": "imports",
@@ -2809,18 +2865,6 @@
     {
       "source": "script:create_workspace.py",
       "target": "script:upgrade_harness.py",
-      "type": "imports",
-      "label": ""
-    },
-    {
-      "source": "script:epistemic_trace.py",
-      "target": "script:check_secrets.py",
-      "type": "imports",
-      "label": ""
-    },
-    {
-      "source": "script:epistemic_trace.py",
-      "target": "script:project_config.py",
       "type": "imports",
       "label": ""
     },
@@ -2936,6 +2980,12 @@
       "source": "script:load_quickguide.py",
       "target": "ref-general:harness-governance.md",
       "type": "reads",
+      "label": ""
+    },
+    {
+      "source": "script:mark_brief_done.py",
+      "target": "script:project_config.py",
+      "type": "imports",
       "label": ""
     },
     {
@@ -3137,6 +3187,12 @@
       "label": ""
     },
     {
+      "source": "script:update_cross_refs.py",
+      "target": "script:project_config.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
       "source": "script:upgrade_harness.py",
       "target": "script:project_config.py",
       "type": "imports",
@@ -3145,6 +3201,12 @@
     {
       "source": "script:upgrade_harness.py",
       "target": "script:run_migrations.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:verify_commit_scope.py",
+      "target": "script:project_config.py",
       "type": "imports",
       "label": ""
     },
@@ -3246,12 +3308,6 @@
     },
     {
       "source": "skill-internal:plan/standard",
-      "target": "script:check_plan_coverage.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "skill-internal:plan/standard",
       "target": "ref-template:plan-step.md",
       "type": "reads",
       "label": ""
@@ -3333,259 +3389,6 @@
       "target": "script:upgrade_harness.py",
       "type": "invokes",
       "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "rule:harness-structure",
-      "type": "auto-loads",
-      "label": ".claude/**"
-    },
-    {
-      "source": "skill:check",
-      "target": "agent:code-reviewer",
-      "type": "delegates",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "agent:harness-health-evaluator",
-      "type": "delegates",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "agent:migration-validator",
-      "type": "delegates",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "agent:semiotic-inspector",
-      "type": "delegates",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "agent:standards-checker",
-      "type": "delegates",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "agent:test-plan-generator",
-      "type": "delegates",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "agent:test-runner",
-      "type": "delegates",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/a11y.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/api.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/arch.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/compat.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/data.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/db.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/dx.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/i18n.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/micro.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/ops.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/perf.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/resp.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/sec.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/test.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/ux.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives/vis.md",
-      "type": "dynamic-load",
-      "label": "review-perspectives"
-    },
-    {
-      "source": "skill:check",
-      "target": "script:check_docs.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "script:check_git_freshness.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "script:check_spec_conformance.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "script:generate_telemetry_report.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "script:reserve_id.py",
-      "type": "invokes",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:report-conventions.md",
-      "type": "lazy-load",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-log-template.md",
-      "type": "lazy-load",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives-index.md",
-      "type": "lazy-load",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "ref-general:review-perspectives.md",
-      "type": "lazy-load",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "skill:post-skill",
-      "type": "orchestrates",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "skill:pre-skill",
-      "type": "orchestrates",
-      "label": ""
-    },
-    {
-      "source": "skill:check",
-      "target": "skill:communicate",
-      "type": "suggests",
-      "label": "Share the test plan with stakeholders?"
-    },
-    {
-      "source": "skill:check",
-      "target": "skill:onboard",
-      "type": "suggests",
-      "label": "Need to onboard someone to the project?"
-    },
-    {
-      "source": "skill:check",
-      "target": "skill:pending",
-      "type": "suggests",
-      "label": "Check and address outstanding pending actions"
-    },
-    {
-      "source": "skill:check",
-      "target": "skill:plan",
-      "type": "suggests",
-      "label": "Want to plan fixes for the review findings?",
-      "primary": true
-    },
-    {
-      "source": "skill:check",
-      "target": "skill:publish",
-      "type": "suggests",
-      "label": "Preflight passed -- ready to cut a release?"
-    },
-    {
-      "source": "skill:check",
-      "target": "skill:reflect",
-      "type": "suggests",
-      "label": "After quality checks, surface patterns across recent runs"
-    },
-    {
-      "source": "skill:check",
-      "target": "skill:research",
-      "type": "suggests",
-      "label": "Want to discuss usage patterns?"
     },
     {
       "source": "skill:communicate",
@@ -3685,6 +3488,259 @@
       "primary": true
     },
     {
+      "source": "skill:critique",
+      "target": "rule:harness-structure",
+      "type": "auto-loads",
+      "label": ".claude/**"
+    },
+    {
+      "source": "skill:critique",
+      "target": "agent:code-reviewer",
+      "type": "delegates",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "agent:harness-health-evaluator",
+      "type": "delegates",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "agent:migration-validator",
+      "type": "delegates",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "agent:semiotic-inspector",
+      "type": "delegates",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "agent:standards-checker",
+      "type": "delegates",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "agent:test-plan-generator",
+      "type": "delegates",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "agent:test-runner",
+      "type": "delegates",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/a11y.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/api.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/arch.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/compat.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/data.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/db.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/dx.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/i18n.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/micro.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/ops.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/perf.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/resp.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/sec.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/test.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/ux.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives/vis.md",
+      "type": "dynamic-load",
+      "label": "review-perspectives"
+    },
+    {
+      "source": "skill:critique",
+      "target": "script:check_docs.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "script:check_git_freshness.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "script:check_spec_conformance.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "script:generate_telemetry_report.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "script:reserve_id.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:report-conventions.md",
+      "type": "lazy-load",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-log-template.md",
+      "type": "lazy-load",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives-index.md",
+      "type": "lazy-load",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "ref-general:review-perspectives.md",
+      "type": "lazy-load",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "skill:post-skill",
+      "type": "orchestrates",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "skill:pre-skill",
+      "type": "orchestrates",
+      "label": ""
+    },
+    {
+      "source": "skill:critique",
+      "target": "skill:communicate",
+      "type": "suggests",
+      "label": "Share the test plan with stakeholders?"
+    },
+    {
+      "source": "skill:critique",
+      "target": "skill:onboard",
+      "type": "suggests",
+      "label": "Need to onboard someone to the project?"
+    },
+    {
+      "source": "skill:critique",
+      "target": "skill:pending",
+      "type": "suggests",
+      "label": "Check and address outstanding pending actions"
+    },
+    {
+      "source": "skill:critique",
+      "target": "skill:plan",
+      "type": "suggests",
+      "label": "Want to plan fixes for the review findings?",
+      "primary": true
+    },
+    {
+      "source": "skill:critique",
+      "target": "skill:publish",
+      "type": "suggests",
+      "label": "Preflight passed -- ready to cut a release?"
+    },
+    {
+      "source": "skill:critique",
+      "target": "skill:reflect",
+      "type": "suggests",
+      "label": "After quality checks, surface patterns across recent runs"
+    },
+    {
+      "source": "skill:critique",
+      "target": "skill:research",
+      "type": "suggests",
+      "label": "Want to discuss usage patterns?"
+    },
+    {
       "source": "skill:design",
       "target": "rule:harness-structure",
       "type": "auto-loads",
@@ -3771,7 +3827,7 @@
     },
     {
       "source": "skill:document",
-      "target": "skill:check",
+      "target": "skill:critique",
       "type": "suggests",
       "label": "Validate documentation consistency?",
       "primary": true
@@ -3947,7 +4003,7 @@
     },
     {
       "source": "skill:implement",
-      "target": "skill:check",
+      "target": "skill:critique",
       "type": "suggests",
       "label": "All checks run by default unless --skip-checks was used.",
       "primary": true
@@ -4233,7 +4289,7 @@
     },
     {
       "source": "skill:post-skill",
-      "target": "script:check_human_markers_only.py",
+      "target": "script:build_telemetry.py",
       "type": "invokes",
       "label": ""
     },
@@ -4257,6 +4313,12 @@
     },
     {
       "source": "skill:post-skill",
+      "target": "script:mark_brief_done.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:post-skill",
       "target": "script:pending.py",
       "type": "invokes",
       "label": ""
@@ -4264,6 +4326,18 @@
     {
       "source": "skill:post-skill",
       "target": "script:run_preflight_fast.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:post-skill",
+      "target": "script:update_cross_refs.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:post-skill",
+      "target": "script:verify_commit_scope.py",
       "type": "invokes",
       "label": ""
     },
@@ -4299,7 +4373,7 @@
     },
     {
       "source": "skill:pre-skill",
-      "target": "script:epistemic_trace.py",
+      "target": "script:conversation_trace.py",
       "type": "invokes",
       "label": ""
     },
@@ -4347,7 +4421,7 @@
     },
     {
       "source": "skill:publish",
-      "target": "skill:check",
+      "target": "skill:critique",
       "type": "suggests",
       "label": "Verify harness health after publishing",
       "primary": true
@@ -4525,12 +4599,6 @@
     },
     {
       "source": "skill:research",
-      "target": "skill:plan",
-      "type": "orchestrates",
-      "label": ""
-    },
-    {
-      "source": "skill:research",
       "target": "skill:post-skill",
       "type": "orchestrates",
       "label": ""
@@ -4623,7 +4691,7 @@
     },
     {
       "source": "skill:seja-setup",
-      "target": "skill:check",
+      "target": "skill:critique",
       "type": "suggests",
       "label": "Verify harness health after upgrading",
       "primary": true
@@ -4642,10 +4710,10 @@
     }
   ],
   "warnings": [
-    "skill:check references unresolved ref 'project/design-standards.md'",
-    "skill:check references unresolved ref 'project/security-checklists.md'",
-    "skill:check references unresolved ref 'project/standards.md'",
     "skill:communicate references unresolved ref 'project/product-design-as-coded.md'",
+    "skill:critique references unresolved ref 'project/design-standards.md'",
+    "skill:critique references unresolved ref 'project/security-checklists.md'",
+    "skill:critique references unresolved ref 'project/standards.md'",
     "skill:explain references unresolved ref 'project/product-design-as-coded.md'",
     "skill:explain references unresolved ref 'project/product-design-as-intended.md'",
     "skill:implement references unresolved ref 'project/product-design-as-coded.md'",
