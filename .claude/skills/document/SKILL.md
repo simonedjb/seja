@@ -1,7 +1,7 @@
 ---
 name: document
 description: "Generate or update project documentation based on plan Docs: fields, auto-detection, or explicit type selection."
-argument-hint: "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|drr|help-center|changelog>] [--since <ref>] [--full-history]"
+argument-hint: "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|ddr|help-center|changelog|spo>] [--since <ref>] [--full-history] [--harness] [--drift]"
 compatibility: "Designed for Claude Code with the SEJA harness"
 metadata:
   last-updated: 2026-04-01 16:42 UTC
@@ -22,7 +22,9 @@ metadata:
 | `<scope>` | Yes (unless --plan or --auto-detect) | What to document: a file path, module, feature name, or general topic |
 | `--plan <id>` | No | Read Docs: fields from a plan file and generate documentation for each identified need |
 | `--auto-detect` | No | Detect documentation needs from recent git changes using heuristics |
-| `--type <type>` | No | Force a specific documentation type: readme, contextual-help, api-reference, drr, help-center, or changelog |
+| `--type <type>` | No | Force a specific documentation type: readme, contextual-help, api-reference, ddr, help-center, changelog, or spo |
+| `--harness` | No | Used with `--type spo`. Generates SEJA's own product overview from `call-graph.json` instead of the project's `product-overview.yaml`. |
+| `--drift` | No | Used with `--type spo`. In the generated HTML, dims non-`done` cards to show the as-coded vs. as-intended delta. |
 | `--since <ref>` | No | Override auto-detect bounding window. Accepts a date (`2026-04-01`), a git SHA, or `last` (since last `/document` run of any kind). Ignored by non-auto-detect modes |
 | `--full-history` | No | Ignore per-doc-type bounding windows and apply the heuristic over the full recent git history (equivalent to pre-proposal behavior). Use when you want a clean-slate scan |
 
@@ -32,6 +34,7 @@ If there are no arguments, ask the user what they need documented.
 
 ## Mode Detection
 
+- If `--type spo` is present: use the [SPO Workflow](#spo-workflow) below. Skip the Core Workflow entirely.
 - If `--plan` is present: read the plan file, extract all non-N/A Docs: fields, and generate documentation for each identified need.
 - If `--auto-detect` is present: analyze recent git changes and apply the auto-detection heuristic to determine which documentation types are needed.
 - If `--type` is present: generate the specified documentation type for the given scope.
@@ -56,7 +59,7 @@ If there are no arguments, ask the user what they need documented.
 
    Otherwise (default history-aware behavior):
    1. Read `${BRIEFS_INDEX_FILE}` (see project/conventions.md).
-   2. For each doc-type in the auto-detection heuristic table (`api-reference`, `contextual-help`, `readme`, `drr`, `changelog`, `help-center`), scan the index for the most recent DONE row where:
+   2. For each doc-type in the auto-detection heuristic table (`api-reference`, `contextual-help`, `readme`, `ddr`, `changelog`, `help-center`), scan the index for the most recent DONE row where:
       - `Skill` is `document`, AND
       - `Generated` column contains that doc-type (comma-separated match)
    3. If a matching row is found and has a non-empty `Head SHA`:
@@ -109,6 +112,32 @@ If there are no arguments, ask the user what they need documented.
 
 ---
 
+## SPO Workflow
+
+This section is used when `--type spo` is present. Skip the Core Workflow entirely.
+
+1. Run `/pre-skill "document" --type spo` to add general instructions to the context window.
+
+2. **Determine mode**:
+   - If `--harness` is present: run `python .claude/skills/scripts/priv/generate_spo.py --harness`. Output path: `_output/docs/harness-spo.html`.
+   - Otherwise (project mode): check that `product-overview.yaml` exists (resolved via `${SPO_DATA_FILE}` from `conventions.md`; default `product-overview.yaml`). If absent, tell the designer: "No `product-overview.yaml` found. Run `/design` first to seed the initial SPO skeleton, or create the file from `.claude/references/template/product-overview.yaml`."
+   - If `--drift` is also present: pass `--drift` to the script. The generated HTML dims non-`done` cards and shows a per-layer "N done / M total" badge.
+   - If `--output <path>` is present: pass `--output <path>` to the script.
+
+3. **Run the generator**: `python .claude/skills/scripts/priv/generate_spo.py [--harness] [--drift] [--output <path>]`
+
+   The generated HTML supports the optional `product-overview.yaml` fields: `meta.facets` (extra filter axes such as subsystem/channels), `meta.tracker_type: seja` (renders each card's `req_ids`/`decision_ids`/`journey_ids` as traceability chips), bilingual labels via `meta.languages` (in-page language toggle), card `source_ref` deep-links back to design sources, and a computed analyses panel (press **A** in the page) covering gaps/orphans/hubs/chains/quality-coverage/cross-version risk. See `.claude/references/template/product-overview.yaml` and the SPO how-to for the schema.
+
+4. **Validate output**: confirm the HTML file was written. If the script exits non-zero, surface the error to the designer.
+
+5. **Report**: display the output file path and a one-line summary (number of layers, cards, personas in the generated diagram).
+
+6. **Record document run metadata** — same as step 2b in the Core Workflow. Run `git rev-parse HEAD` (abbreviated to 10 chars), then edit the current STARTED entry in `${BRIEFS_FILE}` to append ` | SHA | <head-sha> | GENERATED | spo`.
+
+7. Run `/post-skill` to log the brief, commit, and suggest next steps.
+
+---
+
 ## Auto-Detection Heuristic
 
 | Change pattern | Suggested doc type |
@@ -116,7 +145,7 @@ If there are no arguments, ask the user what they need documented.
 | API endpoint files (routes, controllers, schemas) changed | api-reference |
 | New UI screen/component added | contextual-help |
 | README-referenced features changed | readme |
-| Architectural decisions made (plan review log has trade-offs) | drr |
+| Architectural decisions made (plan review log has trade-offs) | ddr |
 | New user-facing features (FEATURE prefix) | changelog + help-center |
 | Module files added/removed | module README (convention from standards) |
 

@@ -72,7 +72,7 @@ If a migration makes a change you want to inspect, the upgrade report written to
 
 `/seja-setup --upgrade` (pull harness file updates) -> `/critique health` (verify harness integrity) -> review the CHANGELOG and resolve any conflicts.
 
-> **Tip:** Run `/explain spec-drift` afterward if you suspect design specs have diverged during the time between upgrades.
+> **Tip:** Run `/explain drift` afterward if you suspect design specs have diverged during the time between upgrades.
 
 ## What to read next
 

@@ -17,7 +17,7 @@ designer_description: "When you run /onboard for a level-2 expert -- a senior wh
 ### Support Structure
 
 - **Architecture sponsor**: pair with a tech lead or L3 on system-wide design decisions and rationale.
-- **Decision history + stakeholders**: DRRs, plan history (`${PLANS_DIR}/INDEX.md`), historical briefs (use `/explain behavior-evolution`); 1:1s with PM, design lead, other tech leads within first two weeks.
+- **Decision history + stakeholders**: DDRs, plan history (`${PLANS_DIR}/INDEX.md`), historical briefs (use `/explain behavior-evolution`); 1:1s with PM, design lead, other tech leads within first two weeks.
 
 ### Learning Path
 

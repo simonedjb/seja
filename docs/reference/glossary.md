@@ -18,7 +18,7 @@ Canonical reference for SEJA terminology. This is a lookup, not a tutorial: scan
 ## Markers
 
 - **CHANGELOG_APPEND** -- Append-only marker type used to add entries to a CHANGELOG section of a Human (markers) file via `apply_marker.py`.
-- **D-NNN** -- DRR-shaped Decision entry ID (Context / Decision / Consequences) living in `project/product-design-as-intended.md § Decisions`, orthogonal to the REQ namespace.
+- **D-NNN** -- DDR-shaped Decision entry ID (Context / Decision / Consequences) living in `project/product-design-as-intended.md § Decisions`, orthogonal to the REQ namespace.
 - **ESTABLISHED** -- Inline HTML comment stamp recording that a human has promoted an implemented item to established status, carrying plan ID, date, and optional version.
 - **PUBLISH pending entry** -- Pending-ledger entry subtype filed by `cut_tag.py` at tag-cut to track outstanding publish-to-public work; surfaced by the pre-skill hook and escalated after 3 days overdue. See `docs/reference/release-process.md § Drift prevention`.
 - **REQ-TYPE-NNN** -- Stable machine-parseable requirement ID (ENT, PERM, VAL, UX, MC, JM, I18N, DELTA) placed as an HTML comment before the heading, row, or bullet that defines the requirement. See `docs/concepts.md § REQ-TYPE-NNN`.
@@ -69,7 +69,7 @@ Canonical reference for SEJA terminology. This is a lookup, not a tutorial: scan
 - **post-skill pipeline** -- Lifecycle hook run after every skill for briefs update, QA logging, as-coded updates, marker proposals, and git commit.
 - **pre-skill pipeline** -- Eight-stage pipeline run before every skill: help, brief-log, orphan-check, budget-eval, compaction-check, pending-check, ref-load, constitution.
 - **product-design-as-coded** -- Unified implementation-state file (`project/product-design-as-coded.md`) auto-maintained by the agent, with three H2 sections: Conceptual Design, Metacommunication, Journey Maps.
-- **product-design-as-intended** -- Unified working-intent file (`project/product-design-as-intended.md`) holding design intent, DRR-shaped Decisions, and CHANGELOG, classified Human (markers).
+- **product-design-as-intended** -- Unified working-intent file (`project/product-design-as-intended.md`) holding design intent, DDR-shaped Decisions, and CHANGELOG, classified Human (markers).
 - **rule** -- Path-scoped guidance file under `.claude/rules/` auto-loaded when Claude edits files matching the rule's scope.
 - **script** -- Helper script under `.claude/skills/scripts/` performing validation, index generation, conversion, or orchestration tasks.
 - **section boundary** -- Enforcement rule preventing agents from writing outside designated H2 sections of a multi-section file, validated by `check_section_boundary_writes.py`.

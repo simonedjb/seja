@@ -100,11 +100,11 @@ flowchart TD
 - `/implement` -> `/document`: Runs automatically via post-skill step 2b for FEATURE/REDESIGN plans and plans with non-N/A Docs: fields; edge stays informational for `--skip-docs` and standalone `/document` modes
 - `/implement` -> `/pending`: Review pending actions created by this implementation
 - `/implement` -> `/reflect`: Surface patterns across recent skill runs (non-prescriptive)
-- `/explain spec-drift` -> `/plan`: Specs analyzed -- ready to plan next steps
-- `/explain spec-drift` -> `/design`: Drift indicates intent has evolved -- update the project design
-- `/explain spec-drift --promote` -> `/explain spec-drift --promote --apply-markers plan-<id>`: Decision proposal drafted -- after you apply the prose, flip the STATUS markers
-- `/explain spec-drift` -> `/pending`: Address pending actions surfaced by the drift check
-- `/pending` -> `/explain spec-drift --promote`: Next logical step after addressing pending curation items (generates a Decision proposal for promotion candidates)
+- `/explain drift` -> `/plan`: Specs analyzed -- ready to plan next steps
+- `/explain drift` -> `/design`: Drift indicates intent has evolved -- update the project design
+- `/explain drift --promote` -> `/explain drift --promote --apply-markers plan-<id>`: Decision proposal drafted -- after you apply the prose, flip the STATUS markers
+- `/explain drift` -> `/pending`: Address pending actions surfaced by the drift check
+- `/pending` -> `/explain drift --promote`: Next logical step after addressing pending curation items (generates a Decision proposal for promotion candidates)
 - `/pending` -> `/implement`: Next logical step after reviewing pending review items
 - `/research` -> `/design`: Recommendations indicate the design intent should change -- update the project design before planning implementation
 - `/research --inventory` -> `/explain`: Want a deeper explanation of any of these
@@ -125,7 +125,7 @@ flowchart TD
 - `/critique test-plan` -> `/communicate`: Share the test plan with stakeholders
 - `/critique preflight` -> `/onboard`: Need to onboard someone to the project
 - `/seja-setup --upgrade` -> `/critique health`: Verify framework health after upgrading
-- `/seja-setup --upgrade` -> `/explain spec-drift`: Re-run spec drift after framework upgrade to catch changed conventions
+- `/seja-setup --upgrade` -> `/explain drift`: Re-run spec drift after framework upgrade to catch changed conventions
 - `/document` -> `/critique docs`: Validate documentation consistency
 - `/communicate` -> `/onboard`: Need to onboard someone to the project
 - `/onboard` -> `/communicate`: Want to generate stakeholder material as well

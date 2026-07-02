@@ -1,4 +1,4 @@
-"""Tests for the /explain spec-drift --promote Phase 3a/3b workflow.
+"""Tests for the /explain drift --promote Phase 3a/3b workflow.
 
 The workflow itself is defined in .claude/skills/explain/SKILL.md (Step C) and
 is executed by an agent orchestrating apply_marker.py + pending.py. These tests
@@ -243,7 +243,7 @@ def phase3a_generate_proposal(
         "",
         "Review, edit to your voice, copy accepted entries into "
         "`_references/project/product-design-as-intended.md § Decisions`, then run "
-        f"`/explain spec-drift --promote --apply-markers {plan_id}`.",
+        f"`/explain drift --promote --apply-markers {plan_id}`.",
         "",
     ]
     for d in decisions:
@@ -312,7 +312,7 @@ def phase3a_add_pending_actions(
         "--description",
         f"Copy draft Decision entries from {proposal_path.name} into "
         "product-design-as-intended.md § Decisions, then run "
-        f"/explain spec-drift --promote --apply-markers {plan_id} to flip "
+        f"/explain drift --promote --apply-markers {plan_id} to flip "
         "STATUS markers (Phase 3b)",
     )
     assert result.returncode == 0, result.stderr

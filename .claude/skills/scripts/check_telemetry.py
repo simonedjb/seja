@@ -97,6 +97,8 @@ ALL_FIELDS = REQUIRED_FIELDS | {
     "advisory_decisions",
     "research_decisions",
     "tokens_used",
+    "approx_token_count",
+    "session_id",
 }
 
 
@@ -230,6 +232,21 @@ def validate_record(record: dict) -> list[str]:
                 )
             elif val < 0:
                 errors.append(f"'tokens_used' must be >= 0, got {val}")
+
+    if "approx_token_count" in record:
+        val = record["approx_token_count"]
+        if val is not None:
+            if not isinstance(val, int) or isinstance(val, bool):
+                errors.append(
+                    f"'approx_token_count' must be int or null, got {type(val).__name__}"
+                )
+            elif val < 0:
+                errors.append(f"'approx_token_count' must be >= 0, got {val}")
+
+    if "session_id" in record:
+        err = _check_string_or_null(record, "session_id")
+        if err:
+            errors.append(err)
 
     if "qa_type" in record:
         val = record["qa_type"]

@@ -86,7 +86,7 @@ Compact command sequences for common planning scenarios. Each links back to the 
 
 `/research --deep` (use the council format to get multi-perspective design feedback) -> `/plan --roadmap` (translate the agreed direction into a prioritized roadmap).
 
-> **Tip:** Combine with `/explain spec-drift` first if design specs may be out of sync.
+> **Tip:** Combine with `/explain drift` first if design specs may be out of sync.
 
 ### Figma Make to production code
 

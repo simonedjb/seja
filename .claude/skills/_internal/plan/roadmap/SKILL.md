@@ -63,7 +63,7 @@ Steps 1-11 below. Common-step reuse: step 1 = C1; step 8 = C2+C3 with `--type ro
    - `<!-- STATUS: established | plan-NNNNNN | YYYY-MM-DD -->` (promoted)
    - `<!-- STATUS: IMPLEMENTED | plan-NNNNNN | YYYY-MM-DD -->` (legacy uppercase; see `general/shared-definitions.md` § STATUS state machine)
 
-   Filter scopes input to open items only; classification and downstream behavior (step 3 Delta, step 4 Technical/Design, step 5 Waves) are unchanged. Disjoint from `/explain spec-drift --promote` Phase 3a.
+   Filter scopes input to open items only; classification and downstream behavior (step 3 Delta, step 4 Technical/Design, step 5 Waves) are unchanged. Disjoint from `/explain drift --promote` Phase 3a.
 
    If no REQ markers, skip this step; step 3 reads the full prose. `--only-unimplemented` is a no-op in that branch.
 
@@ -121,7 +121,9 @@ Steps 1-11 below. Common-step reuse: step 1 = C1; step 8 = C2+C3 with `--type ro
    **Conditional plan generation** based on choice:
    - **Technical**: invoke the standard workflow inline (read `.claude/skills/_internal/plan/standard/SKILL.md` via the Read tool per work item; execute steps 1-6 inline; skip steps 7 and 8 per the clarification below) with item description.
    - **Design**: invoke the standard workflow inline (read `.claude/skills/_internal/plan/standard/SKILL.md` via the Read tool per work item; execute steps 1-6 inline; skip steps 7 and 8 per the clarification below) with `--framing metacomm` and item description phrased as I/you (e.g., "When you open the home page, I want you to see...").
-   - After each plan is generated, update the roadmap file's Plan column from `plan-TBD` to the actual ID.
+   - After each plan is generated, run:
+     `python .claude/skills/scripts/update_roadmap_plan_id.py --roadmap-file <roadmap-file-path> --work-item-id <work-item-slug> --plan-id <plan-id>`
+     where `<roadmap-file-path>` is the path from step 8, `<work-item-slug>` is the current work item's ID column value, and `<plan-id>` is the ID output by standard step 6. Non-zero exit → warn but do not block: "Warning: could not update roadmap Plan column for `<slug>`: `<reason>`".
    - If "Don't create plans now", skip generation.
    - **Inline-invocation clarification**: when invoking the standard workflow inline for a work item, skip that workflow's step 7 (AskUserQuestion next-step prompt) and step 8 (per-plan /post-skill). Per C6, the roadmap's finalization step owns the commit decision for the whole run; per-plan finalization would produce N prompts and N commits, defeating the unified-artifact contract.
 

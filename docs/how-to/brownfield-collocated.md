@@ -6,7 +6,7 @@ last-reviewed: 2026-05-05
 
 # Brownfield collocated how-to
 
-This how-to is for you when you are a solo designer or a team with an existing codebase and you want to introduce SEJA into it without a separate workspace -- the harness files will live inside the same repository as your source code. By the end of it you will have a seeded codebase, an explained snapshot of what the system currently does, a design spec set that captures both as-coded reality and intended target, a first planned improvement, and a clean spec-drift promote cycle that flips a verified item from `proposed` to `implemented`. It takes about 45 minutes.
+This how-to is for you when you are a solo designer or a team with an existing codebase and you want to introduce SEJA into it without a separate workspace -- the harness files will live inside the same repository as your source code. By the end of it you will have a seeded codebase, an explained snapshot of what the system currently does, a design spec set that captures both as-coded reality and intended target, a first planned improvement, and a clean drift promote cycle that flips a verified item from `proposed` to `implemented`. It takes about 45 minutes.
 
 ## Before you start
 
@@ -50,15 +50,15 @@ Run `/plan <description>` targeting the highest-priority gap between what the as
 
 **Harness:** `/plan` drafts the plan file into `_output/plans/`, optionally spawns the `plan-reviewer` subagent, and records the specific `product-design-as-intended.md` lines the plan intends to address. See [harness-reference.md#plan](../reference/harness-reference.md#plan).
 
-## Step 5: Implement, then draft Decision entries with `/explain spec-drift --promote`
+## Step 5: Implement, then draft Decision entries with `/explain drift --promote`
 
-Run `/implement <plan-id>` and let the generator-critic loop land the changes. Then verify in the running codebase that the implemented behavior matches what `project/product-design-as-intended.md` describes. When you are satisfied, run `/explain spec-drift --promote`.
+Run `/implement <plan-id>` and let the generator-critic loop land the changes. Then verify in the running codebase that the implemented behavior matches what `project/product-design-as-intended.md` describes. When you are satisfied, run `/explain drift --promote`.
 
 **Harness:** The proposal pass drafts `D-NNN` Decision entries against `project/product-design-as-intended.md` and writes them to `_output/explained-<id>/`. No markers are flipped yet -- the proposal pass is a draft-only operation so that you can review the rationale text before it becomes part of the spec. See [harness-reference.md#explain-spec-drift](../reference/harness-reference.md#explain-spec-drift).
 
-## Step 6: Apply markers with `/explain spec-drift --apply-markers`
+## Step 6: Apply markers with `/explain drift --apply-markers`
 
-Review the draft Decision entries in `_output/explained-<id>/`. If you accept them, run `/explain spec-drift --apply-markers plan-<id>` to flip the marker.
+Review the draft Decision entries in `_output/explained-<id>/`. If you accept them, run `/explain drift --apply-markers plan-<id>` to flip the marker.
 
 **Harness:** The marker pass invokes `apply_marker.py` to flip `STATUS: proposed` -> `STATUS: implemented` at the line level inside `project/product-design-as-intended.md`. The as-intended file is enforced by `check_human_markers_only.py` -- only marker lines may change in this operation, so prose edits and marker flips stay separated into two distinct audit events. See [harness-reference.md#apply-marker](../reference/harness-reference.md#apply-marker) and [harness-reference.md#check-human-markers-only](../reference/harness-reference.md#check-human-markers-only).
 

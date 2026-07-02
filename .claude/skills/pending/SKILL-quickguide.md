@@ -6,10 +6,10 @@ Twelve action types the harness can file:
 |------|----------|--------------------|
 | `mark-implemented` | post-skill | Flip STATUS markers via `/pending` dispatch |
 | `test-implementation` | post-skill | Run the plan's test plan manually |
-| `verify-as-coded` | post-skill | Run `/explain spec-drift` to confirm |
+| `verify-as-coded` | post-skill | Run `/explain drift` to confirm |
 | `update-documentation` | post-skill / `--skip-docs` | Run `/document --plan <source>` |
-| `apply-promote-markers` | `/explain spec-drift --promote` | Write Decision entries, then `--apply-markers` |
-| `spec-drift-check` | periodic trigger | Run `/explain spec-drift` |
+| `apply-promote-markers` | `/explain drift --promote` | Write Decision entries, then `--apply-markers` |
+| `spec-drift-check` | periodic trigger | Run `/explain drift` |
 | `periodic-curation` | periodic trigger | Review and triage the ledger |
 | `incorporate-research-markers` | post-skill | Flip INCORPORATED markers in UX research |
 | `implement` | post-skill (after `/plan`) | Run `/implement <plan-id>` |
@@ -40,4 +40,4 @@ Twelve action types the harness can file:
 
 **Related**: `/critique health` Check 9 reports the pending-ledger count (diagnostic only). Any mutation (address/add/done/snooze/dismiss) still flows through `/pending`. The two skills are intentionally separate -- see advisory-000442.
 
-**Next step**: `/explain spec-drift --promote` after addressing periodic curation items (generates a Decision proposal for promotion candidates), or `/implement` once you have reviewed the outstanding review items.
+**Next step**: `/explain drift --promote` after addressing periodic curation items (generates a Decision proposal for promotion candidates), or `/implement` once you have reviewed the outstanding review items.

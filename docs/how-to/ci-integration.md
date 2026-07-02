@@ -122,7 +122,7 @@ The following skills cannot run in headless CI mode because they require user de
 | `/plan` | Review and approval step |
 | `/implement` | May pause for guidance on failures |
 | `/help --browse` | Interactive menu selection |
-| `/explain spec-drift` | Spec analysis may require user decisions |
+| `/explain drift` | Spec analysis may require user decisions |
 | `/plan --roadmap` | Item review and approval |
 
 Use these skills in local development sessions, not in CI.

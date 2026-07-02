@@ -129,7 +129,7 @@ metadata:
    | `template/security-checklists.md` | `project/security-checklists.md` | -- |
    | `template/ux-research-results.md` | `project/ux-research-results.md` | `Human (markers)`. Pre-populate personas/user community from Q2.10 if provided. Agents write `INCORPORATED` + CHANGELOG appends via `apply_marker.py`. |
    | `template/agent/{constraints,entities,permissions,spec-checks}.yaml` | `project/agent/*` | Agent YAML specs. |
-   | `template/docs/*.md` | `project/docs/*.md` | Per Section 5 answer: "defaults" -> 3 recommended (readme, contextual-help, drr); "skip" -> none; else selected subset. |
+   | `template/docs/*.md` | `project/docs/*.md` | Per Section 5 answer: "defaults" -> 3 recommended (readme, contextual-help, ddr); "skip" -> none; else selected subset. |
    | `template/settings.json` | `.claude/settings.json` | Substitute actual paths. |
 
    > **Registry note:** For each row in the As-Intended / As-Coded Registry (see conventions.md), ensure the as-intended template is copied during project setup; as-coded templates are copied for brownfield projects per the branch above. When new rows are added in future harness versions, add their template copies here.
@@ -177,7 +177,7 @@ metadata:
     |---|---|---|
     | `project/conventions.md` | Directory paths, variable definitions | Stack choices (T2) |
     | `project/constitution.md` | Immutable principles, security invariants | Immutable principles (T2) |
-    | `project/product-design-as-intended.md` | Unified working intent (§1-§17), `## Decisions` (DRR shape), CHANGELOG. `Human (markers)`. | Q2.3 (entities), Q2.6 (permissions), Final Step metacomm -> §15 |
+    | `project/product-design-as-intended.md` | Unified working intent (§1-§17), `## Decisions` (DDR shape), CHANGELOG. `Human (markers)`. | Q2.3 (entities), Q2.6 (permissions), Final Step metacomm -> §15 |
     | `project/ux-research-results.md` | Personas, problem scenarios, cross-ref map, processing status, JM-E-NNN journeys, CHANGELOG. `Human (markers)`. | Q2.1, Q2.10 |
     | `project/standards.md` | Backend, Frontend, Testing, i18n sections | Backend/Frontend/Testing/i18n patterns (T3) |
     | `project/design-standards.md` | UX patterns + Graphic/visual design | UX patterns (T1), Visual design (T1) |

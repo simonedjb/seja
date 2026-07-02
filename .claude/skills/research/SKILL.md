@@ -16,7 +16,7 @@ metadata:
     - general/shared-definitions.md
     - general/report-conventions.md
     - general/review-perspectives.md
-    - template/docs/drr.md
+    - template/docs/ddr.md
 ---
 
 > Overview: see [./SKILL-quickguide.md](./SKILL-quickguide.md)
@@ -114,7 +114,7 @@ Output folder: `${RESEARCH_DIR}` (see project/conventions.md). Filename pattern:
 
    **When to skip**: purely informational research, `--inventory` queries, or how-to questions with no design choice.
 
-   **Proposal shape** (DRR-shaped; see `template/docs/drr.md` for the full DRR template):
+   **Proposal shape** (DDR-shaped; see `template/docs/ddr.md` for the full DDR template):
 
    ```
    ### D-NEXT: <title>

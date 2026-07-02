@@ -16,6 +16,30 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   preserved as-is; do not alter them.
 -->
 
+### Added
+
+- **SPO generator extensions** (`generate_spo.py`): generic cross-cutting **facets** (`meta.facets` declares filter axes over any card field, e.g. subsystem/channels; chips derived automatically and combined with persona/quality filters by intersection); **SEJA-ID traceability** (`meta.tracker_type: seja` renders each card's `req_ids`/`decision_ids`/`journey_ids` as chips); **bilingual labels** (any label may be a `{locale: string}` map; `meta.languages` adds an in-page language toggle); **deep-links** (card `source_ref` renders a ↗ link back to the design source, resolved relative to repo root); and a **computed analyses panel** (press **A**) covering coverage gaps, orphan nodes, hub connectivity, longest value chains, unaddressed quality criteria, and cross-version dependency risk. Template, TaskFlow demo, `/document --type spo` workflow note, and the SPO how-to updated to document the new fields. Backward compatible: existing `product-overview.yaml` files render unchanged.
+
+## [0.7.0] -- 2026-07-02 19:40 UTC
+
+### Breaking changes
+
+- **`/document --type drr` renamed to `/document --type ddr`**: DDR (Design Decision Record) replaces DRR (Design Rationale Record). Update saved prompts or CI steps that pass `--type drr`.
+
+### Added
+
+- **Structured Product Overview (SPO) generator** (`generate_spo.py`): new script that reads `product-overview.yaml` and writes `_output/docs/spo.html` — a fully self-contained interactive value-chain diagram with 5 configurable layers (goals → tasks → features → services → data). Features: SVG bezier arrows (enables = orange, depends = purple), persona filter, quality-criteria panel, roadmap column view (V1/V2/V3), compact/full toggle, gap-detection badges (⚠ for cards with no lower-layer enabler), drift overlay (`--drift` dims non-`done` cards to show as-intended vs. as-coded delta), and `--harness` mode that derives the SEJA harness overview from `call-graph.json` instead of project YAML. Invoked via `/document --type spo`. Script count: 51 → 52.
+- **`product-overview.yaml` template**: new companion file to `product-design-as-intended.md` capturing the SPO data model (configurable layers, personas, quality criteria, card graph with `enables`/`depends` edges, lifecycle `status` field). Populated incrementally by `/design` (skeleton), `/plan` (feature cards), `/implement` (status flips), and `/research` (quality criteria). Includes a fully populated TaskFlow demo in `template/demo/product-overview.yaml`.
+- **`/document --type spo`** wired into the document skill: new SPO Workflow section in `SKILL.md`, `--type spo`, `--harness`, and `--drift` flags added to the argument table and quickguide.
+- **QC code pills in card detail view** (SPO): quality-criteria IDs appear as small rounded pills in the card footer row (detail view only; hidden in compact mode). Pill shows ID; full label on hover.
+- **Public docs: SPO how-to guide** (`seja-public/docs/how-to/structured-product-overview.md`): explains layers, `product-overview.yaml`, card lifecycle, when to regenerate, and `--drift` overlay.
+
+### Changed
+
+- **DDR (Design Decision Record) replaces DRR (Design Rationale Record)** across the harness (47 files, template rename `docs/drr.md` → `docs/ddr.md`, directory convention `docs/drr/` → `docs/ddr/`, skills-manifest enum). Naming rationale: "Decision" is the noun that names what the record contains; "Rationale" was an attribute of one section. DDR scope unchanged — covers product, architecture, UX, and any other design discipline. Adds optional `links:` frontmatter field (`supersedes` / `related` / `implements`) for semantic cross-references between DDRs.
+- **SPO card selection**: clicking a card highlights only its direct vertical chain (upward via `enables` edges, downward via reverse `enables`). Lateral `depends` edges no longer extend the connected set into unrelated branches. Unconnected arrows recede to a background SVG layer (gray, behind card tiles). Clicking a dimmed card selects it directly without first clearing the selection. Clicking blank space resets.
+- **`harness-structure.md`**: template count updated (49 → 51); `generate_spo.py` documented alongside `generate_call_graph.py`.
+
 ## [0.6.0] -- 2026-06-29 20:35 UTC
 
 ### Breaking changes

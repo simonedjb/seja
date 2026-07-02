@@ -12,7 +12,7 @@ tier: Essential
 - [P0] Is there CI/CD running tests, linting, and type-checking on every commit?
 - [P0] Can a developer go from clone to passing tests in under 5 minutes with a single command, and does the pipeline fail fast with actionable errors?
 - [P0] Does the internal developer platform provide self-service environment provisioning, secrets, and deployment -- no tickets for routine work?
-- [P0] Are inline comments, API docs, and DRRs up to date and co-located with the code they describe?
+- [P0] Are inline comments, API docs, and DDRs up to date and co-located with the code they describe?
 - [P0] Will a new contributor understand this without tribal knowledge?
 - [P0] Could a developer exhaust docs, examples, and error messages without finding a path to their task? (Ia — "I give up." — developer abandons goal out of knowledge, patience, or time)
 - [P0] Could a developer believe their operation succeeded when it didn't — silent failures, swallowed errors, ignored parameters? (Ib — "Looks fine to me." — silent misconfiguration or partial write)

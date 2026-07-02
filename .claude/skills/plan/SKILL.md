@@ -109,7 +109,7 @@ See [Metacomm framing -- additional context](#metacomm-framing--additional-conte
    - **Summary**: <one-sentence summary of the metacommunication message this plan implements>
    - **Source**: agent (metacomm)
    ```
-   Consumed by `/explain spec-drift` or `/post-skill` to keep `project/product-design-as-intended.md` in sync.
+   Consumed by `/explain drift` or `/post-skill` to keep `project/product-design-as-intended.md` in sync.
 
 ## Dispatch
 

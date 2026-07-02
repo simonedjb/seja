@@ -6,7 +6,7 @@ last-reviewed: 2026-05-05
 
 # Brownfield workspace how-to
 
-This how-to is for you when you are a growing team or an enterprise introducing SEJA alongside an existing codebase, and you want the harness files, the design decisions, and the audit trail to live in a workspace repository that never writes into the codebase. By the end of it you will have an independent workspace repo pointing at the existing codebase, a design spec set that reads both the as-coded reality and the intended target state, a clean spec-drift promote cycle, and a documented upgrade path for when the foundational framework changes. It takes about 50 minutes.
+This how-to is for you when you are a growing team or an enterprise introducing SEJA alongside an existing codebase, and you want the harness files, the design decisions, and the audit trail to live in a workspace repository that never writes into the codebase. By the end of it you will have an independent workspace repo pointing at the existing codebase, a design spec set that reads both the as-coded reality and the intended target state, a clean drift promote cycle, and a documented upgrade path for when the foundational framework changes. It takes about 50 minutes.
 
 ## Before you start
 
@@ -41,15 +41,15 @@ Run `/plan <description>` from the workspace targeting a specific gap between as
 
 **Harness:** `/plan` drafts the plan file into the workspace's `_output/plans/` directory and optionally spawns the `plan-reviewer` subagent. All codebase references inside the plan resolve via the absolute `CODEBASE_DIR`. See [harness-reference.md#plan](../reference/harness-reference.md#plan).
 
-## Step 5: Implement, then draft Decision entries with `/explain spec-drift --promote`
+## Step 5: Implement, then draft Decision entries with `/explain drift --promote`
 
-Launch the agent from the workspace with the codebase attached via `claude --add-dir <codebase-path>`, then run `/implement <plan-id>`. Verify the implemented behavior in the running codebase. When satisfied, run `/explain spec-drift --promote`.
+Launch the agent from the workspace with the codebase attached via `claude --add-dir <codebase-path>`, then run `/implement <plan-id>`. Verify the implemented behavior in the running codebase. When satisfied, run `/explain drift --promote`.
 
 **Harness:** The proposal pass drafts `D-NNN` Decision entries against `project/product-design-as-intended.md` and writes them to the workspace's `_output/explained-<id>/` directory. No markers are flipped yet; the Decision text is a draft for review. Source-code writes from `/implement` land in the attached codebase, while design-reconciliation writes land in the workspace, preserving the separation between the two repositories. See [harness-reference.md#explain-spec-drift](../reference/harness-reference.md#explain-spec-drift).
 
-## Step 6: Apply markers with `/explain spec-drift --apply-markers`
+## Step 6: Apply markers with `/explain drift --apply-markers`
 
-Review the draft Decision entries in the workspace. If you accept them, run `/explain spec-drift --apply-markers plan-<id>`.
+Review the draft Decision entries in the workspace. If you accept them, run `/explain drift --apply-markers plan-<id>`.
 
 **Harness:** The marker pass invokes `apply_marker.py` to flip `STATUS: proposed` -> `STATUS: implemented` at the line level inside the workspace copy of `project/product-design-as-intended.md`. `check_human_markers_only.py` enforces that only marker lines change in this operation, so the Decision prose and the marker flip remain two distinct audit events inside the workspace git history. See [harness-reference.md#apply-marker](../reference/harness-reference.md#apply-marker) and [harness-reference.md#check-human-markers-only](../reference/harness-reference.md#check-human-markers-only).
 

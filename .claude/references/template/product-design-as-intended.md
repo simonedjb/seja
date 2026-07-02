@@ -2,7 +2,7 @@
 
 <!-- maintained-by: human (designer); Human (markers) classification since SEJA 2.8.3 -->
 
-> **How to use this template:** Copy this file to `project/product-design-as-intended.md`. This unified file records working design intent (§0-§17), validated decisions with preserved rationale (`## Decisions` in DRR shape), and a chronological changelog of marker flips and decision additions (`## CHANGELOG`). Replaces the two separate design-intent-to-be.md and design-intent-established.md files that existed prior to SEJA 2.8.3. See the harness CHANGELOG for the migration rationale (source: advisory-000264 Phase 2 D / plan-000268).
+> **How to use this template:** Copy this file to `project/product-design-as-intended.md`. This unified file records working design intent (§0-§17), validated decisions with preserved rationale (`## Decisions` in DDR shape), and a chronological changelog of marker flips and decision additions (`## CHANGELOG`). Replaces the two separate design-intent-to-be.md and design-intent-established.md files that existed prior to SEJA 2.8.3. See the harness CHANGELOG for the migration rationale (source: advisory-000264 Phase 2 D / plan-000268).
 >
 > **Classification**: `Human (markers)` -- prose (intent, entity hierarchies, permission models, metacomm intentions, journey maps, decision rationales) is human-authored only. Agents may write `STATUS` markers on §1-§17 sections, §15 JM-TB-NNN journey entries, and `### D-NNN:` Decision entries via `apply_marker.py` after AskUserQuestion confirmation. Agents may also append lines to the `## CHANGELOG` section. Prose writes to `project/product-design-as-intended.md` are rejected by `check_human_markers_only.py` during post-skill step 6c.
 >
@@ -12,7 +12,7 @@
 >
 > **Append-only sections**: `## Decisions` and `## CHANGELOG` are enforced append-only by `check_changelog_append_only.py` (post-skill step 6c). The `## Decisions` section uses the prose-only rule: marker lines matching `ALLOWED_MARKERS` are filtered out before the prefix-preserving check, so apply_marker.py may insert STATUS markers above existing `### D-NNN:` headings without triggering a middle-insertion violation. The `## CHANGELOG` section uses the strict rule: historical lines never change.
 >
-> **Promotion workflow**: items with `STATUS: implemented` are candidates for promotion to `STATUS: established` via `/explain spec-drift --promote`. The workflow splits into Phase 3a (agent writes a prose proposal report to `_output/promote-proposals/`) and Phase 3b (`/explain spec-drift --promote --apply-markers plan-NNNNNN` runs per-item AskUserQuestion + marker flip). The designer copies the proposal prose into `## Decisions` between the two phases.
+> **Promotion workflow**: items with `STATUS: implemented` are candidates for promotion to `STATUS: established` via `/explain drift --promote`. The workflow splits into Phase 3a (agent writes a prose proposal report to `_output/promote-proposals/`) and Phase 3b (`/explain drift --promote --apply-markers plan-NNNNNN` runs per-item AskUserQuestion + marker flip). The designer copies the proposal prose into `## Decisions` between the two phases.
 
 ---
 
@@ -299,7 +299,7 @@
 | Feature / Flow | Designer Intent | Priority | Source | Last Synced |
 |---|---|---|---|---|
 <!-- REQ-MC-001 -->
-| {{feature}} | {{intent}} | {{P0 / P1 / P2}} | {{human / agent (spec-drift) / agent (metacomm)}} | {{YYYY-MM-DD HH:MM UTC}} |
+| {{feature}} | {{intent}} | {{P0 / P1 / P2}} | {{human / agent (drift) / agent (metacomm)}} | {{YYYY-MM-DD HH:MM UTC}} |
 
 ---
 
@@ -319,7 +319,7 @@
 >
 > **Lifecycle:** When a journey in this section has been implemented by a plan, mark it with
 > `<!-- STATUS: IMPLEMENTED | plan-NNNNNN | YYYY-MM-DD -->`. When promoting to established,
-> use `<!-- ESTABLISHED: ... -->` or run `/explain spec-drift --promote`.
+> use `<!-- ESTABLISHED: ... -->` or run `/explain drift --promote`.
 
 ---
 
@@ -367,7 +367,7 @@ journey
 
 ## 16. Conceptual Design Delta
 
-> Summary of what is new, changed, or removed compared to `project/product-design-as-coded.md § Conceptual Design`. Updated manually or via `/explain spec-drift`.
+> Summary of what is new, changed, or removed compared to `project/product-design-as-coded.md § Conceptual Design`. Updated manually or via `/explain drift`.
 
 ### New (in as-intended but not in as-coded)
 
@@ -392,7 +392,7 @@ journey
 
 ## 17. Metacommunication Delta
 
-> Summary of gaps between current implementation (`project/product-design-as-coded.md § Metacommunication`) and intended design. Updated manually or via `/explain spec-drift`.
+> Summary of gaps between current implementation (`project/product-design-as-coded.md § Metacommunication`) and intended design. Updated manually or via `/explain drift`.
 
 ### New Intentions (not yet implemented)
 
@@ -416,9 +416,9 @@ journey
 
 ## Decisions
 
-> Validated decisions with preserved rationale, in DRR shape per `template/docs/drr.md`. Each entry is a `### D-NNN:` heading with a `STATUS` marker on the line immediately above, followed by Context / Decision / Consequences / optional Supersedes / Rejected Alternatives fields.
+> Validated decisions with preserved rationale, in DDR shape per `template/docs/ddr.md`. Each entry is a `### D-NNN:` heading with a `STATUS` marker on the line immediately above, followed by Context / Decision / Consequences / optional Supersedes / Rejected Alternatives fields.
 >
-> **Lifecycle**: Decisions start as `STATUS: proposed` when the designer drafts them. They advance to `implemented` when the corresponding work ships (post-skill step 2e proposes the marker flip via AskUserQuestion). They advance to `established` via `/explain spec-drift --promote` Phase 3b after the designer has copied the proposal prose into the entry. They advance to `superseded` only when a new D-NNN entry links back via the `Supersedes:` field.
+> **Lifecycle**: Decisions start as `STATUS: proposed` when the designer drafts them. They advance to `implemented` when the corresponding work ships (post-skill step 2e proposes the marker flip via AskUserQuestion). They advance to `established` via `/explain drift --promote` Phase 3b after the designer has copied the proposal prose into the entry. They advance to `superseded` only when a new D-NNN entry links back via the `Supersedes:` field.
 >
 > **Append-only**: this section is enforced append-only by `check_changelog_append_only.py` (prose-only rule). Existing prose lines cannot be modified or removed. New entries are added at the end (or superseding entries are added at the end with a `Supersedes: D-MMM` field). Marker line insertions and flips above existing headings are allowed via `apply_marker.py`.
 

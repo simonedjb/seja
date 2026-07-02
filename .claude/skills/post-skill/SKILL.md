@@ -50,7 +50,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
    Checkpoint: `1 | <current datetime UTC> | $ARGUMENTS[0]` to `${OUTPUT_DIR}/.post-skill-checkpoint`.
 
-1b. **Telemetry recording** -- prepare a record in context (flushed to disk at step 8b). Prepare a telemetry record per the schema in SKILL-reference.md (Telemetry Schema). Fields and qa_type enum are defined there. Populate `session_id` from the `CLAUDE_SESSION_ID` environment variable if available in the conversation context; otherwise set to `null`.
+1b. **Telemetry recording** -- prepare a record in context (flushed to disk at step 8b). Prepare a telemetry record per the schema in SKILL-reference.md (Telemetry Schema). Fields and qa_type enum are defined there. `session_id` is populated automatically by `build_telemetry.py` from the `CLAUDE_SESSION_ID` env var — no explicit flag needed. For token count: use `--tokens-used` when the count is exact; use `--approx-token-count` when estimating (e.g. derived from a progress indicator rather than an API response).
 
 2. **As-Coded alignment** -- run when parent skill is `implement` (brief skill field). Skip when parent is `plan` (no code yet).
 
@@ -111,7 +111,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
       iv. **Implement mark-done safety net**: `python .claude/skills/scripts/pending.py done --source plan-<id> --type implement` unconditionally. Closes the entry filed at `/plan` step 7h; idempotent (no-op if absent or already done). Also recovers when a crash occurred between `/implement`'s rename and its own mark-done call.
 
 2c. **Design intent curation reminder** (same gate as step 2). Informational only -- do **not** perform the promotion (designer owns every word of Decision entries; harness manages only the STATUS marker lifecycle). Output (text, not AskUserQuestion):
-   > "Design intent from plan [plan-id] has been implemented. Consider promoting items to `established` status via `/explain spec-drift --promote` (Phase 3a generates a draft Decision entry proposal; Phase 3b flips the STATUS markers after you apply the prose). P0 priority items: §4 Permission Model, §11 Global Vision, §13 Solution Representations, §14 Per-Feature Intentions."
+   > "Design intent from plan [plan-id] has been implemented. Consider promoting items to `established` status via `/explain drift --promote` (Phase 3a generates a draft Decision entry proposal; Phase 3b flips the STATUS markers after you apply the prose). P0 priority items: §4 Permission Model, §11 Global Vision, §13 Solution Representations, §14 Per-Feature Intentions."
 
 2b. **Documentation auto-run** (same gate as step 2; skip silently if no plan -- advisory, explain, check).
 

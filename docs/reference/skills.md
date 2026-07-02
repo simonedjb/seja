@@ -22,7 +22,7 @@ Generated 2026-06-17T15:23:41Z from the seja-priv harness source. All skills lis
 | Skill | Description | Argument hint |
 |---|---|---|
 | `/critique` | Critique quality: validation, code review, smoke tests, preflight, and harness health. | `<validate \| review \| smoke \| preflight \| health \| test-plan \| docs \| freshness \| telemetry \| semiotic-inspection> [--depth <light\|standard\|deep>] [--source <path>] [scope]` |
-| `/explain` | Explains behavior, code, data model, architecture, or spec drift with visual diagrams and analogies. | `<architecture\|behavior\|behavior-evolution\|code\|data-model\|spec-drift> [brief]` |
+| `/explain` | Explains behavior, code, data model, architecture, or drift between design specs with visual diagrams and analogies. | `<architecture\|behavior\|behavior-evolution\|code\|data-model\|drift> [brief]` |
 | `/reflect` | On-demand reflection anchored on specific plans, research reports, or other artifacts. I summarize the artifacts you choose, ask whether you are reflecting on the product (what was built) or your practice (how you worked), then ask the matching question and record your words verbatim. | `[--telemetry [--since 30d] [--skill <name>] [--dry-run]] \| [--deep [scope] [--since 30d]]` |
 | `/research` | Answer questions about the codebase, architecture, or design decisions, logging Q&A pairs. With --inventory, catalog codebase elements matching a pattern. | `<question or topic> [--inventory <pattern>] [--deep]` |
 
@@ -39,7 +39,7 @@ Generated 2026-06-17T15:23:41Z from the seja-priv harness source. All skills lis
 | Skill | Description | Argument hint |
 |---|---|---|
 | `/communicate` | Generate tailored communication material for a specific audience segment. | `<audience> [--format md\|html\|both] [--all] [--source <advisory-file>]` |
-| `/document` | Generate or update project documentation based on plan Docs: fields, auto-detection, or explicit type selection. | `<scope> [--plan <id>] [--auto-detect] [--type <readme\|contextual-help\|api-reference\|drr\|help-center\|changelog>] [--since <ref>] [--full-history]` |
+| `/document` | Generate or update project documentation based on plan Docs: fields, auto-detection, or explicit type selection. | `<scope> [--plan <id>] [--auto-detect] [--type <readme\|contextual-help\|api-reference\|ddr\|help-center\|changelog\|spo>] [--since <ref>] [--full-history] [--drift]` |
 | `/help` | Show contextual help, browse skills by category, or get details on a specific skill. | `[skill-name \| --browse]` |
 | `/onboard` | Generate a tailored onboarding plan for a new team member based on their role and expertise level. | `<role-family> <expertise-level> [name] [--area <focus-area>] [--format md\|html\|both] [--all] [--all-levels <role>] [--all-roles <level>] [--batch <spec-list>]` |
 | `/pending` | List and address outstanding human actions from the pending ledger: verify implementations, flip status markers, run periodic curation, manage deferred work. | `[list\|address <id>\|add\|done\|snooze\|dismiss] [args]` |

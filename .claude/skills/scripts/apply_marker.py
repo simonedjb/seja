@@ -198,7 +198,7 @@ def _apply_decision_append(
 ) -> tuple[list[str], int, str]:
     """Append a new D-NNN decision entry to the ## Decisions section.
 
-    The ``value`` parameter carries the full DRR-shaped entry text (everything
+    The ``value`` parameter carries the full DDR-shaped entry text (everything
     after the ``### D-NNN: <title>`` heading). The ``--id`` argument is ignored
     at the caller level -- the next D-NNN ID is auto-assigned by scanning
     existing entries.

@@ -96,5 +96,5 @@ Then run a code review on the files you just generated:
 
 - Run `/help` to see all available skills
 - Run `/design` to modify the project configuration
-- Run `/explain spec-drift` to compare as-coded vs. as-intended design files
+- Run `/explain drift` to compare as-coded vs. as-intended design files
 - Edit the design files directly and re-run `/critique validate` to see how the harness detects changes

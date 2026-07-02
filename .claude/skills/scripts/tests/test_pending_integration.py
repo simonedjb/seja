@@ -43,7 +43,7 @@ MINIMAL_CONVENTIONS_WITH_TRIGGERS = """\
 | Trigger | Interval (days) | Action type | Description |
 |---------|-----------------|-------------|-------------|
 | Periodic curation | 30 | periodic-curation | Review items ready to promote |
-| Spec-drift check | 14 | spec-drift-check | Run /explain spec-drift |
+| Spec-drift check | 14 | spec-drift-check | Run /explain drift |
 
 ## Source Directories
 """

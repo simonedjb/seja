@@ -16,7 +16,15 @@ Format: loosely based on [Keep a Changelog](https://keepachangelog.com/). SemVer
 
 ## [Unreleased]
 
-<!-- bump: minor -->
+### Breaking changes
+
+- **`/document --type drr` renamed to `/document --type ddr`**: DDR (Design Decision Record) replaces DRR (Design Rationale Record). The acronym change aligns the name to what the record contains; scope is unchanged. Update saved prompts or scripts that pass `--type drr`.
+
+### Changed
+
+- **DDR (Design Decision Record) replaces DRR (Design Rationale Record)** throughout the harness. The rename sharpens the naming — "Decision" is the noun; "Rationale" was an attribute of one section. DDR scope explicitly covers product, architecture, UX, and any other design discipline. Adds an optional `links:` field to the DDR format (supersedes / related / implements) for semantic cross-references between records.
+
+## [v0.6.0] - 2026-06-29
 
 ### Breaking changes
 

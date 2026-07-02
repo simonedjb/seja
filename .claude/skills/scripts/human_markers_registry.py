@@ -125,7 +125,7 @@ ALLOWED_MARKERS: dict[str, dict] = {
     },
     "DECISION_APPEND": {
         # Appends a new ### D-NNN: section to the ## Decisions heading.
-        # The value field carries the full DRR-shaped entry text.
+        # The value field carries the full DDR-shaped entry text.
         # line_regex validates the heading line of the appended entry.
         "line_regex": r"### D-\d{3}: .{1,200}",
         "allowed_values": None,

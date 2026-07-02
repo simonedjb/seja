@@ -24,6 +24,6 @@
 
 **When to use**: After `/seja-setup` to define design intent for a new project. Anytime you want to update your project's design foundations (stack, domain model, standards, metacommunication). Use `/design update <section-slug>` (valid slugs: `stack`, `conceptual`, `metacomm`, `backend-standards`, `frontend-standards`, `ux-standards`, `ui-standards`, `i18n`, `security`, `testing`, `constitution`, `full`) to jump straight to a specific section. Use Mode 5 (`--mode interview`) when you want to think out loud rather than fill a form; use Mode 1 (default) when you know your stack and want speed.
 
-**Not for**: topology scaffolding (use `/seja-setup`), planning implementation (use `/plan`), or checking drift between intent and code (use `/explain spec-drift`).
+**Not for**: topology scaffolding (use `/seja-setup`), planning implementation (use `/plan`), or checking drift between intent and code (use `/explain drift`).
 
 **Next step**: `/plan --roadmap` to generate a development roadmap from the new design, or `/plan` to plan your first feature.

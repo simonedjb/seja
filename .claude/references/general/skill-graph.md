@@ -1,5 +1,5 @@
 ---
-designer_description: "When one skill finishes and you are deciding what to do next, I'm the reference that codifies the directed After / Suggest / Reason relationships across the whole skill catalog, so /post-skill can point you at the one or two follow-up skills that genuinely continue the thread -- /implement after /plan, /document after /implement, /explain spec-drift after a long build, and so on."
+designer_description: "When one skill finishes and you are deciding what to do next, I'm the reference that codifies the directed After / Suggest / Reason relationships across the whole skill catalog, so /post-skill can point you at the one or two follow-up skills that genuinely continue the thread -- /implement after /plan, /document after /implement, /explain drift after a long build, and so on."
 ---
 
 # FRAMEWORK - SKILL RELATIONSHIP GRAPH
@@ -19,11 +19,11 @@ designer_description: "When one skill finishes and you are deciding what to do n
 | `/implement` | `/document` | Runs automatically via post-skill step 2b for FEATURE/REDESIGN plans and plans with non-N/A Docs: fields; edge stays informational for `--skip-docs` and standalone `/document` modes. |
 | `/implement` | `/pending` | Review pending actions created by this implementation |
 | `/implement` | `/reflect` | Surface patterns across recent skill runs (non-prescriptive) |
-| `/explain spec-drift` | `/plan` | Specs analyzed -- ready to plan next steps? |
-| `/explain spec-drift` | `/design` | Drift indicates intent has evolved -- update the project design |
-| `/explain spec-drift --promote` | `/explain spec-drift --promote --apply-markers plan-<id>` | Decision proposal drafted -- after you apply the prose, flip the STATUS markers |
-| `/explain spec-drift` | `/pending` | Address pending actions surfaced by the drift check |
-| `/pending` | `/explain spec-drift --promote` | Next logical step after addressing pending curation items (generates a Decision proposal for promotion candidates) |
+| `/explain drift` | `/plan` | Specs analyzed -- ready to plan next steps? |
+| `/explain drift` | `/design` | Drift indicates intent has evolved -- update the project design |
+| `/explain drift --promote` | `/explain drift --promote --apply-markers plan-<id>` | Decision proposal drafted -- after you apply the prose, flip the STATUS markers |
+| `/explain drift` | `/pending` | Address pending actions surfaced by the drift check |
+| `/pending` | `/explain drift --promote` | Next logical step after addressing pending curation items (generates a Decision proposal for promotion candidates) |
 | `/pending` | `/implement` | Next logical step after reviewing pending review items |
 
 ### Analysis & Review
@@ -62,7 +62,7 @@ designer_description: "When one skill finishes and you are deciding what to do n
 | After | Suggest | Reason |
 | --- | --- | --- |
 | `/seja-setup --upgrade` | `/critique health` | Verify harness health after upgrading |
-| `/seja-setup --upgrade` | `/explain spec-drift` | Re-run spec drift after harness upgrade to catch changed conventions |
+| `/seja-setup --upgrade` | `/explain drift` | Re-run spec drift after harness upgrade to catch changed conventions |
 | `/critique preflight` | `/publish` | Preflight passed -- ready to cut a release? |
 | `/publish` | `/critique health` | Verify harness health after publishing |
 

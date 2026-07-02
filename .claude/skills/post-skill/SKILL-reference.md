@@ -7,7 +7,7 @@
 Step 1b example record:
 
 ```json
-{"timestamp": "2026-03-29T14:00:00Z", "skill": "research", "id": "000014", "duration_seconds": 1800, "outcome": "success", "brief": "What other attributes could be incorporated into telemetry?", "prefix_scope": "CHORE-O", "plan_id": null, "error_type": null, "output_file": "_output/research-logs/research-000014-telemetry-attributes-expansion.md", "context_budget": "standard", "git_commit_sha": null, "files_changed": null, "parent_skill": null, "qa_type": "research-follow-up", "user_revised_output": null, "decision_points": [], "advisory_decisions": [], "research_decisions": [], "tokens_used": null, "session_id": null}
+{"timestamp": "2026-03-29T14:00:00Z", "skill": "research", "id": "000014", "duration_seconds": 1800, "outcome": "success", "brief": "What other attributes could be incorporated into telemetry?", "prefix_scope": "CHORE-O", "plan_id": null, "error_type": null, "output_file": "_output/research-logs/research-000014-telemetry-attributes-expansion.md", "context_budget": "standard", "git_commit_sha": null, "files_changed": null, "parent_skill": null, "qa_type": "research-follow-up", "user_revised_output": null, "decision_points": [], "advisory_decisions": [], "research_decisions": [], "tokens_used": null, "approx_token_count": null, "session_id": null}
 ```
 
 | Field | Type | Source / meaning (fallback) |
@@ -31,8 +31,9 @@ Step 1b example record:
 | `decision_points` | list\|null | One `{"prompt": "...", "chosen_option": "...", "rationale_presented": <bool>}` per `AskUserQuestion`. `rationale_presented` = `true` when option descriptions carry the Decision-point rationale payload from `.claude/references/general/constraints.md` (1-2 lines + optional `(more: <link>)`); `false` for bare labels. `[]` if no calls; `null` on capture failure. |
 | `advisory_decisions` | list\|null | Dual-key legacy alias; TRANSITION (plan-000468): same payload as `research_decisions`; retired at advisory-000448 Rec 5's 6-month legacy-folder revisit. |
 | `research_decisions` | list\|null | `{"topic": "...", "decision": "...", "priority": "high\|medium\|low"}` per HIGH/MEDIUM recommendation; populated by `/research` step 7. `[]` non-research; `null` on capture failure. Canonical forward key. |
-| `tokens_used` | int\|null | Total API tokens consumed (input + output) during the skill invocation. `null` when unavailable or capture failed. |
-| `session_id` | string\|null | Claude Code session UUID from `CLAUDE_SESSION_ID` in the agent's conversation context. Enables correlation of skill invocations within the same session. `null` when unavailable or capture failed. |
+| `tokens_used` | int\|null | Total API tokens consumed (input + output) during the skill invocation. Exact count. `null` when unavailable or capture failed. |
+| `approx_token_count` | int\|null | Approximate token count when an exact count cannot be obtained. Use in place of `tokens_used` when estimating. `null` when not applicable. |
+| `session_id` | string\|null | Claude Code session UUID from `CLAUDE_SESSION_ID` env var; populated automatically by `build_telemetry.py` from the environment — no need to pass `--session-id` explicitly. `null` when unavailable. |
 
 `qa_type` enum:
 

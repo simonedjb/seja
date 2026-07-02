@@ -246,7 +246,7 @@ journey
 
 ## Decisions
 
-<!-- TEMPLATE ENTRY - demonstrates the DRR shape; replace or delete before promoting a real decision -->
+<!-- TEMPLATE ENTRY - demonstrates the DDR shape; replace or delete before promoting a real decision -->
 
 <!-- STATUS: proposed -->
 ### D-001: Binary task status (todo / done)

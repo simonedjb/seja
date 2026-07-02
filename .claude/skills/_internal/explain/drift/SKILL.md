@@ -1,6 +1,6 @@
 ---
-name: explain-spec-drift-internal
-description: "Inlined worker for /explain spec-drift mode. Not user-invocable."
+name: explain-drift-internal
+description: "Inlined worker for /explain drift mode. Not user-invocable."
 compatibility: "Designed for Claude Code with the SEJA harness"
 metadata:
   internal: true
@@ -10,7 +10,7 @@ metadata:
 
 > This is an inlined worker; execute these instructions as part of the caller's flow. The wrapper at `.claude/skills/explain/SKILL.md` has already run C1 (pre-skill) and loaded design-spec references; execute the steps below and invoke C4 (post-skill) at the end.
 
-### spec-drift (reference prose)
+### drift (reference prose)
 
 Combines read-only drift analysis with an optional sync workflow. Scope argument: `all` (default), `conceptual-design`, `metacomm`, `--promote` (promotion-only; skip to Step C), or `--promote --apply-markers plan-NNNNNN` (Phase 3b). C3 saves the drift report; C4 closes each terminal branch (sync-No, Phase 3a end, Phase 3b end).
 
@@ -64,7 +64,7 @@ If scope is `--promote` or `--promote --apply-markers ...`, skip Steps A-B and g
    ## Pending Promotions
 
    Items marked `STATUS: implemented` in registered Human (markers) files not yet promoted to `established`.
-   Candidates for `/explain spec-drift --promote` (Phase 3a drafts the Decision entry; Phase 3b flips the markers).
+   Candidates for `/explain drift --promote` (Phase 3a drafts the Decision entry; Phase 3b flips the markers).
 
    | File | Section / Row | Marker | Plan |
    |------|--------------|--------|------|
@@ -81,7 +81,7 @@ Use AskUserQuestion (fallback: numbered text list) with these options:
 - "1. Conceptual-design to metacomm -- align metacomm with the conceptual design"
 - "2. Metacomm to conceptual-design -- align conceptual design with the metacomm"
 - "3. Bidirectional -- reconcile both (with user confirmation for conflicts)"
-- "4. Promote implemented items -- draft DRR-shaped Decision entries for `STATUS: implemented` items (Phase 3a)"
+- "4. Promote implemented items -- draft DDR-shaped Decision entries for `STATUS: implemented` items (Phase 3a)"
 - "5. No -- skip sync"
 
 If **No**: apply C4 and stop. If **Promote implemented items**: go to Step C (Phase 3a).
@@ -90,16 +90,16 @@ If **No**: apply C4 and stop. If **Promote implemented items**: go to Step C (Ph
 
 The promote workflow has two phases so the designer owns every word of the Decision prose while the harness manages the STATUS lifecycle structurally:
 
-- **Phase 3a -- Proposal generation** (`/explain spec-drift --promote`): draft DRR-shaped entries for `STATUS: implemented` items to `_output/promote-proposals/promote-proposal-plan-<id>.md`. Do NOT modify `product-design-as-intended.md`. File one pending action (`apply-promote-markers`).
-- **Phase 3b -- Marker flip** (`/explain spec-drift --promote --apply-markers plan-NNNNNN`, 6-digit plan ID): verify `### D-NNN:` entries were added (heading-only grep), run per-item AskUserQuestion confirmation, invoke `apply_marker.py` on confirmed items. Post-skill's `check_human_markers_only.py` and `check_changelog_append_only.py` verify marker flips do not bleed prose.
+- **Phase 3a -- Proposal generation** (`/explain drift --promote`): draft DDR-shaped entries for `STATUS: implemented` items to `_output/promote-proposals/promote-proposal-plan-<id>.md`. Do NOT modify `product-design-as-intended.md`. File one pending action (`apply-promote-markers`).
+- **Phase 3b -- Marker flip** (`/explain drift --promote --apply-markers plan-NNNNNN`, 6-digit plan ID): verify `### D-NNN:` entries were added (heading-only grep), run per-item AskUserQuestion confirmation, invoke `apply_marker.py` on confirmed items. Post-skill's `check_human_markers_only.py` and `check_changelog_append_only.py` verify marker flips do not bleed prose.
 
-##### Phase 3a steps (`/explain spec-drift --promote`)
+##### Phase 3a steps (`/explain drift --promote`)
 
 1. Read the registry from `project/conventions.md` (fallback `template/conventions.md`). Scan registered `product-design-as-intended.md` (and any other Human (markers) files) for `STATUS: implemented` markers lacking `ESTABLISHED:`.
 
 2. Group candidates by plan ID (from the STATUS marker's plan field). If none, tell the user ("No implemented items pending promotion.") and apply C4.
 
-3. For each candidate, draft a DRR-shaped entry per `template/docs/drr.md`. Sources: Context from the plan's Agent Interpretation; Decision from the chosen approach; Consequences from Trade-offs (if present) + any REQ markers the plan touched.
+3. For each candidate, draft a DDR-shaped entry per `template/docs/ddr.md`. Sources: Context from the plan's Agent Interpretation; Decision from the chosen approach; Consequences from Trade-offs (if present) + any REQ markers the plan touched.
 
 4. Assign stable `D-NNN` IDs by scanning existing Decision entries in `product-design-as-intended.md § Decisions` and using the next available number. REQ and D-NNN are orthogonal namespaces.
 
@@ -108,20 +108,20 @@ The promote workflow has two phases so the designer owns every word of the Decis
 6. **Dedup before adding pending actions**: grep the pending ledger for existing `apply-promote-markers` entries with `source: plan-<id>`.
    - Status `pending` exists: do NOT add duplicates. Tell the designer: "Proposal already queued. See `_output/promote-proposals/promote-proposal-plan-<id>.md`, or run Phase 3b to continue."
    - Only status `done` exists: proceed with a fresh entry (re-promotion is valid).
-   - Otherwise: invoke `python .claude/skills/scripts/pending.py add --type apply-promote-markers --source plan-<id> --description "Copy draft Decision entries from _output/promote-proposals/promote-proposal-plan-<id>.md into product-design-as-intended.md § Decisions, then run /explain spec-drift --promote --apply-markers plan-<id> to flip STATUS markers (Phase 3b)"`.
+   - Otherwise: invoke `python .claude/skills/scripts/pending.py add --type apply-promote-markers --source plan-<id> --description "Copy draft Decision entries from _output/promote-proposals/promote-proposal-plan-<id>.md into product-design-as-intended.md § Decisions, then run /explain drift --promote --apply-markers plan-<id> to flip STATUS markers (Phase 3b)"`.
 
-7. Tell the designer: "Phase 3a complete. Drafted N Decision entries in `_output/promote-proposals/promote-proposal-plan-<id>.md`. Review, edit to your voice, copy into `product-design-as-intended.md § Decisions`, save, then run `/explain spec-drift --promote --apply-markers plan-<id>` to flip the STATUS markers."
+7. Tell the designer: "Phase 3a complete. Drafted N Decision entries in `_output/promote-proposals/promote-proposal-plan-<id>.md`. Review, edit to your voice, copy into `product-design-as-intended.md § Decisions`, save, then run `/explain drift --promote --apply-markers plan-<id>` to flip the STATUS markers."
 
 8. Apply C4.
 
-##### Phase 3b steps (`/explain spec-drift --promote --apply-markers plan-NNNNNN`)
+##### Phase 3b steps (`/explain drift --promote --apply-markers plan-NNNNNN`)
 
 1. Read the pending ledger to find the matching `apply-promote-markers` action for this plan ID. If not found, warn and continue (designer may be running Phase 3b without a prior Phase 3a).
 
 2. Read `_output/promote-proposals/promote-proposal-plan-<id>.md`. Extract the list of drafted `D-NNN` IDs.
 
 3. **Heading-only grep** `product-design/product-design-as-intended.md` for each D-NNN: regex `^###\s+D-NNN(?::|\s*$)`. Do NOT match title text, Context prose, or body -- the designer may have rewritten the prose (designer-voice preservation). Split results into `present` and `missing`.
-   - `present` empty: abort with "No D-NNN entries from the proposal found in `product-design-as-intended.md`. Copy the draft entries from `_output/promote-proposals/promote-proposal-plan-<id>.md` first, then re-run `/explain spec-drift --promote --apply-markers plan-<id>`."
+   - `present` empty: abort with "No D-NNN entries from the proposal found in `product-design-as-intended.md`. Copy the draft entries from `_output/promote-proposals/promote-proposal-plan-<id>.md` first, then re-run `/explain drift --promote --apply-markers plan-<id>`."
    - `present` non-empty: proceed with present set; at end of phase, report `missing` set to the designer.
 
 4. For each D-NNN in both the proposal and the file, AskUserQuestion: "Flip STATUS from implemented to established for D-NNN?" (per-item confirmation).
@@ -149,6 +149,6 @@ If the user chose a sync direction in Step B.
 
 **Finalization.** Update `last-synced` on all modified entries. Update "Delta from As-Coded" sections in both as-intended files if as-coded exists. Apply C4.
 
-### Voice and framing (spec-drift)
+### Voice and framing (drift)
 
-**spec-drift**: combines drift analysis and optional sync (replaces the former `/spec` skill). Two-phase promote workflow in Step C.
+**drift**: combines drift analysis and optional sync (replaces the former `/spec` skill). Two-phase promote workflow in Step C.

@@ -64,32 +64,32 @@
       "category": "planning-execution"
     },
     {
-      "after": "/explain spec-drift",
+      "after": "/explain drift",
       "suggest": "/plan",
       "reason": "Specs analyzed -- ready to plan next steps?",
       "category": "planning-execution"
     },
     {
-      "after": "/explain spec-drift",
+      "after": "/explain drift",
       "suggest": "/design",
       "reason": "Drift indicates intent has evolved -- update the project design",
       "category": "planning-execution"
     },
     {
-      "after": "/explain spec-drift --promote",
-      "suggest": "/explain spec-drift --promote --apply-markers plan-<id>",
+      "after": "/explain drift --promote",
+      "suggest": "/explain drift --promote --apply-markers plan-<id>",
       "reason": "Decision proposal drafted -- after you apply the prose, flip the STATUS markers",
       "category": "planning-execution"
     },
     {
-      "after": "/explain spec-drift",
+      "after": "/explain drift",
       "suggest": "/pending",
       "reason": "Address pending actions surfaced by the drift check",
       "category": "planning-execution"
     },
     {
       "after": "/pending",
-      "suggest": "/explain spec-drift --promote",
+      "suggest": "/explain drift --promote",
       "reason": "Next logical step after addressing pending curation items (generates a Decision proposal for promotion candidates)",
       "category": "planning-execution"
     },
@@ -227,7 +227,7 @@
     },
     {
       "after": "/seja-setup --upgrade",
-      "suggest": "/explain spec-drift",
+      "suggest": "/explain drift",
       "reason": "Re-run spec drift after harness upgrade to catch changed conventions",
       "category": "framework-maintenance"
     },

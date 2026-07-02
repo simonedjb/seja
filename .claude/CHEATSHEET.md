@@ -8,16 +8,16 @@
 | Skill | Description | Arguments |
 |-------|-------------|-----------|
 | `/design` | Define or update project design — stack, conventions, domain model, conceptua... | `[--mode interview] [--generate-spec] [--add-docs] [spec-file-path]` |
-| `/implement` | Execute a previously generated plan to add a feature, fix a bug, or refactor ... | `<planned-item-id> [--manual] [--roadmap <roadmap-id>] [--checkpoint wave\|plan\|none] [--max-iterations N] [--dry-run] [--skip-checks] [--skip-docs]` |
+| `/implement` | Execute a previously generated plan to add a feature, fix a bug, or refactor ... | `<planned-item-id> [--manual] [--roadmap <roadmap-id>] [--pending] [--checkpoint wave\|plan\|none] [--max-iterations N] [--dry-run] [--skip-checks] [--skip-docs]` |
 | `/plan` | Make a plan to add a feature, fix a bug, or refactor code. Supports metacomm ... | `<brief> [--review <light\|standard\|deep>] [--framing metacomm] [--light] [--plan \| --roadmap [--from-spec <path>] [--auto] [--only-unimplemented]]` |
 
 ## Analysis & Review
 
 | Skill | Description | Arguments |
 |-------|-------------|-----------|
-| `/check` | Run quality checks: validation, code review, smoke tests, preflight, or harne... | `<validate \| review \| smoke \| preflight \| health \| test-plan \| docs \| freshness \| telemetry \| semiotic-inspection> [--depth <light\|standard\|deep>] [scope]` |
-| `/explain` | Explains behavior, code, data model, architecture, or spec drift with visual ... | `<architecture\|behavior\|behavior-evolution\|code\|data-model\|spec-drift> [brief]` |
-| `/reflect` | On-demand reflection anchored on specific plans, research reports, or other a... | `[--telemetry [--since 30d] [--skill <name>] [--dry-run]]` |
+| `/critique` | Critique quality: validation, code review, smoke tests, preflight, and harnes... | `<validate \| review \| smoke \| preflight \| health \| test-plan \| docs \| freshness \| telemetry \| semiotic-inspection> [--depth <light\|standard\|deep>] [--source <path>] [scope]` |
+| `/explain` | Explains behavior, code, data model, architecture, or spec drift with visual ... | `<architecture\|behavior\|behavior-evolution\|code\|data-model\|drift> [brief]` |
+| `/reflect` | On-demand reflection anchored on specific plans, research reports, or other a... | `[--telemetry [--since 30d] [--skill <name>] [--dry-run]] \| [--deep [scope] [--since 30d]]` |
 | `/research` | Answer questions about the codebase, architecture, or design decisions, loggi... | `<question or topic> [--inventory <pattern>] [--deep]` |
 
 ## Utilities
@@ -25,11 +25,12 @@
 | Skill | Description | Arguments |
 |-------|-------------|-----------|
 | `/communicate` | Generate tailored communication material for a specific audience segment | `<audience> [--format md\|html\|both] [--all] [--source <advisory-file>]` |
-| `/document` | Generate or update project documentation based on plan Docs: fields, auto-det... | `<scope> [--plan <id>] [--auto-detect] [--type <readme\|contextual-help\|api-reference\|drr\|help-center\|changelog>] [--since <ref>] [--full-history]` |
+| `/document` | Generate or update project documentation based on plan Docs: fields, auto-det... | `<scope> [--plan <id>] [--auto-detect] [--type <readme\|contextual-help\|api-reference\|ddr\|help-center\|changelog\|spo>] [--since <ref>] [--full-history] [--drift]` |
 | `/help` | Show contextual help, browse skills by category, or get details on a specific... | `[skill-name \| --browse]` |
 | `/onboard` | Generate a tailored onboarding plan for a new team member based on their role... | `<role-family> <expertise-level> [name] [--area <focus-area>] [--format md\|html\|both] [--all] [--all-levels <role>] [--all-roles <level>] [--batch <spec-list>]` |
 | `/pending` | List and address outstanding human actions from the pending ledger: verify im... | `[list\|address <id>\|add\|done\|snooze\|dismiss] [args]` |
+| `/publish` | Publish a tagged release to the public SEJA repository via the automated publ... | `[version] [--dry-run] [--yes]` |
 | `/qa-log` | Log the entire current Q&A session into a file for future reference | `brief or topic` |
 | `/seja-setup` | Manage the SEJA harness in this project: install into a new or existing codeb... | `[<target-directory>] [--here \| --workspace \| --demo \| --upgrade] [--version <tag>] [--dry-run]` |
 
-*14 skills available. Use `/help --browse` for interactive selection.*
+*15 skills available. Use `/help --browse` for interactive selection.*

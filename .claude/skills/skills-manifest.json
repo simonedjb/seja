@@ -1,5 +1,5 @@
 {
-  "generated": "2026-06-15T20:38:16Z",
+  "generated": "2026-06-30T13:42:54Z",
   "count": 15,
   "skills": [
     {
@@ -26,14 +26,14 @@
     {
       "name": "document",
       "description": "Generate or update project documentation based on plan Docs: fields, auto-detection, or explicit type selection.",
-      "argument_hint": "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|drr|help-center|changelog>] [--since <ref>] [--full-history]",
+      "argument_hint": "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|ddr|help-center|changelog|spo>] [--since <ref>] [--full-history] [--harness] [--drift]",
       "category": "utility",
       "version": "1.0.0"
     },
     {
       "name": "explain",
       "description": "Explains behavior, code, data model, architecture, or spec drift with visual diagrams and analogies.",
-      "argument_hint": "<architecture|behavior|behavior-evolution|code|data-model|spec-drift> [brief]",
+      "argument_hint": "<architecture|behavior|behavior-evolution|code|data-model|drift> [brief]",
       "category": "analysis",
       "version": "1.1.0"
     },
@@ -88,7 +88,7 @@
     },
     {
       "name": "reflect",
-      "description": "On-demand reflection anchored on specific plans, research reports, or other artifacts. I summarize the artifacts you choose, ask what stands out, and record your reflection.",
+      "description": "On-demand reflection anchored on specific plans, research reports, or other artifacts. I summarize the artifacts you choose, ask whether you are reflecting on the product (what was built) or your practice (how you worked), then ask the matching question and record your words verbatim.",
       "argument_hint": "[--telemetry [--since 30d] [--skill <name>] [--dry-run]] | [--deep [scope] [--since 30d]]",
       "category": "analysis",
       "version": "2.0.0"

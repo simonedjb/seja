@@ -62,7 +62,7 @@ designer_description: "I'm your project's single source of truth for directory s
 | `CONSTITUTION_FILE` | `project/constitution.md` | Project constitution -- immutable principles (in `product-design/`) | Human |
 | `AS_CODED` | `project/product-design-as-coded.md` | Unified implementation state: Conceptual Design, Metacommunication, Journey Maps (in `product-design/`) | Agent |
 | `CD_AS_IS_CHANGELOG` | `project/product-design-changelog.md` | As-built conceptual design changelog (in `product-design/`) | Agent |
-| `DESIGN_INTENT` | `project/product-design-as-intended.md` | Unified working intent (§0-§17) + DRR Decision log (## Decisions) + CHANGELOG (in `product-design/`) | Human (markers) |
+| `DESIGN_INTENT` | `project/product-design-as-intended.md` | Unified working intent (§0-§17) + DDR Decision log (## Decisions) + CHANGELOG (in `product-design/`) | Human (markers) |
 | `DESIGN_INTENT_TO_BE` | `project/product-design-as-intended.md` | Legacy alias for `DESIGN_INTENT` (workspace-mode backward compat; see plan-000268 Amendment A6) | Human (markers) |
 | `UX_RESEARCH` | `project/ux-research-results.md` | UX research: personas, problem scenarios, journeys, processing status, CHANGELOG (in `product-design/`) | Human (markers) |
 | `STANDARDS` | `project/standards.md` | Unified engineering standards: Backend, Frontend, Testing, i18n (in `product-design/`) | Human / Agent |
@@ -70,13 +70,15 @@ designer_description: "I'm your project's single source of truth for directory s
 | `SESSION_NOTES_FILE` | `${TMP_DIR}/session-notes.md` | Session-scoped working memory for structured note-taking | Agent |
 | `DECISION_DIGEST_FILE` | `${OUTPUT_DIR}/decision-digest.jsonl` | Machine-readable decision index (one JSON line per design decision) | Agent |
 | `CONVERSATION_TRACE_FILE` | `${OUTPUT_DIR}/conversation-trace.jsonl` | Append-only conversation trace log (per-utterance exchanges with session and event-chain linkage) | Agent |
+| `SPO_DATA_FILE` | `project/product-overview.yaml` | Structured Product Overview data (layers, personas, quality criteria, cards) — companion to product-design-as-intended.md (in `product-design/`) | Human |
+| `SPO_OUTPUT_FILE` | `${OUTPUT_DIR}/docs/spo.html` | Generated interactive SPO HTML — run `/document --type spo` to regenerate | Agent |
 
 ---
 
 ## As-Intended / As-Coded Registry
 
 > Canonical list of all as-intended files and their as-coded counterparts in this project.
-> Read by `/design` (template generation), `/explain spec-drift` (drift checking),
+> Read by `/design` (template generation), `/explain drift` (drift checking),
 > and post-skill (DONE marking proposals). Add a row when a new as-intended file
 > is introduced. `as-coded` is optional -- set to `-` if not applicable (e.g., research-only files).
 > The Section column identifies which portion of a file corresponds to each registry row when a file hosts multiple artifact types. Tools that scan for drift use the ID prefix (JM-TB-NNN for designed journeys, JM-E-NNN for discovered journeys) to discriminate artifact types within the same file.
@@ -88,6 +90,7 @@ designer_description: "I'm your project's single source of truth for directory s
 | `${DESIGN_INTENT}` | §0-§17 design intent + Decisions + CHANGELOG | `${AS_CODED}` |
 | `${DESIGN_INTENT}` | §15 designed journeys | `${AS_CODED} § Journey Maps` |
 | `${UX_RESEARCH}` | all (personas, scenarios, journeys, CHANGELOG) | `-` |
+| `${SPO_DATA_FILE}` | layers, personas, quality criteria, cards (full value chain) | `${SPO_OUTPUT_FILE}` |
 
 ---
 
@@ -106,7 +109,7 @@ designer_description: "I'm your project's single source of truth for directory s
 | Trigger | Interval (days) | Action type | Description |
 |---------|-----------------|-------------|-------------|
 | Periodic curation | 30 | `periodic-curation` | Review `product-design-as-intended.md` for items ready to promote from `implemented` to `established` |
-| Spec-drift check | 14 | `spec-drift-check` | Run `/explain spec-drift` to surface drift between design intent and as-coded state |
+| Spec-drift check | 14 | `spec-drift-check` | Run `/explain drift` to surface drift between design intent and as-coded state |
 | Git freshness check | 7 | `check-git-freshness` | Compare each project git repo to its upstream; surface behind/ahead counts. Resolve via `/critique freshness`. Default: 7; blank to disable. |
 
 | Threshold | Value | Description |

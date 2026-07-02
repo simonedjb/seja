@@ -484,7 +484,7 @@ Answer:
 
 > Fills: `project/docs/` -- documentation structures for your project. These templates define what documentation your project will maintain and how it's organized.
 >
-> **Quick path:** Accept defaults to get the 3 recommended templates (README, contextual help, DRR). Say "skip" to opt out entirely.
+> **Quick path:** Accept defaults to get the 3 recommended templates (README, contextual help, DDR). Say "skip" to opt out entirely.
 
 **5.1** Which documentation structures do you want?
 > *Recommended templates are pre-selected. Optional templates depend on your app type.*
@@ -493,7 +493,7 @@ Answer:
 |----------|-----------------|-------------|
 | **README** | Project overview, setup, reading order for developers | Yes |
 | **Contextual help** | Per-screen help pages with 3-question pattern (What/How/Verify) | Yes |
-| **DRR** | Design Rationale Records for tracking design rationale | Yes |
+| **DDR** | Design Decision Records for tracking design rationale | Yes |
 | **Help center** | User-facing manual (minimal 5-page or full searchable) | No (recommended for content/marketplace/community apps) |
 | **API reference** | Developer API documentation (endpoint index + deep-dives) | No |
 | **Changelog** | User-facing release notes (Keep a Changelog format) | No |
@@ -505,8 +505,8 @@ Answer: (list selected templates, or "defaults" for recommended only, or "skip" 
 
 Answer: (yes / no)
 
-**5.3** Do you want to track design decisions as DRRs?
-> *Design Rationale Records capture the "why" behind significant decisions (framework choices, design patterns, trade-offs). They prevent future developers from undoing decisions without understanding the context.*
+**5.3** Do you want to track design decisions as DDRs?
+> *Design Decision Records capture the "why" behind significant decisions (framework choices, design patterns, trade-offs). They prevent future developers from undoing decisions without understanding the context.*
 
 Answer: (yes / no)
 

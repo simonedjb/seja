@@ -167,6 +167,7 @@ class TestBuildTelemetry:
             parent_skill=None,
             qa_type=None,
             tokens_used=None,
+            approx_token_count=None,
             session_id=None,
             decision_points_json=None,
             research_decisions_json=None,
@@ -176,7 +177,6 @@ class TestBuildTelemetry:
         assert record is not None
 
         val_errors, warnings = check_tel.validate_record(record)
-        # session_id is an unknown field -- produces a warning but not an error
         assert val_errors == [], f"validation errors: {val_errors}"
 
     def test_invalid_outcome_enum_exits_nonzero(self) -> None:
@@ -232,6 +232,7 @@ class TestBuildTelemetry:
             parent_skill=None,
             qa_type=None,
             tokens_used=None,
+            approx_token_count=None,
             session_id=None,
             decision_points_json=None,
             research_decisions_json=decisions_json,

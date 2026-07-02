@@ -14,7 +14,7 @@ Use this page when you want to produce something communicative and are not sure 
 
 | Audience | Artifact kind | Example question | Skill | Output location |
 |----------|---------------|------------------|-------|-----------------|
-| Future maintainer (technical) | Project documentation -- README, API reference, DRR, contextual help, help center | "How does this module work, and what were the trade-offs?" | `/document` | `docs/` or `project/` |
+| Future maintainer (technical) | Project documentation -- README, API reference, DDR, contextual help, help center | "How does this module work, and what were the trade-offs?" | `/document` | `docs/` or `project/` |
 | New team member (role family and expertise level) | Tailored onboarding plan with role-conditional reading order and first-week tasks | "What should my first week look like as a BLD L2?" | `/onboard` | `_output/onboarding-plans/` |
 | Stakeholder outside the team (non-technical, audience-segment specific) | Tailored material for EVL, CLT, USR, or ACD | "What do I tell the CTO about our architecture and progress?" | `/communicate` | `_output/communication/` |
 | Invoking developer (yourself, wanting to understand) | Explanation of behavior, code, data model, architecture, or spec drift | "Why does the pre-skill hook fire twice on first run?" | `/explain` | `_output/explained-behaviors/`, `_output/explained-code/`, `_output/explained-data-model/`, `_output/explained-architecture/` |

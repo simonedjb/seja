@@ -296,7 +296,7 @@ designer_description: "I'm the as-coded mirror of what actually shipped in your 
 ### Delta from As-Intended
 
 > Gaps between current implementation and intended journey design (`project/product-design-as-intended.md §15 (Designed User Journeys)`).
-> Updated by post-skill or manually via `/explain spec-drift`.
+> Updated by post-skill or manually via `/explain drift`.
 
 #### Not Yet Implemented
 

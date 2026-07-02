@@ -1,7 +1,7 @@
 {
-  "generated": "2026-06-18T11:41:13Z",
-  "node_count": 223,
-  "edge_count": 481,
+  "generated": "2026-07-02T18:54:58Z",
+  "node_count": 231,
+  "edge_count": 499,
   "nodes": [
     {
       "id": "agent:architecture-explainer",
@@ -40,7 +40,7 @@
       "type": "agent",
       "label": "document-generator",
       "path": ".claude/agents/document-generator.md",
-      "description": "When you run /document for a specific artifact -- a README, contextual help for a screen, an API reference, a DRR, a help-center page, or a project changelog -- I'm the engine that reads the right template, scans your codebase for the concrete specifics, and produces a user-facing document that fits its Diataxis category. You get a file that speaks to whoever consumes that doc type, not a generic wall of text.",
+      "description": "When you run /document for a specific artifact -- a README, contextual help for a screen, an API reference, a DDR, a help-center page, a project changelog, or a Structured Product Overview -- I'm the engine that reads the right template, scans your codebase for the concrete specifics, and produces a user-facing document that fits its Diataxis category. You get a file that speaks to whoever consumes that doc type, not a generic wall of text.",
       "description_source": "designer-description"
     },
     {
@@ -480,7 +480,7 @@
       "type": "ref-general",
       "label": "shared-definitions",
       "path": ".claude/references/general/shared-definitions.md",
-      "description": "When a skill, plan, or artifact uses a harness-wide concept -- the metacommunication message and its first-person I / second-person you phrasing rule, the Semiotic Engineering grounding behind review perspectives and spec-drift, the File Maintainer Classification that controls who may edit what -- I'm the reference that holds the canonical definitions, so the same term means the same thing everywhere.",
+      "description": "When a skill, plan, or artifact uses a harness-wide concept -- the metacommunication message and its first-person I / second-person you phrasing rule, the Semiotic Engineering grounding behind review perspectives and drift detection, the File Maintainer Classification that controls who may edit what -- I'm the reference that holds the canonical definitions, so the same term means the same thing everywhere.",
       "description_source": "designer-description"
     },
     {
@@ -488,7 +488,7 @@
       "type": "ref-general",
       "label": "skill-graph",
       "path": ".claude/references/general/skill-graph.md",
-      "description": "When one skill finishes and you are deciding what to do next, I'm the reference that codifies the directed After / Suggest / Reason relationships across the whole skill catalog, so /post-skill can point you at the one or two follow-up skills that genuinely continue the thread -- /implement after /plan, /document after /implement, /explain spec-drift after a long build, and so on.",
+      "description": "When one skill finishes and you are deciding what to do next, I'm the reference that codifies the directed After / Suggest / Reason relationships across the whole skill catalog, so /post-skill can point you at the one or two follow-up skills that genuinely continue the thread -- /implement after /plan, /document after /implement, /explain drift after a long build, and so on.",
       "description_source": "designer-description"
     },
     {
@@ -498,6 +498,46 @@
       "path": ".claude/references/general/threat-model.md",
       "description": "When you want to understand how SEJA defends itself against poisoned conventions files, path-escape attempts, unreviewed generated scripts, and prompt injection through user arguments, I'm the lightweight STRIDE-style threat model that names each trust boundary and injection vector, its severity and likelihood, the guard that mitigates it, and whether that guard is fully enforced or still partial.",
       "description_source": "designer-description"
+    },
+    {
+      "id": "ref-project:constitution.md",
+      "type": "ref-project",
+      "label": "constitution",
+      "path": "product-design/constitution.md",
+      "description": "I'm SEJA's immutable principles -- the non-negotiable commitments on design authority, epistemic posture, privacy, lifecycle discipline, artifact integrity, and authorship voice that every skill and agent must observe. Private to seja-priv; never synced to seja-public.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "ref-project:conventions.md",
+      "type": "ref-project",
+      "label": "conventions",
+      "path": "product-design/conventions.md",
+      "description": "I'm SEJA's own project conventions -- the single source of truth for SEJA's directory structure, file paths, harness stack, and the registry of as-intended and as-coded files. Written for SEJA as a product using its own harness. Private to seja-priv; never synced to seja-public.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "ref-project:product-design-as-coded.md",
+      "type": "ref-project",
+      "label": "product-design-as-coded",
+      "path": "product-design/product-design-as-coded.md",
+      "description": "I'm the as-coded mirror of what actually shipped in your project -- conceptual design, metacommunication, and journey maps kept in step with the codebase by post-skill after each plan -- so drift against your product-design-as-intended.md is always visible rather than something you have to reconstruct by reading source.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "ref-project:product-design-as-intended.md",
+      "type": "ref-project",
+      "label": "product-design-as-intended",
+      "path": "product-design/product-design-as-intended.md",
+      "description": "SEJA -- Design Intent\n\n<!-- maintained-by: human (designer); Human (markers) classification --> <!-- Private to seja-priv: SEJA's own design intent.",
+      "description_source": "developer-fallback"
+    },
+    {
+      "id": "ref-project:ux-research-results.md",
+      "type": "ref-project",
+      "label": "ux-research-results",
+      "path": "product-design/ux-research-results.md",
+      "description": "SEJA -- UX Research Results\n\n<!-- maintained-by: human (designer/researcher); Human (markers) classification --> <!-- Private to seja-priv: SEJA's own UX research.",
+      "description_source": "developer-fallback"
     },
     {
       "id": "ref-template:agent/constraints.yaml",
@@ -644,6 +684,14 @@
       "description_source": "designer-description"
     },
     {
+      "id": "ref-template:demo/product-overview.yaml",
+      "type": "ref-template",
+      "label": "product-overview.yaml",
+      "path": ".claude/references/template/demo/product-overview.yaml",
+      "description": "---",
+      "description_source": "developer-fallback"
+    },
+    {
       "id": "ref-template:design-confidence-annotations.md",
       "type": "ref-template",
       "label": "design-confidence-annotations",
@@ -692,11 +740,11 @@
       "description_source": "designer-description"
     },
     {
-      "id": "ref-template:docs/drr.md",
+      "id": "ref-template:docs/ddr.md",
       "type": "ref-template",
-      "label": "drr",
-      "path": ".claude/references/template/docs/drr.md",
-      "description": "When /document generates a Design Rationale Record, I'm the template that shapes the context, decision, consequences, and status-tracking sections using your plan's Docs: fields and the decision the diff encodes, so the why behind a significant dedsign choice is captured in the record future developers will read before they try to undo it.",
+      "label": "ddr",
+      "path": ".claude/references/template/docs/ddr.md",
+      "description": "When /document generates a Design Decision Record, I'm the template that shapes the context, decision, consequences, and status-tracking sections using your plan's Docs: fields and the decision the diff encodes, so the why behind a significant dedsign choice is captured in the record future developers will read before they try to undo it.",
       "description_source": "designer-description"
     },
     {
@@ -746,6 +794,14 @@
       "path": ".claude/references/template/product-design-changelog.md",
       "description": "I record how your project's implemented conceptual design has evolved over time -- one entry appended by post-skill after each plan that reshaped the design, with source and plan reference -- so you can trace when a concept first shipped, when it changed, and which plan moved it, without digging through commit history.",
       "description_source": "designer-description"
+    },
+    {
+      "id": "ref-template:product-overview.yaml",
+      "type": "ref-template",
+      "label": "product-overview.yaml",
+      "path": ".claude/references/template/product-overview.yaml",
+      "description": "---",
+      "description_source": "developer-fallback"
     },
     {
       "id": "ref-template:project-spec.md",
@@ -1540,6 +1596,14 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:update_roadmap_plan_id.py",
+      "type": "script",
+      "label": "update_roadmap_plan_id.py",
+      "path": ".claude/skills/scripts/update_roadmap_plan_id.py",
+      "description": "After /plan generates a plan inline from a roadmap, I update the\nroadmap file's Plan column for the matching work-item row from plan-TBD to\nthe real reserved plan ID -- targeted by work-item slug so the edit is\nalways unambiguous even when the table has many plan-TBD cells.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:upgrade_harness.py",
       "type": "script",
       "label": "upgrade_harness.py",
@@ -1579,7 +1643,7 @@
       "label": "/design",
       "path": ".claude/skills/design/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Configures design intent for your project. Six modes cover every design lifecycle stage: interactive questionnaire (default), from a pre-filled spec file, adding documentation templates, generating a blank spec, interview-driven conversation, and updating existing design sections. After `/seja-setup` populates `conventions.md` with stack definitions, `/design` generates the remaining design-intent artifacts (product-design-as-intended, ux-research-results, standards, design-standards, security-checklists, constitution) and amends CLAUDE.md.\n\n**Examples**:\n> `/design`\n> Post-`/seja-setup` (partial-design state): detects that conventions.md exists but design intent is absent. Skips Section 1 (stack already answered), walks through Sections 0 (metacomm) and 2-5+ (conceptual-design, UX/visual design, standards, docs).\n\n> `/design` (when project already configured)\n> Shows current design summary and offers an interactive menu to update specific sections.\n\n> `/design specs/my-project.md`\n> Reads a pre-filled spec file and generates all design artifacts from it without interactive prompts (Mode 2).\n\n> `/design --generate-spec`\n> Outputs a blank spec skeleton you can fill out offline and feed back via Mode 2 (Mode 4).\n\n> `/design --add-docs`\n> Adds documentation templates to an already-configured project (Mode 3).\n\n> `/design --mode interview`\n> Open-ended conversation that builds design intent through questions, then synthesizes structured outputs. Best when you haven't pre-formalized your idea (Mode 5).\n\n> `/design update conceptual`\n> Jumps directly to the conceptual-design section update dialog, skipping the interactive menu.\n\n**When to use**: After `/seja-setup` to define design intent for a new project. Anytime you want to update your project's design foundations (stack, domain model, standards, metacommunication). Use `/design update <section-slug>` (valid slugs: `stack`, `conceptual`, `metacomm`, `backend-standards`, `frontend-standards`, `ux-standards`, `ui-standards`, `i18n`, `security`, `testing`, `constitution`, `full`) to jump straight to a specific section. Use Mode 5 (`--mode interview`) when you want to think out loud rather than fill a form; use Mode 1 (default) when you know your stack and want speed.\n\n**Not for**: topology scaffolding (use `/seja-setup`), planning implementation (use `/plan`), or checking drift between intent and code (use `/explain spec-drift`).\n\n**Next step**: `/plan --roadmap` to generate a development roadmap from the new design, or `/plan` to plan your first feature.",
+      "description": "**What it does**: Configures design intent for your project. Six modes cover every design lifecycle stage: interactive questionnaire (default), from a pre-filled spec file, adding documentation templates, generating a blank spec, interview-driven conversation, and updating existing design sections. After `/seja-setup` populates `conventions.md` with stack definitions, `/design` generates the remaining design-intent artifacts (product-design-as-intended, ux-research-results, standards, design-standards, security-checklists, constitution) and amends CLAUDE.md.\n\n**Examples**:\n> `/design`\n> Post-`/seja-setup` (partial-design state): detects that conventions.md exists but design intent is absent. Skips Section 1 (stack already answered), walks through Sections 0 (metacomm) and 2-5+ (conceptual-design, UX/visual design, standards, docs).\n\n> `/design` (when project already configured)\n> Shows current design summary and offers an interactive menu to update specific sections.\n\n> `/design specs/my-project.md`\n> Reads a pre-filled spec file and generates all design artifacts from it without interactive prompts (Mode 2).\n\n> `/design --generate-spec`\n> Outputs a blank spec skeleton you can fill out offline and feed back via Mode 2 (Mode 4).\n\n> `/design --add-docs`\n> Adds documentation templates to an already-configured project (Mode 3).\n\n> `/design --mode interview`\n> Open-ended conversation that builds design intent through questions, then synthesizes structured outputs. Best when you haven't pre-formalized your idea (Mode 5).\n\n> `/design update conceptual`\n> Jumps directly to the conceptual-design section update dialog, skipping the interactive menu.\n\n**When to use**: After `/seja-setup` to define design intent for a new project. Anytime you want to update your project's design foundations (stack, domain model, standards, metacommunication). Use `/design update <section-slug>` (valid slugs: `stack`, `conceptual`, `metacomm`, `backend-standards`, `frontend-standards`, `ux-standards`, `ui-standards`, `i18n`, `security`, `testing`, `constitution`, `full`) to jump straight to a specific section. Use Mode 5 (`--mode interview`) when you want to think out loud rather than fill a form; use Mode 1 (default) when you know your stack and want speed.\n\n**Not for**: topology scaffolding (use `/seja-setup`), planning implementation (use `/plan`), or checking drift between intent and code (use `/explain drift`).\n\n**Next step**: `/plan --roadmap` to generate a development roadmap from the new design, or `/plan` to plan your first feature.",
       "description_source": "quick-guide"
     },
     {
@@ -1588,7 +1652,7 @@
       "label": "/document",
       "path": ".claude/skills/document/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Generate or update documentation for your project. Four invocation modes: plan-driven (reads Docs: fields from a plan), auto-detect (scans recent git changes), type-targeted (you pick the doc type), or bare scope (you name a file/module/feature). Uses project templates and the documentation-quality writing guide for structured generation. Supports 6 documentation types: readme, contextual-help, api-reference, drr, help-center, and changelog.\n\n**Examples**:\n> `/document --plan 000130`\n> Reads the plan's Docs: fields and generates the appropriate documentation for each identified need.\n\n> `/document --auto-detect`\n> Analyzes recent git changes using 6 heuristic patterns (new API routes, changed models, new UI components, config changes, architectural shifts, breaking changes) and generates matching documentation types.\n\n> `/document --auto-detect --since 2026-04-01`\n> Same as above but bounds the git scan to changes since a specific date.\n\n> `/document --auto-detect --since last`\n> Scans only changes since the last `/document` run of any kind.\n\n> `/document --auto-detect --full-history`\n> Ignores per-doc-type bounding windows and scans the full recent git history.\n\n> `/document --type readme`\n> Generates or updates the project README.\n\n> `/document --type api-reference`\n> Generates API reference documentation from your routes and handlers.\n\n> `/document --type changelog`\n> Generates a changelog entry from recent changes.\n\n<!-- priv-only-start -->\n> `/document --type changelog --harness`\n> Generates a harness changelog entry in `.claude/CHANGELOG.md` using structured git history extraction.\n<!-- priv-only-end -->\n\n> `/document --type drr`\n> Creates a Design Rationale Record for a recent decision.\n\n> `/document --type contextual-help`\n> Generates contextual help content for UI features.\n\n> `/document --type help-center`\n> Generates help-center articles for end users.\n\n> `/document src/auth`\n> Documents the auth module -- infers the most appropriate doc type from the scope content.\n\n**When to use**: After implementing a feature or fix that affects user-facing behavior, API contracts, or architectural decisions. Automatically suggested by post-skill for FEATURE and REDESIGN plans and plans with non-N/A Docs: fields. Use `--plan` when documentation needs are already specified in a plan; use `--auto-detect` for a broad scan of what changed; use `--type` when you know exactly which doc type you need; use bare scope for ad-hoc documentation of a specific area.\n\n**Not for**: stakeholder updates (use `/communicate`) or personalized onboarding plans (use `/onboard`). See `docs/how-to/which-communicative-skill.md` for the audience routing table.\n\n**Next step**: `/critique docs` to validate documentation consistency.\n\n**See also**: `/explain` -- understand existing system behavior, architecture, data model, or design spec drift.",
+      "description": "**What it does**: Generate or update documentation for your project. Four invocation modes: plan-driven (reads Docs: fields from a plan), auto-detect (scans recent git changes), type-targeted (you pick the doc type), or bare scope (you name a file/module/feature). Uses project templates and the documentation-quality writing guide for structured generation. Supports 7 documentation types: readme, contextual-help, api-reference, ddr, help-center, changelog, and spo.\n\n**Examples**:\n> `/document --plan 000130`\n> Reads the plan's Docs: fields and generates the appropriate documentation for each identified need.\n\n> `/document --auto-detect`\n> Analyzes recent git changes using 6 heuristic patterns (new API routes, changed models, new UI components, config changes, architectural shifts, breaking changes) and generates matching documentation types.\n\n> `/document --auto-detect --since 2026-04-01`\n> Same as above but bounds the git scan to changes since a specific date.\n\n> `/document --auto-detect --since last`\n> Scans only changes since the last `/document` run of any kind.\n\n> `/document --auto-detect --full-history`\n> Ignores per-doc-type bounding windows and scans the full recent git history.\n\n> `/document --type readme`\n> Generates or updates the project README.\n\n> `/document --type api-reference`\n> Generates API reference documentation from your routes and handlers.\n\n> `/document --type changelog`\n> Generates a changelog entry from recent changes.\n\n<!-- priv-only-start -->\n> `/document --type changelog --harness`\n> Generates a harness changelog entry in `.claude/CHANGELOG.md` using structured git history extraction.\n<!-- priv-only-end -->\n\n> `/document --type spo`\n> Generates `_output/docs/spo.html` — an interactive layered product overview from `product-overview.yaml`. Shows the full value chain (goals → tasks → features → services → data) with persona filters, quality criteria panel, and roadmap version columns.\n\n> `/document --type spo --drift`\n> Same as above, but dims non-`done` cards to highlight the gap between as-intended and as-coded state.\n\n<!-- priv-only-start -->\n> `/document --type spo --harness`\n> Generates `_output/docs/harness-spo.html` — the SEJA harness's own product overview, derived from `call-graph.json` (skills → features, agents → services, scripts → services, references → data).\n<!-- priv-only-end -->\n\n> `/document --type ddr`\n> Creates a Design Decision Record for a recent decision.\n\n> `/document --type contextual-help`\n> Generates contextual help content for UI features.\n\n> `/document --type help-center`\n> Generates help-center articles for end users.\n\n> `/document src/auth`\n> Documents the auth module -- infers the most appropriate doc type from the scope content.\n\n**When to use**: After implementing a feature or fix that affects user-facing behavior, API contracts, or architectural decisions. Automatically suggested by post-skill for FEATURE and REDESIGN plans and plans with non-N/A Docs: fields. Use `--plan` when documentation needs are already specified in a plan; use `--auto-detect` for a broad scan of what changed; use `--type` when you know exactly which doc type you need; use bare scope for ad-hoc documentation of a specific area. Use `--type spo` after design is established, before a stakeholder presentation, or when the product structure changes significantly (new layers, major feature additions).\n\n**Not for**: stakeholder updates (use `/communicate`) or personalized onboarding plans (use `/onboard`). See `docs/how-to/which-communicative-skill.md` for the audience routing table.\n\n**Next step**: `/critique docs` to validate documentation consistency.\n\n**See also**: `/explain` -- understand existing system behavior, architecture, data model, or design spec drift.",
       "description_source": "quick-guide"
     },
     {
@@ -1597,7 +1661,7 @@
       "label": "/explain",
       "path": ".claude/skills/explain/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Get a clear explanation of how something works -- a feature's behavior, the data model, the overall architecture, how behavior evolved over time, how code works, or the drift between your design specs. Includes diagrams and analogies to make complex topics accessible. Six mode types, each producing a different kind of explanation report. The **spec-drift** mode also offers an interactive sync workflow to realign diverged specs.\n\n**Examples**:\n> `/explain architecture How does the authentication flow work?`\n> Produces a visual diagram of the auth flow, explains each step in plain language, and highlights key design decisions.\n\n> `/explain behavior What happens when a user submits a form with validation errors?`\n> Explains the emergent behavior from the user's perspective, covering each path through the flow.\n\n> `/explain behavior-evolution How has the notification system changed?`\n> Explains current notification behavior AND traces how it evolved through past plans and commits.\n\n> `/explain code src/auth/middleware.ts`\n> Explains how the code works, aimed at junior developers being onboarded.\n\n> `/explain data-model How are users and permissions related?`\n> Explains the data model with entity diagrams, pitfalls, and refactoring opportunities.\n\n> `/explain spec-drift`\n> Compares as-coded and as-intended design specs. Reports entities, permissions, and UX patterns that have drifted. Asks whether you want to sync.\n\n> `/explain spec-drift conceptual-design`\n> Narrows the scan to only the conceptual-design sections of the registry.\n\n> `/explain spec-drift metacomm`\n> Narrows the scan to only the metacommunication sections.\n\n> `/explain spec-drift --scope since-plan plan-000295`\n> Scans only registry files touched by a specific plan -- useful after `/implement` to check drift introduced by that plan.\n\n> `/explain spec-drift --promote`\n> Generates Decision proposals (D-NNN entries) for items ready to be promoted from as-coded to as-intended.\n\n> `/explain spec-drift --promote --apply-markers plan-000295`\n> After you have written the Decision entries, flips the STATUS markers for items covered by the plan (Phase 3b).\n\n**When to use**: You want to understand how a part of the system works, need to onboard yourself on unfamiliar code, want a visual overview of the architecture, or want to see and resolve the gap between as-coded and as-intended design specs. In its general modes (architecture, behavior, code, data-model, behavior-evolution) it most often hands off to `/research` for follow-up questions. In `spec-drift` mode it has a recurring post-`/reflect` role -- after each cycle closes, run `/explain spec-drift` to detect divergence.\n\n**Not for**: generating artifacts someone else will read (use `/document`, `/communicate`, or `/onboard`); `/explain` answers *your* questions about the system. See `docs/how-to/which-communicative-skill.md` for the audience routing table.\n\n**Next step**:\n- After general modes (architecture, behavior, etc.): `/research` to follow up with deeper questions.\n- After `spec-drift`: `/plan` to address the drift, `/design` if intent has evolved, or `/pending` to address pending actions surfaced by the check.\n- After `spec-drift --promote`: `--apply-markers plan-<id>` to flip STATUS markers once you have written the Decision entries.\n\n**See also**: `/document` -- generate project documentation artifacts (READMEs, changelogs, API references, ADRs).",
+      "description": "**What it does**: Get a clear explanation of how something works -- a feature's behavior, the data model, the overall architecture, how behavior evolved over time, how code works, or the drift between your design specs. Includes diagrams and analogies to make complex topics accessible. Six mode types, each producing a different kind of explanation report. The **drift** mode also offers an interactive sync workflow to realign diverged specs.\n\n**Examples**:\n> `/explain architecture How does the authentication flow work?`\n> Produces a visual diagram of the auth flow, explains each step in plain language, and highlights key design decisions.\n\n> `/explain behavior What happens when a user submits a form with validation errors?`\n> Explains the emergent behavior from the user's perspective, covering each path through the flow.\n\n> `/explain behavior-evolution How has the notification system changed?`\n> Explains current notification behavior AND traces how it evolved through past plans and commits.\n\n> `/explain code src/auth/middleware.ts`\n> Explains how the code works, aimed at junior developers being onboarded.\n\n> `/explain data-model How are users and permissions related?`\n> Explains the data model with entity diagrams, pitfalls, and refactoring opportunities.\n\n> `/explain drift`\n> Compares as-coded and as-intended design specs. Reports entities, permissions, and UX patterns that have drifted. Asks whether you want to sync.\n\n> `/explain drift conceptual-design`\n> Narrows the scan to only the conceptual-design sections of the registry.\n\n> `/explain drift metacomm`\n> Narrows the scan to only the metacommunication sections.\n\n> `/explain drift --scope since-plan plan-000295`\n> Scans only registry files touched by a specific plan -- useful after `/implement` to check drift introduced by that plan.\n\n> `/explain drift --promote`\n> Generates Decision proposals (D-NNN entries) for items ready to be promoted from as-coded to as-intended.\n\n> `/explain drift --promote --apply-markers plan-000295`\n> After you have written the Decision entries, flips the STATUS markers for items covered by the plan (Phase 3b).\n\n**When to use**: You want to understand how a part of the system works, need to onboard yourself on unfamiliar code, want a visual overview of the architecture, or want to see and resolve the gap between as-coded and as-intended design specs. In its general modes (architecture, behavior, code, data-model, behavior-evolution) it most often hands off to `/research` for follow-up questions. In `drift` mode it has a recurring post-`/reflect` role -- after each cycle closes, run `/explain drift` to detect divergence.\n\n**Not for**: generating artifacts someone else will read (use `/document`, `/communicate`, or `/onboard`); `/explain` answers *your* questions about the system. See `docs/how-to/which-communicative-skill.md` for the audience routing table.\n\n**Next step**:\n- After general modes (architecture, behavior, etc.): `/research` to follow up with deeper questions.\n- After `drift`: `/plan` to address the drift, `/design` if intent has evolved, or `/pending` to address pending actions surfaced by the check.\n- After `drift --promote`: `--apply-markers plan-<id>` to flip STATUS markers once you have written the Decision entries.\n\n**See also**: `/document` -- generate project documentation artifacts (READMEs, changelogs, API references, ADRs).",
       "description_source": "quick-guide"
     },
     {
@@ -1633,7 +1697,7 @@
       "label": "/pending",
       "path": ".claude/skills/pending/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Lists outstanding human actions the harness is tracking for you, showing each one with type-specific advice on how to resolve it, then stops. Six subcommands cover the full lifecycle: list (read-only listing with advice), address (guided resolution for marker-flip types), add, done, snooze, and dismiss. The ledger lives at `_output/pending.jsonl` and is append-only, so you never lose history.\n\nTwelve action types the harness can file:\n\n| Type | Filed by | Typical resolution |\n|------|----------|--------------------|\n| `mark-implemented` | post-skill | Flip STATUS markers via `/pending` dispatch |\n| `test-implementation` | post-skill | Run the plan's test plan manually |\n| `verify-as-coded` | post-skill | Run `/explain spec-drift` to confirm |\n| `update-documentation` | post-skill / `--skip-docs` | Run `/document --plan <source>` |\n| `apply-promote-markers` | `/explain spec-drift --promote` | Write Decision entries, then `--apply-markers` |\n| `spec-drift-check` | periodic trigger | Run `/explain spec-drift` |\n| `periodic-curation` | periodic trigger | Review and triage the ledger |\n| `incorporate-research-markers` | post-skill | Flip INCORPORATED markers in UX research |\n| `implement` | post-skill (after `/plan`) | Run `/implement <plan-id>` |\n| `review-downstream-plan` | `/implement` (file-overlap check) | Review affected plan for assumption drift |\n| `create-decision-entry` | `/research` (decision-extract) | Create a D-NNN entry in as-intended |\n| `user-defined` | `/pending add` | Whatever you described |\n\n**Examples**:\n> `/pending`\n> Lists all pending items grouped by type, each with advice on how to resolve it (e.g., which skill to run, which file to open). Prints a footer showing available subcommands, then stops.\n\n> `/pending address pa-000003`\n> Runs the guided resolution workflow for item pa-000003. For mark-implemented and incorporate-research-markers types, walks you through per-candidate marker flips with confirmation. For other types, prints the type-specific advice.\n\n> `/pending add --type user-defined --source plan-000042 --description \"review CSRF middleware\"`\n> Appends a custom reminder to the ledger. Pre-skill will surface it at the top of every skill invocation until resolved.\n\n> `/pending done pa-000003`\n> Marks item pa-000003 as done.\n\n> `/pending snooze pa-000005 --until 2026-05-01`\n> Hides item pa-000005 until May 1st, then resurfaces it.\n\n> `/pending dismiss pa-000007 --reason \"no longer relevant after redesign\"`\n> Dismisses an item without completing it. The reason is recorded in the ledger.\n\n**When to use**: After `/implement` if you chose \"Defer for later review\" at post-skill, when pre-skill tells you there are pending actions, when the periodic curation trigger has fired, or any time you want to review what the harness is tracking for you.\n\n**Related**: `/critique health` Check 9 reports the pending-ledger count (diagnostic only). Any mutation (address/add/done/snooze/dismiss) still flows through `/pending`. The two skills are intentionally separate -- see advisory-000442.\n\n**Next step**: `/explain spec-drift --promote` after addressing periodic curation items (generates a Decision proposal for promotion candidates), or `/implement` once you have reviewed the outstanding review items.",
+      "description": "**What it does**: Lists outstanding human actions the harness is tracking for you, showing each one with type-specific advice on how to resolve it, then stops. Six subcommands cover the full lifecycle: list (read-only listing with advice), address (guided resolution for marker-flip types), add, done, snooze, and dismiss. The ledger lives at `_output/pending.jsonl` and is append-only, so you never lose history.\n\nTwelve action types the harness can file:\n\n| Type | Filed by | Typical resolution |\n|------|----------|--------------------|\n| `mark-implemented` | post-skill | Flip STATUS markers via `/pending` dispatch |\n| `test-implementation` | post-skill | Run the plan's test plan manually |\n| `verify-as-coded` | post-skill | Run `/explain drift` to confirm |\n| `update-documentation` | post-skill / `--skip-docs` | Run `/document --plan <source>` |\n| `apply-promote-markers` | `/explain drift --promote` | Write Decision entries, then `--apply-markers` |\n| `spec-drift-check` | periodic trigger | Run `/explain drift` |\n| `periodic-curation` | periodic trigger | Review and triage the ledger |\n| `incorporate-research-markers` | post-skill | Flip INCORPORATED markers in UX research |\n| `implement` | post-skill (after `/plan`) | Run `/implement <plan-id>` |\n| `review-downstream-plan` | `/implement` (file-overlap check) | Review affected plan for assumption drift |\n| `create-decision-entry` | `/research` (decision-extract) | Create a D-NNN entry in as-intended |\n| `user-defined` | `/pending add` | Whatever you described |\n\n**Examples**:\n> `/pending`\n> Lists all pending items grouped by type, each with advice on how to resolve it (e.g., which skill to run, which file to open). Prints a footer showing available subcommands, then stops.\n\n> `/pending address pa-000003`\n> Runs the guided resolution workflow for item pa-000003. For mark-implemented and incorporate-research-markers types, walks you through per-candidate marker flips with confirmation. For other types, prints the type-specific advice.\n\n> `/pending add --type user-defined --source plan-000042 --description \"review CSRF middleware\"`\n> Appends a custom reminder to the ledger. Pre-skill will surface it at the top of every skill invocation until resolved.\n\n> `/pending done pa-000003`\n> Marks item pa-000003 as done.\n\n> `/pending snooze pa-000005 --until 2026-05-01`\n> Hides item pa-000005 until May 1st, then resurfaces it.\n\n> `/pending dismiss pa-000007 --reason \"no longer relevant after redesign\"`\n> Dismisses an item without completing it. The reason is recorded in the ledger.\n\n**When to use**: After `/implement` if you chose \"Defer for later review\" at post-skill, when pre-skill tells you there are pending actions, when the periodic curation trigger has fired, or any time you want to review what the harness is tracking for you.\n\n**Related**: `/critique health` Check 9 reports the pending-ledger count (diagnostic only). Any mutation (address/add/done/snooze/dismiss) still flows through `/pending`. The two skills are intentionally separate -- see advisory-000442.\n\n**Next step**: `/explain drift --promote` after addressing periodic curation items (generates a Decision proposal for promotion candidates), or `/implement` once you have reviewed the outstanding review items.",
       "description_source": "quick-guide"
     },
     {
@@ -1705,7 +1769,7 @@
       "label": "/seja-setup",
       "path": ".claude/skills/seja-setup/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Manages SEJA's state in this project. Single entry point for every harness-lifecycle operation: install, finalise in place, companion workspace, demo bootstrap, and upgrade. On first install it scaffolds `CLAUDE.md` with stack-dependent content, populates `.claude/rules/` with stack-flavored rule files, and fills `product-design/conventions.md` with basic definitions. With no arguments, it inspects the current directory via `detect_setup_state.py` and routes to the correct action.\n\nState detection recognizes four project states: **no-harness** (fresh install target), **fresh-download** (SEJA cloned into project, needs finalisation), **partial-init** (conventions.md exists but design intent absent), and **finalised** (full project, offers upgrade).\n\n**Examples**:\n> `/seja-setup /path/to/my-project`\n> Detects the scenario (greenfield/existing), copies all harness files, populates conventions.md with stack definitions via the Section 1 questionnaire, scaffolds CLAUDE.md and rules, and tells you to run `/design` next.\n\n> `/seja-setup --here`\n> Detects you downloaded SEJA into your project folder; finalises setup in place. Prompts for git-history handling and cleanup of harness-dev artefacts.\n\n> `/seja-setup /path/to/my-project --workspace`\n> Creates a companion workspace directory alongside an existing codebase. The workspace is its own git repo with version-controlled design history.\n\n> `/seja-setup /path/to/taskflow-demo --demo`\n> Sets up the harness with the pre-configured TaskFlow demo project (pre-filled conventions, constitution, conceptual design, and walkthrough).\n\n> `/seja-setup --upgrade`\n> Upgrades harness files in the current project to the latest SemVer tag without touching project-specific files.\n\n> `/seja-setup --upgrade --version v0.2.0`\n> Pins the upgrade to a specific release tag instead of latest.\n\n> `/seja-setup --upgrade --dry-run`\n> Previews what the upgrade would change without applying anything.\n\n> `/seja-setup`\n> No args: inspects cwd, reports the detected state, and routes to install, finalise, upgrade menu, or refuse as appropriate.\n\n**When to use**: Every time you touch SEJA's state in a project -- first install, in-place finalisation, companion-workspace creation, demo bootstrap, or later harness upgrade. After the first iteration, you rarely run `/seja-setup` unless upgrading.\n\nStack-presence modes determine what gets scaffolded: **full-stack** (backend + frontend), **API-only** (`FRONTEND_FRAMEWORK=none`), **frontend-only** (`BACKEND_FRAMEWORK=none`), and **CLI / library** (both `none`). Each mode emits only the appropriate rows in `conventions.md`, sections in `CLAUDE.md`, rule files, and smoke-test infrastructure.\n\n**Next step**: `/design` after a fresh install to define design intent (entities, permissions, metacommunication, personas, standards). If you are new to SEJA, read `general/getting-started.md` first. After `--upgrade`: `/critique health` to verify harness integrity, then `/explain spec-drift` to catch changed conventions.\n\n**Merge background**: This skill merges the former `/setup` and `/upgrade` into a unified harness-state command.",
+      "description": "**What it does**: Manages SEJA's state in this project. Single entry point for every harness-lifecycle operation: install, finalise in place, companion workspace, demo bootstrap, and upgrade. On first install it scaffolds `CLAUDE.md` with stack-dependent content, populates `.claude/rules/` with stack-flavored rule files, and fills `product-design/conventions.md` with basic definitions. With no arguments, it inspects the current directory via `detect_setup_state.py` and routes to the correct action.\n\nState detection recognizes four project states: **no-harness** (fresh install target), **fresh-download** (SEJA cloned into project, needs finalisation), **partial-init** (conventions.md exists but design intent absent), and **finalised** (full project, offers upgrade).\n\n**Examples**:\n> `/seja-setup /path/to/my-project`\n> Detects the scenario (greenfield/existing), copies all harness files, populates conventions.md with stack definitions via the Section 1 questionnaire, scaffolds CLAUDE.md and rules, and tells you to run `/design` next.\n\n> `/seja-setup --here`\n> Detects you downloaded SEJA into your project folder; finalises setup in place. Prompts for git-history handling and cleanup of harness-dev artefacts.\n\n> `/seja-setup /path/to/my-project --workspace`\n> Creates a companion workspace directory alongside an existing codebase. The workspace is its own git repo with version-controlled design history.\n\n> `/seja-setup /path/to/taskflow-demo --demo`\n> Sets up the harness with the pre-configured TaskFlow demo project (pre-filled conventions, constitution, conceptual design, and walkthrough).\n\n> `/seja-setup --upgrade`\n> Upgrades harness files in the current project to the latest SemVer tag without touching project-specific files.\n\n> `/seja-setup --upgrade --version v0.2.0`\n> Pins the upgrade to a specific release tag instead of latest.\n\n> `/seja-setup --upgrade --dry-run`\n> Previews what the upgrade would change without applying anything.\n\n> `/seja-setup`\n> No args: inspects cwd, reports the detected state, and routes to install, finalise, upgrade menu, or refuse as appropriate.\n\n**When to use**: Every time you touch SEJA's state in a project -- first install, in-place finalisation, companion-workspace creation, demo bootstrap, or later harness upgrade. After the first iteration, you rarely run `/seja-setup` unless upgrading.\n\nStack-presence modes determine what gets scaffolded: **full-stack** (backend + frontend), **API-only** (`FRONTEND_FRAMEWORK=none`), **frontend-only** (`BACKEND_FRAMEWORK=none`), and **CLI / library** (both `none`). Each mode emits only the appropriate rows in `conventions.md`, sections in `CLAUDE.md`, rule files, and smoke-test infrastructure.\n\n**Next step**: `/design` after a fresh install to define design intent (entities, permissions, metacommunication, personas, standards). If you are new to SEJA, read `general/getting-started.md` first. After `--upgrade`: `/critique health` to verify harness integrity, then `/explain drift` to catch changed conventions.\n\n**Merge background**: This skill merges the former `/setup` and `/upgrade` into a unified harness-state command.",
       "description_source": "quick-guide"
     },
     {
@@ -1741,10 +1805,10 @@
       "description_source": "none"
     },
     {
-      "id": "skill-internal:explain/spec-drift",
+      "id": "skill-internal:explain/drift",
       "type": "skill-internal",
-      "label": "_internal/explain/spec-drift",
-      "path": ".claude/skills/_internal/explain/spec-drift/SKILL.md",
+      "label": "_internal/explain/drift",
+      "path": ".claude/skills/_internal/explain/drift/SKILL.md",
       "description": "",
       "description_source": "none"
     },
@@ -2000,7 +2064,7 @@
     },
     {
       "source": "agent:document-generator",
-      "target": "ref-template:docs/drr.md",
+      "target": "ref-template:docs/ddr.md",
       "type": "reads",
       "label": ""
     },
@@ -2761,6 +2825,12 @@
       "label": ""
     },
     {
+      "source": "script:check_git_freshness.py",
+      "target": "ref-project:conventions.md",
+      "type": "reads",
+      "label": ""
+    },
+    {
       "source": "script:check_harness_drift.py",
       "target": "script:upgrade_harness.py",
       "type": "imports",
@@ -3163,6 +3233,12 @@
       "label": ""
     },
     {
+      "source": "script:test_detect_setup_state.py",
+      "target": "ref-project:conventions.md",
+      "type": "reads",
+      "label": ""
+    },
+    {
       "source": "script:test_reflect_deep.py",
       "target": "script:reflect_colors.py",
       "type": "imports",
@@ -3241,19 +3317,19 @@
       "label": ""
     },
     {
-      "source": "skill-internal:explain/spec-drift",
+      "source": "skill-internal:explain/drift",
       "target": "script:apply_marker.py",
       "type": "invokes",
       "label": ""
     },
     {
-      "source": "skill-internal:explain/spec-drift",
+      "source": "skill-internal:explain/drift",
       "target": "script:pending.py",
       "type": "invokes",
       "label": ""
     },
     {
-      "source": "skill-internal:explain/spec-drift",
+      "source": "skill-internal:explain/drift",
       "target": "skill:explain",
       "type": "orchestrates",
       "label": ""
@@ -3279,6 +3355,12 @@
     {
       "source": "skill-internal:plan/roadmap",
       "target": "script:pending.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill-internal:plan/roadmap",
+      "target": "script:update_roadmap_plan_id.py",
       "type": "invokes",
       "label": ""
     },
@@ -3453,6 +3535,12 @@
     {
       "source": "skill:communicate",
       "target": "ref-general:shared-definitions.md",
+      "type": "lazy-load",
+      "label": ""
+    },
+    {
+      "source": "skill:communicate",
+      "target": "ref-project:product-design-as-coded.md",
       "type": "lazy-load",
       "label": ""
     },
@@ -3827,6 +3915,12 @@
     },
     {
       "source": "skill:document",
+      "target": "ref-template:product-overview.yaml",
+      "type": "reads",
+      "label": ""
+    },
+    {
+      "source": "skill:document",
       "target": "skill:critique",
       "type": "suggests",
       "label": "Validate documentation consistency?",
@@ -3858,7 +3952,7 @@
     },
     {
       "source": "skill:explain",
-      "target": "skill-internal:explain/spec-drift",
+      "target": "skill-internal:explain/drift",
       "type": "dispatches-inline",
       "label": ""
     },
@@ -3878,6 +3972,18 @@
       "source": "skill:explain",
       "target": "script:reserve_id.py",
       "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "skill:explain",
+      "target": "ref-project:product-design-as-coded.md",
+      "type": "lazy-load",
+      "label": ""
+    },
+    {
+      "source": "skill:explain",
+      "target": "ref-project:product-design-as-intended.md",
+      "type": "lazy-load",
       "label": ""
     },
     {
@@ -3950,6 +4056,18 @@
     {
       "source": "skill:implement",
       "target": "ref-general:report-conventions.md",
+      "type": "eager-load",
+      "label": ""
+    },
+    {
+      "source": "skill:implement",
+      "target": "ref-project:product-design-as-coded.md",
+      "type": "eager-load",
+      "label": ""
+    },
+    {
+      "source": "skill:implement",
+      "target": "ref-project:product-design-as-intended.md",
       "type": "eager-load",
       "label": ""
     },
@@ -4100,6 +4218,12 @@
     },
     {
       "source": "skill:onboard",
+      "target": "ref-project:product-design-as-coded.md",
+      "type": "lazy-load",
+      "label": ""
+    },
+    {
+      "source": "skill:onboard",
       "target": "skill:post-skill",
       "type": "orchestrates",
       "label": ""
@@ -4210,6 +4334,18 @@
     },
     {
       "source": "skill:plan",
+      "target": "ref-project:product-design-as-coded.md",
+      "type": "eager-load",
+      "label": ""
+    },
+    {
+      "source": "skill:plan",
+      "target": "ref-project:product-design-as-intended.md",
+      "type": "eager-load",
+      "label": ""
+    },
+    {
+      "source": "skill:plan",
       "target": "script:reserve_id.py",
       "type": "invokes",
       "label": ""
@@ -4223,6 +4359,12 @@
     {
       "source": "skill:plan",
       "target": "ref-general:review-perspectives.md",
+      "type": "lazy-load",
+      "label": ""
+    },
+    {
+      "source": "skill:plan",
+      "target": "ref-project:conventions.md",
       "type": "lazy-load",
       "label": ""
     },
@@ -4415,6 +4557,18 @@
     },
     {
       "source": "skill:publish",
+      "target": "agent:document-generator",
+      "type": "delegates",
+      "label": ""
+    },
+    {
+      "source": "skill:publish",
+      "target": "skill:post-skill",
+      "type": "orchestrates",
+      "label": ""
+    },
+    {
+      "source": "skill:publish",
       "target": "skill:pre-skill",
       "type": "orchestrates",
       "label": ""
@@ -4454,6 +4608,12 @@
     {
       "source": "skill:reflect",
       "target": "ref-general:constraints.md",
+      "type": "eager-load",
+      "label": ""
+    },
+    {
+      "source": "skill:reflect",
+      "target": "ref-project:conventions.md",
       "type": "eager-load",
       "label": ""
     },
@@ -4557,6 +4717,12 @@
     },
     {
       "source": "skill:research",
+      "target": "ref-project:product-design-as-coded.md",
+      "type": "eager-load",
+      "label": ""
+    },
+    {
+      "source": "skill:research",
       "target": "script:apply_marker.py",
       "type": "invokes",
       "label": ""
@@ -4593,7 +4759,13 @@
     },
     {
       "source": "skill:research",
-      "target": "ref-template:docs/drr.md",
+      "target": "ref-project:product-design-as-intended.md",
+      "type": "lazy-load",
+      "label": ""
+    },
+    {
+      "source": "skill:research",
+      "target": "ref-template:docs/ddr.md",
       "type": "lazy-load",
       "label": ""
     },
@@ -4710,25 +4882,13 @@
     }
   ],
   "warnings": [
-    "skill:communicate references unresolved ref 'project/product-design-as-coded.md'",
     "skill:critique references unresolved ref 'project/design-standards.md'",
     "skill:critique references unresolved ref 'project/security-checklists.md'",
     "skill:critique references unresolved ref 'project/standards.md'",
-    "skill:explain references unresolved ref 'project/product-design-as-coded.md'",
-    "skill:explain references unresolved ref 'project/product-design-as-intended.md'",
-    "skill:implement references unresolved ref 'project/product-design-as-coded.md'",
-    "skill:implement references unresolved ref 'project/product-design-as-intended.md'",
     "skill:implement references unresolved ref 'project/security-checklists.md'",
     "skill:implement references unresolved ref 'project/standards.md'",
-    "skill:onboard references unresolved ref 'project/product-design-as-coded.md'",
-    "skill:plan references unresolved ref 'project/conventions.md'",
     "skill:plan references unresolved ref 'project/design-standards.md'",
-    "skill:plan references unresolved ref 'project/product-design-as-coded.md'",
-    "skill:plan references unresolved ref 'project/product-design-as-intended.md'",
     "skill:plan references unresolved ref 'project/security-checklists.md'",
-    "skill:plan references unresolved ref 'project/standards.md'",
-    "skill:reflect references unresolved ref 'project/conventions.md'",
-    "skill:research references unresolved ref 'project/product-design-as-coded.md'",
-    "skill:research references unresolved ref 'project/product-design-as-intended.md'"
+    "skill:plan references unresolved ref 'project/standards.md'"
   ]
 }

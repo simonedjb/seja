@@ -1,5 +1,5 @@
 ---
-designer_description: "When a skill, plan, or artifact uses a harness-wide concept -- the metacommunication message and its first-person I / second-person you phrasing rule, the Semiotic Engineering grounding behind review perspectives and spec-drift, the File Maintainer Classification that controls who may edit what -- I'm the reference that holds the canonical definitions, so the same term means the same thing everywhere."
+designer_description: "When a skill, plan, or artifact uses a harness-wide concept -- the metacommunication message and its first-person I / second-person you phrasing rule, the Semiotic Engineering grounding behind review perspectives and drift detection, the File Maintainer Classification that controls who may edit what -- I'm the reference that holds the canonical definitions, so the same term means the same thing everywhere."
 ---
 
 # GENERAL - SHARED DEFINITIONS
@@ -92,13 +92,13 @@ Inline HTML comment immediately before the section heading -- invisible in rende
 
 Uppercase `STATUS: IMPLEMENTED` markers remain valid. The widened `_STATUS_MARKER_RE` (SEJA 2.8.3, plan-000268 Amendment A1) detects legacy markers so a Phase 3b flip REPLACES rather than stacks. New/consolidated files use the lowercase scheme; `project/product-design-as-intended.md` (since SEJA 2.8.3) is the canonical lowercase-primary Human (markers) file.
 
-### Decision entries (DRR)
+### Decision entries (DDR)
 
 Design-intent decision entries live in `project/product-design-as-intended.md §
-Decisions` under `### D-NNN: Title` headings (DRR shape (see `template/docs/drr.md` for the canonical template)). The `D-NNN` namespace is
+Decisions` under `### D-NNN: Title` headings (DDR shape (see `template/docs/ddr.md` for the canonical template)). The `D-NNN` namespace is
 **orthogonal to REQ-TYPE-NNN** -- separate taxonomies, never intermixed. REQ markers
 trace individual requirements; Decision entries capture rationale and trade-offs behind
-larger architectural choices. D-NNN entries are the capture mechanism (created by `/research` step 9b); standalone DRR files in `docs/drr/` are the publication mechanism (created by `/document --type drr`, optionally sourced from existing D-NNN entries).
+larger architectural choices. D-NNN entries are the capture mechanism (created by `/research` step 9b); standalone DDR files in `docs/ddr/` are the publication mechanism (created by `/document --type ddr`, optionally sourced from existing D-NNN entries).
 
 Decision entries carry their own `STATUS` marker (lowercase multi-value scheme) above
 the heading:
@@ -112,7 +112,7 @@ the heading:
 **Consequences**: ...
 ```
 
-`/explain spec-drift --promote` (Phase 3a) drafts DRR-shaped entries from plan metadata
+`/explain drift --promote` (Phase 3a) drafts DDR-shaped entries from plan metadata
 for items marked `STATUS: implemented`, writing to
 `_output/promote-proposals/promote-proposal-plan-<id>.md`. The designer reviews, edits
 to their voice, and copies entries into `product-design-as-intended.md § Decisions`.
@@ -133,7 +133,7 @@ For structured tables (e.g. journey map steps), add a Status column:
 ### ESTABLISHED stamp
 
 Applied when a human confirms promotion of an IMPLEMENTED item (via `/explain
-spec-drift --promote` or manual curation):
+drift --promote` or manual curation):
 
 ```markdown
 <!-- ESTABLISHED: plan-NNNNNN | YYYY-MM-DD | vX.Y.Z -->

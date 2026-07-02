@@ -1,0 +1,403 @@
+---
+designer_description: "I'm the demo SPO data file /seja-setup --demo writes into your scratch project -- a fully populated 5-layer value chain for the TaskFlow demo app, showing how business goals connect through user tasks and features down to data infrastructure, with personas, quality criteria, roadmap versioning, and card statuses. Open _output/docs/spo.html after running /document --type spo to see the interactive diagram."
+---
+
+# product-overview.yaml — TaskFlow Demo (Structured Product Overview)
+#
+# Demo data for /seja-setup --demo. Illustrates a complete SPO for
+# TaskFlow, a lightweight browser-based task management app.
+# Run /document --type spo to generate the interactive HTML.
+
+meta:
+  title:
+    en-US: "TaskFlow — Product Overview"
+    pt-BR: "TaskFlow — Visão do Produto"
+  version_labels:
+    V1: "V1 · MVP"
+    V2: "V2 · Enhanced"
+    V3: "V3 · Roadmap"
+  tracker_type: seja
+  locale: en-US
+  languages: [en-US, pt-BR]
+  facets:
+    - {id: subsystem, label: Subsystem, field: subsystem}
+    - {id: channels,  label: Channels,  field: channels}
+
+layers:
+  - id: data
+    name: Data & Storage
+    subtitle: persistence and browser foundations
+    relation_label: underlies
+
+  - id: services
+    name: Services
+    subtitle: processing and business logic
+    relation_label: powers
+
+  - id: features
+    name: Features
+    subtitle: what the app delivers
+    relation_label: enables
+
+  - id: tasks
+    name: User Tasks
+    subtitle: what each person needs to accomplish
+    relation_label: addresses
+
+  - id: goals
+    name: Goals
+    subtitle: why this product exists
+    relation_label: supports
+
+personas:
+  - id: P-01
+    name: Alex
+    role: Individual Contributor
+    initials: A
+    type: external
+    tasks: [T-01, T-02, T-03]
+
+  - id: P-02
+    name: Jordan
+    role: Power User
+    initials: J
+    type: external
+    tasks: [T-02, T-04]
+
+quality_criteria:
+  - id: G-QC-1
+    layer: goals
+    label: Measurable outcome
+
+  - id: G-QC-2
+    layer: goals
+    label: User-aligned benefit
+
+  - id: T-QC-1
+    layer: tasks
+    label: Task effectiveness
+
+  - id: T-QC-2
+    layer: tasks
+    label: Learnability
+
+  - id: F-QC-1
+    layer: features
+    label: Usability
+
+  - id: F-QC-2
+    layer: features
+    label: Performance
+
+  - id: S-QC-1
+    layer: services
+    label: Data integrity
+
+  - id: D-QC-1
+    layer: data
+    label: Durability
+
+  - id: D-QC-2
+    layer: data
+    label: Offline support
+
+cards:
+
+  # ── Goals ──────────────────────────────────────────────────────────────────
+
+  - id: G-01
+    layer: goals
+    title: Reduce friction in daily task tracking
+    enables: []
+    depends: []
+    version: V1
+    personas: []
+    quality_criteria: [G-QC-1, G-QC-2]
+    fulfillment:
+      - "task creation in under 10 seconds"
+      - "zero onboarding required"
+    tracker_id: ""
+    tracker_title: ""
+    status: done
+    status_plan: plan-000001
+    status_date: "2026-05-15"
+    owner: ""
+
+  - id: G-02
+    layer: goals
+    title: Support personal productivity habits
+    enables: []
+    depends: []
+    version: V2
+    personas: []
+    quality_criteria: [G-QC-1, G-QC-2]
+    fulfillment:
+      - "recurring tasks or templates"
+      - "daily review ritual support"
+    tracker_id: ""
+    tracker_title: ""
+    status: proposed
+    status_plan: ""
+    status_date: ""
+    owner: ""
+
+  # ── User Tasks ─────────────────────────────────────────────────────────────
+
+  - id: T-01
+    layer: tasks
+    title: Create and capture a task quickly
+    enables: [G-01]
+    depends: []
+    version: V1
+    personas: [P-01]
+    quality_criteria: [T-QC-1, T-QC-2]
+    fulfillment:
+      - "single-field entry"
+      - "keyboard shortcut to add"
+    tracker_id: ""
+    tracker_title: ""
+    status: done
+    status_plan: plan-000001
+    status_date: "2026-05-15"
+    owner: ""
+
+  - id: T-02
+    layer: tasks
+    title: Organise tasks by category
+    enables: [G-01]
+    depends: [T-01]
+    version: V1
+    personas: [P-01, P-02]
+    quality_criteria: [T-QC-1]
+    fulfillment:
+      - "drag to category or dropdown assign"
+      - "filter list by category"
+    tracker_id: ""
+    tracker_title: ""
+    status: done
+    status_plan: plan-000002
+    status_date: "2026-05-22"
+    owner: ""
+
+  - id: T-03
+    layer: tasks
+    title: Mark tasks complete and review progress
+    enables: [G-01]
+    depends: [T-01]
+    version: V1
+    personas: [P-01]
+    quality_criteria: [T-QC-1, T-QC-2]
+    fulfillment:
+      - "one-click completion toggle"
+      - "completion count visible without navigation"
+    tracker_id: ""
+    tracker_title: ""
+    status: done
+    status_plan: plan-000001
+    status_date: "2026-05-15"
+    owner: ""
+
+  - id: T-04
+    layer: tasks
+    title: Set up recurring tasks or daily templates
+    enables: [G-02]
+    depends: [T-01, T-02]
+    version: V2
+    personas: [P-02]
+    quality_criteria: [T-QC-1]
+    fulfillment:
+      - "schedule: daily/weekly/monthly"
+      - "auto-creates next occurrence on completion"
+    tracker_id: ""
+    tracker_title: ""
+    status: proposed
+    status_plan: ""
+    status_date: ""
+    owner: ""
+
+  # ── Features ───────────────────────────────────────────────────────────────
+
+  - id: F-01
+    layer: features
+    title: Task creation & editing
+    enables: [T-01, T-03]
+    depends: []
+    version: V1
+    personas: []
+    quality_criteria: [F-QC-1, F-QC-2]
+    subsystem: ui
+    req_ids: [REQ-UX-001]
+    source_ref: "product-design/product-design-as-intended.md#8-user-experience-patterns"
+    fulfillment:
+      - "inline edit on click"
+      - "title, notes, due date fields"
+    tracker_id: ""
+    tracker_title: ""
+    status: done
+    status_plan: plan-000001
+    status_date: "2026-05-15"
+    owner: ""
+
+  - id: F-02
+    layer: features
+    title: Category management
+    enables: [T-02]
+    depends: [F-01]
+    version: V1
+    personas: []
+    quality_criteria: [F-QC-1]
+    fulfillment:
+      - "create / rename / delete categories"
+      - "colour coding per category"
+    tracker_id: ""
+    tracker_title: ""
+    status: done
+    status_plan: plan-000002
+    status_date: "2026-05-22"
+    owner: ""
+
+  - id: F-03
+    layer: features
+    title: Task list & completion view
+    enables: [T-03]
+    depends: [F-01]
+    version: V1
+    personas: []
+    quality_criteria: [F-QC-1, F-QC-2]
+    fulfillment:
+      - "filter: all / active / completed"
+      - "completion counter in header"
+    tracker_id: ""
+    tracker_title: ""
+    status: done
+    status_plan: plan-000001
+    status_date: "2026-05-15"
+    owner: ""
+
+  - id: F-04
+    layer: features
+    title: Recurring task templates
+    enables: [T-04]
+    depends: [F-01, F-02]
+    version: V2
+    personas: []
+    quality_criteria: [F-QC-1]
+    fulfillment:
+      - "recurrence rule editor"
+      - "next-occurrence preview"
+    tracker_id: ""
+    tracker_title: ""
+    status: proposed
+    status_plan: ""
+    status_date: ""
+    owner: ""
+
+  # ── Services ───────────────────────────────────────────────────────────────
+
+  - id: S-01
+    layer: services
+    title: Task service (CRUD + filtering)
+    enables: [F-01, F-03]
+    depends: []
+    version: V1
+    personas: []
+    quality_criteria: [S-QC-1]
+    subsystem: logic
+    req_ids: [REQ-ENT-001]
+    decision_ids: [D-001]
+    fulfillment:
+      - "idempotent add/update/delete"
+      - "filter API by status, category, due date"
+    tracker_id: ""
+    tracker_title: ""
+    status: done
+    status_plan: plan-000001
+    status_date: "2026-05-15"
+    owner: ""
+    external: false
+    provider: ""
+
+  - id: S-02
+    layer: services
+    title: Category service
+    enables: [F-02]
+    depends: [S-01]
+    version: V1
+    personas: []
+    quality_criteria: [S-QC-1]
+    fulfillment:
+      - "CRUD for categories"
+      - "cascading task update on category rename"
+    tracker_id: ""
+    tracker_title: ""
+    status: done
+    status_plan: plan-000002
+    status_date: "2026-05-22"
+    owner: ""
+    external: false
+    provider: ""
+
+  - id: S-03
+    layer: services
+    title: Recurrence engine
+    enables: [F-04]
+    depends: [S-01]
+    version: V2
+    personas: []
+    quality_criteria: [S-QC-1]
+    fulfillment:
+      - "next-occurrence calculation"
+      - "on-completion auto-schedule"
+    tracker_id: ""
+    tracker_title: ""
+    status: proposed
+    status_plan: ""
+    status_date: ""
+    owner: ""
+    external: false
+    provider: ""
+
+  # ── Data & Storage ─────────────────────────────────────────────────────────
+
+  - id: D-01
+    layer: data
+    title: Browser local storage
+    enables: [S-01, S-02]
+    depends: []
+    version: V1
+    personas: []
+    quality_criteria: [D-QC-1, D-QC-2]
+    subsystem: storage
+    channels: [Browser Storage API]
+    fulfillment:
+      - "JSON serialisation of task + category state"
+      - "auto-save on every mutation"
+      - "works fully offline"
+    tracker_id: ""
+    tracker_title: ""
+    status: done
+    status_plan: plan-000001
+    status_date: "2026-05-15"
+    owner: ""
+    external: false
+    provider: ""
+
+  - id: D-02
+    layer: data
+    title: In-memory reactive state
+    enables: [S-01, S-02, S-03]
+    depends: [D-01]
+    version: V1
+    personas: []
+    quality_criteria: [D-QC-1]
+    fulfillment:
+      - "single source of truth for UI reactivity"
+      - "derived views (filtered lists) recomputed on change"
+    tracker_id: ""
+    tracker_title: ""
+    status: done
+    status_plan: plan-000001
+    status_date: "2026-05-15"
+    owner: ""
+    external: false
+    provider: ""

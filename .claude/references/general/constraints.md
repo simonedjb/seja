@@ -8,8 +8,8 @@ designer_description: "When you want to know the non-negotiable guardrails every
 - Do not compress human-facing prose unless specifically directed to do so by the user.
 - Prefer named sections and paragraphs to numbered ones, except when ordering is essential (e.g. execution steps).
 - All files must be UTF-8 encoded.
-- All lines end in CRLF.
 - For English texts, use US English spelling.
+- For Portuguese texts, use pr-BR and proper diacritics.
 - Do not invent data.
 - Do not generate agent-dependent or nondeterministic behavior unless explicitly requested.
 - Do not use ANSI code in generated code or reports.
@@ -68,8 +68,8 @@ Each entry is a clickable relative-path link (relative to the project root). Lis
 - `/research` step 10 -- the advisory report
 - post-skill step 6e -- the plan file and as-intended files with STATUS marker candidates
 - post-skill step 11 -- the just-completed artifact
-- `/explain spec-drift` Step B -- the drift report
-- `/explain spec-drift` Phase 3b step 4 -- the promote-proposal file
+- `/explain drift` Step B -- the drift report
+- `/explain drift` Phase 3b step 4 -- the promote-proposal file
 - `/pending` step 4 -- the source artifact for the selected pending action
 
 **When it does NOT apply.** `AskUserQuestion` instances that gather input before any artifact exists -- no files to link yet. Examples: roadmap mode selection, onboarding role/level selection, check mode selection, explain type selection, communication audience selection.

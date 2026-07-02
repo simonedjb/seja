@@ -65,10 +65,10 @@ If there is no argument or `list`:
 |------|----------------|
 | `mark-implemented` | Verify the implementation matches `<source>`. Run `/pending address <id>` to flip STATUS markers interactively. |
 | `test-implementation` | Run the test plan from `_output/plans/plan-<source>-*.md`, then `/pending done <id>`. |
-| `verify-as-coded` | Run `/explain spec-drift` to compare as-coded vs as-intended, then `/pending done <id>`. |
+| `verify-as-coded` | Run `/explain drift` to compare as-coded vs as-intended, then `/pending done <id>`. |
 | `update-documentation` | Run `/document --plan <source>`, then `/pending done <id>`. |
-| `apply-promote-markers` | Open `_output/promote-proposals/promote-proposal-plan-<source>.md`, rewrite Decision entries in your voice, copy to as-intended section Decisions, then `/explain spec-drift --promote --apply-markers <source>` (auto-marks done). |
-| `spec-drift-check` | Run `/explain spec-drift`. Follow with `--promote` if STATUS items need promotion. Then `/pending done <id>`. |
+| `apply-promote-markers` | Open `_output/promote-proposals/promote-proposal-plan-<source>.md`, rewrite Decision entries in your voice, copy to as-intended section Decisions, then `/explain drift --promote --apply-markers <source>` (auto-marks done). |
+| `spec-drift-check` | Run `/explain drift`. Follow with `--promote` if STATUS items need promotion. Then `/pending done <id>`. |
 | `periodic-curation` | Review the pending ledger: dismiss stale items, snooze items not yet due. Then `/pending done <id>`. |
 | `incorporate-research-markers` | Run `/pending address <id>` to flip INCORPORATED markers interactively. |
 | `implement` | Run `/implement <source>`. The entry auto-closes when the plan's DONE header is written. |

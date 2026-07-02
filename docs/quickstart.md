@@ -162,7 +162,7 @@ document and communicate -- validate before you communicate.
    on the next iteration.
 
 When specs and as-coded state fall out of alignment, run
-`/explain spec-drift` to compare them and surface what needs to
+`/explain drift` to compare them and surface what needs to
 change; it feeds back into `/design` or `/plan` naturally.
 
 ## Now read concepts.md

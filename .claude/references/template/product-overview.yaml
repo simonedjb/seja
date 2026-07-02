@@ -1,0 +1,245 @@
+---
+recommended: true
+depends_on: [product-design-as-intended.md, conventions.md]
+freshness: living-document
+diataxis: reference
+description: "Structured Product Overview data model — layers, personas, quality criteria, and cards capturing the value chain from business goals to data/infrastructure."
+designer_description: "When /document --type spo runs, I'm the data file it reads to generate the interactive product overview HTML. I capture the full value chain from business goals down to data infrastructure, with personas, quality criteria, and roadmap versioning. Each card in the value chain gets an ID, layer assignment, upward enables edges, lateral depends edges, a version bucket (V1/V2/V3), and a lifecycle status that drifts from proposed to implementing to done."
+---
+
+# product-overview.yaml — Structured Product Overview
+
+# Companion to product-design-as-intended.md.
+# This file captures the SPO data model: layers, personas, quality criteria,
+# and cards. It is populated incrementally by /design (initial skeleton),
+# /plan (new feature cards), /implement (status transitions), and
+# /research (obstacles and quality criteria).
+#
+# Run /document --type spo to regenerate the interactive HTML from this file.
+# Run /document --type spo --harness to generate the SEJA harness overview
+# from call-graph.json instead of this file.
+
+meta:
+  title: "{{PROJECT_NAME}} — Product Overview"
+  version_labels:
+    V1: "V1 · MVP"
+    V2: "V2 · Next Release"
+    V3: "V3 · Roadmap"
+  tracker_type: ""  # jira | linear | github | seja | "" (empty hides the tracker column)
+                    # "seja": render each card's req_ids / decision_ids / journey_ids as traceability chips.
+
+  # ── Internationalization ──────────────────────────────────────────────────
+  # Any label (meta.title, layer name/subtitle, card title, quality-criteria label,
+  # persona name/role, version label) may be EITHER a plain string OR a per-locale
+  # map, e.g.:  title: {en-US: "…", pt-BR: "…"}
+  # List the selectable locales in `languages`; `locale` is the default shown.
+  # When more than one language is listed, an in-page language toggle appears.
+  locale: en-US
+  languages: [en-US]   # e.g. [en-US, pt-BR]
+
+  # ── Facets ────────────────────────────────────────────────────────────────
+  # Cross-cutting filter axes (beyond the persona bar). Each facet reads a card
+  # field and builds a chip row; clicking chips highlights matching cards.
+  # `field` names a card key holding a string or a list of strings.
+  facets: []
+  # facets:
+  #   - {id: subsystem, label: Subsystem, field: subsystem}
+  #   - {id: channels,  label: Channels,  field: channels}
+
+# ── Layers ────────────────────────────────────────────────────────────────────
+# Ordered bottom-up: first entry = bottom of diagram (most concrete).
+# The HTML generator renders layers top-down (last entry = top row = L1).
+# relation_label: the verb describing what a card in this layer does to the
+# layer above it when you click "enables" (shown on the arrow label in compact mode).
+#
+# Default: 5-layer software product model.
+# Add "obstacles" between "goals" and "tasks" for problem-space emphasis.
+# Add "kernels" between "features" and "services" for AI/ML-heavy products.
+
+layers:
+  - id: data
+    name: Data & Infrastructure
+    subtitle: persistence, pipelines, foundations
+    relation_label: underlies
+
+  - id: services
+    name: Services & Integrations
+    subtitle: processing engines and external APIs
+    relation_label: powers
+
+  - id: features
+    name: Features & Modules
+    subtitle: what the system delivers
+    relation_label: enables
+
+  - id: tasks
+    name: User Tasks
+    subtitle: what each role needs to accomplish
+    relation_label: addresses
+
+  - id: goals
+    name: Business Goals
+    subtitle: strategic rationale
+    relation_label: supports
+
+# ── Personas ──────────────────────────────────────────────────────────────────
+# Each persona is referenced by ID from cards.tasks[] in the tasks layer.
+# type: internal (your team or org users) | external (customers/end-users) | partner (integrators, third parties)
+
+personas:
+  - id: P-01
+    name: "{{Persona Name}}"
+    role: "{{Role Title}}"
+    initials: "{{X}}"
+    type: internal          # internal | external | partner
+    tasks: []               # card IDs (T-NNN) this persona is primarily responsible for
+
+# ── Quality Criteria ──────────────────────────────────────────────────────────
+# Quality criteria are organized per layer. Each card references QC IDs via
+# its quality_criteria[] list. The CQ panel in the HTML lets you filter cards
+# by criterion to see which parts of the value chain address it.
+
+quality_criteria:
+  - id: "{{G-QC-01}}"
+    layer: goals
+    label: "{{Strategic alignment}}"
+
+  - id: "{{T-QC-01}}"
+    layer: tasks
+    label: "{{Task effectiveness}}"
+
+  - id: "{{F-QC-01}}"
+    layer: features
+    label: "{{Usability}}"
+
+  - id: "{{S-QC-01}}"
+    layer: services
+    label: "{{Latency}}"
+
+  - id: "{{D-QC-01}}"
+    layer: data
+    label: "{{Durability}}"
+
+# ── Cards ─────────────────────────────────────────────────────────────────────
+# Card ID convention (recommended, not enforced):
+#   G-NNN  Business Goals layer
+#   T-NNN  Tasks layer
+#   F-NNN  Features layer
+#   S-NNN  Services layer
+#   D-NNN  Data layer
+#   (add OB-NNN for Obstacles, K-NNN for Kernels if those layers are added)
+#
+# enables: list of card IDs that THIS card enables (upward connection).
+#   A card in the "features" layer enables a card in the "tasks" layer.
+# depends: list of card IDs that THIS card depends on (lateral, same level).
+#   A feature depends on another feature that must exist first.
+#
+# status lifecycle: proposed → implementing → done
+#   deferred: explicitly out of scope; still shown but grayed out.
+#
+# Cards are populated by:
+#   /design   → initial goals + tasks stubs
+#   /plan     → new feature/service cards (status: proposed)
+#   /implement → status flips (proposed → implementing → done)
+#   /research  → obstacle cards (if obstacles layer is enabled)
+
+cards:
+
+  # ── Business Goals ────────────────────────────────────────────────────────
+  - id: G-01
+    layer: goals
+    title: "{{Goal title}}"
+    enables: []             # which goal does achieving this support? (usually empty for top layer)
+    depends: []
+    version: V1
+    personas: []
+    quality_criteria: []
+    fulfillment: []         # evidence strings: key results, metrics, acceptance indicators
+    tracker_id: ""
+    tracker_title: ""
+    status: proposed        # proposed | implementing | done | deferred
+    status_plan: ""
+    status_date: ""
+    owner: ""
+
+  # ── User Tasks ────────────────────────────────────────────────────────────
+  - id: T-01
+    layer: tasks
+    title: "{{Task title}}"
+    enables: [G-01]         # which goal does completing this task support?
+    depends: []
+    version: V1
+    personas: [P-01]
+    quality_criteria: []
+    fulfillment: []
+    tracker_id: ""
+    tracker_title: ""
+    status: proposed
+    status_plan: ""
+    status_date: ""
+    owner: ""
+
+  # ── Features & Modules ────────────────────────────────────────────────────
+  # Optional card fields (all default to empty):
+  #   subsystem: ""          module/subsystem tag; drives the `subsystem` facet
+  #   channels: []           external systems/channels this card touches; drives the `channels` facet
+  #   req_ids / decision_ids / journey_ids: []   SEJA traceability (REQ-*/D-NNN/JM-TB-NNN);
+  #                          rendered as chips when meta.tracker_type == "seja"
+  #   source_ref: "path#anchor"  deep-link back to the design source (relative to repo root)
+  - id: F-01
+    layer: features
+    title: "{{Feature title}}"
+    enables: [T-01]         # which task does this feature enable?
+    depends: []
+    version: V1
+    personas: []
+    quality_criteria: []
+    fulfillment: []
+    subsystem: ""
+    channels: []
+    req_ids: []
+    decision_ids: []
+    journey_ids: []
+    source_ref: ""
+    tracker_id: ""
+    tracker_title: ""
+    status: proposed
+    status_plan: ""
+    status_date: ""
+    owner: ""
+
+  # ── Services & Integrations ───────────────────────────────────────────────
+  - id: S-01
+    layer: services
+    title: "{{Service title}}"
+    enables: [F-01]         # which feature does this service power?
+    depends: []
+    version: V1
+    personas: []
+    quality_criteria: []
+    fulfillment: []
+    tracker_id: ""
+    tracker_title: ""
+    status: proposed
+    status_plan: ""
+    status_date: ""
+    owner: ""
+    external: false         # true for third-party services (shown with ↗ badge)
+    provider: ""            # e.g. "AWS", "Stripe", "OpenAI"
+
+  # ── Data & Infrastructure ─────────────────────────────────────────────────
+  - id: D-01
+    layer: data
+    title: "{{Data/infrastructure title}}"
+    enables: [S-01]         # which service does this data layer underlie?
+    depends: []
+    version: V1
+    personas: []
+    quality_criteria: []
+    fulfillment: []
+    tracker_id: ""
+    tracker_title: ""
+    status: proposed
+    status_plan: ""
+    status_date: ""
+    owner: ""

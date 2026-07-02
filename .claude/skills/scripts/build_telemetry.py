@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -123,9 +124,21 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         type=int,
         dest="tokens_used",
-        help="Tokens consumed (>= 0)",
+        help="Tokens consumed (>= 0); exact count",
     )
-    p.add_argument("--session-id", default=None, dest="session_id", help="Session identifier")
+    p.add_argument(
+        "--approx-token-count",
+        default=None,
+        type=int,
+        dest="approx_token_count",
+        help="Approximate token count when exact count is unavailable (>= 0)",
+    )
+    p.add_argument(
+        "--session-id",
+        default=None,
+        dest="session_id",
+        help="Session identifier (defaults to CLAUDE_SESSION_ID env var)",
+    )
     p.add_argument(
         "--telemetry-file",
         default=None,
@@ -201,6 +214,9 @@ def _build_record(args: argparse.Namespace) -> tuple[dict | None, list[str]]:
     err = _validate_non_negative_int(args.tokens_used, "tokens_used")
     if err:
         errors.append(err)
+    err = _validate_non_negative_int(args.approx_token_count, "approx_token_count")
+    if err:
+        errors.append(err)
 
     # Parse complex JSON fields
     decision_points, err = _parse_json_field(args.decision_points_json, "decision_points")
@@ -230,7 +246,8 @@ def _build_record(args: argparse.Namespace) -> tuple[dict | None, list[str]]:
         "parent_skill": args.parent_skill,
         "qa_type": args.qa_type,
         "tokens_used": args.tokens_used,
-        "session_id": args.session_id,
+        "approx_token_count": args.approx_token_count,
+        "session_id": args.session_id or os.environ.get("CLAUDE_SESSION_ID"),
         "user_revised_output": None,
         "decision_points": decision_points,
         "research_decisions": research_decisions,
