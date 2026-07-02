@@ -16,9 +16,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   preserved as-is; do not alter them.
 -->
 
+## [0.7.1] -- 2026-07-02 20:51 UTC
+
 ### Added
 
-- **SPO generator extensions** (`generate_spo.py`): generic cross-cutting **facets** (`meta.facets` declares filter axes over any card field, e.g. subsystem/channels; chips derived automatically and combined with persona/quality filters by intersection); **SEJA-ID traceability** (`meta.tracker_type: seja` renders each card's `req_ids`/`decision_ids`/`journey_ids` as chips); **bilingual labels** (any label may be a `{locale: string}` map; `meta.languages` adds an in-page language toggle); **deep-links** (card `source_ref` renders a ↗ link back to the design source, resolved relative to repo root); and a **computed analyses panel** (press **A**) covering coverage gaps, orphan nodes, hub connectivity, longest value chains, unaddressed quality criteria, and cross-version dependency risk. Template, TaskFlow demo, `/document --type spo` workflow note, and the SPO how-to updated to document the new fields. Backward compatible: existing `product-overview.yaml` files render unchanged.
+- **SPO generator extensions** (`generate_spo.py`): generic cross-cutting **facets** (`meta.facets` declares filter axes over any card field, e.g. subsystem/channels; chips derived automatically and combined with persona/quality filters by intersection); **SEJA-ID traceability** (`meta.tracker_type: seja` renders each card's `req_ids`/`decision_ids`/`journey_ids` as chips); **bilingual labels** (any label may be a `{locale: string}` map; `meta.languages` adds an in-page language toggle); **deep-links** (card `source_ref` renders a ↗ link back to the design source, resolved relative to repo root); and a **computed analyses panel** (press **A**) covering coverage gaps, orphan nodes, hub connectivity, longest value chains, unaddressed quality criteria, and cross-version dependency risk. Template, TaskFlow demo, `/document --type spo` workflow note, and the SPO how-to updated to document the new fields. Backward compatible: existing `product-overview.yaml` files render unchanged. Adds `test_generate_spo.py` (5 smoke tests).
+
+### Changed
+
+- **"Intelligent Components" replaces "Intelligence Kernels"** as the recommended AI/ML extension-layer name throughout harness templates, the SPO how-to guide, and the `product-overview.yaml` layer comment. Layer ID convention: `intelligent-components`; suggested card prefix: `IC-NNN`.
 
 ## [0.7.0] -- 2026-07-02 19:40 UTC
 

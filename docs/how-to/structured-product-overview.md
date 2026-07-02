@@ -12,7 +12,7 @@ The Structured Product Overview is an interactive HTML diagram that shows your p
 
 The generated `_output/docs/spo.html` file opens in any browser and includes:
 
-- **Layered cards** organized into layers (5 by default; add `obstacles` / `kernels` for problem-space or AI-heavy products)
+- **Layered cards** organized into layers (5 by default; add `obstacles` / `intelligent-components` for problem-space or AI-heavy products)
 - **SVG arrows** tracing how lower-layer cards enable upper-layer cards
 - **Persona filter** — click a persona chip to highlight their card relationships
 - **Facet bar** — extra filter axes (e.g. Subsystem, Channels) declared in `meta.facets`; chips highlight matching cards, and combine with persona/quality filters
@@ -129,7 +129,7 @@ Update status via:
 | Services & Integrations | `services` | Processing engines, external APIs |
 | Data & Infrastructure | `data` | Persistence, pipelines, foundations |
 
-To add layers (e.g. an `obstacles` layer between `goals` and `tasks`, or a `kernels` layer for AI/ML components), add entries to the `layers` array in `product-overview.yaml`. Use card ID prefixes consistently: `G-NNN` (goals), `T-NNN` (tasks), `F-NNN` (features), `S-NNN` (services), `D-NNN` (data).
+To add layers (e.g. an `obstacles` layer between `goals` and `tasks`, or an `intelligent-components` layer for AI/ML capabilities), add entries to the `layers` array in `product-overview.yaml`. Use card ID prefixes consistently: `G-NNN` (goals), `T-NNN` (tasks), `F-NNN` (features), `S-NNN` (services), `D-NNN` (data).
 
 ## When to re-generate
 

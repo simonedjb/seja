@@ -54,7 +54,7 @@ meta:
 #
 # Default: 5-layer software product model.
 # Add "obstacles" between "goals" and "tasks" for problem-space emphasis.
-# Add "kernels" between "features" and "services" for AI/ML-heavy products.
+# Add "intelligent-components" between "features" and "services" for AI/ML-heavy products.
 
 layers:
   - id: data
@@ -127,7 +127,7 @@ quality_criteria:
 #   F-NNN  Features layer
 #   S-NNN  Services layer
 #   D-NNN  Data layer
-#   (add OB-NNN for Obstacles, K-NNN for Kernels if those layers are added)
+#   (add OB-NNN for Obstacles, IC-NNN for Intelligent Components if those layers are added)
 #
 # enables: list of card IDs that THIS card enables (upward connection).
 #   A card in the "features" layer enables a card in the "tasks" layer.
