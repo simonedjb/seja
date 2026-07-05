@@ -9,10 +9,10 @@ metadata:
   category: analysis
   context_budget: standard
   eager_references:
-    - project/product-design-as-coded.md
+    - product-design/product-design-as-coded.md
   references:
-    - project/product-design-as-coded.md
-    - project/product-design-as-intended.md
+    - product-design/product-design-as-coded.md
+    - product-design/product-design-as-intended.md
     - general/shared-definitions.md
     - general/report-conventions.md
     - general/review-perspectives.md
@@ -41,7 +41,7 @@ If `--inventory` is present, run the **Inventory workflow**; the brief is everyt
 
 ## Inventory Workflow
 
-Output folder: `${INVENTORIES_DIR}` (see project/conventions.md). Filename pattern: `inventory-<id>-<truncated short title slug>.md` (6-digit zero-padded ID).
+Output folder: `${INVENTORIES_DIR}` (see product-design/conventions.md). Filename pattern: `inventory-<id>-<truncated short title slug>.md` (6-digit zero-padded ID).
 
 If there is no brief after `--inventory`, ask for the brief.
 
@@ -66,7 +66,7 @@ If there is no brief after `--inventory`, ask for the brief.
 
 ### Definitions
 
-Output folder: `${RESEARCH_DIR}` (see project/conventions.md). Filename pattern: `research-<id>-<truncated short title slug>.md` (6-digit zero-padded ID).
+Output folder: `${RESEARCH_DIR}` (see product-design/conventions.md). Filename pattern: `research-<id>-<truncated short title slug>.md` (6-digit zero-padded ID).
 
 ### Skill-specific Instructions
 
@@ -75,7 +75,7 @@ Output folder: `${RESEARCH_DIR}` (see project/conventions.md). Filename pattern:
 2. Reserve the next global ID: `python .claude/skills/scripts/reserve_id.py --type research --title '<short title>'`.
 
 3. **Load references on demand** from the "Available references" list emitted by pre-skill:
-   - `project/product-design-as-intended.md` when comparing current vs. target design
+   - `product-design/product-design-as-intended.md` when comparing current vs. target design
    - `general/shared-definitions.md` when domain terminology is ambiguous
    - `general/report-conventions.md` before writing the research report
    - `general/review-perspectives.md` before evaluating from multiple perspectives

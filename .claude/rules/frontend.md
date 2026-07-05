@@ -9,7 +9,7 @@ designer_description: "When you edit anything under frontend/src/, I remind you 
 When editing files under these paths:
 
 - **Review questions**: see `.claude/references/general/review-perspectives/ux.md`, `.claude/references/general/review-perspectives/a11y.md`, `.claude/references/general/review-perspectives/vis.md`, `.claude/references/general/review-perspectives/resp.md` -- P0 questions are the critical checks.
-- **Full conventions**: see `project/standards.md §§ Frontend and Testing` -- stack-specific rules.
+- **Full conventions**: see `product-design/standards.md §§ Frontend and Testing` -- stack-specific rules.
 
 ## Perspective Alignment
 

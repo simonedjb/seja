@@ -75,7 +75,7 @@ You will receive:
 
    ### ddr
 
-   **Step A -- Check for existing D-NNN entries.** Before generating from scratch, read `product-design-as-intended.md` (the project's `project/product-design-as-intended.md`) and locate its `## Decisions` section. Scan for `### D-NNN:` headings.
+   **Step A -- Check for existing D-NNN entries.** Before generating from scratch, read `product-design-as-intended.md` (the project's `product-design/product-design-as-intended.md`) and locate its `## Decisions` section. Scan for `### D-NNN:` headings.
 
    - **If D-NNN entries exist:** present the list of discovered entries to the caller and offer to expand one or more into full standalone DDR files. Expansion adds the fields that the lightweight D-NNN entry omits: Status (Proposed / Accepted / Deprecated / Superseded), Date, Deciders, structured `+`/`-`/`0` Consequences notation, and per-alternative `### Alternative NN` subsections with their own +/-/0 lists. Preserve the original D-NNN entry's Context and Decision prose verbatim; do not paraphrase. Auto-number the output DDR file using the existing DDR index (or starting at DDR-000001 if no index exists). Write each expanded DDR to `docs/ddr/ddr-NNNNNN-<slug>.md` and update `docs/ddr/INDEX.md`.
    - **If no D-NNN entries exist:** fall back to the from-scratch generation path below.

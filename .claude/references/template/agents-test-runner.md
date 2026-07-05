@@ -24,7 +24,7 @@ You will receive one of:
 
 1. **Determine test scope** from the input.
 
-2. **Run tests** using the commands from `project/conventions.md`:
+2. **Run tests** using the commands from `product-design/conventions.md`:
 
    **Backend tests:** use `${BACKEND_TEST_CMD}`
 

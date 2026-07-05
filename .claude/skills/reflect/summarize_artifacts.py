@@ -38,6 +38,43 @@ _SCAN_DIRS = [
 ]
 
 
+def _is_companion(name: str) -> bool:
+    """True for files that shadow a canonical artifact sharing the same id.
+
+    Companion artifacts (progress logs, QA logs) live in the same directory as the
+    canonical file and match the same bare id, so they must be excluded before any
+    header-based tiebreak.
+    """
+    return name.endswith("-progress.md") or "-qa-" in name
+
+
+def _first_line(path: Path) -> str:
+    """Return the first line of a file (without trailing newline), or '' on error."""
+    try:
+        with path.open(encoding="utf-8") as fh:
+            return fh.readline().rstrip("\n")
+    except OSError:
+        return ""
+
+
+def _pick_canonical(matches: list[Path]) -> Path:
+    """Deterministically select the canonical artifact among id-matching files.
+
+    Ordering: (1) PRIMARY -- drop companion suffixes (-progress.md / -qa-); (2)
+    SECONDARY -- among survivors prefer the header-bearing file; (3) FALLBACK --
+    first by name order if none survive (caller passes a name-sorted list, so
+    this is deterministic). _HEADER_RE is deliberately NOT the sole
+    discriminator: it does not enumerate the 'Research' token, so a research-log
+    canonical file fails the header test -- companion-suffix exclusion is what
+    protects research artifacts.
+    """
+    survivors = [f for f in matches if not _is_companion(f.name)] or matches
+    for f in survivors:
+        if _HEADER_RE.match(_first_line(f)):
+            return f
+    return survivors[0]
+
+
 def _resolve_path(ref: str) -> Path | None:
     """Resolve an artifact reference (ID like 'plan-NNNNNN' or bare 'NNNNNN') to a file."""
     bare_id = re.sub(r"^(?:plan|advisory|research|reflection|inventory|proposal|check)-", "", ref)
@@ -47,9 +84,14 @@ def _resolve_path(ref: str) -> Path | None:
         d = output_dir / subdir
         if not d.is_dir():
             continue
-        for f in d.iterdir():
-            if f.suffix == ".md" and bare_id in f.name:
-                return f
+        # sorted by name so the _pick_canonical fallback (survivors[0]) is
+        # deterministic across platforms, not dependent on iterdir() order.
+        matches = sorted(
+            (f for f in d.iterdir() if f.suffix == ".md" and bare_id in f.name),
+            key=lambda f: f.name,
+        )
+        if matches:
+            return _pick_canonical(matches)
     p = Path(ref)
     if p.is_file():
         return p

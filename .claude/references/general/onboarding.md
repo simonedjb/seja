@@ -86,7 +86,7 @@ Plans saved in date-versioned folders under `${ONBOARDING_PLANS_DIR}/<YYYY-MM-DD
 ## Relationship to Other Harness Components
 
 - **Review perspectives** (`general/review-perspectives.md`): addresses the DX P1 question on structured onboarding paths.
-- **Conceptual design** (`project/conceptual-design-*.md`): primary source for Shapers.
-- **Metacommunication** (`project/metacomm-*.md`): Shapers and Guardians load it to understand designer intent.
-- **Coding standards** (`project/standards.md §§ Backend and Frontend`): referenced by Builders.
+- **Conceptual design** (`product-design/conceptual-design-*.md`): primary source for Shapers.
+- **Metacommunication** (`product-design/metacomm-*.md`): Shapers and Guardians load it to understand designer intent.
+- **Coding standards** (`product-design/standards.md §§ Backend and Frontend`): referenced by Builders.
 - **Skills system** (`.claude/skills/`): the onboarding skill orchestrates all of the above.

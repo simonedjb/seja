@@ -1,7 +1,7 @@
 {
-  "generated": "2026-07-02T18:54:58Z",
-  "node_count": 231,
-  "edge_count": 499,
+  "generated": "2026-07-05T03:54:52Z",
+  "node_count": 235,
+  "edge_count": 500,
   "nodes": [
     {
       "id": "agent:architecture-explainer",
@@ -532,6 +532,14 @@
       "description_source": "developer-fallback"
     },
     {
+      "id": "ref-project:product-design-changelog.md",
+      "type": "ref-project",
+      "label": "product-design-changelog",
+      "path": "product-design/product-design-changelog.md",
+      "description": "I record how SEJA's implemented conceptual design has evolved over time -- one entry appended by post-skill after each plan that reshaped the design, with source and plan reference -- so you can trace when a concept first shipped, when it changed, and which plan moved it, without digging through commit history.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "ref-project:ux-research-results.md",
       "type": "ref-project",
       "label": "ux-research-results",
@@ -840,7 +848,7 @@
       "type": "ref-template",
       "label": "roadmap-summary",
       "path": ".claude/references/template/roadmap-summary.md",
-      "description": "When /plan --roadmap produces the roadmap summary file, I'm the canonical shape for the header, ## Source list, ## Wave Summary tables (one per wave, with Plan and Status columns), and ## Execution Instructions block -- including the anti-pattern note that Plan column entries start as plan-TBD and are filled in only after /plan reserves the real ID.",
+      "description": "When /plan --roadmap produces the roadmap summary file, I'm the canonical shape for the header, ## Source list, ## Checkpoint Schedule section (records which wave transitions get a review, or 'None'), ## Wave Summary tables (one per wave, with Plan and Status columns), and ## Execution Instructions block (including Checkpoint Review blocks between waves per the schedule, and the anti-pattern note that Plan column entries start as plan-TBD and are filled in only after /plan reserves the real ID).",
       "description_source": "designer-description"
     },
     {
@@ -1156,6 +1164,14 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:check_retired_tokens.py",
+      "type": "script",
+      "label": "check_retired_tokens.py",
+      "path": ".claude/skills/scripts/check_retired_tokens.py",
+      "description": "When a name is retired from the harness -- a config variable or a\nskill reference that no longer exists -- I make sure no live file still\nmentions it. You find out about a stale reference to a dead token before it\nships, pointed straight at the file and line that still carries it.",
+      "description_source": "designer-description"
+    },
+    {
       "id": "script:check_route_coverage.py",
       "type": "script",
       "label": "check_route_coverage.py",
@@ -1273,6 +1289,14 @@
       "label": "create_workspace.py",
       "path": ".claude/skills/scripts/create_workspace.py",
       "description": "When you run /seja-setup --workspace, I am how a fresh SEJA workspace\ncomes into existence alongside your existing codebase without touching\nthe codebase itself. I copy the harness skeleton into the workspace\npath you name and wire it to point at the target project, so your\ndesign history and plans accumulate in a separate git repo while the\ncode being described stays untouched.",
+      "description_source": "designer-description"
+    },
+    {
+      "id": "script:design_system.py",
+      "type": "script",
+      "label": "design_system.py",
+      "path": ".claude/skills/scripts/design_system.py",
+      "description": "When a project ships a design system as an HTML file with CSS\ncustom properties and style blocks, I'm the extraction layer that reads\nthose tokens out so generators like md_to_html and generate_spo can\nadopt them without each one reinventing its own HTML parser.",
       "description_source": "designer-description"
     },
     {
@@ -1556,6 +1580,14 @@
       "description_source": "designer-description"
     },
     {
+      "id": "script:seja_harness_hook.py",
+      "type": "script",
+      "label": "seja_harness_hook.py",
+      "path": ".claude/skills/scripts/seja_harness_hook.py",
+      "description": "UserPromptSubmit hook: inject SEJA harness lifecycle reminder.\n\nInvocation: hook-ci\nLifecycle: active\n\nBundled into every SEJA project. Runs on every user prompt submission\nand outputs a reminder so Claude stays oriented to the harness lifecycle\neven in auto mode or plan mode. Install via .claude/settings.json hooks.",
+      "description_source": "developer-fallback"
+    },
+    {
       "id": "script:smoke_test_core.py",
       "type": "script",
       "label": "smoke_test_core.py",
@@ -1652,7 +1684,7 @@
       "label": "/document",
       "path": ".claude/skills/document/SKILL.md",
       "user_invocable": true,
-      "description": "**What it does**: Generate or update documentation for your project. Four invocation modes: plan-driven (reads Docs: fields from a plan), auto-detect (scans recent git changes), type-targeted (you pick the doc type), or bare scope (you name a file/module/feature). Uses project templates and the documentation-quality writing guide for structured generation. Supports 7 documentation types: readme, contextual-help, api-reference, ddr, help-center, changelog, and spo.\n\n**Examples**:\n> `/document --plan 000130`\n> Reads the plan's Docs: fields and generates the appropriate documentation for each identified need.\n\n> `/document --auto-detect`\n> Analyzes recent git changes using 6 heuristic patterns (new API routes, changed models, new UI components, config changes, architectural shifts, breaking changes) and generates matching documentation types.\n\n> `/document --auto-detect --since 2026-04-01`\n> Same as above but bounds the git scan to changes since a specific date.\n\n> `/document --auto-detect --since last`\n> Scans only changes since the last `/document` run of any kind.\n\n> `/document --auto-detect --full-history`\n> Ignores per-doc-type bounding windows and scans the full recent git history.\n\n> `/document --type readme`\n> Generates or updates the project README.\n\n> `/document --type api-reference`\n> Generates API reference documentation from your routes and handlers.\n\n> `/document --type changelog`\n> Generates a changelog entry from recent changes.\n\n<!-- priv-only-start -->\n> `/document --type changelog --harness`\n> Generates a harness changelog entry in `.claude/CHANGELOG.md` using structured git history extraction.\n<!-- priv-only-end -->\n\n> `/document --type spo`\n> Generates `_output/docs/spo.html` — an interactive layered product overview from `product-overview.yaml`. Shows the full value chain (goals → tasks → features → services → data) with persona filters, quality criteria panel, and roadmap version columns.\n\n> `/document --type spo --drift`\n> Same as above, but dims non-`done` cards to highlight the gap between as-intended and as-coded state.\n\n<!-- priv-only-start -->\n> `/document --type spo --harness`\n> Generates `_output/docs/harness-spo.html` — the SEJA harness's own product overview, derived from `call-graph.json` (skills → features, agents → services, scripts → services, references → data).\n<!-- priv-only-end -->\n\n> `/document --type ddr`\n> Creates a Design Decision Record for a recent decision.\n\n> `/document --type contextual-help`\n> Generates contextual help content for UI features.\n\n> `/document --type help-center`\n> Generates help-center articles for end users.\n\n> `/document src/auth`\n> Documents the auth module -- infers the most appropriate doc type from the scope content.\n\n**When to use**: After implementing a feature or fix that affects user-facing behavior, API contracts, or architectural decisions. Automatically suggested by post-skill for FEATURE and REDESIGN plans and plans with non-N/A Docs: fields. Use `--plan` when documentation needs are already specified in a plan; use `--auto-detect` for a broad scan of what changed; use `--type` when you know exactly which doc type you need; use bare scope for ad-hoc documentation of a specific area. Use `--type spo` after design is established, before a stakeholder presentation, or when the product structure changes significantly (new layers, major feature additions).\n\n**Not for**: stakeholder updates (use `/communicate`) or personalized onboarding plans (use `/onboard`). See `docs/how-to/which-communicative-skill.md` for the audience routing table.\n\n**Next step**: `/critique docs` to validate documentation consistency.\n\n**See also**: `/explain` -- understand existing system behavior, architecture, data model, or design spec drift.",
+      "description": "**What it does**: Generate or update documentation for your project. Four invocation modes: plan-driven (reads Docs: fields from a plan), auto-detect (scans recent git changes), type-targeted (you pick the doc type), or bare scope (you name a file/module/feature). Uses project templates and the documentation-quality writing guide for structured generation. Supports 6 documentation types: readme, contextual-help, api-reference, ddr, help-center, and changelog.\n\n**Examples**:\n> `/document --plan 000130`\n> Reads the plan's Docs: fields and generates the appropriate documentation for each identified need.\n\n> `/document --auto-detect`\n> Analyzes recent git changes using 6 heuristic patterns (new API routes, changed models, new UI components, config changes, architectural shifts, breaking changes) and generates matching documentation types.\n\n> `/document --auto-detect --since 2026-04-01`\n> Same as above but bounds the git scan to changes since a specific date.\n\n> `/document --auto-detect --since last`\n> Scans only changes since the last `/document` run of any kind.\n\n> `/document --auto-detect --full-history`\n> Ignores per-doc-type bounding windows and scans the full recent git history.\n\n> `/document --type readme`\n> Generates or updates the project README.\n\n> `/document --type api-reference`\n> Generates API reference documentation from your routes and handlers.\n\n> `/document --type changelog`\n> Generates a changelog entry from recent changes.\n\n<!-- priv-only-start -->\n> `/document --type changelog --harness`\n> Generates a harness changelog entry in `.claude/CHANGELOG.md` using structured git history extraction.\n<!-- priv-only-end -->\n\n<!-- priv-only-start -->\n> `/document --type spo`\n> Generates `_output/docs/spo.html` — an interactive layered product overview from `product-overview.yaml`. Shows the full value chain (goals → tasks → features → services → data) with persona filters, quality criteria panel, and roadmap version columns.\n\n> `/document --type spo --drift`\n> Same as above, but dims non-`done` cards to highlight the gap between as-intended and as-coded state.\n\n<!-- priv-only-end -->\n\n<!-- priv-only-start -->\n> `/document --type spo --harness`\n> Generates `_output/docs/harness-spo.html` — the SEJA harness's own product overview, derived from `call-graph.json` (skills → features, agents → services, scripts → services, references → data).\n<!-- priv-only-end -->\n\n> `/document --type ddr`\n> Creates a Design Decision Record for a recent decision.\n\n> `/document --type contextual-help`\n> Generates contextual help content for UI features.\n\n> `/document --type help-center`\n> Generates help-center articles for end users.\n\n> `/document src/auth`\n> Documents the auth module -- infers the most appropriate doc type from the scope content.\n\n**When to use**: After implementing a feature or fix that affects user-facing behavior, API contracts, or architectural decisions. Automatically suggested by post-skill for FEATURE and REDESIGN plans and plans with non-N/A Docs: fields. Use `--plan` when documentation needs are already specified in a plan; use `--auto-detect` for a broad scan of what changed; use `--type` when you know exactly which doc type you need; use bare scope for ad-hoc documentation of a specific area.\n\n**Not for**: stakeholder updates (use `/communicate`) or personalized onboarding plans (use `/onboard`). See `docs/how-to/which-communicative-skill.md` for the audience routing table.\n\n**Next step**: `/critique docs` to validate documentation consistency.\n\n**See also**: `/explain` -- understand existing system behavior, architecture, data model, or design spec drift.",
       "description_source": "quick-guide"
     },
     {
@@ -2825,12 +2857,6 @@
       "label": ""
     },
     {
-      "source": "script:check_git_freshness.py",
-      "target": "ref-project:conventions.md",
-      "type": "reads",
-      "label": ""
-    },
-    {
       "source": "script:check_harness_drift.py",
       "target": "script:upgrade_harness.py",
       "type": "imports",
@@ -2856,6 +2882,12 @@
     },
     {
       "source": "script:check_po_parity.py",
+      "target": "script:project_config.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:check_retired_tokens.py",
       "target": "script:project_config.py",
       "type": "imports",
       "label": ""
@@ -3060,6 +3092,12 @@
     },
     {
       "source": "script:md_to_html.py",
+      "target": "script:design_system.py",
+      "type": "imports",
+      "label": ""
+    },
+    {
+      "source": "script:md_to_html.py",
       "target": "script:project_config.py",
       "type": "imports",
       "label": ""
@@ -3168,6 +3206,12 @@
     },
     {
       "source": "script:run_preflight_fast.py",
+      "target": "script:check_retired_tokens.py",
+      "type": "invokes",
+      "label": ""
+    },
+    {
+      "source": "script:run_preflight_fast.py",
       "target": "script:check_secrets.py",
       "type": "invokes",
       "label": ""
@@ -3230,12 +3274,6 @@
       "source": "script:test_detect_setup_state.py",
       "target": "script:detect_setup_state.py",
       "type": "imports",
-      "label": ""
-    },
-    {
-      "source": "script:test_detect_setup_state.py",
-      "target": "ref-project:conventions.md",
-      "type": "reads",
       "label": ""
     },
     {
@@ -4882,13 +4920,13 @@
     }
   ],
   "warnings": [
-    "skill:critique references unresolved ref 'project/design-standards.md'",
-    "skill:critique references unresolved ref 'project/security-checklists.md'",
-    "skill:critique references unresolved ref 'project/standards.md'",
-    "skill:implement references unresolved ref 'project/security-checklists.md'",
-    "skill:implement references unresolved ref 'project/standards.md'",
-    "skill:plan references unresolved ref 'project/design-standards.md'",
-    "skill:plan references unresolved ref 'project/security-checklists.md'",
-    "skill:plan references unresolved ref 'project/standards.md'"
+    "skill:critique references unresolved ref 'product-design/design-standards.md'",
+    "skill:critique references unresolved ref 'product-design/security-checklists.md'",
+    "skill:critique references unresolved ref 'product-design/standards.md'",
+    "skill:implement references unresolved ref 'product-design/security-checklists.md'",
+    "skill:implement references unresolved ref 'product-design/standards.md'",
+    "skill:plan references unresolved ref 'product-design/design-standards.md'",
+    "skill:plan references unresolved ref 'product-design/security-checklists.md'",
+    "skill:plan references unresolved ref 'product-design/standards.md'"
   ]
 }

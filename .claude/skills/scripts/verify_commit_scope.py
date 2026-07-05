@@ -56,8 +56,8 @@ _SKILL_DIR_VARS: dict[str, str] = {
     "advisory": "RESEARCH_DIR",   # legacy alias
     "plan": "PLANS_DIR",
     "implement": "PLANS_DIR",
-    "check": "CHECK_LOGS_DIR",
-    "document": "CHECK_LOGS_DIR",
+    "critique": "CRITIQUE_LOGS_DIR",
+    "document": "DOCS_DIR",
     "explain": "EXPLAINED_BEHAVIORS_DIR",
     "communicate": "COMMUNICATION_DIR",
     "reflect": "REFLECTIONS_DIR",
@@ -244,7 +244,7 @@ def _parse_args() -> argparse.Namespace:
         "--skill-type",
         required=True,
         metavar="NAME",
-        help="Skill type: research, plan, implement, check, etc.",
+        help="Skill type: research, plan, implement, critique, etc.",
     )
     parser.add_argument(
         "--artifact-id",

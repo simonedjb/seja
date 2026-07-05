@@ -4,7 +4,7 @@ designer_description: "I'm your project's single source of truth for directory s
 
 # TEMPLATE - PROJECT CONVENTIONS
 
-> **How to use this template:** Copy this file to `project/conventions.md` and fill in the values for your project. This is the first file to customize — all other reference files and skills reference variables defined here.
+> **How to use this template:** Copy this file to `product-design/conventions.md` and fill in the values for your project. This is the first file to customize — all other reference files and skills reference variables defined here.
 >
 > Centralized project-specific definitions. All skills and reference files reference variables from this file instead of hardcoding project-specific values. To adapt the skill system to a different project, edit only this file.
 
@@ -27,7 +27,7 @@ designer_description: "I'm your project's single source of truth for directory s
 | Variable | Value | Description |
 |----------|-------|-------------|
 | `SKILLS_DIR` | `.claude/skills` | Root directory for skill definitions |
-| `AGENT_SPECS_DIR` | `project/agent` | Agent-facing structured specifications in YAML (in `product-design/`) |
+| `AGENT_SPECS_DIR` | `product-design/agent` | Agent-facing structured specifications in YAML |
 | `OUTPUT_DIR` | `_output` | Root directory for all generated artifacts |
 | `PLANS_DIR` | `${OUTPUT_DIR}/plans` | Plan output folder |
 | `SCRIPTS_DIR` | `${OUTPUT_DIR}/generated-scripts` | Script output folder |
@@ -59,18 +59,18 @@ designer_description: "I'm your project's single source of truth for directory s
 | `BRIEFS_FILE` | `${OUTPUT_DIR}/briefs.md` | Execution log of all skill invocations | Agent |
 | `BRIEFS_INDEX_FILE` | `${OUTPUT_DIR}/briefs-index.md` | Lightweight briefs index (one-line summaries) | Agent |
 | `ARTIFACT_INDEX_FILE` | `${OUTPUT_DIR}/INDEX.md` | Single global artifact index (no per-folder INDEX.md files) | Agent |
-| `CONSTITUTION_FILE` | `project/constitution.md` | Project constitution -- immutable principles (in `product-design/`) | Human |
-| `AS_CODED` | `project/product-design-as-coded.md` | Unified implementation state: Conceptual Design, Metacommunication, Journey Maps (in `product-design/`) | Agent |
-| `CD_AS_IS_CHANGELOG` | `project/product-design-changelog.md` | As-built conceptual design changelog (in `product-design/`) | Agent |
-| `DESIGN_INTENT` | `project/product-design-as-intended.md` | Unified working intent (§0-§17) + DDR Decision log (## Decisions) + CHANGELOG (in `product-design/`) | Human (markers) |
-| `DESIGN_INTENT_TO_BE` | `project/product-design-as-intended.md` | Legacy alias for `DESIGN_INTENT` (workspace-mode backward compat; see plan-000268 Amendment A6) | Human (markers) |
-| `UX_RESEARCH` | `project/ux-research-results.md` | UX research: personas, problem scenarios, journeys, processing status, CHANGELOG (in `product-design/`) | Human (markers) |
-| `STANDARDS` | `project/standards.md` | Unified engineering standards: Backend, Frontend, Testing, i18n (in `product-design/`) | Human / Agent |
-| `DESIGN_STANDARDS` | `project/design-standards.md` | Unified design standards: UX patterns and graphic/visual design (in `product-design/`) | Human / Agent |
+| `CONSTITUTION_FILE` | `product-design/constitution.md` | Project constitution -- immutable principles | Human |
+| `AS_CODED` | `product-design/product-design-as-coded.md` | Unified implementation state: Conceptual Design, Metacommunication, Journey Maps | Agent |
+| `CD_AS_IS_CHANGELOG` | `product-design/product-design-changelog.md` | As-built conceptual design changelog | Agent |
+| `DESIGN_INTENT` | `product-design/product-design-as-intended.md` | Unified working intent (§0-§17) + DDR Decision log (## Decisions) + CHANGELOG | Human (markers) |
+| `DESIGN_INTENT_TO_BE` | `product-design/product-design-as-intended.md` | Legacy alias for `DESIGN_INTENT` (workspace-mode backward compat; see plan-000268 Amendment A6) | Human (markers) |
+| `UX_RESEARCH` | `product-design/ux-research-results.md` | UX research: personas, problem scenarios, journeys, processing status, CHANGELOG | Human (markers) |
+| `STANDARDS` | `product-design/standards.md` | Unified engineering standards: Backend, Frontend, Testing, i18n | Human / Agent |
+| `DESIGN_STANDARDS` | `product-design/design-standards.md` | Unified design standards: UX patterns and graphic/visual design | Human / Agent |
 | `SESSION_NOTES_FILE` | `${TMP_DIR}/session-notes.md` | Session-scoped working memory for structured note-taking | Agent |
 | `DECISION_DIGEST_FILE` | `${OUTPUT_DIR}/decision-digest.jsonl` | Machine-readable decision index (one JSON line per design decision) | Agent |
 | `CONVERSATION_TRACE_FILE` | `${OUTPUT_DIR}/conversation-trace.jsonl` | Append-only conversation trace log (per-utterance exchanges with session and event-chain linkage) | Agent |
-| `SPO_DATA_FILE` | `project/product-overview.yaml` | Structured Product Overview data (layers, personas, quality criteria, cards) — companion to product-design-as-intended.md (in `product-design/`) | Human |
+| `SPO_DATA_FILE` | `product-design/product-overview.yaml` | Structured Product Overview data (layers, personas, quality criteria, cards) -- companion to product-design-as-intended.md | Human |
 | `SPO_OUTPUT_FILE` | `${OUTPUT_DIR}/docs/spo.html` | Generated interactive SPO HTML — run `/document --type spo` to regenerate | Agent |
 
 ---

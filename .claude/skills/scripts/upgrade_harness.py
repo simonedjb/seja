@@ -232,7 +232,7 @@ def collect_source_files(source: Path) -> list[Path]:
                 files.append(f)
 
     # References — .claude/references/general/ and .claude/references/template/
-    # (project/ subdir is excluded — that is consumer-specific data)
+    # (product-design/ subdir is excluded — that is consumer-specific data)
     if ar_dir.is_dir():
         for subdir_name in ("general", "template"):
             subdir = ar_dir / subdir_name
@@ -677,12 +677,12 @@ def run_upgrade(
 
         if diff["missing_in_project"]:
             report_convention_gaps.append(
-                f"Variables in template missing from project/conventions.md: "
+                f"Variables in template missing from product-design/conventions.md: "
                 f"{', '.join(diff['missing_in_project'])}"
             )
         if diff["extra_in_project"]:
             report_convention_gaps.append(
-                f"Variables in project/conventions.md not in template: "
+                f"Variables in product-design/conventions.md not in template: "
                 f"{', '.join(diff['extra_in_project'])}"
             )
         if not diff["missing_in_project"] and not diff["extra_in_project"]:
@@ -693,7 +693,7 @@ def run_upgrade(
         )
     else:
         report_convention_gaps.append(
-            "INFO: No project/conventions.md found — diff skipped."
+            "INFO: No product-design/conventions.md found — diff skipped."
         )
 
     # --- Path reference scan (migration layouts only) ---
@@ -785,6 +785,10 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+
+    if sys.platform == "win32":
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
     # Resolve source
     source_path = Path(args.source).resolve()

@@ -10,9 +10,9 @@ metadata:
   context_budget: heavy
   references:
     - general/report-conventions.md
-    - project/standards.md
-    - project/design-standards.md
-    - project/security-checklists.md
+    - product-design/standards.md
+    - product-design/design-standards.md
+    - product-design/security-checklists.md
     - general/review-perspectives.md
     - general/review-perspectives-index.md
     - general/review-log-template.md
@@ -49,7 +49,7 @@ Fallback (legacy projects): if `conventions.md` has no stack variables and they 
 
 > Warning: No stack framework variables found in conventions.md. Running all check scripts. Add BACKEND_FRAMEWORK and FRONTEND_FRAMEWORK to conventions.md to enable stack filtering.
 
-**C3. Reserve ID + save report.** Output folder: `${CRITIQUE_LOGS_DIR}` (see `project/conventions.md`). Filename: `critique-<id>-<truncated short title slug>.md` (6-digit zero-padded ID). Reserve the next global ID via `python .claude/skills/scripts/reserve_id.py --type critique --title '<title>'`. Save per report conventions with the mode-specific header and body described in each mode section.
+**C3. Reserve ID + save report.** Output folder: `${CRITIQUE_LOGS_DIR}` (see `product-design/conventions.md`). Filename: `critique-<id>-<truncated short title slug>.md` (6-digit zero-padded ID). Reserve the next global ID via `python .claude/skills/scripts/reserve_id.py --type critique --title '<title>'`. Save per report conventions with the mode-specific header and body described in each mode section.
 
 **C4. Present + post-skill.** Present the summary to the user, highlighting failures (or the mode-appropriate severity). Run /post-skill <id>.
 
@@ -139,7 +139,7 @@ Reuses C1, C3, C4. Scope options: `staged` (default) | file path | directory pat
 
 1. Determine the review scope: `staged` -> `git diff --cached`; file path -> that file; directory -> all source files in it; no scope -> ask the user.
 
-   **Review depth:** if `--depth <light|standard|deep>` is provided, resolve effective depth as `max(floor, flag)` where `floor` = `MINIMUM_REVIEW_DEPTH` from `project/conventions.md` (default `light`). With no `--depth` flag, the code-reviewer evaluates all 16 perspectives (equivalent to `deep`).
+   **Review depth:** if `--depth <light|standard|deep>` is provided, resolve effective depth as `max(floor, flag)` where `floor` = `MINIMUM_REVIEW_DEPTH` from `product-design/conventions.md` (default `light`). With no `--depth` flag, the code-reviewer evaluates all 16 perspectives (equivalent to `deep`).
 
 2. Launch the `code-reviewer` agent with scope and depth. The agent uses the two-stage loading protocol (see `general/review-perspectives.md` section "Two-Stage Loading"): load the index, select 4-6 relevant perspectives based on change content, load only those `review-perspectives/<tag>.md` files (load all 16 for `deep` or when explicitly requested), evaluate, and return a structured report.
 

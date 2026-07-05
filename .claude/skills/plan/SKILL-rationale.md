@@ -23,7 +23,7 @@ Each citation unpacked:
 
 The `--roadmap` workflow carries three sub-modes because roadmap generation has three distinct authoring starting points, and each has a different reference-file reading pattern that cannot be collapsed into a single prose:
 
-- **Mode 1 (Auto-generate from project references)** -- `/design` has populated `project/product-design-as-intended.md` (and optionally `product-design-as-coded.md`) and the roadmap falls out of a delta analysis between as-coded and as-intended. This is the default modern path. Introduced as the primary roadmap flow in the earliest roadmap iteration; plan-000411 refined the reference-file reading checklist (step 2) and the requirements-extraction pass (step 2b, added when REQ markers landed).
+- **Mode 1 (Auto-generate from project references)** -- `/design` has populated `product-design/product-design-as-intended.md` (and optionally `product-design-as-coded.md`) and the roadmap falls out of a delta analysis between as-coded and as-intended. This is the default modern path. Introduced as the primary roadmap flow in the earliest roadmap iteration; plan-000411 refined the reference-file reading checklist (step 2) and the requirements-extraction pass (step 2b, added when REQ markers landed).
 - **Mode 2 (From spec file)** -- the user has a manual `roadmap-spec.md` draft (authored offline, possibly produced earlier via Mode 3) and the roadmap parser compiles it into the roadmap summary. This path exists so that human-authored control can precede auto-decomposition when project references are not yet canonical or when the user wants to adjust classifications/dependencies before plans are generated.
 - **Mode 3 (Generate blank spec)** -- the user wants a spec skeleton to edit offline, then invoke Mode 2 later. Mode 3 is a pure scaffolding utility: it copies `.claude/references/template/roadmap-spec.md` to `<target>/specs/roadmap-spec-<datetime>.md` and exits. Hence Mode 3 skips every Common Step (no pre-skill, no ID reserve, no post-skill -- the output is a local artifact the user fills in offline).
 
@@ -41,7 +41,7 @@ When a roadmap generates N plans across multiple waves, those plans may execute 
 
 The fix: each /plan invocation reserves its own ID via C2 (inside step 9 of Mode 1 when plans are generated inline). The roadmap's Plan column starts as `plan-TBD` and is filled with the real ID after `/plan` completes. If a generated plan is discarded before commit, no ID is burned; if a plan is never generated (Wave 2 and later), no ID is reserved. The IDs-as-they-are-assigned ordering always matches the actual implementation ordering.
 
-Exception (recorded in the SKILL.md body): generating full plans eagerly via the step 9 decision point is fine. Those plans are real /plan invocations that each call C2; they can be discarded (by selecting `Revise plan` at their per-plan step 7 equivalent) before any ID is burned. The anti-pattern is specifically about calling `reserve_id.py --type plan` outside of a /plan invocation.
+Exception (recorded in the SKILL.md body): generating full plans eagerly via the step 9 decision point is fine. Those plans are real /plan invocations that each call C2; once generated, they are auto-committed (step 7 runs /post-skill immediately after plan finalization). IDs are always used once reserved -- there is no discard path. The anti-pattern is specifically about calling `reserve_id.py --type plan` outside of a /plan invocation.
 
 ## Decision-point rationale convention origin
 

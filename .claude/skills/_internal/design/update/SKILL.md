@@ -10,17 +10,17 @@ metadata:
 
 > This is an inlined worker; execute these instructions as part of the caller's flow. The wrapper at `.claude/skills/design/SKILL.md` has already run the Detection Logic and routed to this mode.
 >
-> **Pre-skill ownership**: Step 1 of the Design Update instructs running pre-skill. That step stays here in the internal (not in the wrapper) so that pre-skill fires exactly once, from within the mode that actually needs it. Initial-design modes (Modes 1, 2, 3, 4, 5) skip pre-skill entirely because `project/conventions.md` does not yet exist when they run.
+> **Pre-skill ownership**: Step 1 of the Design Update instructs running pre-skill. That step stays here in the internal (not in the wrapper) so that pre-skill fires exactly once, from within the mode that actually needs it. Initial-design modes (Modes 1, 2, 3, 4, 5) skip pre-skill entirely because `product-design/conventions.md` does not yet exist when they run.
 
 ## Design Update (project definitions exist)
 
-When `project/conventions.md` already exists AND `project/product-design-as-intended.md` exists:
+When `product-design/conventions.md` already exists AND `product-design/product-design-as-intended.md` exists:
 
 > **Ownership split (stack updates vs. initial scaffolding)**: Initial stack scaffolding (first-time `conventions.md` population, CLAUDE.md / rules / smoke-test infra scaffolding) is owned by `/seja-setup` (see `/seja-setup` Standard Install Flow step 4b and the `Scaffold-CLAUDE.md` / `Scaffold-Rules` / `Scaffold-SmokeTestInfra` anchors in steps 7c-7e). Stack *updates* in finalised projects go through `/design update stack` (or the interactive Update menu option 1 below). Updates are a separate concern from creation: a user swapping a stack mid-project gets a single entry point here, and `/design` re-invokes the `Scaffold-*` anchors by name to keep downstream artifacts consistent.
 
-1. Run /pre-skill "design" $ARGUMENTS to load general instructions and register the brief. Pre-skill is invoked only in the Update branch; initial-design modes (Mode 1/2/4) remain bootstrap-clean because `project/conventions.md` does not yet exist when they run.
+1. Run /pre-skill "design" $ARGUMENTS to load general instructions and register the brief. Pre-skill is invoked only in the Update branch; initial-design modes (Mode 1/2/4) remain bootstrap-clean because `product-design/conventions.md` does not yet exist when they run.
 
-2. **Show current design summary**: Read `project/conventions.md` and display current stack choices.
+2. **Show current design summary**: Read `product-design/conventions.md` and display current stack choices.
 
 3. **Offer update options** (skipped on CLI fast path `/design update <slug>`):
    > "Your project design is already configured. What would you like to update?"
@@ -31,7 +31,7 @@ When `project/conventions.md` already exists AND `project/product-design-as-inte
 
 4. **Apply updates**: Read current `project/` file, present values, walk through changes. Preserve unmodified sections.
 
-   **Stack choices (menu option 1 / slug `stack`)**: edit the stack variables in `project/conventions.md` in place -- `BACKEND_FRAMEWORK`, `FRONTEND_FRAMEWORK`, `DATABASE`, `BACKEND_TEST`, `FRONTEND_TEST`, `ORM`, `MIGRATIONS`, `VALIDATION`, `AUTH`, `BUILD_TOOL`, `CSS`, `STATE`, `DATA_FETCHING`, `HTTP_CLIENT`, `ROUTER`, `E2E`, `WCAG`, directory paths (`BACKEND_DIR`, `FRONTEND_DIR`, `MIGRATIONS_DIR`, `FRONTEND_I18N_DIR`), and related conditional rows. Walk the user through each field with the current value shown and the ability to override. Apply the same conditional-population rules documented in `/seja-setup` Standard Install Flow step 4c (omit `BACKEND_*` rows when the new value is `BACKEND_FRAMEWORK=none`; omit `FRONTEND_*` rows and `FRONTEND_I18N_DIR` / `I18N_FRONTEND_FILES` when the new value is `FRONTEND_FRAMEWORK=none`; never leak `{{VAR}}` placeholders into the saved file).
+   **Stack choices (menu option 1 / slug `stack`)**: edit the stack variables in `product-design/conventions.md` in place -- `BACKEND_FRAMEWORK`, `FRONTEND_FRAMEWORK`, `DATABASE`, `BACKEND_TEST`, `FRONTEND_TEST`, `ORM`, `MIGRATIONS`, `VALIDATION`, `AUTH`, `BUILD_TOOL`, `CSS`, `STATE`, `DATA_FETCHING`, `HTTP_CLIENT`, `ROUTER`, `E2E`, `WCAG`, directory paths (`BACKEND_DIR`, `FRONTEND_DIR`, `MIGRATIONS_DIR`, `FRONTEND_I18N_DIR`), and related conditional rows. Walk the user through each field with the current value shown and the ability to override. Apply the same conditional-population rules documented in `/seja-setup` Standard Install Flow step 4c (omit `BACKEND_*` rows when the new value is `BACKEND_FRAMEWORK=none`; omit `FRONTEND_*` rows and `FRONTEND_I18N_DIR` / `I18N_FRONTEND_FILES` when the new value is `FRONTEND_FRAMEWORK=none`; never leak `{{VAR}}` placeholders into the saved file).
 
 5. **Regenerate dependent files**:
 

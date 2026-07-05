@@ -16,6 +16,41 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   preserved as-is; do not alter them.
 -->
 
+## [0.8.0] -- 2026-07-05
+
+### Breaking changes
+
+- **`project/` routing prefix removed**: all SKILL.md `references:` and `eager_references:` entries, agent prompts, rules, and general references now use `product-design/` directly. Downstream projects using `project/` in their SKILL.md references must update to `product-design/`. (plan-000654)
+
+### Added
+
+- **SPO analyses and UX overhaul** (`generate_spo.py`): computed analyses panel (press **A**) with coverage gaps, orphan nodes, hub connectivity, longest value chains, unaddressed quality criteria, cross-version dependency risk, and untracked-implementing analysis; detail cards with links-to/links-from edges and analyses membership badges; single-purpose panel with dynamic title and integrated Quality Criteria toggle; fulfillment confidence dots and layer completion bars; chain-completion metric; owner facet auto-declaration; Internal Skills layer separating internal from user-facing skills; panel accessibility and UX fixes. (plan-000615, plan-000619, plan-000625, plan-000627, plan-000630, plan-000631)
+- **`--strip-internal` flag** for `generate_spo.py`: strips internal/private content from generated SPO for audience-segmented output. (plan-000615)
+- **OCTO design system** (`design_system.py`): shared design-system token module adopted by `generate_spo.py` and `md_to_html.py` for consistent HTML styling. (plan-000642)
+- **`check_retired_tokens.py`**: preflight check detecting usage of retired variable/token names across harness files; wired into `run_preflight_fast.py`. (plan-000638)
+- **Post-skill pending-action creation moved to step 2g**: verify-as-coded, test-implementation, update-documentation, and implement mark-done safety net now created earlier in the lifecycle for clearer ordering. (plan-000650)
+- **Post-skill commit-before-End**: post-skill commits at step 8 before presenting the End option, ensuring work is never lost by an "End" selection. (plan-000640)
+- **Post-skill pre-commit-sha checkpoint resume**: checkpoint recovery from step 7 or 7e now recaptures the pre-commit SHA correctly. (plan-000650)
+- **`DOCS_DIR` variable**: new `${DOCS_DIR}` convention variable for generated documentation output; `verify_commit_scope.py` routes `document` skill-type to DOCS_DIR. (plan-000648)
+- **Conversation trace system**: append-only JSONL trace of user/agent exchanges with session linkage and skill backfill.
+- **`product-design-changelog.md`**: new separated conceptual-design changelog file.
+- **SPO internal-only enforcement**: SPO docs and feature references are never included in seja-public output.
+
+### Changed
+
+- **`/plan` commits plan before asking about implementation**: the plan file is staged and committed before the AskUserQuestion about next steps, preventing loss if the user selects End. (plan-000657)
+- **Pre-skill routing table**: `project/` prefix routing removed; all references resolve directly from `product-design/`. (plan-000654)
+
+### Fixed
+
+- **`check_design_output.py` path-doubling**: fixed bug where `product-design/` was duplicated in constructed paths at lines 191 and 225. (plan-000652, plan-000641)
+- **`check_plan_coverage.py` path-doubling and stale fixtures**: fixed design-intent path resolution; migrated test fixtures to `product-design/` layout. (plan-000641)
+- **`verify_commit_scope.py` CLI help text**: updated stale "check" reference to "critique" in `--skill-type` help string and `_SKILL_DIR_VARS` dictionary key. (plan-000656)
+- **`conftest.py` sys.path**: test conftest now adds `critique/` instead of dead `check/` to sys.path. (proposal-000636)
+- **23 unmasked test failures**: fixed migration-drift test failures across config resolution, call-graph, perspectives-reference, and retired-tokens tests; added deterministic `_resolve_path` fallback sorting. (plan-000638)
+- **Unicode crash on Windows**: replaced Unicode arrows with ASCII `->` in `seja_harness_hook.py`. (plan-000627)
+- **`summarize_artifacts._resolve_path`**: deterministic fallback sorting for path resolution. (plan-000638)
+
 ## [0.7.1] -- 2026-07-02 20:51 UTC
 
 ### Added

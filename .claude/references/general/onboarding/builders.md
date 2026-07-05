@@ -17,7 +17,7 @@ designer_description: "When you run /onboard for a builder -- a frontend, backen
 ### Essential (all Builders must cover)
 
 - **Architecture overview**: layers, component boundaries, data flow, deployment topology. Run `/explain architecture` if missing.
-- **Coding conventions**: `project/standards.md §§ Backend and Frontend`; path-scoped rules in `.claude/rules/`.
+- **Coding conventions**: `product-design/standards.md §§ Backend and Frontend`; path-scoped rules in `.claude/rules/`.
 - **Development environment**: clone, install deps, env vars, database setup, first test run. Target: clone-to-passing-tests under 5 minutes.
 - **CI/CD pipeline**: build, test, lint, deploy stages -- triggering, reading failures, deploying.
 - **Branching and PR workflow**: branch naming, commit conventions, PR template, review expectations.
@@ -26,7 +26,7 @@ designer_description: "When you run /onboard for a builder -- a frontend, backen
 ### Deep-dive (load for thorough onboarding or when Builder is the primary role)
 
 - **Dependency map, data model**: third-party libraries, internal shared packages, external integrations; entity relationships, naming conventions, migration workflow (run `/explain data-model` if missing).
-- **Testing strategy**: unit/integration/e2e boundaries, coverage expectations, writing and running tests. See `project/standards.md § Testing`.
+- **Testing strategy**: unit/integration/e2e boundaries, coverage expectations, writing and running tests. See `product-design/standards.md § Testing`.
 - **Error handling**: propagation across layers, logging conventions, error response formats.
 - **Performance and security**: known bottlenecks, caching, query optimization; auth flow, input validation, secrets management.
 
@@ -40,8 +40,8 @@ designer_description: "When you run /onboard for a builder -- a frontend, backen
 
 ## Key Reference Files
 
-- `project/standards.md § Backend` (if backend role)
-- `project/standards.md § Frontend` (if frontend role)
+- `product-design/standards.md § Backend` (if backend role)
+- `product-design/standards.md § Frontend` (if frontend role)
 - `.claude/rules/backend.md`, `.claude/rules/frontend.md` (path-scoped rules)
-- `project/product-design-as-coded.md § Conceptual Design` (current system design)
+- `product-design/product-design-as-coded.md § Conceptual Design` (current system design)
 - `general/review-perspectives/dx.md` (developer experience standards)

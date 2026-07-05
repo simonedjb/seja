@@ -4,7 +4,7 @@ designer_description: "I'm your project's immutable principles -- the non-negoti
 
 # TEMPLATE - PROJECT CONSTITUTION
 
-> **How to use this template:** Copy this file to `project/constitution.md` and fill in the values for your project. This file declares immutable principles that override all other guidance. Agents must never violate these without explicit user override.
+> **How to use this template:** Copy this file to `product-design/constitution.md` and fill in the values for your project. This file declares immutable principles that override all other guidance. Agents must never violate these without explicit user override.
 >
 > The constitution is loaded first by pre-skill, before conventions or any other reference file. Rules here take precedence over everything else.
 >

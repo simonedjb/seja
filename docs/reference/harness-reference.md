@@ -1,7 +1,7 @@
 ---
 diataxis: reference
 freshness: release-bound
-last-reviewed: 2026-06-30
+last-reviewed: 2026-07-04
 ---
 
 <!--
@@ -14,7 +14,7 @@ Do not edit by hand. To regenerate:
 
 # SEJA harness reference
 
-Generated 2026-06-30T13:42:57Z from seja-priv harness state.
+Generated 2026-07-04T22:56:29Z from seja-priv harness state.
 
 ## Skills
 
@@ -130,6 +130,7 @@ Generated 2026-06-30T13:42:57Z from seja-priv harness state.
 | check_migration_chain.py | Validate Alembic migration revision chain in dialogos. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_migration_chain.py` | `concepts/call-graph.md` |
 | check_plan_coverage.py | Plan coverage verification against design-intent requirements. | agent-invoked, hook-ci | active | `.claude/skills/design/check_plan_coverage.py` | `concepts.md`, `concepts/call-graph.md` |
 | check_po_parity.py | Verify Flask-Babel .po catalog parity. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_po_parity.py` | `concepts/call-graph.md` |
+| check_retired_tokens.py | Guard against retired tokens lingering in live harness files. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_retired_tokens.py` |  |
 | check_route_coverage.py | Check that backend API routes have corresponding frontend API methods and vice versa. | agent-invoked, hook-ci | active | `.claude/skills/scripts/check_route_coverage.py` | `concepts/call-graph.md` |
 | check_secrets.py | Scan files for accidentally committed secrets. | agent-invoked, hook-ci | active | `.claude/skills/design/check_secrets.py` | `concepts/call-graph.md`, `how-to/ci-integration.md` |
 | check_section_boundary_writes.py | Reject contiguous write regions that cross | agent-invoked, hook-ci | active | `.claude/skills/post-skill/check_section_boundary_writes.py` | `concepts.md`, `concepts/call-graph.md`, `how-to/greenfield-collocated.md`, `how-to/greenfield-workspace.md`, `how-to/plan-and-execute.md`, `how-to/quality-gates.md`, `reference/glossary.md` |
@@ -158,10 +159,12 @@ Generated 2026-06-30T13:42:57Z from seja-priv harness state.
 
 | Name | Purpose | Invoked by | Lifecycle | Path | Mentioned in |
 |---|---|---|---|---|---|
+| design_system.py | Extract CSS and design tokens from HTML design system files. | library | active | `.claude/skills/scripts/design_system.py` |  |
 | human_markers_registry.py | Shared registry for Human (markers) files and allowed marker patterns. | library | active | `.claude/skills/scripts/human_markers_registry.py` | `concepts/call-graph.md` |
 | load_quickguide.py | Shared loader for SKILL-quickguide.md sibling files. | library | active | `.claude/skills/scripts/load_quickguide.py` | `concepts/call-graph.md` |
 | project_config.py | Central configuration for SEJA helper scripts. | library | active | `.claude/skills/scripts/project_config.py` | `concepts/call-graph.md` |
 | reflect_colors.py | shared color palette for /reflect --deep visualizations. | library | active | `.claude/skills/reflect/reflect_colors.py` | `concepts/call-graph.md` |
+| seja_harness_hook.py | UserPromptSubmit hook: inject SEJA harness lifecycle reminder. | hook-ci | active | `.claude/skills/scripts/seja_harness_hook.py` |  |
 | smoke_test_core.py | Smoke Test Core — generic framework for registry-driven API smoke testing. | library | active | `.claude/skills/scripts/smoke_test_core.py` | `concepts/call-graph.md` |
 | test_detect_setup_state.py | Tests for detect_setup_state.py. | test | active | `.claude/skills/seja-setup/test_detect_setup_state.py` | `concepts/call-graph.md` |
 | test_reflect_deep.py | Tests for /reflect --deep mode modules. | test | active | `.claude/skills/reflect/test_reflect_deep.py` | `concepts/call-graph.md` |
@@ -194,6 +197,7 @@ Generated 2026-06-30T13:42:57Z from seja-priv harness state.
 - **check_migration_chain.py** (primary: Skill- or agent-invoked) -- also classified as: hook-ci; see [Hook and CI](#hook-and-ci)
 - **check_plan_coverage.py** (primary: Skill- or agent-invoked) -- also classified as: hook-ci; see [Hook and CI](#hook-and-ci)
 - **check_po_parity.py** (primary: Skill- or agent-invoked) -- also classified as: hook-ci; see [Hook and CI](#hook-and-ci)
+- **check_retired_tokens.py** (primary: Skill- or agent-invoked) -- also classified as: hook-ci; see [Hook and CI](#hook-and-ci)
 - **check_route_coverage.py** (primary: Skill- or agent-invoked) -- also classified as: hook-ci; see [Hook and CI](#hook-and-ci)
 - **check_secrets.py** (primary: Skill- or agent-invoked) -- also classified as: hook-ci; see [Hook and CI](#hook-and-ci)
 - **check_section_boundary_writes.py** (primary: Skill- or agent-invoked) -- also classified as: hook-ci; see [Hook and CI](#hook-and-ci)

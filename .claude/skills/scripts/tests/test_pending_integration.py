@@ -53,7 +53,7 @@ def _setup_fake_repo(tmp_path: Path, with_triggers: bool = True) -> Path:
     """Create a minimal fake SEJA repo layout under tmp_path."""
     (tmp_path / ".claude").mkdir(exist_ok=True)
     (tmp_path / "_output").mkdir(exist_ok=True)
-    proj_dir = tmp_path / "_references" / "project"
+    proj_dir = tmp_path / "product-design"
     proj_dir.mkdir(parents=True, exist_ok=True)
     if with_triggers:
         (proj_dir / "conventions.md").write_text(MINIMAL_CONVENTIONS_WITH_TRIGGERS, encoding="utf-8")

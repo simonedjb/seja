@@ -144,6 +144,27 @@ quality_criteria:
 #   /research  → obstacle cards (if obstacles layer is enabled)
 
 cards:
+  #
+  # ── fulfillment[] field contract ──────────────────────────────────────────
+  # `fulfillment` is an array of evidence strings attached to a card.
+  # Each entry must cite a verifiable artifact — not a bare assertion.
+  #
+  # ACCEPTABLE evidence strings:
+  #   • User research citations:  "<Study title>, <YYYY-MM>, n=<N>"
+  #       e.g. "User onboarding study, 2026-06, n=24"
+  #   • Test results:             "<Test name>, pass rate <N>%"
+  #       e.g. "End-to-end checkout regression, pass rate 98%"
+  #   • Documented milestone artifacts:
+  #       e.g. "Release note v2.3.0 §Changelog — shipped 2026-05-14"
+  #
+  # NOT ACCEPTABLE (will be flagged by reviewers):
+  #   • Bare assertions with no artifact reference:
+  #       e.g. "Done in sprint 12" — no study, test, or document cited
+  #   • Placeholder text:
+  #       e.g. "TODO: add evidence later"
+  #
+  # Leave the list empty ([]) when no evidence has been collected yet.
+  # ──────────────────────────────────────────────────────────────────────────
 
   # ── Business Goals ────────────────────────────────────────────────────────
   - id: G-01
@@ -154,7 +175,7 @@ cards:
     version: V1
     personas: []
     quality_criteria: []
-    fulfillment: []         # evidence strings: key results, metrics, acceptance indicators
+    fulfillment: []         # evidence strings — see contract above
     tracker_id: ""
     tracker_title: ""
     status: proposed        # proposed | implementing | done | deferred

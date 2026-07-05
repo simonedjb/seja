@@ -6,15 +6,15 @@ designer_description: "I'm the as-coded mirror of what actually shipped in your 
 
 <!-- maintained-by: Agent (post-skill); Agent classification since SEJA 2.8.4 -->
 
-> **How to use this template:** Copy this file to `project/product-design-as-coded.md`. It records the implementation state (as-coded) in three domain sections: Conceptual Design, Metacommunication, and Journey Maps. This unified file replaces the three separate as-is files (conceptual-design-as-is, metacomm-as-is, journey-maps-as-is) that existed prior to SEJA 2.8.4. See the harness CHANGELOG for the migration rationale (source: advisory-000264 Phase 2 E).
+> **How to use this template:** Copy this file to `product-design/product-design-as-coded.md`. It records the implementation state (as-coded) in three domain sections: Conceptual Design, Metacommunication, and Journey Maps. This unified file replaces the three separate as-is files (conceptual-design-as-is, metacomm-as-is, journey-maps-as-is) that existed prior to SEJA 2.8.4. See the harness CHANGELOG for the migration rationale (source: advisory-000264 Phase 2 E).
 >
 > **Classification**: `Agent` -- this file is written by post-skill step 2 after each plan execution. Designers read the file to understand what the codebase currently implements; post-skill mirrors the target product-design-as-intended.md structure into the three sections here as code ships.
 >
 > **Section boundary discipline**: post-skill writes target one H2 domain section at a time. The `check_section_boundary_writes.py` validator at preflight step 6c rejects any contiguous write region that spans two or more H2 sections. This catches the class of bug where a buggy Edit call accidentally modifies an adjacent section. The validator uses git-diff against the prior commit and allows arbitrary edits WITHIN a section.
 >
 > **Related files:**
-> - `project/product-design-as-intended.md` -- target design intent, Human (markers) classification (since SEJA 2.8.3)
-> - `project/product-design-changelog.md` -- changelog for conceptual-design changes, kept separate (Phase 3 F will embed conditionally)
+> - `product-design/product-design-as-intended.md` -- target design intent, Human (markers) classification (since SEJA 2.8.3)
+> - `product-design/product-design-changelog.md` -- changelog for conceptual-design changes, kept separate (Phase 3 F will embed conditionally)
 
 ---
 
@@ -161,7 +161,7 @@ designer_description: "I'm the as-coded mirror of what actually shipped in your 
 |----------|-------|-----------------|
 | {{field}} length | {{min}}–{{max}} chars | {{why}} |
 
-> **Note:** These constants must be kept in sync between backend and frontend. See `project/security-checklists.md` Quick Reference for the technical mapping.
+> **Note:** These constants must be kept in sync between backend and frontend. See `product-design/security-checklists.md` Quick Reference for the technical mapping.
 
 ---
 
@@ -180,7 +180,7 @@ designer_description: "I'm the as-coded mirror of what actually shipped in your 
 1. Analysis (understanding needs and defining requirements)
    1.1. What do I know or don’t know about (all of) you and how?
    {{EMT_ANALYSIS_WHAT_I_KNOW_OR_DONT_KNOW_ABOUT_YOU_AND_HOW}}
-   > For persona profiles and problem scenarios informing the current design, see `project/ux-research-results.md §1-§4`.
+   > For persona profiles and problem scenarios informing the current design, see `product-design/ux-research-results.md §1-§4`.
    1.2. What do I know or don’t know about affected others and how?
    {{EMT_ANALYSIS_WHAT_I_KNOW_OR_DONT_KNOW_ABOUT_AFFECTED_OTHERS_AND_HOW}}
    1.3. What do I know or don’t know about the intended (and other anticipated) contexts of use?
@@ -194,10 +194,10 @@ designer_description: "I'm the as-coded mirror of what actually shipped in your 
    {{EMT_DESIGN_WHICH_OF_YOUR_GOALS_HAVE_I_DESIGNED_THE_SYSTEM_TO_SUPPORT}}
    2.3. In what situations/contexts do I intend/accept you will use the system to achieve each goal? Why?
    {{EMT_DESIGN_IN_WHAT_SITUATIONS_CONTEXTS_DO_I_INTEND_ACCEPT_YOU_WILL_USE_THE_SYSTEM_TO_ACHIEVE_EACH_GOAL}}
-   > For implemented solution representations, see Section 3 below. For visual journey maps, see `project/product-design-as-coded.md § Journey Maps`.
+   > For implemented solution representations, see Section 3 below. For visual journey maps, see `product-design/product-design-as-coded.md § Journey Maps`.
    2.4. How should you use the system to achieve each goal, according to my design?
    {{EMT_DESIGN_HOW_SHOULD_YOU_USE_THE_SYSTEM_TO_ACHIEVE_EACH_GOAL}}
-   > For step-by-step user journeys, see `project/journey-maps.md`.
+   > For step-by-step user journeys, see `product-design/journey-maps.md`.
    2.5. For what purposes do I not want you to use the system?
    {{EMT_DESIGN_FOR_WHAT_PURPOSES_DO_I_NOT_WANT_YOU_TO_USE_THE_SYSTEM}}
    2.6. *What ethical principles influenced my design decisions?
@@ -225,7 +225,7 @@ designer_description: "I'm the as-coded mirror of what actually shipped in your 
 
 ### 3. Solution Representations (Implemented)
 
-> Solution representations that have been implemented. Mirrors the structure in `project/product-design-as-intended.md` Section 13, but reflects what is actually built. Maintained by post-skill after plan execution.
+> Solution representations that have been implemented. Mirrors the structure in `product-design/product-design-as-intended.md` Section 13, but reflects what is actually built. Maintained by post-skill after plan execution.
 
 #### Option A: Solution Scenarios
 
@@ -276,8 +276,8 @@ designer_description: "I'm the as-coded mirror of what actually shipped in your 
 
 ### JM-TB-001: {{Journey Title}}
 
-- **Persona:** {{PersonaName}} (from `project/ux-research-results.md`)
-- **Solution Scenario:** {{SS-001}} (from `project/product-design-as-intended.md §13`)
+- **Persona:** {{PersonaName}} (from `product-design/ux-research-results.md`)
+- **Solution Scenario:** {{SS-001}} (from `product-design/product-design-as-intended.md §13`)
 - **Goal:** {{what the user wants to achieve}}
 - **Implementation Status:** {{implemented / partial / not started}}
 
@@ -295,7 +295,7 @@ designer_description: "I'm the as-coded mirror of what actually shipped in your 
 
 ### Delta from As-Intended
 
-> Gaps between current implementation and intended journey design (`project/product-design-as-intended.md §15 (Designed User Journeys)`).
+> Gaps between current implementation and intended journey design (`product-design/product-design-as-intended.md §15 (Designed User Journeys)`).
 > Updated by post-skill or manually via `/explain drift`.
 
 #### Not Yet Implemented
@@ -312,7 +312,7 @@ designer_description: "I'm the as-coded mirror of what actually shipped in your 
 
 ### Delta from Research Findings
 
-<!-- Populate this section when `project/ux-research-results.md §5` contains JM-E-NNN entries
+<!-- Populate this section when `product-design/ux-research-results.md §5` contains JM-E-NNN entries
      (i.e., the project has conducted formal journey research and documented it there).
      This delta compares the current implementation against empirical research findings --
      a qualitatively different signal from the as-intended delta above (research-vs-reality, not intent-vs-reality).

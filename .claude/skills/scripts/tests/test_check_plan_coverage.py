@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+import check_plan_coverage
 from check_plan_coverage import (
     Finding,
     Requirement,
@@ -20,13 +21,40 @@ from check_plan_coverage import (
 # ---------------------------------------------------------------------------
 
 def _make_project_structure(tmp_path):
-    """Create the _references/project/, _output/plans/, and .claude/ dirs."""
-    project_dir = tmp_path / "_references" / "project"
+    """Create the product-design/, _output/plans/, and .claude/ dirs.
+
+    The design-intent spec lives at ``product-design/product-design-as-intended.md``
+    (the current post-migration layout resolved by compute_coverage). Returns
+    ``(project_dir, plans_dir)`` where ``project_dir`` is the design-intent home;
+    tests write the spec at ``project_dir / "product-design-as-intended.md"``.
+    """
+    project_dir = tmp_path / "product-design"
     project_dir.mkdir(parents=True)
     plans_dir = tmp_path / "_output" / "plans"
     plans_dir.mkdir(parents=True)
     (tmp_path / ".claude").mkdir(exist_ok=True)
     return project_dir, plans_dir
+
+
+@pytest.fixture
+def _pin_design_intent(monkeypatch):
+    """Pin DESIGN_INTENT/PLANS_DIR so coverage resolution is hermetic.
+
+    ``compute_coverage`` resolves DESIGN_INTENT through project_config's
+    module-level REPO_ROOT, which reads the *real* ``conventions.md`` and
+    ignores ``tmp_path``. Stubbing the config-get helper keeps these tests
+    independent of the ambient repo layout and portable to downstream repos
+    whose design-intent filename differs.
+    """
+    config = {
+        "DESIGN_INTENT": "product-design/product-design-as-intended.md",
+        "PLANS_DIR": "_output/plans",
+    }
+    monkeypatch.setattr(
+        check_plan_coverage,
+        "_load_project_config_get",
+        lambda root: config.get,
+    )
 
 
 SAMPLE_SPEC = """\
@@ -268,6 +296,7 @@ class TestTraceExtraction:
 # 3. Coverage computation
 # ---------------------------------------------------------------------------
 
+@pytest.mark.usefixtures("_pin_design_intent")
 class TestCoverageComputation:
 
     def test_full_coverage_no_gaps(self, tmp_path):
@@ -319,6 +348,64 @@ class TestCoverageComputation:
 
 
 # ---------------------------------------------------------------------------
+# 3b. Path-doubling regression guard
+# ---------------------------------------------------------------------------
+
+class TestPathDoublingRegressionGuard:
+    """Guard against the ``product-design/`` path-doubling bug (plan-000641).
+
+    When ``DESIGN_INTENT`` already carries a ``product-design/`` prefix (the
+    current post-migration layout), the resolver must resolve it as
+    ``root/product-design/product-design-as-intended.md`` -- it must NOT
+    re-prepend ``product-design/`` to the already-prefixed value, which would
+    yield the non-existent ``root/product-design/product-design/...`` path and
+    make ``compute_coverage`` silently skip with a spurious "spec not found"
+    result (falsely reporting full coverage while real gaps went unchecked).
+
+    The config lookup is monkeypatched deterministically rather than left to
+    the ambient ``project_config`` import: if ``project_config`` were
+    unimportable, ``compute_coverage`` would fall back to the bare
+    ``product-design/...`` default whose path resolves directly, so the
+    buggy doubling branch would never be exercised and this guard would
+    pass green with the defect present. Pinning the
+    already-``product-design/``-prefixed value forces the doubling path.
+    """
+
+    def test_prefixed_design_intent_is_not_doubled(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(
+            "check_plan_coverage._load_project_config_get",
+            lambda root: (lambda key, default=None: {
+                "DESIGN_INTENT": "product-design/product-design-as-intended.md",
+                "PLANS_DIR": "_output/plans",
+            }.get(key, default)),
+        )
+
+        project_dir, _plans_dir = _make_project_structure(tmp_path)
+        spec_file = project_dir / "product-design-as-intended.md"
+        # At least one UNCOVERED requirement (no plan traces it).
+        spec_file.write_text(
+            "## 2. Entity Hierarchy\n<!-- REQ-ENT-001 -->\n### User\n",
+            encoding="utf-8",
+        )
+
+        findings = compute_coverage(tmp_path, verbose=True)
+
+        # The spec must be found and its requirement reported as a gap -- NOT
+        # the "spec not found" skip (which would leave gap_findings empty).
+        gap_findings = [f for f in findings if "Untraced" in f.message]
+        assert len(gap_findings) == 1, (
+            "resolver doubled product-design/ and skipped coverage instead of "
+            f"reporting the untraced requirement; findings={findings}"
+        )
+        assert "REQ-ENT-001" in gap_findings[0].message
+        skip_findings = [f for f in findings if "skipping plan coverage" in f.message]
+        assert not skip_findings, (
+            "compute_coverage emitted a spec-not-found skip -- the "
+            "product-design/ prefix was doubled"
+        )
+
+
+# ---------------------------------------------------------------------------
 # 4. Classification derivation
 # ---------------------------------------------------------------------------
 
@@ -353,6 +440,7 @@ class TestClassification:
 # 5. Security gap escalation
 # ---------------------------------------------------------------------------
 
+@pytest.mark.usefixtures("_pin_design_intent")
 class TestSecurityEscalation:
 
     def test_security_gaps_are_errors(self, tmp_path):
@@ -414,3 +502,123 @@ class TestEdgeCases:
         lines = ["", "", "### Actual Title"]
         title = _extract_title(lines, 0)
         assert "Actual Title" in title
+
+
+# ---------------------------------------------------------------------------
+# 7. Inline traced_by annotation support (plan-000646)
+# ---------------------------------------------------------------------------
+
+SAMPLE_SPEC_WITH_TRACED_BY = """\
+# Design Intent
+
+## 2. Entity Hierarchy
+
+<!-- REQ-ENT-001 | traced_by: bootstrap -->
+### User
+
+The primary entity.
+
+<!-- REQ-ENT-002 | traced_by: bootstrap -->
+### Group
+
+A container for users.
+
+## 4. Permission Model
+
+<!-- REQ-PERM-001 | traced_by: bootstrap -->
+| Role | Level | Capabilities |
+|------|-------|-------------|
+| Admin | 100 | Full access |
+"""
+
+SAMPLE_SPEC_MIXED_TRACES = """\
+# Design Intent
+
+## 2. Entity Hierarchy
+
+<!-- REQ-ENT-001 | traced_by: bootstrap -->
+### User
+
+The primary entity.
+
+<!-- REQ-ENT-002 -->
+### Group
+
+A container for users.
+"""
+
+
+class TestInlineTracedByExtraction:
+
+    def test_extracts_traced_by_value(self, tmp_path):
+        project_dir, _ = _make_project_structure(tmp_path)
+        spec_file = project_dir / "product-design-as-intended.md"
+        spec_file.write_text(SAMPLE_SPEC_WITH_TRACED_BY, encoding="utf-8")
+
+        reqs = extract_requirements(spec_file)
+        by_id = {r.id: r for r in reqs}
+
+        assert by_id["REQ-ENT-001"].traced_by == "bootstrap"
+        assert by_id["REQ-ENT-002"].traced_by == "bootstrap"
+        assert by_id["REQ-PERM-001"].traced_by == "bootstrap"
+
+    def test_bare_marker_has_no_traced_by(self, tmp_path):
+        project_dir, _ = _make_project_structure(tmp_path)
+        spec_file = project_dir / "product-design-as-intended.md"
+        spec_file.write_text(SAMPLE_SPEC, encoding="utf-8")
+
+        reqs = extract_requirements(spec_file)
+        for r in reqs:
+            assert r.traced_by is None
+
+
+@pytest.mark.usefixtures("_pin_design_intent")
+class TestInlineTracedByCoverage:
+
+    def test_all_traced_by_counts_as_covered(self, tmp_path):
+        """Requirements with traced_by annotations are covered without plan traces."""
+        project_dir, _ = _make_project_structure(tmp_path)
+        spec_file = project_dir / "product-design-as-intended.md"
+        spec_file.write_text(SAMPLE_SPEC_WITH_TRACED_BY, encoding="utf-8")
+
+        findings = compute_coverage(tmp_path, verbose=True)
+
+        errors = [f for f in findings if f.severity == "error"]
+        warnings = [f for f in findings if f.severity == "warning"]
+        assert len(errors) == 0
+        assert len(warnings) == 0
+        info = [f for f in findings if "3/3" in f.message]
+        assert len(info) == 1
+
+    def test_mixed_traced_by_and_plan_traces(self, tmp_path):
+        """A mix of inline traced_by and plan-file traces both count as covered."""
+        project_dir, plans_dir = _make_project_structure(tmp_path)
+        spec_file = project_dir / "product-design-as-intended.md"
+        spec_file.write_text(SAMPLE_SPEC_MIXED_TRACES, encoding="utf-8")
+        # Only trace REQ-ENT-002 via a plan file; REQ-ENT-001 is traced_by inline
+        plan_file = plans_dir / "plan-000100-partial.md"
+        plan_file.write_text(
+            "# Plan\n\n### Step 1\n- **Traces**: REQ-ENT-002\n",
+            encoding="utf-8",
+        )
+
+        findings = compute_coverage(tmp_path, verbose=True)
+
+        errors = [f for f in findings if f.severity == "error"]
+        warnings = [f for f in findings if f.severity == "warning"]
+        assert len(errors) == 0
+        assert len(warnings) == 0
+        info = [f for f in findings if "2/2" in f.message]
+        assert len(info) == 1
+
+    def test_untraced_requirement_still_reported(self, tmp_path):
+        """Requirements without traced_by or plan traces are still gaps."""
+        project_dir, _ = _make_project_structure(tmp_path)
+        spec_file = project_dir / "product-design-as-intended.md"
+        spec_file.write_text(SAMPLE_SPEC_MIXED_TRACES, encoding="utf-8")
+
+        findings = compute_coverage(tmp_path, verbose=False)
+
+        gap_findings = [f for f in findings if "Untraced" in f.message]
+        assert len(gap_findings) == 1
+        assert "REQ-ENT-002" in gap_findings[0].message

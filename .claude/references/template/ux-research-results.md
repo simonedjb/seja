@@ -2,13 +2,13 @@
 
 <!-- maintained-by: human (designer/researcher); Human (markers) classification since SEJA 2.8.2 -->
 
-> **How to use this template:** Copy this file to `project/ux-research-results.md` and record UX research findings as they arrive. This unified file replaces the two separate ux-research-new.md and ux-research-established.md files that existed prior to SEJA 2.8.2. See the harness CHANGELOG for the migration rationale (source: advisory-000264 Phase 1 C).
+> **How to use this template:** Copy this file to `product-design/ux-research-results.md` and record UX research findings as they arrive. This unified file replaces the two separate ux-research-new.md and ux-research-established.md files that existed prior to SEJA 2.8.2. See the harness CHANGELOG for the migration rationale (source: advisory-000264 Phase 1 C).
 >
 > **Classification**: `Human (markers)` -- prose content (personas, problem scenarios, journey observations) is human-authored only. Agents may write fixed-format markers (`<!-- INCORPORATED: plan-NNNNNN | YYYY-MM-DD -->`) and append lines to the `## CHANGELOG` section at the bottom of the file, but only via `apply_marker.py` and only after AskUserQuestion confirmation. Enforced by `check_human_markers_only.py` and `check_changelog_append_only.py` during post-skill step 6c.
 >
 > **Stable IDs**: personas use `R-P-NNN`, problem scenarios use `R-PS-NNN`, discovered journeys use `JM-E-NNN`. IDs are stable across the file's lifetime. Revising an entry in place preserves the ID; superseding an entry mints a new ID and records a `superseded` CHANGELOG entry. Designers MUST use unique R-P-NNN, R-PS-NNN, and JM-E-NNN IDs within the file -- `apply_marker.py` raises `entry id <id> matches N headings (ambiguous)` if two headings share the same ID, which would block marker application.
 >
-> **One-directional flow**: Research findings in `§5 Discovered User Journeys` inform `project/product-design-as-intended.md §15 Designed User Journeys` (per advisory-000264 Phase 2 design-intent merge). Section 5 is structurally append-only for prose: agents may insert managed INCORPORATED markers above existing headings, but no prose line can be removed, modified, or inserted in the middle. Enforced by `check_changelog_append_only.py`.
+> **One-directional flow**: Research findings in `§5 Discovered User Journeys` inform `product-design/product-design-as-intended.md §15 Designed User Journeys` (per advisory-000264 Phase 2 design-intent merge). Section 5 is structurally append-only for prose: agents may insert managed INCORPORATED markers above existing headings, but no prose line can be removed, modified, or inserted in the middle. Enforced by `check_changelog_append_only.py`.
 >
 > **Consistency checking**: The agent can verify consistency between UX research, design intent, and the implemented solution via `/explain drift` or `/critique validate`. The agent does not write prose content to this file -- only the designer/researcher does.
 
@@ -62,13 +62,13 @@
 
 {{2-3 paragraphs describing the problem narrative. What is the user trying to do? What goes wrong? What is frustrating, slow, or impossible? Write concretely -- use the persona's context to make the scenario vivid and specific.}}
 
-> Are there misuse contexts for this scenario? If so, note them for security review in `project/security-checklists.md`.
+> Are there misuse contexts for this scenario? If so, note them for security review in `product-design/security-checklists.md`.
 
 ---
 
 ## 3. Cross-Reference Map
 
-> Explicit links between research artifacts and design-intent files. Personas and problem scenarios feed the EMT analysis section in `project/product-design-as-intended.md`. Solution representations (scenarios, user stories) are recorded in `project/product-design-as-intended.md` Section 13, not here -- they are design decisions, not research.
+> Explicit links between research artifacts and design-intent files. Personas and problem scenarios feed the EMT analysis section in `product-design/product-design-as-intended.md`. Solution representations (scenarios, user stories) are recorded in `product-design/product-design-as-intended.md` Section 13, not here -- they are design decisions, not research.
 
 | Artifact ID | Artifact Title | Design Artifact | Relationship |
 |-------------|---------------|----------------|-------------|
@@ -97,13 +97,13 @@
 
 > Journey maps discovered through user research sessions (field observations, usability studies, contextual inquiry, diary studies, etc.). These are empirical findings -- they describe what users *actually do*, not what was designed or what is implemented.
 >
-> **One-directional flow:** Research findings here inform `project/product-design-as-intended.md §15` (Designed User Journeys). They do NOT flow back into this file.
+> **One-directional flow:** Research findings here inform `product-design/product-design-as-intended.md §15` (Designed User Journeys). They do NOT flow back into this file.
 >
 > **Append-only discipline:** This section is structurally append-only for prose. `check_changelog_append_only.py` (post-skill step 6c) diffs this section against the prior git commit using a prose-only rule: lines matching any marker regex in `human_markers_registry.ALLOWED_MARKERS` are filtered out before comparison, so `apply_marker.py` may insert `<!-- INCORPORATED: plan-NNN | YYYY-MM-DD -->` markers above existing `### JM-E-NNN:` headings without triggering a middle-insertion violation. Prose lines, however, cannot be removed, modified, or inserted in the middle. Only prose additions at the end are allowed.
 >
 > **Related files:**
-> - `project/product-design-as-intended.md §15` -- designed journeys (as-intended, human-maintained)
-> - `project/product-design-as-coded.md § Journey Maps` -- implemented journeys (agent-maintained)
+> - `product-design/product-design-as-intended.md §15` -- designed journeys (as-intended, human-maintained)
+> - `product-design/product-design-as-coded.md § Journey Maps` -- implemented journeys (agent-maintained)
 
 <!--
   ENTRY PATTERN -- copy this block for each journey map entry from a research session

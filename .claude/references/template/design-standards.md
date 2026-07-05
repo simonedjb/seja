@@ -4,7 +4,7 @@ designer_description: "I list the UX and visual-design conventions your project 
 
 # TEMPLATE - DESIGN STANDARDS REFERENCE
 
-> **How to use this template:** Copy this file to `project/design-standards.md` and populate the relevant sections for your project's UX patterns and visual-design conventions. This unified file replaces the two separate design-standards files (ux-design-standards, graphic-ui-design-standards) that existed prior to SEJA 2.8.1. See the harness CHANGELOG for the migration rationale (source: advisory-000264 Phase 1).
+> **How to use this template:** Copy this file to `product-design/design-standards.md` and populate the relevant sections for your project's UX patterns and visual-design conventions. This unified file replaces the two separate design-standards files (ux-design-standards, graphic-ui-design-standards) that existed prior to SEJA 2.8.1. See the harness CHANGELOG for the migration rationale (source: advisory-000264 Phase 1).
 
 ---
 
@@ -242,9 +242,9 @@ Every empty state must include:
 
 | Artifact | Cadence | Owner | Format |
 |----------|---------|-------|--------|
-| **Persona documents** | Review quarterly, update after major research | Product designer | Markdown in `project/ux-research-results.md §1-§2` |
-| **Problem/solution scenarios** | Update per major feature or user research round | Product designer | Markdown in `project/ux-research-results.md §3-§4` |
-| **Journey maps** | Update per major feature | Product designer | Diagram in `project/product-design-as-intended.md §15` (designed) + `project/product-design-as-coded.md § Journey Maps` (implemented), or design tool |
+| **Persona documents** | Review quarterly, update after major research | Product designer | Markdown in `product-design/ux-research-results.md §1-§2` |
+| **Problem/solution scenarios** | Update per major feature or user research round | Product designer | Markdown in `product-design/ux-research-results.md §3-§4` |
+| **Journey maps** | Update per major feature | Product designer | Diagram in `product-design/product-design-as-intended.md §15` (designed) + `product-design/product-design-as-coded.md § Journey Maps` (implemented), or design tool |
 | **Usability test reports** | Per-release (minimum) | Product designer or UX researcher | Markdown report with findings + severity |
 
 > *Default: Quarterly persona review + per-release usability test. Rationale: personas drift as the product evolves; usability tests before release catch the highest-impact issues. Example: a 5-participant usability test using think-aloud protocol on the 3 most critical user flows.*

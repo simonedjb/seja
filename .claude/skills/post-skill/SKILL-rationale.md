@@ -20,9 +20,25 @@ Design intent: the schema is extended via plan-N, not revised in place. When a n
 
 ## Pipeline pattern rationale
 
-Post-skill is 13 steps in a single monolithic pipeline (plus pre-skill's 8 stages -- paired by design). The full lifecycle is readable in one file so maintainers can trace "what happens after a skill finishes" without hopping across micro-hooks. Decomposing into per-step hook files would add file count and configuration without solving an actual problem.
+Post-skill is a single monolithic pipeline (plus pre-skill's 8 stages -- paired by design), ending at the step-12 next-step prompt, with tracked-file *mutation* front-loaded ahead of the step-8 commit (see `## Commit-ordering invariant`) and only *presentation* (surprises, link, banner, next-step) left after it. The full lifecycle is readable in one file so maintainers can trace "what happens after a skill finishes" without hopping across micro-hooks. Decomposing into per-step hook files would add file count and configuration without solving an actual problem.
 
 See `.claude/references/general/harness-governance.md § Governance > Architectural Decisions > Pre/post-skill monolithic pipelines` for the canonical ruling. Revisit only if a step needs independent versioning, at which point the `skip_stages` mechanism (the pre-skill analogue) would extend to post-skill.
+
+## Commit-ordering invariant
+
+Post-skill has exactly **two commit points** -- the primary commit (step 8) and the telemetry trailing commit (8b) -- and **no tracked-file mutation occurs after step 8**. Everything the primary commit needs (including `_output/docs/deploy.html` and the `## Manual Actions` plan-file edit on `implement` runs) is produced *before* it, at the `implement`-gated step `7e` (deferred-artifact generation).
+
+Rationale (plan-000640, from research-000639): the prior layout generated deploy.html / Manual Actions at the old step 9 -- *after* the step-8 commit had already run and *after* step 8 deleted `.post-skill-checkpoint`. That left those artifacts in a post-completion, checkpoint-unprotected window; a crash or interruption while the step-13 next-step prompt was open orphaned uncommitted changes (which the next session's `verify_commit_scope` flags, or a concurrent session sweeps into an unrelated commit on `main`), and the old step-13 "on End: stage, commit" clause -- which had no defined commit message and never ran if the session died at the prompt -- was the only thing meant to redeem the dangling "(commit scope, step 8)" promise.
+
+Consequences of the invariant:
+- The "delete checkpoint at step 8" line is now **correct** (previously premature, because step 9 still mutated afterward).
+- The step-12 next-step **End is a true no-op** -- there is nothing left to commit.
+- Step `7e` writes its own `7e` checkpoint token so a crash between generation and the commit resumes deterministically (a `7` token re-runs the idempotent `7e`; a `7e` token proceeds to commit). The `## Manual Actions` edit is idempotent (update-in-place if the section exists) precisely so a `7`-token resume cannot double-append.
+- Telemetry stays a **separate trailing commit** (8b), HEAD-SHA-gated -- do NOT fold it into the primary commit (see the 8b amend-divergence rationale).
+- `7e` is **skipped in `--deferred`** worktree mode; the orchestrator owns wave-level docs/commits.
+- Label note: the step is `7e`, chosen over `7h` to avoid colliding with the `/plan`-lifecycle "step 7h" citations.
+
+A future step that needs to mutate tracked files must slot in **before** step 8 (like `7e`), never after -- otherwise it silently reopens the post-commit mutation window this invariant closed.
 
 ## Q&A companion-by-default
 
@@ -37,7 +53,7 @@ Companion files keep the parent diff narrow and the maintainer-class boundary in
 
 ## Section boundary discipline
 
-Post-skill step 2 writes to `project/product-design-as-coded.md`, which has three H2 domain sections: `## Conceptual Design`, `## Metacommunication`, `## Journey Maps`. Writes must stay within one H2 section per `Edit` call; multi-section updates require multiple Edits.
+Post-skill step 2 writes to `product-design/product-design-as-coded.md`, which has three H2 domain sections: `## Conceptual Design`, `## Metacommunication`, `## Journey Maps`. Writes must stay within one H2 section per `Edit` call; multi-section updates require multiple Edits.
 
 Rationale (SEJA 2.8.4, plan-000269): the unified as-coded file was produced by merging the three prior `-as-is.md` files. To keep domain ownership legible after the merge, `check_section_boundary_writes.py` (invoked at post-skill step 6c) rejects any single contiguous write region that spans two or more H2 sections. Anchor-based `Edit` using H3 heading text (rather than line numbers) keeps rewrites deterministic as the file grows.
 
@@ -45,12 +61,12 @@ The executional instruction stays in SKILL.md (step 2d's Section-boundary-discip
 
 ## Legacy-layout migration
 
-The Branch-3 WARNING emitted at step 2b (when `project/product-design-as-coded.md` is missing but any of `conceptual-design-as-is.md`, `metacomm-as-is.md`, `journey-maps-as-is.md` exist on disk) is the SEJA 2.8.4 migration signal.
+The Branch-3 WARNING emitted at step 2b (when `product-design/product-design-as-coded.md` is missing but any of `conceptual-design-as-is.md`, `metacomm-as-is.md`, `journey-maps-as-is.md` exist on disk) is the SEJA 2.8.4 migration signal.
 
 Two supported migration paths (see `seja-public/CHANGELOG.md § 2.8.4`):
 
-- **Option 1**: run `/seja-setup --upgrade` to let the harness instantiate `project/product-design-as-coded.md` from `template/product-design-as-coded.md` and move relevant content out of the three legacy files.
-- **Option 2**: manually instantiate `project/product-design-as-coded.md` from the template, copy the live content over, and delete the three legacy files.
+- **Option 1**: run `/seja-setup --upgrade` to let the harness instantiate `product-design/product-design-as-coded.md` from `template/product-design-as-coded.md` and move relevant content out of the three legacy files.
+- **Option 2**: manually instantiate `product-design/product-design-as-coded.md` from the template, copy the live content over, and delete the three legacy files.
 
 The warning text itself (which the agent emits verbatim) stays in SKILL.md because it is the agent-visible output. This file records the migration context so maintainers can update the warning when the migration window closes or extend it if a future unification demands a third branch.
 
@@ -75,5 +91,7 @@ Short list of plans and advisories referenced from post-skill's execution rules 
 - `advisory-000264` -- the SEJA 2.8 unification arc that produced 2.8.2 (ux-research), 2.8.3 (design-intent), and 2.8.4 (as-coded).
 - `advisory-000423` -- Q&A companion-by-default decision (see section above).
 - `advisory-000441` / `plan-000444` -- auto-doc step 2b default-flip rationale.
+- `research-000639` -- pros/cons analysis of "pre-ending" post-skill (commit before the End no-op); crash-safety and commit-ordering.
+- `plan-000640` -- pre-ending relocation: deferred-artifact generation moved to step `7e` before the step-8 commit; the commit-ordering invariant.
 
 New plan/advisory references added to post-skill rules (or moved into this file) should extend this index.

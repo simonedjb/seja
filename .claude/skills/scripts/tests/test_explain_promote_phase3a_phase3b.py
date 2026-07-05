@@ -132,7 +132,7 @@ DESIGN_INTENT_NON_COLON_HEADING = DESIGN_INTENT_BASELINE.replace(
 def fake_repo(tmp_path):
     """Build a fake repo layout at tmp_path with a product-design-as-intended.md fixture."""
     (tmp_path / ".claude").mkdir()
-    rel = "_references/project/product-design-as-intended.md"
+    rel = "product-design/product-design-as-intended.md"
     target = tmp_path / rel
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(DESIGN_INTENT_BASELINE, encoding="utf-8")
@@ -242,7 +242,7 @@ def phase3a_generate_proposal(
         f"Source plan: {plan_id}",
         "",
         "Review, edit to your voice, copy accepted entries into "
-        "`_references/project/product-design-as-intended.md § Decisions`, then run "
+        "`product-design/product-design-as-intended.md § Decisions`, then run "
         f"`/explain drift --promote --apply-markers {plan_id}`.",
         "",
     ]

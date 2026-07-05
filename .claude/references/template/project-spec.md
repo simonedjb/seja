@@ -53,8 +53,8 @@ version: 2
      - Validation constants: field limits with domain rationale
 
      You can use prose, bullet lists, tables, or any Markdown format.
-     The agent will use this to populate project/product-design-as-coded.md § Conceptual Design
-     and project/product-design-as-intended.md. -->
+     The agent will use this to populate product-design/product-design-as-coded.md § Conceptual Design
+     and product-design/product-design-as-intended.md. -->
 
 
 ## Source Directories

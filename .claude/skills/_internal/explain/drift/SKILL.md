@@ -20,7 +20,7 @@ If scope is `--promote` or `--promote --apply-markers ...`, skip Steps A-B and g
 
 1. Determine scope from the argument (default: `all`). Accepted variants: `all`, `conceptual-design`, `metacomm`, `--promote`, `--promote --apply-markers plan-NNNNNN`, `--scope since-plan plan-NNNNNN`. If scope is `since-plan plan-NNNNNN`, validate the plan ID format against `^plan-\d{6}$`. If invalid, emit `ERROR: --scope since-plan expects plan-NNNNNN (6-digit ID). Got: <value>` and abort.
 
-2. Read the as-intended/as-coded registry from `project/conventions.md` (fallback `template/conventions.md`). Use the Section column to narrow scans. For each row in scope: if the as-coded counterpart is `-` (research-only) or either file is missing, report and skip. Journey-ID locations: JM-TB-NNN -> `product-design-as-intended.md §15`; JM-E-NNN -> `ux-research-results.md §5`.
+2. Read the as-intended/as-coded registry from `product-design/conventions.md` (fallback `template/conventions.md`). Use the Section column to narrow scans. For each row in scope: if the as-coded counterpart is `-` (research-only) or either file is missing, report and skip. Journey-ID locations: JM-TB-NNN -> `product-design-as-intended.md §15`; JM-E-NNN -> `ux-research-results.md §5`.
 
    For each in-scope as-intended file, also scan for `STATUS: implemented` markers (legacy `STATUS: IMPLEMENTED` also detected) lacking an `ESTABLISHED:` stamp. Collect as "pending promotion" items.
 
@@ -95,7 +95,7 @@ The promote workflow has two phases so the designer owns every word of the Decis
 
 ##### Phase 3a steps (`/explain drift --promote`)
 
-1. Read the registry from `project/conventions.md` (fallback `template/conventions.md`). Scan registered `product-design-as-intended.md` (and any other Human (markers) files) for `STATUS: implemented` markers lacking `ESTABLISHED:`.
+1. Read the registry from `product-design/conventions.md` (fallback `template/conventions.md`). Scan registered `product-design-as-intended.md` (and any other Human (markers) files) for `STATUS: implemented` markers lacking `ESTABLISHED:`.
 
 2. Group candidates by plan ID (from the STATUS marker's plan field). If none, tell the user ("No implemented items pending promotion.") and apply C4.
 

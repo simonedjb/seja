@@ -639,3 +639,89 @@ def test_plan_invalid_form_raises_clear_error(fake_repo):
         f"stdout: {result.stdout}\nstderr: {result.stderr}"
     )
     assert "--plan must be 'plan-NNNNNN'" in result.stderr
+
+
+# ---------------------------------------------------------------------------
+# REQ_TRACED_BY tests (plan-000646)
+# ---------------------------------------------------------------------------
+
+
+def test_req_traced_by_annotates_bare_marker(fake_repo):
+    """REQ_TRACED_BY replaces a bare <!-- REQ-ID --> with the traced_by annotation."""
+    tmp, rel, target = fake_repo
+    result = _run_in_fake_repo(
+        tmp, rel,
+        "--file", str(target), "--id", "REQ-ENT-001",
+        "--marker", "REQ_TRACED_BY", "--value", "bootstrap",
+    )
+    assert result.returncode == 0, (
+        f"expected success, got {result.returncode}\n"
+        f"stdout: {result.stdout}\nstderr: {result.stderr}"
+    )
+    content = _read(target)
+    assert "<!-- REQ-ENT-001 | traced_by: bootstrap -->" in content
+    # The bare marker should no longer exist
+    assert "<!-- REQ-ENT-001 -->" not in content
+
+
+def test_req_traced_by_idempotent_reannotation(fake_repo):
+    """Running REQ_TRACED_BY twice replaces the existing annotation cleanly."""
+    tmp, rel, target = fake_repo
+    # First annotation
+    r1 = _run_in_fake_repo(
+        tmp, rel,
+        "--file", str(target), "--id", "REQ-UX-001",
+        "--marker", "REQ_TRACED_BY", "--value", "bootstrap",
+    )
+    assert r1.returncode == 0, r1.stderr
+    # Re-annotate with a different value
+    r2 = _run_in_fake_repo(
+        tmp, rel,
+        "--file", str(target), "--id", "REQ-UX-001",
+        "--marker", "REQ_TRACED_BY", "--value", "plan-000100",
+    )
+    assert r2.returncode == 0, r2.stderr
+    content = _read(target)
+    assert "<!-- REQ-UX-001 | traced_by: plan-000100 -->" in content
+    # Only one annotation should exist
+    assert content.count("REQ-UX-001") == 1
+
+
+def test_req_traced_by_not_found_fails(fake_repo):
+    """REQ_TRACED_BY fails when the target REQ ID does not exist in the file."""
+    tmp, rel, target = fake_repo
+    result = _run_in_fake_repo(
+        tmp, rel,
+        "--file", str(target), "--id", "REQ-MISSING-999",
+        "--marker", "REQ_TRACED_BY", "--value", "bootstrap",
+    )
+    assert result.returncode == 1
+    assert "not found" in result.stderr
+
+
+def test_req_traced_by_without_value_fails(fake_repo):
+    """REQ_TRACED_BY requires --value, like STATUS and CHANGELOG_APPEND."""
+    tmp, rel, target = fake_repo
+    result = _run_in_fake_repo(
+        tmp, rel,
+        "--file", str(target), "--id", "REQ-ENT-001",
+        "--marker", "REQ_TRACED_BY",
+    )
+    assert result.returncode == 1
+    assert "REQ_TRACED_BY requires --value" in result.stderr
+
+
+def test_req_traced_by_dry_run(fake_repo):
+    """REQ_TRACED_BY with --dry-run prints diff without writing."""
+    tmp, rel, target = fake_repo
+    before = _read(target)
+    result = _run_in_fake_repo(
+        tmp, rel,
+        "--file", str(target), "--id", "REQ-ENT-001",
+        "--marker", "REQ_TRACED_BY", "--value", "bootstrap",
+        "--dry-run",
+    )
+    assert result.returncode == 0, result.stderr
+    after = _read(target)
+    assert before == after
+    assert "+<!-- REQ-ENT-001 | traced_by: bootstrap -->" in result.stdout

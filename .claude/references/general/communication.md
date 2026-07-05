@@ -49,9 +49,9 @@ Material is organized in 3 progressive layers; each adds specificity:
 
 | Layer | Name | Source | Contents |
 |-------|------|--------|----------|
-| **0** | Universal Foundation | `project/product-design-as-coded.md`, `project/conventions.md` | Project identity (name, tagline, mission), value proposition (problem/for whom), key differentiators, current state (phase, maturity, key metrics) -- shared across audiences |
+| **0** | Universal Foundation | `product-design/product-design-as-coded.md`, `product-design/conventions.md` | Project identity (name, tagline, mission), value proposition (problem/for whom), key differentiators, current state (phase, maturity, key metrics) -- shared across audiences |
 | **1** | Audience-Specific | `general/communication/<audience>.md` | Essential + Deep-dive sections, tone guidance (formality, technical depth, framing), Diataxis mapping (Tutorial / How-to / Explanation / Reference) |
-| **2** | Format-Specific | `project/communication-style.md` | CSS, header/footer templates, per-audience tone overrides, HTML conversion settings (when `--format html`) |
+| **2** | Format-Specific | `product-design/communication-style.md` | CSS, header/footer templates, per-audience tone overrides, HTML conversion settings (when `--format html`) |
 
 ---
 
@@ -79,8 +79,8 @@ For a given invocation, the skill loads files in this order:
 
 1. `general/communication.md` -- this file (harness overview, audience resolution)
 2. `general/communication/evaluators.md` -- audience-specific content template and tone
-3. `project/product-design-as-coded.md` -- project identity (Layer 0; reads `## Conceptual Design` and `## Metacommunication` H2 sections)
-4. `project/communication-style.md` -- Layer 2 overrides (if `--format html` or file exists)
+3. `product-design/product-design-as-coded.md` -- project identity (Layer 0; reads `## Conceptual Design` and `## Metacommunication` H2 sections)
+4. `product-design/communication-style.md` -- Layer 2 overrides (if `--format html` or file exists)
 5. `general/report-conventions.md` -- output file naming and encoding rules
 
 ### Source reformatting (`/communicate clients --source advisory-0002.md`)
@@ -122,6 +122,6 @@ ${COMMUNICATION_DIR}/
 - **Onboarding** (`general/onboarding.md`, `/onboard`): serves A2 Adopters; `/communicate` cross-references onboarding plans when relevant.
 - **Research** (`/research`): reports can be reformatted via `--source <file>` into audience-appropriate communication.
 - **Review perspectives** (`general/review-perspectives.md`): the UX perspective's focus on audience-appropriate communication maps to the per-audience tone guidance here.
-- **Conceptual design / Metacommunication** (`project/product-design-as-coded.md § Conceptual Design` and `§ Metacommunication`): Layer 0 draws project identity and designer intent from these H2 sections.
-- **Style template** (`template/communication-style.md` / `project/communication-style.md`): visual presentation and tone overrides, instantiated per-project by `/design`.
+- **Conceptual design / Metacommunication** (`product-design/product-design-as-coded.md § Conceptual Design` and `§ Metacommunication`): Layer 0 draws project identity and designer intent from these H2 sections.
+- **Style template** (`template/communication-style.md` / `product-design/communication-style.md`): visual presentation and tone overrides, instantiated per-project by `/design`.
 - **Skills system** (`.claude/skills/communicate/SKILL.md`): the `/communicate` skill orchestrates the above.

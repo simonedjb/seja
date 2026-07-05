@@ -40,10 +40,10 @@ class TestColors:
     """Tests for the shared color palette module."""
 
     def test_color_domain_length(self):
-        assert len(reflect_colors.COLOR_DOMAIN) == 11
+        assert len(reflect_colors.COLOR_DOMAIN) == len(reflect_colors.SKILL_ORDER) + len(reflect_colors.MODE_COLORS)
 
     def test_color_range_length(self):
-        assert len(reflect_colors.COLOR_RANGE) == 11
+        assert len(reflect_colors.COLOR_RANGE) == len(reflect_colors.COLOR_DOMAIN)
 
     def test_hex_format(self):
         hex_re = re.compile(r"^#[0-9A-Fa-f]{6}$")
@@ -299,7 +299,7 @@ class TestEventMatrix:
         assert "$schema" in spec
         assert "vega-lite" in spec["$schema"]
         domain = spec["encoding"]["color"]["scale"]["domain"]
-        assert len(domain) == 11
+        assert len(domain) == len(reflect_colors.COLOR_DOMAIN)
 
     def test_generate_returns_paths(self, tmp_path: Path):
         """generate() returns paths dict with vl_json and html keys."""

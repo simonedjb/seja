@@ -1,5 +1,5 @@
 ---
-designer_description: "When /plan --roadmap produces the roadmap summary file, I'm the canonical shape for the header, ## Source list, ## Wave Summary tables (one per wave, with Plan and Status columns), and ## Execution Instructions block -- including the anti-pattern note that Plan column entries start as plan-TBD and are filled in only after /plan reserves the real ID."
+designer_description: "When /plan --roadmap produces the roadmap summary file, I'm the canonical shape for the header, ## Source list, ## Checkpoint Schedule section (records which wave transitions get a review, or 'None'), ## Wave Summary tables (one per wave, with Plan and Status columns), and ## Execution Instructions block (including Checkpoint Review blocks between waves per the schedule, and the anti-pattern note that Plan column entries start as plan-TBD and are filled in only after /plan reserves the real ID)."
 ---
 
 # Template: Roadmap Summary File
@@ -12,10 +12,14 @@ Canonical shape referenced by: `.claude/skills/plan/SKILL.md` Roadmap Workflow (
 # Roadmap <id> | <datetime> | <title>
 
 ## Source
-- project/product-design-as-coded.md (read)
-- project/product-design-as-intended.md (read)
-- project/conventions.md (read)
+- product-design/product-design-as-coded.md (read)
+- product-design/product-design-as-intended.md (read)
+- product-design/conventions.md (read)
 - ... (list all files read)
+
+## Checkpoint Schedule
+- After Wave 0 → before Wave 1
+- After Wave 2 → before Wave 3
 
 ## Wave Summary
 
@@ -45,6 +49,14 @@ Execute these plans one at a time, in order:
 1. /implement XXXX (user-model)
 2. /implement XXXX (group-model)
 
+#### Checkpoint Review — before Wave 1
+
+Before starting Wave 1:
+1. Read the Verify sections of completed Wave 0 plans to confirm what was built.
+2. Compare with Wave 1 planned work — check for API contract changes, new entity shapes, revised file structures, or scope shifts that affect Wave 1 plans.
+3. If any Wave 1 plan needs revision: run `/plan <revised-brief>` for the affected item, then update this roadmap's Wave 1 Plan column with the new plan ID.
+4. Proceed to Wave 1 only when all needed revisions are committed.
+
 ### Wave 1 (parallel -- 2 plans)
 All depend on Wave 0. Execute in parallel via:
 - Multiple Claude Code sessions, or
@@ -53,3 +65,6 @@ All depend on Wave 0. Execute in parallel via:
 ### Wave 2 (parallel -- 1 plan)
 Depends on Wave 1. Execute after Wave 1 completes.
 ```
+
+> Checkpoint Review blocks appear between waves per the `## Checkpoint Schedule` above.
+> When `## Checkpoint Schedule` lists `- None`, the Execution Instructions contain no checkpoint blocks.

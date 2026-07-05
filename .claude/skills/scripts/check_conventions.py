@@ -11,7 +11,7 @@ Invocation: agent-invoked, hook-ci
 Lifecycle: active
 
 Checks that every ${VARIABLE_NAME} reference used in SKILL.md and .claude/references/**/*.md
-files is defined in project/conventions.md (or template/conventions.md as fallback).
+files is defined in product-design/conventions.md (or template/conventions.md as fallback).
 
 Exit codes: 0 = pass (all referenced variables are defined), 1 = errors found.
 
@@ -64,12 +64,12 @@ _REF_RE = re.compile(r"\$\{([A-Z][A-Z0-9_]*)\}")
 
 
 def find_conventions_file() -> Path | None:
-    """Locate the conventions file, preferring project/ over template/."""
+    """Locate the conventions file, preferring product-design/ over template/."""
     if _CONVENTIONS_REL.is_file():
         return _CONVENTIONS_REL
     if _TEMPLATE_REL.is_file():
         print(
-            "INFO: project/conventions.md not found; using template/conventions.md as fallback",
+            "INFO: product-design/conventions.md not found; using template/conventions.md as fallback",
             file=sys.stderr,
         )
         return _TEMPLATE_REL
@@ -136,7 +136,7 @@ def main() -> None:
     # Locate conventions file
     conventions_path = find_conventions_file()
     if conventions_path is None:
-        print("ERROR: neither project/conventions.md nor template/conventions.md found")
+        print("ERROR: neither product-design/conventions.md nor template/conventions.md found")
         sys.exit(1)
 
     conventions_name = conventions_path.name

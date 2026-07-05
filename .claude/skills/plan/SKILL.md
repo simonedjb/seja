@@ -10,20 +10,20 @@ metadata:
   category: planning
   context_budget: heavy
   eager_references:
-    - project/product-design-as-coded.md
-    - project/product-design-as-intended.md
+    - product-design/product-design-as-coded.md
+    - product-design/product-design-as-intended.md
     - general/report-conventions.md
     - general/coding-standards.md
     - general/review-perspectives-index.md
   references:
-    - project/product-design-as-coded.md
-    - project/product-design-as-intended.md
-    - project/conventions.md
+    - product-design/product-design-as-coded.md
+    - product-design/product-design-as-intended.md
+    - product-design/conventions.md
     - general/report-conventions.md
     - general/coding-standards.md
-    - project/standards.md
-    - project/security-checklists.md
-    - project/design-standards.md
+    - product-design/standards.md
+    - product-design/security-checklists.md
+    - product-design/design-standards.md
     - general/review-perspectives.md
     - general/review-perspectives-index.md
     - general/review-log-template.md
@@ -56,7 +56,7 @@ metadata:
 
 ## Design Guard
 
-Before planning, verify `project/conventions.md` exists in `product-design/`. If missing, stop and tell the user: "No project design found. Run `/design` first to define your project's stack, conventions, and domain model." If present, proceed.
+Before planning, verify `product-design/conventions.md` exists in `product-design/`. If missing, stop and tell the user: "No project design found. Run `/design` first to define your project's stack, conventions, and domain model." If present, proceed.
 
 If there are no arguments, ask for the brief.
 
@@ -85,10 +85,10 @@ Shared execution steps referenced by every mode's delta table. Each mode's step 
 
 - **C1. Pre-skill**: Run /pre-skill "plan" $ARGUMENTS[0] to load general instructions and register the brief.
 - **C2. Reserve ID**: Run `python .claude/skills/scripts/reserve_id.py --type <type> --title '<short title>'`. `<type>` is `plan` (standard single-plan), `proposal` (`--light`), or `roadmap` (`--roadmap` Modes 1 and 2). Mode 3 skips this step.
-- **C3. Artifact header**: Header shape `# <Kind> <id> | <prefix><scope> | <current datetime> | <short title>`. For plans, extend with ` | Review: <depth>` and follow with `plan_format_version: 1` on the next line; metacomm framing inserts `METACOMM |` after prefix-scope; advisory Q&A source adds `source: advisory-<id>`. Proposals include `plan_format_version: 1` (see `.claude/references/template/proposal.md`). Roadmaps follow `.claude/references/template/roadmap-summary.md`. Output folders: `${PLANS_DIR}`, `${PROPOSALS_DIR}`, `${ROADMAP_DIR}` (see project/conventions.md); Mode 3 writes to `<target>/specs/`.
+- **C3. Artifact header**: Header shape `# <Kind> <id> | <prefix><scope> | <current datetime> | <short title>`. For plans, extend with ` | Review: <depth>` and follow with `plan_format_version: 1` on the next line; metacomm framing inserts `METACOMM |` after prefix-scope; advisory Q&A source adds `source: advisory-<id>`. Proposals include `plan_format_version: 1` (see `.claude/references/template/proposal.md`). Roadmaps follow `.claude/references/template/roadmap-summary.md`. Output folders: `${PLANS_DIR}`, `${PROPOSALS_DIR}`, `${ROADMAP_DIR}` (see product-design/conventions.md); Mode 3 writes to `<target>/specs/`.
 - **C4. Decision-point rationale**: phrase every AskUserQuestion option (or text-based decision-point option) per the Decision-point rationale convention in `general/constraints.md`: `Recommended when ...` / `NOT recommended when ...`.
-- **C5. Review Depth Override**: the `--review <light|standard|deep>` flag overrides complexity-gated depth. Effective depth = `max(auto, floor, flag)` with ordering `light < standard < deep`, where `auto` = complexity gate, `floor` = `MINIMUM_REVIEW_DEPTH` from `project/conventions.md` (default `light`), `flag` = `--review` value. If effective differs from auto, log: "Review depth overridden: auto=`<auto>`, floor=`<floor>`, flag=`<flag>`, effective=`<effective>`". Update the plan header's `Review:` field to match effective. Applies to the standard single-plan workflow; `--light` reviews lightly inline; `--roadmap` delegates to generated plans.
-- **C6. Post-skill**: Run /post-skill <id> after the user confirms commit. For `--roadmap` Modes 1 and 2, the roadmap run owns the commit; per-plan invocations generated inline skip their own post-skill (see Mode 1 step 9).
+- **C5. Review Depth Override**: the `--review <light|standard|deep>` flag overrides complexity-gated depth. Effective depth = `max(auto, floor, flag)` with ordering `light < standard < deep`, where `auto` = complexity gate, `floor` = `MINIMUM_REVIEW_DEPTH` from `product-design/conventions.md` (default `light`), `flag` = `--review` value. If effective differs from auto, log: "Review depth overridden: auto=`<auto>`, floor=`<floor>`, flag=`<flag>`, effective=`<effective>`". Update the plan header's `Review:` field to match effective. Applies to the standard single-plan workflow; `--light` reviews lightly inline; `--roadmap` delegates to generated plans.
+- **C6. Post-skill**: Run /post-skill <id> after the plan is finalized (before the implement question). For `--roadmap` Modes 1 and 2, the roadmap run owns the commit; per-plan invocations generated inline skip their own post-skill (see Mode 1 step 9).
 
 ## Framing
 
@@ -109,7 +109,7 @@ See [Metacomm framing -- additional context](#metacomm-framing--additional-conte
    - **Summary**: <one-sentence summary of the metacommunication message this plan implements>
    - **Source**: agent (metacomm)
    ```
-   Consumed by `/explain drift` or `/post-skill` to keep `project/product-design-as-intended.md` in sync.
+   Consumed by `/explain drift` or `/post-skill` to keep `product-design/product-design-as-intended.md` in sync.
 
 ## Dispatch
 

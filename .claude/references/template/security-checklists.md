@@ -4,7 +4,7 @@ designer_description: "I'm your project's security-review checklists -- one list
 
 # TEMPLATE - SECURITY CHECKLISTS
 
-> **How to use this template:** Copy this file to `project/security-checklists.md`. These checklists are largely generic — customize the Quick Reference table with your project's actual validation constants and file paths. Remove checklists that don't apply to your stack.
+> **How to use this template:** Copy this file to `product-design/security-checklists.md`. These checklists are largely generic — customize the Quick Reference table with your project's actual validation constants and file paths. Remove checklists that don't apply to your stack.
 
 ---
 

@@ -146,11 +146,22 @@ def main() -> int:
     parser.add_argument("--verbose", "-v", action="store_true", help="Show passing checks too")
     args = parser.parse_args()
 
-    root = Path(args.root) if args.root else REPO_ROOT
+    if args.root:
+        root = Path(args.root)
+    else:
+        # In workspace mode CODEBASE_DIR points to the sibling codebase; use it
+        # as the check root so glob/grep targets resolve against the real source.
+        try:
+            from project_config import get_path as _get_path
+            _codebase_dir = _get_path("CODEBASE_DIR")
+            root = _codebase_dir if (_codebase_dir and _codebase_dir.is_dir()) else REPO_ROOT
+        except Exception:
+            root = REPO_ROOT
+
     # Locate spec-checks.yaml
     spec_checks_path = root / "product-design" / "agent" / "spec-checks.yaml"
     if not spec_checks_path.exists():
-        print("No spec checks configured (project/agent/spec-checks.yaml not found). Skipping.")
+        print("No spec checks configured (product-design/agent/spec-checks.yaml not found). Skipping.")
         return 0
 
     # Load YAML (use simple parser to avoid external dependency)

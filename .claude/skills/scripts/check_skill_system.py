@@ -217,19 +217,26 @@ def check_skills(verbose: bool = False) -> tuple[list[str], list[str], list[str]
 
         # Check metadata.references — empty list [] is valid
         # Files live in general/, template/ (under HARNESS_REFS_DIR) or
-        # project/ entries (under PROJECT_REFS_DIR after stripping the "project/" prefix).
+        # product-design/ entries (resolved directly from repo root).
+        # Legacy project/ prefix is still accepted as a deprecated fallback.
         refs = metadata.get("references", [])
         infos = []
         if isinstance(refs, list):
             for ref in refs:
-                if ref.startswith("project/"):
+                if ref.startswith("product-design/"):
+                    ref_path = REPO_ROOT / ref
+                elif ref.startswith("project/"):
+                    # DEPRECATED: project/ prefix — use product-design/ instead
+                    infos.append(
+                        f"INFO: project/ prefix is deprecated; use product-design/ instead: {ref}"
+                    )
                     ref_path = PROJECT_REFS_DIR / ref.removeprefix("project/")
                 else:
                     ref_path = HARNESS_REFS_DIR / ref
                 if not ref_path.exists():
-                    if IS_HARNESS_ONLY and ref.startswith("project/"):
+                    if IS_HARNESS_ONLY and (ref.startswith("product-design/") or ref.startswith("project/")):
                         infos.append(
-                            f"  - {name}/SKILL.md: project/* reference not found "
+                            f"  - {name}/SKILL.md: product-design/* reference not found "
                             f"(expected -- no project configured): '{ref}'"
                         )
                     else:
@@ -250,16 +257,23 @@ def check_skills(verbose: bool = False) -> tuple[list[str], list[str], list[str]
                     f"got: {type(eager_refs).__name__}"
                 )
             else:
-                # Paths must exist (general/template via HARNESS_REFS_DIR; project/ via PROJECT_REFS_DIR)
+                # Paths must exist (general/template via HARNESS_REFS_DIR;
+                # product-design/ resolved from repo root; legacy project/ via PROJECT_REFS_DIR)
                 for eref in eager_refs:
-                    if eref.startswith("project/"):
+                    if eref.startswith("product-design/"):
+                        eref_path = REPO_ROOT / eref
+                    elif eref.startswith("project/"):
+                        # DEPRECATED: project/ prefix — use product-design/ instead
+                        infos.append(
+                            f"INFO: project/ prefix is deprecated; use product-design/ instead: {eref}"
+                        )
                         eref_path = PROJECT_REFS_DIR / eref.removeprefix("project/")
                     else:
                         eref_path = HARNESS_REFS_DIR / eref
                     if not eref_path.exists():
-                        if IS_HARNESS_ONLY and eref.startswith("project/"):
+                        if IS_HARNESS_ONLY and (eref.startswith("product-design/") or eref.startswith("project/")):
                             infos.append(
-                                f"  - {name}/SKILL.md: project/* eager_reference not found "
+                                f"  - {name}/SKILL.md: product-design/* eager_reference not found "
                                 f"(expected -- no project configured): '{eref}'"
                             )
                         else:

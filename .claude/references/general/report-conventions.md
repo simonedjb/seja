@@ -4,7 +4,7 @@ designer_description: "When a skill produces a report file under your output dir
 
 # FRAMEWORK - REPORT CONVENTIONS
 
-When a skill produces a report file in `${OUTPUT_DIR}` (see project/conventions.md), apply these conventions for common sub-fields:
+When a skill produces a report file in `${OUTPUT_DIR}` (see product-design/conventions.md), apply these conventions for common sub-fields:
 
 - *id*: sequential number, zero-padded to 6 chars, globally unique across artifact types, reserved atomically via `reserve_id.py`.
 - *current datetime*: format `YYYY-MM-DD HH:MM` in UTC.

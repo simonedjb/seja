@@ -21,7 +21,7 @@ designer_description: "I'm the demo conventions file /seja-setup --demo writes i
 | Variable | Value | Description |
 |----------|-------|-------------|
 | `SKILLS_DIR` | `.claude/skills` | Root directory for skill definitions |
-| `AGENT_SPECS_DIR` | `project/agent` | Agent-facing structured specifications (in `product-design/`) |
+| `AGENT_SPECS_DIR` | `product-design/agent` | Agent-facing structured specifications |
 | `OUTPUT_DIR` | `_output` | Root directory for all generated artifacts |
 | `PLANS_DIR` | `${OUTPUT_DIR}/plans` | Plan output folder |
 | `SCRIPTS_DIR` | `${OUTPUT_DIR}/generated-scripts` | Script output folder |
@@ -38,10 +38,10 @@ designer_description: "I'm the demo conventions file /seja-setup --demo writes i
 |----------|-------|-------------|
 | `BRIEFS_FILE` | `${OUTPUT_DIR}/briefs.md` | Execution log of all skill invocations |
 | `ARTIFACT_INDEX_FILE` | `${OUTPUT_DIR}/INDEX.md` | Single global artifact index |
-| `CONSTITUTION_FILE` | `project/constitution.md` | Project constitution (in `product-design/`) |
-| `DESIGN_INTENT` | `project/product-design-as-intended.md` | Unified working intent + Decisions + CHANGELOG (in `product-design/`) |
-| `UX_RESEARCH` | `project/ux-research-results.md` | UX research: personas, problem scenarios, journeys, CHANGELOG (in `product-design/`) |
-| `AS_CODED` | `project/product-design-as-coded.md` | Unified implementation state: Conceptual Design, Metacommunication, Journey Maps (in `product-design/`) |
+| `CONSTITUTION_FILE` | `product-design/constitution.md` | Project constitution |
+| `DESIGN_INTENT` | `product-design/product-design-as-intended.md` | Unified working intent + Decisions + CHANGELOG |
+| `UX_RESEARCH` | `product-design/ux-research-results.md` | UX research: personas, problem scenarios, journeys, CHANGELOG |
+| `AS_CODED` | `product-design/product-design-as-coded.md` | Unified implementation state: Conceptual Design, Metacommunication, Journey Maps |
 
 ---
 

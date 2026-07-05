@@ -16,8 +16,8 @@ designer_description: "When you are writing or reviewing code and want the unive
 ## Review Integration
 
 - For every code change (create or alter), evaluate against applicable engineering and design perspectives in `general/review-perspectives.md`, recording each as adopted, deferred (with reason), or N/A on the plan. If a perspective is deferred only because out-of-scope, ask the user whether to include it.
-- If a helper script generated during execution could benefit future plans, write it to `${TMP_DIR}` (see project/conventions.md) with a header describing purpose, usage, and context.
-- For detailed Backend, Frontend, Testing, and i18n conventions, see the corresponding H2 sections of `project/standards.md`.
+- If a helper script generated during execution could benefit future plans, write it to `${TMP_DIR}` (see product-design/conventions.md) with a header describing purpose, usage, and context.
+- For detailed Backend, Frontend, Testing, and i18n conventions, see the corresponding H2 sections of `product-design/standards.md`.
 
 ## Git commit messages
 
@@ -58,5 +58,5 @@ Apply the rule when its stack applies:
 - **i18n**: if strings are created/altered, update all affected i18n entries (mind diacritics and accented characters).
 - **Frontend**: if frontend files change, update the corresponding contextual help and user docs.
 - **Alembic/PostgreSQL**: Alembic migrations must be idempotent and consider Postgres syntax.
-- **TypeScript**: frontend source uses `.ts`/`.tsx`; new files must be TypeScript; convert existing `.js`/`.jsx` when modified. See `project/standards.md § Frontend > 21`.
-- **Python**: backend source uses Python 3. See `project/standards.md § Backend`.
+- **TypeScript**: frontend source uses `.ts`/`.tsx`; new files must be TypeScript; convert existing `.js`/`.jsx` when modified. See `product-design/standards.md § Frontend > 21`.
+- **Python**: backend source uses Python 3. See `product-design/standards.md § Backend`.

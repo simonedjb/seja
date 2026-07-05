@@ -18,7 +18,7 @@ paths:
 When editing files under these paths:
 
 - **Review questions**: see `.claude/references/general/review-perspectives/db.md`, `.claude/references/general/review-perspectives/sec.md` -- P0 questions are the critical checks.
-- **Full conventions**: see `project/standards.md § Backend > 6` -- stack-specific rules.
+- **Full conventions**: see `product-design/standards.md § Backend > 6` -- stack-specific rules.
 
 ## Perspective Alignment
 

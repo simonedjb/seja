@@ -47,9 +47,10 @@ from project_config import REPO_ROOT, get_path
 
 VERSIONS_DIR = get_path("MIGRATIONS_DIR") or REPO_ROOT / "backend" / "migrations" / "versions"
 
-# Regex to match revision = '...' and down_revision = '...'
+# Regex to match revision = '...' and down_revision = '...' or ('a', 'b') (merge)
 _REVISION_RE = re.compile(r"^revision\s*=\s*['\"]([^'\"]+)['\"]", re.MULTILINE)
 _DOWN_REV_RE = re.compile(r"^down_revision\s*=\s*['\"]([^'\"]*)['\"]", re.MULTILINE)
+_DOWN_REV_TUPLE_RE = re.compile(r"^down_revision\s*=\s*\(([^)]+)\)", re.MULTILINE)
 _DOWN_REV_NONE_RE = re.compile(r"^down_revision\s*=\s*None", re.MULTILINE)
 
 # Patterns for idempotency checks
@@ -69,10 +70,16 @@ def parse_migration(fpath: Path) -> dict | None:
     revision = rev_match.group(1)
 
     down_match = _DOWN_REV_RE.search(text)
+    down_tuple = _DOWN_REV_TUPLE_RE.search(text)
     down_none = _DOWN_REV_NONE_RE.search(text)
 
     if down_match:
-        down_revision = down_match.group(1) or None
+        down_revision: str | list[str] | None = down_match.group(1) or None
+    elif down_tuple:
+        # Merge migration: down_revision = ('abc', 'def')
+        parents = [s.strip().strip("'\"") for s in down_tuple.group(1).split(",")
+                   if s.strip().strip("'\"")]
+        down_revision = parents if len(parents) > 1 else (parents[0] if parents else None)
     elif down_none:
         down_revision = None
     else:
@@ -160,11 +167,13 @@ def main():
         print("No migrations to check.")
         return
 
-    # Build graph: revision -> down_revision
-    graph = {}
+    # Build graph: revision -> list[down_revision] (list supports merge migrations)
+    graph: dict[str, list[str | None]] = {}
     rev_to_file = {}
     for m in migrations:
-        graph[m["revision"]] = m["down_revision"]
+        raw = m["down_revision"]
+        parents: list[str | None] = raw if isinstance(raw, list) else [raw]
+        graph[m["revision"]] = parents
         rev_to_file[m["revision"]] = m["file"]
 
     all_revisions = set(graph.keys())
@@ -172,19 +181,21 @@ def main():
     warnings = []
 
     # 1. Check for orphan references
-    for rev, down in graph.items():
-        if down is not None and down not in all_revisions:
-            errors.append(
-                f"Orphan reference: {rev_to_file[rev]} (revision={rev}) "
-                f"references down_revision={down} which does not exist"
-            )
+    for rev, parents in graph.items():
+        for down in parents:
+            if down is not None and down not in all_revisions:
+                errors.append(
+                    f"Orphan reference: {rev_to_file[rev]} (revision={rev}) "
+                    f"references down_revision={down} which does not exist"
+                )
 
     # 2. Check for multiple heads
     # A head is a revision that no other revision points to as down_revision
     children = set()
-    for down in graph.values():
-        if down is not None:
-            children.add(down)
+    for parents in graph.values():
+        for down in parents:
+            if down is not None:
+                children.add(down)
     heads = [rev for rev in all_revisions if rev not in children]
     if len(heads) > 1:
         head_files = [f"{rev_to_file[h]} ({h})" for h in sorted(heads)]
@@ -192,9 +203,10 @@ def main():
 
     # 3. Check for multiple children of same parent (branches)
     parent_count: dict[str, list[str]] = {}
-    for rev, down in graph.items():
-        if down is not None:
-            parent_count.setdefault(down, []).append(rev)
+    for rev, parents in graph.items():
+        for down in parents:
+            if down is not None:
+                parent_count.setdefault(down, []).append(rev)
     for parent, kids in parent_count.items():
         if len(kids) > 1:
             kid_files = [f"{rev_to_file[k]} ({k})" for k in sorted(kids)]
@@ -203,8 +215,11 @@ def main():
                 f"{', '.join(kid_files)}"
             )
 
-    # 4. Cycle detection
-    cycles = detect_cycles(graph)
+    # 4. Cycle detection (flatten to single-parent graph; merge nodes appear as multiple edges)
+    flat_graph: dict[str, str | None] = {}
+    for rev, parents in graph.items():
+        flat_graph[rev] = parents[0] if parents else None
+    cycles = detect_cycles(flat_graph)
     for cycle in cycles:
         errors.append(f"Cycle detected: {cycle}")
 
@@ -225,10 +240,10 @@ def main():
     if args.verbose:
         print("## Revision Chain\n")
         # Build and display the chain from roots
-        roots = [rev for rev, down in graph.items() if down is None]
+        roots = [rev for rev, downs in graph.items() if all(d is None for d in downs)]
         for root in sorted(roots):
             print(f"  ROOT: {rev_to_file[root]} ({root})")
-            _print_chain(root, graph, rev_to_file, indent=2)
+            _print_chain(root, flat_graph, rev_to_file, indent=2)
         print()
         if heads:
             print(f"## Heads: {', '.join(sorted(heads))}\n")

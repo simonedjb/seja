@@ -27,7 +27,7 @@ designer_description: "When /plan, /critique review, or any skill that evaluates
 
 **Concern:** Bulk export may trigger N+1 queries for large datasets.
 **Step ref:** Step 5 (bulk export query)
-**Files read:** `backend/app/services/export_service.py`, `project/standards.md § Backend`
+**Files read:** `backend/app/services/export_service.py`, `product-design/standards.md § Backend`
 **Finding:** [analysis of the referenced source files]
 **Recommendation:** [specific change or confirmation that no change is needed]
 **Resolution:** [Plan amended — see Plan Amendment (iteration 1) / No change needed — status changed to Adopted]
@@ -50,7 +50,7 @@ designer_description: "When /plan, /critique review, or any skill that evaluates
 
 ## Field Definitions
 
-- **Review depth:** Set by the complexity gate (Light, Standard, Deep). If `MINIMUM_REVIEW_DEPTH` (from project/conventions.md) or a `--review`/`--depth` flag forces depth higher, note as: `**Review depth:** Standard (overridden; auto=Light, floor=Standard)`. Effective depth = `max(auto, floor, flag)`.
+- **Review depth:** Set by the complexity gate (Light, Standard, Deep). If `MINIMUM_REVIEW_DEPTH` (from product-design/conventions.md) or a `--review`/`--depth` flag forces depth higher, note as: `**Review depth:** Standard (overridden; auto=Light, floor=Standard)`. Effective depth = `max(auto, floor, flag)`.
 - **Deep-dive budget:** Running counter, updated after each deep-dive. `N/6 used` in the header surfaces remaining budget at a glance.
 - **Phase 2 header format:** `### Phase 2 — Deep-dive: <TAG> (iteration <N>, deep-dive <M>/6)` -- the `M/6` counter is mandatory.
 - **Conflict Check:** Mandatory after each iteration that produces Phase 2 recommendations; evaluates whether recommendations from different perspectives contradict.

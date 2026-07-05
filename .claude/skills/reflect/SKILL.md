@@ -9,10 +9,10 @@ metadata:
   category: analysis
   context_budget: standard
   eager_references:
-    - project/conventions.md
+    - product-design/conventions.md
     - general/constraints.md
   references:
-    - project/conventions.md
+    - product-design/conventions.md
     - general/constraints.md
     - general/shared-definitions.md
     - general/skill-graph.md
@@ -34,7 +34,7 @@ metadata:
 
 # Reflect
 
-Output folder: `${REFLECTIONS_DIR}` (see project/conventions.md)
+Output folder: `${REFLECTIONS_DIR}` (see product-design/conventions.md)
 Filename pattern: `reflection-<id>-<truncated short title slug>.md` (6-digit zero-padded ID)
 Header pattern: `# Reflection <id> | <current datetime> | <short title>` (macro-index regex requires this exact shape)
 

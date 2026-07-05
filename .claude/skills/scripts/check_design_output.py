@@ -181,21 +181,20 @@ def plugin_phrasing_rule(root: Path, verbose: bool) -> list[Finding]:
     # hardcoded harness-current name if project_config is unavailable entirely.
     cfg_get = _load_project_config_get(root)
     if cfg_get:
-        design_intent_var = cfg_get("DESIGN_INTENT") or cfg_get("DESIGN_INTENT_TO_BE") or "project/product-design-as-intended.md"
-        as_coded_var = cfg_get("AS_CODED") or "project/product-design-as-coded.md"
+        design_intent_var = cfg_get("DESIGN_INTENT") or cfg_get("DESIGN_INTENT_TO_BE") or "product-design/product-design-as-intended.md"
+        as_coded_var = cfg_get("AS_CODED") or "product-design/product-design-as-coded.md"
     else:
-        design_intent_var = "project/product-design-as-intended.md"
-        as_coded_var = "project/product-design-as-coded.md"
+        design_intent_var = "product-design/product-design-as-intended.md"
+        as_coded_var = "product-design/product-design-as-coded.md"
 
     # --- Scan design intent (Part II, sections 11-15 only) ---
-    di = root / "product-design" / design_intent_var
-    if not di.is_file():
-        # Backward-compat: pre-2.8.3 projects may still carry the old split file.
-        legacy = root / "product-design" / "design-intent-to-be.md"
-        if legacy.is_file():
-            di = legacy
+    di_candidates = [
+        root / design_intent_var,
+        root / "product-design" / "design-intent-to-be.md",
+    ]
+    di = next((p for p in di_candidates if p.is_file()), None)
 
-    if di.is_file():
+    if di:
         try:
             text = di.read_text(encoding="utf-8", errors="replace")
         except OSError:
@@ -222,8 +221,12 @@ def plugin_phrasing_rule(root: Path, verbose: bool) -> list[Finding]:
         ))
 
     # --- Scan as-coded § Metacommunication (SEJA 2.8.4 unified file) ---
-    as_coded = root / "product-design" / as_coded_var
-    if as_coded.is_file():
+    ac_candidates = [
+        root / as_coded_var,
+    ]
+    as_coded = next((p for p in ac_candidates if p.is_file()), None)
+
+    if as_coded:
         try:
             text = as_coded.read_text(encoding="utf-8", errors="replace")
         except OSError:
@@ -415,7 +418,7 @@ def plugin_field_presence(root: Path, verbose: bool) -> list[Finding]:
         if verbose:
             findings.append(Finding(
                 "", 0, "info",
-                "Skipped field-presence plugin: no project/conventions.md",
+                "Skipped field-presence plugin: no product-design/conventions.md",
                 "field-presence",
             ))
         return findings
@@ -494,7 +497,7 @@ def plugin_value_propagation(root: Path, verbose: bool) -> list[Finding]:
         if verbose:
             findings.append(Finding(
                 "", 0, "info",
-                "Skipped value-propagation plugin: no project/conventions.md",
+                "Skipped value-propagation plugin: no product-design/conventions.md",
                 "value-propagation",
             ))
         return findings

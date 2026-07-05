@@ -21,13 +21,13 @@ metadata:
 
 # Log QA
 
-Logs the entire current Q&A session (all user prompts and agent responses) into `${QA_LOGS_DIR}` (see project/conventions.md). Standalone invocations write to `${QA_LOGS_DIR}`; lifecycle callers like `/post-skill` may override `output_dir` to collocate the log with the artifact it documents.
+Logs the entire current Q&A session (all user prompts and agent responses) into `${QA_LOGS_DIR}` (see product-design/conventions.md). Standalone invocations write to `${QA_LOGS_DIR}`; lifecycle callers like `/post-skill` may override `output_dir` to collocate the log with the artifact it documents.
 
 If an argument is provided, use it as the short title for the log file. If no argument is provided, derive a short title from the conversation topic.
 
 ## Definitions
 
-Output folder: `${QA_LOGS_DIR}` (see project/conventions.md)
+Output folder: `${QA_LOGS_DIR}` (see product-design/conventions.md)
 Filename pattern: `qa-<id>-<truncated short title slug>.md`
 
 The sequential ID is globally unique across all artifact types (6-digit, zero-padded). In standalone mode, reserve it by running `python .claude/skills/scripts/reserve_id.py --type qa --title '<slug>'` before writing any content.

@@ -12,7 +12,7 @@ Invocation: user-cli
 Lifecycle: active
 
 Reads a markdown file and an optional style configuration file
-(project/communication-style.md) to produce a self-contained HTML
+(product-design/communication-style.md) to produce a self-contained HTML
 document with all CSS inlined.
 
 Engines
@@ -28,7 +28,7 @@ Usage
 -----
     python .claude/skills/scripts/md_to_html.py <input.md> [options]
 
-    --style <path>     Path to project/communication-style.md
+    --style <path>     Path to product-design/communication-style.md
                        (default: product-design/communication-style.md)
     --output <path>    Output HTML path (default: input stem + .html)
     --engine <name>    Override engine: python-markdown | pandoc
@@ -54,6 +54,14 @@ try:
     from project_config import get as _cfg_get
 except ImportError:
     _cfg_get = None
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+try:
+    from design_system import extract_css as _ds_extract_css, find_design_system as _ds_find
+except ImportError:
+    print("WARNING: design_system not found; using default styles.", file=sys.stderr)
+    _ds_extract_css = None
+    _ds_find = None
 
 
 def _default_lang() -> str:
@@ -126,6 +134,14 @@ def parse_style_file(path: Path, verbose: bool = False) -> dict:
         "engine": "python-markdown",
         "pandoc_args": [],
     }
+
+    if path.suffix.lower() == ".html" and _ds_extract_css is not None:
+        css = _ds_extract_css(path)
+        if css is not None:
+            if verbose:
+                print(f"  Extracted CSS from HTML design system: {path}")
+            result["css"] = css
+            return result
 
     if not path.is_file():
         if verbose:
@@ -374,7 +390,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--style", type=Path, default=DEFAULT_STYLE_PATH,
-        help="Path to project/communication-style.md "
+        help="Path to product-design/communication-style.md "
              "(default: product-design/communication-style.md)",
     )
     parser.add_argument(
@@ -418,6 +434,17 @@ def main() -> None:
 
     # Parse style configuration
     style = parse_style_file(args.style, verbose=args.verbose)
+
+    if (
+        args.style == DEFAULT_STYLE_PATH
+        and style["css"] == DEFAULT_CSS
+        and _ds_find is not None
+    ):
+        ds_path = _ds_find(REPO_ROOT)
+        if ds_path is not None:
+            if args.verbose:
+                print(f"  Auto-detected design system: {ds_path}")
+            style = parse_style_file(ds_path, verbose=args.verbose)
 
     # Determine lang
     lang = args.lang or _default_lang()

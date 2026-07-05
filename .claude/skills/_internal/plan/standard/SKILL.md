@@ -8,9 +8,9 @@ metadata:
   version: 1.0.0
 ---
 
-> This is an inlined worker; execute these instructions as part of the caller's flow. The wrapper at .claude/skills/plan/SKILL.md has already run C1 (pre-skill) and the Design Guard; execute the steps below and invoke C6 (post-skill) at the end per the mode's own step 8. Note: when this internal is invoked inline from `_internal/plan/roadmap/SKILL.md` (Mode 1 step 9 or Mode 2 step 8), the caller instructs per-item execution to skip steps 7 and 8 -- the roadmap run owns the user prompt and the commit.
+> This is an inlined worker; execute these instructions as part of the caller's flow. The wrapper at .claude/skills/plan/SKILL.md has already run C1 (pre-skill) and the Design Guard; execute the steps below and invoke C6 (post-skill) at step 7. Note: when this internal is invoked inline from `_internal/plan/roadmap/SKILL.md` (Mode 1 step 9 or Mode 2 step 8), the caller instructs per-item execution to skip steps 7 and 8 -- the roadmap run owns the commit and the user prompt.
 
-This mode is the reference prose -- other modes delta off of its shape. Steps 1, 3 (reserve-ID + header), 5 (Review Depth), 7 (decision-point phrasing), and 8 (post-skill) reuse C1, C2+C3, C5, C4, and C6 respectively; the local prose below adds only the single-plan-specific content.
+This mode is the reference prose -- other modes delta off of its shape. Steps 1, 3 (reserve-ID + header), 5 (Review Depth), 7 (post-skill), and 8 (decision-point phrasing) reuse C1, C2+C3, C5, C6, and C4 respectively; the local prose below adds only the single-plan-specific content.
 
 1. Apply C1 (pre-skill).
 
@@ -18,10 +18,10 @@ This mode is the reference prose -- other modes delta off of its shape. Steps 1,
 
    | When | Load |
    |---|---|
-   | `--framing metacomm` | `project/product-design-as-intended.md` |
-   | Plan touches backend/frontend/testing/i18n files | `project/standards.md` |
-   | Plan involves auth, validation, or sensitive data | `project/security-checklists.md` |
-   | Plan involves UX flows or visual design | `project/design-standards.md` |
+   | `--framing metacomm` | `product-design/product-design-as-intended.md` |
+   | Plan touches backend/frontend/testing/i18n files | `product-design/standards.md` |
+   | Plan involves auth, validation, or sensitive data | `product-design/security-checklists.md` |
+   | Plan involves UX flows or visual design | `product-design/design-standards.md` |
    | Before Phase 1 review | `general/review-perspectives.md` |
    | Before writing the review log | `general/review-log-template.md` |
 
@@ -52,8 +52,8 @@ This mode is the reference prose -- other modes delta off of its shape. Steps 1,
 5. **Review the plan** using a complexity-gated, two-phase process. Use `general/review-log-template.md` for the review log format.
 
    **Step metadata validation (before perspective review):**
-   - Every step has all required fields (Files, References, Interface, Verify, Tests, checkbox). Optional fields (Depends on, Docs, Traces) may be omitted entirely -- absent Depends on = no dependencies; absent Docs/Traces = not applicable. `Interface:` is required but may be `N/A` -- omitting it entirely is a validation error; populate for dependency-producing steps.
-   - Docs and Traces are present-when-relevant. When present, validate: Docs describes specific documentation to update; Traces lists valid REQ-xxx IDs.
+   - Every step has all required fields (Files, References, Interface, Verify, Tests, checkbox). Optional fields (Depends on, Docs, Deploy, Traces) may be omitted entirely -- absent Depends on = no dependencies; absent Docs/Deploy/Traces = not applicable. `Interface:` is required but may be `N/A` -- omitting it entirely is a validation error; populate for dependency-producing steps.
+   - Docs, Deploy, and Traces are present-when-relevant. When present, validate: Docs describes specific documentation to update; Deploy describes actionable deployment changes (specific env var names, ports, service names) covering Docker and standalone (Windows/Linux) where they differ; Traces lists valid REQ-xxx IDs.
    - For non-N/A `Tests:` entries: the description must express an observable behavior ('when X is called with Y, returns Z') rather than a structural assertion ('module exports class Z') or bare test name. Auto mode uses this to write a meaningful failing test before implementation.
    - `Tests: N/A` is appropriate for database migrations, configuration-only steps, pure refactors with pre-existing coverage, and framework/tooling-only steps that produce no business logic.
    - File paths for existing files verified on disk.
@@ -100,12 +100,8 @@ This mode is the reference prose -- other modes delta off of its shape. Steps 1,
 
 6. Output the plan id.
 
-7. Ask the user via AskUserQuestion what to do next (options phrased per C4):
-   - **Implement now** -- commit the plan and run `/implement <id>`. Recommended when the plan has been reviewed and you are ready to proceed in this session. NOT recommended when you want to review offline or share it first.
-   - **Commit plan** -- commit as-is; implement later via `/implement <id>`. Recommended when you want to review further, implement in a separate session, or share. NOT recommended when the plan is trivially correct and delay adds no value.
-   - **Revise plan** -- stop; the plan is not committed. Recommended when you spotted an issue or want to adjust before committing. NOT recommended when the plan is satisfactory and the revision impulse is perfectionism rather than substance.
+7. Run /post-skill <id> to commit the plan. The plan is now a durable git artifact regardless of the user's next choice.
 
-8. Based on the user's choice (C6 applies for the /post-skill call):
-   - **Implement now**: run /post-skill <id>, then run /implement <id>.
-   - **Commit plan**: run /post-skill <id>.
-   - **Revise plan**: do not run /post-skill. Wait for instructions.
+8. Ask the user via AskUserQuestion what to do next (options phrased per C4):
+   - **Implement now** -- run `/implement <id>`. Recommended when the plan has been reviewed and you are ready to proceed in this session. NOT recommended when you want to review the plan offline or implement in a separate session.
+   - **End** -- the plan is committed; implement later via `/implement <id>`. Recommended when the current workflow is complete and you want to stop here. NOT recommended when the plan is trivially correct and implementing now would save context-switching cost.

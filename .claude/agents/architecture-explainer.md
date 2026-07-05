@@ -36,7 +36,7 @@ You will receive:
 ### Step A -- Survey the system
 
 1. Read `CLAUDE.md` (or `README.md`) for project description and stack.
-2. Read `project/conventions.md` for directory structure and key variables.
+2. Read `product-design/conventions.md` for directory structure and key variables.
 3. Scan top-level and primary source directories to identify major components (backend, frontend, shared libraries, infrastructure, etc.).
 4. If a scope is provided, focus on it and its direct dependencies; otherwise cover the full system.
 

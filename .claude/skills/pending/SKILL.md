@@ -41,10 +41,15 @@ If there is no argument or `list`:
 
 2a. If empty list: print `No pending actions.` and run `/post-skill` and stop.
 
-2b. If non-empty list: group items by `type`. For each group, print a header with the count (e.g., "**mark-implemented** (2)"). For each item in the group, print:
+2b. If non-empty list: group items by `type`. For each group, print a header with the count (e.g., "**implement** (2)"). For each item in the group, print:
 
    - `<id>` -- `<type>` -- source: `<source>` -- age: N days
-     - **Recommendation**: type-specific recommendation from the table below. If multiple, write each on a new line. Provide filenames and links to relevant files or plans when applicable. If the recommendation involves running a skill, include the exact command with arguments.
+     > `<description>` (omit this line if `description` is empty or null)
+     - **How to resolve**:
+       1. Render the type-specific resolution steps from the table below, substituting `<id>` and `<source>` with real values.
+       2. When `<source>` references a plan (starts with `plan-`), resolve it to the actual file path by globbing `_output/plans/plan-<NNN>-*.md` (exclude `-progress.md` and `-qa-*.md` siblings) and include the path in the instructions.
+       3. For `user-defined` items, the `description` field IS the instruction — reproduce it verbatim as the resolution steps (it already contains what to do).
+       4. Every resolution block must end with the exact `/pending` subcommand that closes the item.
    <blank line>
 
    After all groups, print the action footer:
@@ -59,22 +64,86 @@ If there is no argument or `list`:
 
 3. Run `/post-skill pending` silently (without outputting intermediate actions) and stop.
 
-### Type-specific recommendations
+### Type-specific resolution steps
 
-| Type | Recommendation |
-|------|----------------|
-| `mark-implemented` | Verify the implementation matches `<source>`. Run `/pending address <id>` to flip STATUS markers interactively. |
-| `test-implementation` | Run the test plan from `_output/plans/plan-<source>-*.md`, then `/pending done <id>`. |
-| `verify-as-coded` | Run `/explain drift` to compare as-coded vs as-intended, then `/pending done <id>`. |
-| `update-documentation` | Run `/document --plan <source>`, then `/pending done <id>`. |
-| `apply-promote-markers` | Open `_output/promote-proposals/promote-proposal-plan-<source>.md`, rewrite Decision entries in your voice, copy to as-intended section Decisions, then `/explain drift --promote --apply-markers <source>` (auto-marks done). |
-| `spec-drift-check` | Run `/explain drift`. Follow with `--promote` if STATUS items need promotion. Then `/pending done <id>`. |
-| `periodic-curation` | Review the pending ledger: dismiss stale items, snooze items not yet due. Then `/pending done <id>`. |
-| `incorporate-research-markers` | Run `/pending address <id>` to flip INCORPORATED markers interactively. |
-| `implement` | Run `/implement <source>`. The entry auto-closes when the plan's DONE header is written. |
-| `review-downstream-plan` | Open referenced plan files and compare against what `<source>` changed. Revise drifted plans via `/plan`, then `/pending done <id>`. |
-| `create-decision-entry` | Create a D-NNN entry in product-design-as-intended.md section Decisions, then `/pending done <id>`. |
-| `user-defined` / unknown | Complete the described action, then `/pending done <id>`. |
+For each type below, render these steps literally in the output (replacing `<id>`, `<source>`, and `<plan-file>` with actual values). Include the resolved plan file path where indicated.
+
+**`implement`**
+1. Open the plan file: `_output/plans/<plan-file>`
+2. Run `/implement <source>` to execute the plan
+3. The entry auto-closes when the plan's `# DONE | ...` header is written — no manual `/pending done` needed
+
+**`mark-implemented`**
+1. Run `/pending address <id>` — this launches the interactive marker-flip workflow
+2. It will walk you through each candidate entry, confirming STATUS → implemented flips
+3. The item auto-closes when all candidates are addressed
+
+**`test-implementation`**
+1. Open the plan file: `_output/plans/<plan-file>`
+2. Find the `## Test plan` or `Tests:` section in the plan
+3. Execute each test condition described there (manually or via test commands)
+4. Run `/pending done <id>` when all tests pass
+
+**`verify-as-coded`**
+1. Run `/explain drift` to compare product-design-as-coded.md against product-design-as-intended.md
+2. If drift is found, update the as-coded file to reflect current implementation
+3. Run `/pending done <id>`
+
+**`update-documentation`**
+1. Run `/document --plan <source>` to generate or update docs for this plan
+2. Review the generated output in `_output/docs/`
+3. Run `/pending done <id>`
+
+**`apply-promote-markers`**
+1. Open `_output/promote-proposals/promote-proposal-plan-<source>.md`
+2. Review the draft Decision entries; rewrite in your own voice if needed
+3. Copy finalized entries into product-design-as-intended.md § Decisions
+4. Run `/explain drift --promote --apply-markers <source>` — this flips STATUS markers and auto-closes the pending entry
+
+**`spec-drift-check`**
+1. Run `/explain drift` to surface mismatches between design intent and as-coded state
+2. If STATUS items are ready for promotion, follow up with `/explain drift --promote`
+3. Run `/pending done <id>`
+
+**`periodic-curation`**
+1. Run `/pending list` (this invocation) to see all open items
+2. Dismiss stale items: `/pending dismiss <id> --reason "..."`
+3. Snooze items not yet actionable: `/pending snooze <id> --until YYYY-MM-DD`
+4. Run `/pending done <id>` for the curation entry itself when triage is complete
+
+**`incorporate-research-markers`**
+1. Run `/pending address <id>` — this launches the interactive INCORPORATED marker-flip workflow
+2. It will walk you through each research finding, confirming INCORPORATED flips in the UX research file
+3. The item auto-closes when all candidates are addressed
+
+**`review-downstream-plan`**
+1. Open the plan files referenced in `<source>` and in the `description`
+2. Check whether changes from `<source>` invalidated assumptions in the downstream plan
+3. If drifted, revise via `/plan` (or dismiss if the downstream plan is obsolete)
+4. Run `/pending done <id>`
+
+**`create-decision-entry`**
+1. Draft a `### D-NNN:` entry following the DDR shape (Context, Decision, Rationale, Consequences, Alternatives)
+2. Append it to product-design-as-intended.md § Decisions
+3. Run `/pending done <id>`
+
+**`check-git-freshness`**
+1. Run `/critique freshness` to compare local branches to their upstreams
+2. If behind, pull or rebase as appropriate
+3. Run `/pending done <id>`
+
+**`reflect-on-practice`**
+1. Run `/reflect` to review patterns from recent sessions
+2. Run `/pending done <id>`
+
+**`follow-up-plan`**
+1. Read the description — it contains the plan scope and rationale
+2. Run `/plan` with the described scope to create the follow-up plan
+3. Run `/pending done <id>` (the new plan will file its own `implement` entry)
+
+**`user-defined` / unknown**
+1. Follow the instructions in the `description` field verbatim — it contains the complete action specification
+2. Run `/pending done <id>` when the described action is complete
 
 ### Address dispatch
 
@@ -88,7 +157,7 @@ When invoked as `/pending address <id>`:
 
    - **incorporate-research-markers**: Same marker-flip flow as mark-implemented but with `--marker INCORPORATED`. Target is a ux-research file. Parse candidate entry IDs from description. When all candidates are addressed, invoke `pending.py done <id>`.
 
-   - **All other types**: Print the type-specific recommendation from the table above and stop. These types resolve via external commands, not via internal dispatch. List the skills (with options and arguments) necessary to resolve each item. If an item is a plan, include a link to the plan file in the recommendation (including the plan file slug).
+   - **All other types**: Print the type-specific resolution steps from the section above, fully substituted with the item's real `<id>`, `<source>`, and resolved `<plan-file>` path. These types resolve via external commands, not via internal dispatch. Include the exact skill commands (with options and arguments) and resolved file paths. Then stop.
 
 3. Run `/post-skill pending` and stop.
 

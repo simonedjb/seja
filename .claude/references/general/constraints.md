@@ -67,7 +67,7 @@ Each entry is a clickable relative-path link (relative to the project root). Lis
 - `/research` step 9b -- the advisory report (and optionally the design-intent file receiving D-NNN entries)
 - `/research` step 10 -- the advisory report
 - post-skill step 6e -- the plan file and as-intended files with STATUS marker candidates
-- post-skill step 11 -- the just-completed artifact
+- post-skill step 10 -- the just-completed artifact
 - `/explain drift` Step B -- the drift report
 - `/explain drift` Phase 3b step 4 -- the promote-proposal file
 - `/pending` step 4 -- the source artifact for the selected pending action
@@ -108,7 +108,7 @@ The session scratchpad (`${SESSION_NOTES_FILE}`) uses timestamped entries with c
 
 The following reference files must survive any context compaction event. They must be re-injected after summarization or truncation and must never be abbreviated:
 
-1. `project/constitution.md` -- immutable project principles; dropping this allows agents to bypass governance rules
+1. `product-design/constitution.md` -- immutable project principles; dropping this allows agents to bypass governance rules
 2. `general/permissions.md` -- agent permission boundaries; dropping this removes authorization constraints
 3. `general/constraints.md` -- behavioral constraints (this file); dropping this removes quality and safety guardrails
 4. Active skill's SKILL.md instructions -- the currently executing skill's full body; dropping this causes the agent to lose its task context

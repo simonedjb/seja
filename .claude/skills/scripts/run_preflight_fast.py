@@ -47,6 +47,7 @@ REPO_ROOT = SCRIPTS_DIR.parents[2]
 # Checks to run, in order. Each entry: (display_name, command_args)
 FAST_CHECKS: list[tuple[str, list[str]]] = [
     ("conventions", [sys.executable, str(SCRIPTS_DIR / "check_conventions.py")]),
+    ("retired-tokens", [sys.executable, str(SCRIPTS_DIR / "check_retired_tokens.py")]),
     ("skill-system", [sys.executable, str(SCRIPTS_DIR / "check_skill_system.py")]),
     ("secrets", [sys.executable, str(SKILLS_DIR / "design" / "check_secrets.py"), "--all"]),
     ("skills-manifest", [sys.executable, str(SCRIPTS_DIR / "generate_skills_manifest.py"), "--check"]),

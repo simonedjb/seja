@@ -12,8 +12,8 @@ metadata:
     - general/shared-definitions.md
     - general/report-conventions.md
   references:
-    - project/product-design-as-coded.md
-    - project/product-design-as-intended.md
+    - product-design/product-design-as-coded.md
+    - product-design/product-design-as-intended.md
     - general/shared-definitions.md
     - general/report-conventions.md
 ---
@@ -50,7 +50,7 @@ If the explanation type (architecture, behavior, behavior-evolution, code, data-
 ## Common Steps (all modes)
 
 - **C1 Pre-skill**: run `/pre-skill "explain" $ARGUMENTS`.
-- **C2 Reserve ID, output path, header**: 6-digit zero-padded IDs via `python .claude/skills/scripts/reserve_id.py --type <type> --title '<short title>'`; output path from `project/conventions.md`; header `# <Type Label> <id> | <prefix><scope> | <current datetime> | <short title>`. Per-type parameters in the Type dispatch table below.
+- **C2 Reserve ID, output path, header**: 6-digit zero-padded IDs via `python .claude/skills/scripts/reserve_id.py --type <type> --title '<short title>'`; output path from `product-design/conventions.md`; header `# <Type Label> <id> | <prefix><scope> | <current datetime> | <short title>`. Per-type parameters in the Type dispatch table below.
 - **C3 Save report**: per `.claude/references/general/report-conventions.md`. Fields: *header* (C2 pattern); *user brief* (+ scope if any); *agent interpretation*; *files*; *explanation* (per-mode sections below). *files* splits -- data-model: *creation files* + *client files*; behavior-evolution: *current implementation files* + *plan files*; architecture: *structural files* + *implementation files*.
 - **C4 Post-skill**: run `/post-skill <id>` to commit, file pending actions, and close. Drift Phase 3a/3b each end with C4; the sync-No branch ends with C4 immediately after the drift report.
 

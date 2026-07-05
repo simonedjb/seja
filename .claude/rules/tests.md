@@ -11,7 +11,7 @@ designer_description: "When you add or edit a test file, I surface the P0 review
 When editing files under these paths:
 
 - **Review questions**: see `.claude/references/general/review-perspectives/test.md`, `.claude/references/general/review-perspectives/dx.md` -- P0 questions are the critical checks.
-- **Full conventions**: see `project/standards.md § Testing` -- stack-specific rules.
+- **Full conventions**: see `product-design/standards.md § Testing` -- stack-specific rules.
 
 ## Perspective Alignment
 

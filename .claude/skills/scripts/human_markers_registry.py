@@ -36,7 +36,7 @@ from pathlib import Path
 # Registry of files classified as Human (markers). Paths use forward slashes
 # (repo-relative POSIX) so that git diff output matches on Windows too.
 #
-# Both the template/ and project/ paths are registered for each real file: the
+# Both the template/ and product-design/ paths are registered for each real file: the
 # template path is what /design seeds (and what harness-level tests touch);
 # the project path is what designer commits exercise via post-skill step 2e.
 # apply_marker.py and check_human_markers_only.py perform exact-string matches
@@ -128,6 +128,15 @@ ALLOWED_MARKERS: dict[str, dict] = {
         # The value field carries the full DDR-shaped entry text.
         # line_regex validates the heading line of the appended entry.
         "line_regex": r"### D-\d{3}: .{1,200}",
+        "allowed_values": None,
+        "allowed_transitions": None,
+    },
+    "REQ_TRACED_BY": {
+        # Annotates an existing <!-- REQ-TYPE-NNN --> marker with a traced_by
+        # pseudo-plan to signal pre-tracing-system requirements. The value
+        # field carries the pseudo-plan name (e.g. "bootstrap"). The --id
+        # argument is the REQ ID (e.g. "REQ-ENT-001"), not a heading.
+        "line_regex": r"<!-- REQ-[A-Z0-9]+-\d{3} \| traced_by: [a-z0-9_-]+ -->",
         "allowed_values": None,
         "allowed_transitions": None,
     },

@@ -36,14 +36,14 @@ Steps 1-11 below. Common-step reuse: step 1 = C1; step 8 = C2+C3 with `--type ro
 
 1. Apply C1 (pre-skill).
 
-2. **Read project references**. If `project/product-design-as-intended.md` is missing, abort and suggest `/design`. `project/product-design-as-coded.md` is required for brownfield, optional for greenfield. Others are optional (warn but continue):
-   - `project/product-design-as-coded.md` (three H2 sections: Conceptual Design, Metacommunication, Journey Maps -- empty or absent for greenfield)
-   - `project/product-design-as-intended.md` (target-state entities, hierarchy, permissions, UX patterns, metacommunication intentions)
-   - `project/conventions.md` (directory structure, source paths)
-   - `project/standards.md § Backend` (API patterns, service layer)
-   - `project/standards.md § Frontend` (pages, components, routing)
-   - `project/standards.md § i18n` (locales, translation scope)
-   - `project/security-checklists.md` (validation, auth)
+2. **Read project references**. If `product-design/product-design-as-intended.md` is missing, abort and suggest `/design`. `product-design/product-design-as-coded.md` is required for brownfield, optional for greenfield. Others are optional (warn but continue):
+   - `product-design/product-design-as-coded.md` (three H2 sections: Conceptual Design, Metacommunication, Journey Maps -- empty or absent for greenfield)
+   - `product-design/product-design-as-intended.md` (target-state entities, hierarchy, permissions, UX patterns, metacommunication intentions)
+   - `product-design/conventions.md` (directory structure, source paths)
+   - `product-design/standards.md § Backend` (API patterns, service layer)
+   - `product-design/standards.md § Frontend` (pages, components, routing)
+   - `product-design/standards.md § i18n` (locales, translation scope)
+   - `product-design/security-checklists.md` (validation, auth)
 
 2b. **Requirements extraction pass**: if `product-design/product-design-as-intended.md` contains REQ markers (`<!-- REQ-*-NNN -->`), launch a `general-purpose` agent (Agent tool) with fresh context to extract a requirements index. The agent:
    1. Reads `product-design-as-intended.md` in full.
@@ -125,13 +125,27 @@ Steps 1-11 below. Common-step reuse: step 1 = C1; step 8 = C2+C3 with `--type ro
      `python .claude/skills/scripts/update_roadmap_plan_id.py --roadmap-file <roadmap-file-path> --work-item-id <work-item-slug> --plan-id <plan-id>`
      where `<roadmap-file-path>` is the path from step 8, `<work-item-slug>` is the current work item's ID column value, and `<plan-id>` is the ID output by standard step 6. Non-zero exit → warn but do not block: "Warning: could not update roadmap Plan column for `<slug>`: `<reason>`".
    - If "Don't create plans now", skip generation.
-   - **Inline-invocation clarification**: when invoking the standard workflow inline for a work item, skip that workflow's step 7 (AskUserQuestion next-step prompt) and step 8 (per-plan /post-skill). Per C6, the roadmap's finalization step owns the commit decision for the whole run; per-plan finalization would produce N prompts and N commits, defeating the unified-artifact contract.
+   - **Inline-invocation clarification**: when invoking the standard workflow inline for a work item, skip that workflow's step 7 (per-plan /post-skill commit) and step 8 (AskUserQuestion next-step prompt). Per C6, the roadmap's finalization step owns the commit for the whole run; per-plan commits and prompts would produce N commits, defeating the unified-artifact contract.
 
    **Anti-pattern -- do not pre-reserve plan IDs.** `/plan` reserves its own ID when invoked (C2 applies per plan); never call `reserve_id.py --type plan` up front for downstream items. The Plan column starts as `plan-TBD` and is filled with the real ID after `/plan` completes. See `SKILL-rationale.md` for the failure-mode reasoning.
 
-9b. **Coverage check (advisory)**: if any plans were generated and REQ markers exist, run `python .claude/skills/design/check_plan_coverage.py --mode advisory` and include the coverage summary in the roadmap file.
+9b. **Checkpoint review configuration**: only when plans were generated for 2+ waves (skip when "Don't create plans now" was selected, or when only Wave 0 was generated). Present AskUserQuestion with three options (phrased per C4):
 
-10. **Finalize the roadmap run** (C6 applies for the /post-skill call):
+   - **After each wave** -- a checkpoint review block is inserted before every subsequent wave in the execution instructions. Recommended when: 6+ items, or when later waves depend on contract details that only become concrete after the foundation is built. NOT recommended when: the scope is well-understood end-to-end and waves are independent.
+   - **After selected waves** -- ask the user which wave transitions get a review (e.g., "after Wave 0, after Wave 2"); insert checkpoint blocks only at those transitions. Recommended when: some wave boundaries are high-risk and others are routine. NOT recommended when: the selection is arbitrary or all transitions are equally uncertain.
+   - **None** -- no checkpoint blocks added. Recommended when: scope is fully locked or you are re-running a known-good roadmap. NOT recommended when: implementation is exploratory or first-pass.
+
+   Record the checkpoint schedule in the roadmap file under a `## Checkpoint Schedule` section (append after `## Source`, before `## Wave Summary`):
+   ```
+   ## Checkpoint Schedule
+   - After Wave 0 → before Wave 1
+   - After Wave 2 → before Wave 3
+   ```
+   (Or `- None` if no checkpoints configured.) This section is the single source of truth consumed by step 11.
+
+9c. **Coverage check (advisory)**: if any plans were generated and REQ markers exist, run `python .claude/skills/design/check_plan_coverage.py --mode advisory` and include the coverage summary in the roadmap file.
+
+10. **Finalize the roadmap run** (C6 applies for the /post-skill call; step 9c coverage check must complete before this step):
     - `qa_engaged == false`: auto-commit the roadmap summary + generated plan files in a single commit via /post-skill with the roadmap ID. Commit message: `roadmap-<id>: <N> plans generated across <M> waves` (adjust per wave generation scope). Print: `Committed roadmap <id> and <N> generated plans.`
     - `qa_engaged == true`: use AskUserQuestion. Options phrased per C4:
       - **Commit all now** -- runs /post-skill as above. Recommended when Q&A produced a coherent, shippable set. NOT recommended when review is pending or some plans are known wrong.
@@ -154,6 +168,21 @@ Steps 1-11 below. Common-step reuse: step 1 = C1; step 8 = C2+C3 with `--type ro
     - Wave 0 only: show `/implement <plan-id>` for Wave 0 and `/plan <description>` for remaining waves.
     - None generated: show `/plan <description>` for all waves.
     - Include the recommended execution method (multiple Claude Code sessions or worktree-isolated agents) for parallel waves.
+    - **Checkpoint review blocks**: between adjacent wave sections where a checkpoint is scheduled (per `## Checkpoint Schedule` in the roadmap file), insert a Checkpoint Review block in this format:
+
+      ```
+      #### Checkpoint Review — before Wave N
+
+      Before starting Wave N:
+      1. Read the Verify sections of completed Wave (N-1) plans to confirm what was built.
+      2. Compare with Wave N planned work — check for API contract changes, new entity shapes,
+         revised file structures, or scope shifts that affect Wave N plans.
+      3. If any Wave N plan needs revision: run `/plan <revised-brief>` for the affected item,
+         then update this roadmap's Wave N Plan column with the new plan ID.
+      4. Proceed to Wave N only when all needed revisions are committed.
+      ```
+
+      When `## Checkpoint Schedule` is `- None`, omit all checkpoint blocks from the execution instructions.
 
 ---
 
@@ -161,7 +190,7 @@ Steps 1-11 below. Common-step reuse: step 1 = C1; step 8 = C2+C3 with `--type ro
 
 > **Q&A tracking**: maintain `qa_engaged` (default `false`). Set `true` when the user adjusts parsed items at step 4/5/6 or requests plan revision mid-stream. Simple accept/confirm answers do NOT constitute Q&A.
 
-Steps 1-10. Common-step reuse: step 1 = C1; step 7 = C2+C3 with `--type roadmap` (behaves like Mode 1 step 8); step 8 reuses the Mode 1 step 9 prose (decision point + inline-invocation clarification); step 9 reuses Mode 1 step 10 (finalization); step 10 reuses Mode 1 step 11 (execution instructions). Steps 2-6 are Mode-2-unique.
+Steps 1-10 (with step 8b inserted). Common-step reuse: step 1 = C1; step 7 = C2+C3 with `--type roadmap` (behaves like Mode 1 step 8); step 8 reuses Mode 1 step 9 prose (decision point + inline-invocation clarification); step 8b reuses Mode 1 step 9b (checkpoint review configuration); step 9 reuses Mode 1 step 10 (finalization); step 10 reuses Mode 1 step 11 (execution instructions). Steps 2-6 are Mode-2-unique.
 
 1. Apply C1 (pre-skill).
 
@@ -180,7 +209,12 @@ Steps 1-10. Common-step reuse: step 1 = C1; step 7 = C2+C3 with `--type roadmap`
 
 6. **Present validation report** with parsed items, classifications, dependency graph. Ask user to confirm or adjust.
 
-Steps 7-10: follow Mode 1 steps 8 -> 9 -> 10 -> 11 prose. Mode 1 is the single source of truth if shared behavior changes.
+Steps 7-10 + 8b: follow Mode 1 steps 8 -> 9 -> 9b -> 10 -> 11 prose. Mode 1 is the single source of truth if shared behavior changes.
+
+- **Step 8** (= Mode 1 step 9): plan generation decision point + inline-invocation clarification.
+- **Step 8b** (= Mode 1 step 9b): checkpoint review configuration. Same logic, options, and `## Checkpoint Schedule` recording in the roadmap file.
+- **Step 9** (= Mode 1 step 10): finalization (C6).
+- **Step 10** (= Mode 1 step 11): execution instructions, including checkpoint review blocks between waves per the schedule recorded in step 8b.
 
 ---
 

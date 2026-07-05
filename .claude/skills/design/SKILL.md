@@ -67,11 +67,11 @@ Valid slugs: `stack`, `conceptual`, `metacomm`, `backend-standards`, `frontend-s
 
 Triggered when `--add-docs` is passed.
 
-1. **Verify project exists**: `project/conventions.md` must exist in `product-design/`, else abort "No project design found. Run `/design` first."
+1. **Verify project exists**: `product-design/conventions.md` must exist in `product-design/`, else abort "No project design found. Run `/design` first."
 
 2. **Check existing docs**: If `project/docs/` already exists, list instantiated templates and ask "Some documentation templates are already set up. Add more, or replace all?"
 
-3. **Present template checklist**: Read all `template/docs/*.md`. Extract `recommended` and `depends_on` from YAML frontmatter. Mark recommended templates with `(Recommended)`; templates whose `depends_on` matches the project's app type (from `project/design-standards.md § UX patterns`) with `(Suggested for your app type)`. Let the user multi-select.
+3. **Present template checklist**: Read all `template/docs/*.md`. Extract `recommended` and `depends_on` from YAML frontmatter. Mark recommended templates with `(Recommended)`; templates whose `depends_on` matches the project's app type (from `product-design/design-standards.md § UX patterns`) with `(Suggested for your app type)`. Let the user multi-select.
 
 4. **Instantiate selected templates**: Copy selected `template/docs/*.md` to `project/docs/`.
 

@@ -55,7 +55,7 @@ Step 1b example record:
 | `plan-` / `implement-` | `${PLANS_DIR}` |
 | `advisory-` | `${ADVISORY_DIR}` |
 | `research-` | `${RESEARCH_DIR}` |
-| `check-` | `${CHECK_LOGS_DIR}` |
+| `check-` | `${CRITIQUE_LOGS_DIR}` |
 | `proposal-` | `${PROPOSALS_DIR}` |
 | `roadmap-` | `${ROADMAP_DIR}` |
 | `onboarding-` | `${ONBOARDING_PLANS_DIR}` |

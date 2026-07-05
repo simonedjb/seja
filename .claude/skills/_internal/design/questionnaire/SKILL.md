@@ -90,7 +90,7 @@ metadata:
 
     4. **Present extracted as-coded model**: Before writing, display a structured summary (Entities, Permissions, Validation Constants, and "Sections with no data detected -- will retain placeholder text"). Ask "Confirm, edit, or add details before I save it to `product-design-as-coded.md § Conceptual Design`."
 
-    5. **Populate**: After confirmation, write `## Conceptual Design` in `project/product-design-as-coded.md` with confirmed content in subsections 2, 4, 10 (and any others with data). Other H3 subsections keep template placeholder text. Preserve the `maintained-by: Agent (post-skill)` header. `## Metacommunication` and `## Journey Maps` H2s remain placeholders (post-skill populates on first plan execution).
+    5. **Populate**: After confirmation, write `## Conceptual Design` in `product-design/product-design-as-coded.md` with confirmed content in subsections 2, 4, 10 (and any others with data). Other H3 subsections keep template placeholder text. Preserve the `maintained-by: Agent (post-skill)` header. `## Metacommunication` and `## Journey Maps` H2s remain placeholders (post-skill populates on first plan execution).
 
 5d. **Brownfield Questionnaire Flow** (brownfield/evolving; three phases):
 
@@ -120,14 +120,14 @@ metadata:
 
    | Source | Destination | Notes |
    |---|---|---|
-   | `template/constitution.md` | `project/constitution.md` | Required; always generated. Content may be customized but not skipped. |
-   | `template/product-design-as-intended.md` | `project/product-design-as-intended.md` | `Human (markers)`. Prose human-authored; agents write `STATUS`/`DECISION_APPEND` (`### D-NNN:`) via `apply_marker.py` after AskUserQuestion. Includes `## Decisions` + `## CHANGELOG`. Apply I/you phrasing rule for Part II metacomm sections. |
-   | `template/product-design-as-coded.md` | `project/product-design-as-coded.md` | **Brownfield only.** If step 5c produced pre-populated `## Conceptual Design`, use that in place of the empty section. Greenfield: do NOT instantiate (post-skill creates it on first plan execution). |
-   | `template/product-design-changelog.md` | `project/product-design-changelog.md` | Brownfield only. Kept separate from `product-design-as-coded.md`. |
-   | `template/standards.md` | `project/standards.md` | Backend, Frontend, Testing, i18n sections. |
-   | `template/design-standards.md` | `project/design-standards.md` | UX patterns + Graphic/visual design. |
-   | `template/security-checklists.md` | `project/security-checklists.md` | -- |
-   | `template/ux-research-results.md` | `project/ux-research-results.md` | `Human (markers)`. Pre-populate personas/user community from Q2.10 if provided. Agents write `INCORPORATED` + CHANGELOG appends via `apply_marker.py`. |
+   | `template/constitution.md` | `product-design/constitution.md` | Required; always generated. Content may be customized but not skipped. |
+   | `template/product-design-as-intended.md` | `product-design/product-design-as-intended.md` | `Human (markers)`. Prose human-authored; agents write `STATUS`/`DECISION_APPEND` (`### D-NNN:`) via `apply_marker.py` after AskUserQuestion. Includes `## Decisions` + `## CHANGELOG`. Apply I/you phrasing rule for Part II metacomm sections. |
+   | `template/product-design-as-coded.md` | `product-design/product-design-as-coded.md` | **Brownfield only.** If step 5c produced pre-populated `## Conceptual Design`, use that in place of the empty section. Greenfield: do NOT instantiate (post-skill creates it on first plan execution). |
+   | `template/product-design-changelog.md` | `product-design/product-design-changelog.md` | Brownfield only. Kept separate from `product-design-as-coded.md`. |
+   | `template/standards.md` | `product-design/standards.md` | Backend, Frontend, Testing, i18n sections. |
+   | `template/design-standards.md` | `product-design/design-standards.md` | UX patterns + Graphic/visual design. |
+   | `template/security-checklists.md` | `product-design/security-checklists.md` | -- |
+   | `template/ux-research-results.md` | `product-design/ux-research-results.md` | `Human (markers)`. Pre-populate personas/user community from Q2.10 if provided. Agents write `INCORPORATED` + CHANGELOG appends via `apply_marker.py`. |
    | `template/agent/{constraints,entities,permissions,spec-checks}.yaml` | `project/agent/*` | Agent YAML specs. |
    | `template/docs/*.md` | `project/docs/*.md` | Per Section 5 answer: "defaults" -> 3 recommended (readme, contextual-help, ddr); "skip" -> none; else selected subset. |
    | `template/settings.json` | `.claude/settings.json` | Substitute actual paths. |
@@ -152,7 +152,7 @@ metadata:
 
 11. **Verification pass** (always runs after template instantiation). Print "Verifying design output...".
 
-    1. Read the spec input (questionnaire answers) and 3 critical generated files: `project/product-design-as-intended.md` (Part II, sections 11-15), `project/constitution.md`, `project/security-checklists.md`.
+    1. Read the spec input (questionnaire answers) and 3 critical generated files: `product-design/product-design-as-intended.md` (Part II, sections 11-15), `product-design/constitution.md`, `product-design/security-checklists.md`.
 
     2. Evaluate semantic fidelity per file:
        - **design-intent Part II**: metacomm message -> generated §11 Global Vision match; §12 EMT guiding questions populated from spec (not placeholders); §14 per-feature intentions cover all spec features.
@@ -163,7 +163,7 @@ metadata:
 
     4. Print "Design output verified. [N] files checked, [M] gaps found and fixed."
 
-    5. **Requirement ID assignment**: For each enumerable requirement in `project/product-design-as-intended.md`, emit an HTML-comment marker `<!-- REQ-TYPE-NNN -->` on the line immediately before the heading/row/bullet. Counters are per-TYPE, zero-padded, starting at 001. TYPE mapping: §2 -> ENT, §4 -> PERM, §7 -> I18N, §8 -> UX, §10 -> VAL, §14 -> MC, §15 -> JM, §16-17 -> DELTA. Enables `check_plan_coverage.py` traceability.
+    5. **Requirement ID assignment**: For each enumerable requirement in `product-design/product-design-as-intended.md`, emit an HTML-comment marker `<!-- REQ-TYPE-NNN -->` on the line immediately before the heading/row/bullet. Counters are per-TYPE, zero-padded, starting at 001. TYPE mapping: §2 -> ENT, §4 -> PERM, §7 -> I18N, §8 -> UX, §10 -> VAL, §14 -> MC, §15 -> JM, §16-17 -> DELTA. Enables `check_plan_coverage.py` traceability.
 
 12. **Secrets check**: Run `python .claude/skills/design/check_secrets.py` to verify no secrets are staged.
 
@@ -175,13 +175,13 @@ metadata:
 
     | File | Controls | Sourced from (questionnaire) |
     |---|---|---|
-    | `project/conventions.md` | Directory paths, variable definitions | Stack choices (T2) |
-    | `project/constitution.md` | Immutable principles, security invariants | Immutable principles (T2) |
-    | `project/product-design-as-intended.md` | Unified working intent (§1-§17), `## Decisions` (DDR shape), CHANGELOG. `Human (markers)`. | Q2.3 (entities), Q2.6 (permissions), Final Step metacomm -> §15 |
-    | `project/ux-research-results.md` | Personas, problem scenarios, cross-ref map, processing status, JM-E-NNN journeys, CHANGELOG. `Human (markers)`. | Q2.1, Q2.10 |
-    | `project/standards.md` | Backend, Frontend, Testing, i18n sections | Backend/Frontend/Testing/i18n patterns (T3) |
-    | `project/design-standards.md` | UX patterns + Graphic/visual design | UX patterns (T1), Visual design (T1) |
-    | `project/security-checklists.md` | Security checklists, validation constants | Security constraints (T3) |
+    | `product-design/conventions.md` | Directory paths, variable definitions | Stack choices (T2) |
+    | `product-design/constitution.md` | Immutable principles, security invariants | Immutable principles (T2) |
+    | `product-design/product-design-as-intended.md` | Unified working intent (§1-§17), `## Decisions` (DDR shape), CHANGELOG. `Human (markers)`. | Q2.3 (entities), Q2.6 (permissions), Final Step metacomm -> §15 |
+    | `product-design/ux-research-results.md` | Personas, problem scenarios, cross-ref map, processing status, JM-E-NNN journeys, CHANGELOG. `Human (markers)`. | Q2.1, Q2.10 |
+    | `product-design/standards.md` | Backend, Frontend, Testing, i18n sections | Backend/Frontend/Testing/i18n patterns (T3) |
+    | `product-design/design-standards.md` | UX patterns + Graphic/visual design | UX patterns (T1), Visual design (T1) |
+    | `product-design/security-checklists.md` | Security checklists, validation constants | Security constraints (T3) |
     | `project/docs/*.md` | Documentation structure templates | Section 5 (docs-templates) |
 
     Then offer: 1) Review specs now, 2) Generate roadmap (`/plan --roadmap`), 3) Done for now.

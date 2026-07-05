@@ -151,7 +151,7 @@ Answer:
 
 ## Section 2 -- Conceptual Design (`conceptual-design`) [T1]
 
-> Fills: `project/product-design-as-intended.md` (always) and `project/product-design-as-coded.md § Conceptual Design` (brownfield only) -- describes WHAT your system is (target state, and current state for evolving products), not HOW it's built.
+> Fills: `product-design/product-design-as-intended.md` (always) and `product-design/product-design-as-coded.md § Conceptual Design` (brownfield only) -- describes WHAT your system is (target state, and current state for evolving products), not HOW it's built.
 
 **2.1** What does your platform do? Who is it for? What problem does it solve? (2--3 paragraphs)
 
@@ -249,7 +249,7 @@ Answer: (yes + link / no)
 
 ## Section 3 -- UX Design Standards (`ux-design-standards`) [T1]
 
-> Fills: `project/design-standards.md § UX patterns` -- interaction patterns, usability, accessibility workflow, and responsive strategy. This is a **T1 (Product & Design)** section -- product designers should complete this directly.
+> Fills: `product-design/design-standards.md § UX patterns` -- interaction patterns, usability, accessibility workflow, and responsive strategy. This is a **T1 (Product & Design)** section -- product designers should complete this directly.
 
 ### App Type
 
@@ -365,7 +365,7 @@ Answer:
 
 ## Section 4 -- Graphic / UI Design Standards (`graphic-ui-design-standards`) [T1]
 
-> Fills: `project/design-standards.md § Graphic / visual design` -- visual identity, color system, typography, spacing, iconography, and motion. This is a **T1 (Product & Design)** section -- product designers should complete this directly.
+> Fills: `product-design/design-standards.md § Graphic / visual design` -- visual identity, color system, typography, spacing, iconography, and motion. This is a **T1 (Product & Design)** section -- product designers should complete this directly.
 >
 > **Minimal viable path:** Answer only 4.1-4.3 (two colors + one font). All other values will be generated using established design scales.
 
@@ -518,7 +518,7 @@ Answer: (yes / no)
 
 ## Section 6 -- Project Conventions (`conventions`) [T2]
 
-> Fills: `project/conventions.md` -- the master variable file that all other references depend on.
+> Fills: `product-design/conventions.md` -- the master variable file that all other references depend on.
 
 **6.1** Project display name?
 > *Fills `{{PROJECT_NAME}}`.*
@@ -550,7 +550,7 @@ Answer:
 
 ## Section 7 -- Frontend Standards (`frontend-standards`) [T2]
 
-> Fills: `project/standards.md § Frontend` -- architectural and design conventions for the frontend.
+> Fills: `product-design/standards.md § Frontend` -- architectural and design conventions for the frontend.
 
 ### Framework Choices
 
@@ -689,7 +689,7 @@ Answer:
 
 ## Section 8 -- Backend Standards (`backend-standards`) [T2]
 
-> Fills: `project/standards.md § Backend` -- architectural conventions for the backend.
+> Fills: `product-design/standards.md § Backend` -- architectural conventions for the backend.
 
 ### Framework Choices
 
@@ -795,7 +795,7 @@ Answer:
 
 ## Section 9 -- Testing Standards (`testing-standards`) [T3]
 
-> Fills: `project/standards.md § Testing` -- testing conventions across all layers.
+> Fills: `product-design/standards.md § Testing` -- testing conventions across all layers.
 
 **9.1** Which backend test framework?
 
@@ -841,7 +841,7 @@ Answer: (e.g., `http://localhost:3000`)
 
 ## Section 10 -- i18n Standards (`i18n-standards`) [T3]
 
-> Fills: `project/standards.md § i18n` -- internationalization conventions.
+> Fills: `product-design/standards.md § i18n` -- internationalization conventions.
 
 **10.1** How many languages will your application support at launch?
 > *List RFC 5646 codes (e.g., `en-US`, `pt-BR`, `fr-FR`, `de-DE`).*
@@ -878,7 +878,7 @@ Answer:
 
 ## Section 11 -- Security Checklists (`security-checklists`) [T3]
 
-> Fills: `project/security-checklists.md` -- security checklists are mostly generic; customize the constants table.
+> Fills: `product-design/security-checklists.md` -- security checklists are mostly generic; customize the constants table.
 
 **11.1** List your validation constants with their values:
 > *These will populate the Quick Reference table and must stay in sync between backend and frontend.*
@@ -921,7 +921,7 @@ Answer:
 > - **Edit** -- the user modifies the message; the agent records the edited version verbatim (per the verbatim rule in `general/shared-definitions.md`). No generation note is appended.
 > - **Reject and skip** -- no metacommunication message is recorded; the field is left blank.
 >
-> *Feeds `project/product-design-as-intended.md`. Must follow the phrasing rule in `general/shared-definitions.md` -- always "I" (designer) and "you" (user), never third-person.*
+> *Feeds `product-design/product-design-as-intended.md`. Must follow the phrasing rule in `general/shared-definitions.md` -- always "I" (designer) and "you" (user), never third-person.*
 
 ---
 

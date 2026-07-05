@@ -242,7 +242,7 @@ def _classify(signals: dict) -> str:
     ):
         return State.FINALISED
 
-    # (e) Partial init: one of project/output exists but not both (or one empty).
+    # (e) Partial init: one of product-design/output exists but not both (or one empty).
     has_project = signals["has_project_dir"] or signals["has_project_conventions"]
     has_output_populated = signals["has_output"] and signals["output_non_empty"]
     if signals["has_claude"] and (has_project ^ has_output_populated):

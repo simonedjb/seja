@@ -19,7 +19,7 @@ Checks performed
   3. Auto-detect matching pairs by intersecting constant names.
   4. Report value mismatches and constants present on one side but not the other.
 
-Configuration (via project/conventions.md)
+Configuration (via product-design/conventions.md)
 ------------------------------------------
   BACKEND_UTILS_DIR        — directory containing the backend constants file
   BACKEND_CONSTANTS_FILE   — filename (default: validation_constants.py)

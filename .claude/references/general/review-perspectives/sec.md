@@ -9,7 +9,7 @@ tier: Essential
 
 - [P0] Does this introduce or widen an attack surface (injection, XSS, CSRF, auth bypass)?
 - [P0] Are inputs validated at the boundary? Outputs sanitized before rendering?
-- [P0] Are secrets, tokens, and credentials handled per project/security-checklists.md?
+- [P0] Are secrets, tokens, and credentials handled per product-design/security-checklists.md?
 - [P0] Can user-controlled input reach OS commands, SQL queries, or template engines without parameterization or sandboxing?
 - [P0] Are auth/session flows resistant to token leakage, fixation, and replay, and is authorization enforced server-side for every state-changing op (incl. horizontal escalation between tenants)?
 

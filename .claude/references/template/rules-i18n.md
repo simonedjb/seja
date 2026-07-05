@@ -19,7 +19,7 @@ paths:
 When editing files under these paths:
 
 - **Review questions**: see `.claude/references/general/review-perspectives/i18n.md` -- P0 questions are the critical checks.
-- **Full conventions**: see `project/standards.md § i18n` -- stack-specific rules.
+- **Full conventions**: see `product-design/standards.md § i18n` -- stack-specific rules.
 
 ## Perspective Alignment
 

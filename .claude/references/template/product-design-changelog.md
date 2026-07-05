@@ -6,9 +6,9 @@ designer_description: "I record how your project's implemented conceptual design
 
 <!-- maintained-by: agent (post-skill) -->
 
-> **How to use this template:** Copy this file to `project/product-design-changelog.md`. This file tracks how the implemented conceptual design has evolved. Each entry is appended automatically by post-skill after plan execution.
+> **How to use this template:** Copy this file to `product-design/product-design-changelog.md`. This file tracks how the implemented conceptual design has evolved. Each entry is appended automatically by post-skill after plan execution.
 >
-> For the current conceptual design snapshot, see `project/product-design-as-coded.md § Conceptual Design`.
+> For the current conceptual design snapshot, see `product-design/product-design-as-coded.md § Conceptual Design`.
 
 ---
 

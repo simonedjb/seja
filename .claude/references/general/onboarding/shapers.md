@@ -16,7 +16,7 @@ designer_description: "When you run /onboard for a shaper -- a product manager, 
 
 ### Essential (all Shapers must cover)
 
-- **Conceptual design and metacommunication**: As-coded state and design intent (`project/product-design-as-coded.md` `## Conceptual Design` + `## Metacommunication`, `project/product-design-as-intended.md`). Entity model, roles, permissions, interaction patterns, and designer intent -- who the user is and why the system works this way.
+- **Conceptual design and metacommunication**: As-coded state and design intent (`product-design/product-design-as-coded.md` `## Conceptual Design` + `## Metacommunication`, `product-design/product-design-as-intended.md`). Entity model, roles, permissions, interaction patterns, and designer intent -- who the user is and why the system works this way.
 - **User personas and journey maps**: Who uses the system, their goals, and how they move through key workflows.
 - **Design system and component library**: Visual language, tokens, reusable components, interaction patterns.
 - **Product roadmap and priorities**: Current/upcoming work, strategic goals, prioritization. Use `/plan --roadmap` output if available.
@@ -41,9 +41,9 @@ designer_description: "When you run /onboard for a shaper -- a product manager, 
 
 ## Key Reference Files
 
-- `project/product-design-as-coded.md § Conceptual Design` (current system design)
-- `project/product-design-as-intended.md` (unified working intent, Decisions log, and metacommunication; Human (markers) classification since SEJA 2.8.3)
-- `project/product-design-as-coded.md § Metacommunication` (current metacommunication record)
+- `product-design/product-design-as-coded.md § Conceptual Design` (current system design)
+- `product-design/product-design-as-intended.md` (unified working intent, Decisions log, and metacommunication; Human (markers) classification since SEJA 2.8.3)
+- `product-design/product-design-as-coded.md § Metacommunication` (current metacommunication record)
 - `general/shared-definitions.md` (project terminology)
 - `general/review-perspectives/ux.md` (UX review standards)
 - `general/review-perspectives/a11y.md` (accessibility standards)

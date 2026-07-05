@@ -1,4 +1,4 @@
-**What it does**: Generate or update documentation for your project. Four invocation modes: plan-driven (reads Docs: fields from a plan), auto-detect (scans recent git changes), type-targeted (you pick the doc type), or bare scope (you name a file/module/feature). Uses project templates and the documentation-quality writing guide for structured generation. Supports 7 documentation types: readme, contextual-help, api-reference, ddr, help-center, changelog, and spo.
+**What it does**: Generate or update documentation for your project. Four invocation modes: plan-driven (reads Docs: fields from a plan), auto-detect (scans recent git changes), type-targeted (you pick the doc type), or bare scope (you name a file/module/feature). Uses project templates and the documentation-quality writing guide for structured generation. Supports 6 documentation types: readme, contextual-help, api-reference, ddr, help-center, and changelog.
 
 **Examples**:
 > `/document --plan 000130`
@@ -26,11 +26,6 @@
 > Generates a changelog entry from recent changes.
 
 
-> `/document --type spo`
-> Generates `_output/docs/spo.html` — an interactive layered product overview from `product-overview.yaml`. Shows the full value chain (goals → tasks → features → services → data) with persona filters, quality criteria panel, and roadmap version columns.
-
-> `/document --type spo --drift`
-> Same as above, but dims non-`done` cards to highlight the gap between as-intended and as-coded state.
 
 
 > `/document --type ddr`
@@ -45,7 +40,7 @@
 > `/document src/auth`
 > Documents the auth module -- infers the most appropriate doc type from the scope content.
 
-**When to use**: After implementing a feature or fix that affects user-facing behavior, API contracts, or architectural decisions. Automatically suggested by post-skill for FEATURE and REDESIGN plans and plans with non-N/A Docs: fields. Use `--plan` when documentation needs are already specified in a plan; use `--auto-detect` for a broad scan of what changed; use `--type` when you know exactly which doc type you need; use bare scope for ad-hoc documentation of a specific area. Use `--type spo` after design is established, before a stakeholder presentation, or when the product structure changes significantly (new layers, major feature additions).
+**When to use**: After implementing a feature or fix that affects user-facing behavior, API contracts, or architectural decisions. Automatically suggested by post-skill for FEATURE and REDESIGN plans and plans with non-N/A Docs: fields. Use `--plan` when documentation needs are already specified in a plan; use `--auto-detect` for a broad scan of what changed; use `--type` when you know exactly which doc type you need; use bare scope for ad-hoc documentation of a specific area.
 
 **Not for**: stakeholder updates (use `/communicate`) or personalized onboarding plans (use `/onboard`). See `docs/how-to/which-communicative-skill.md` for the audience routing table.
 

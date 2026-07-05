@@ -44,7 +44,7 @@ def test_check_prefix():
     action, dest = classify("check-000179-qa-preflight-results.md")
     assert action == "move"
     assert dest is not None
-    assert dest.name == "check-logs"
+    assert dest.name == "critique-logs"
 
 
 def test_roadmap_prefix():

@@ -2,9 +2,9 @@
 
 <!-- maintained-by: human (designer); Human (markers) classification since SEJA 2.8.3 -->
 
-> **How to use this template:** Copy this file to `project/product-design-as-intended.md`. This unified file records working design intent (§0-§17), validated decisions with preserved rationale (`## Decisions` in DDR shape), and a chronological changelog of marker flips and decision additions (`## CHANGELOG`). Replaces the two separate design-intent-to-be.md and design-intent-established.md files that existed prior to SEJA 2.8.3. See the harness CHANGELOG for the migration rationale (source: advisory-000264 Phase 2 D / plan-000268).
+> **How to use this template:** Copy this file to `product-design/product-design-as-intended.md`. This unified file records working design intent (§0-§17), validated decisions with preserved rationale (`## Decisions` in DDR shape), and a chronological changelog of marker flips and decision additions (`## CHANGELOG`). Replaces the two separate design-intent-to-be.md and design-intent-established.md files that existed prior to SEJA 2.8.3. See the harness CHANGELOG for the migration rationale (source: advisory-000264 Phase 2 D / plan-000268).
 >
-> **Classification**: `Human (markers)` -- prose (intent, entity hierarchies, permission models, metacomm intentions, journey maps, decision rationales) is human-authored only. Agents may write `STATUS` markers on §1-§17 sections, §15 JM-TB-NNN journey entries, and `### D-NNN:` Decision entries via `apply_marker.py` after AskUserQuestion confirmation. Agents may also append lines to the `## CHANGELOG` section. Prose writes to `project/product-design-as-intended.md` are rejected by `check_human_markers_only.py` during post-skill step 6c.
+> **Classification**: `Human (markers)` -- prose (intent, entity hierarchies, permission models, metacomm intentions, journey maps, decision rationales) is human-authored only. Agents may write `STATUS` markers on §1-§17 sections, §15 JM-TB-NNN journey entries, and `### D-NNN:` Decision entries via `apply_marker.py` after AskUserQuestion confirmation. Agents may also append lines to the `## CHANGELOG` section. Prose writes to `product-design/product-design-as-intended.md` are rejected by `check_human_markers_only.py` during post-skill step 6c.
 >
 > **Stable IDs**: Decision entries use `D-NNN` (e.g., `D-001`); journey map entries in §15 use `JM-TB-NNN`; requirement markers preserved from the pre-merge template use the existing REQ-TYPE-NNN convention (REQ-ENT, REQ-PERM, REQ-UX, REQ-MC, REQ-JM, REQ-I18N, REQ-DELTA). D-NNN and REQ-TYPE-NNN are orthogonal: Decisions record *why* something was chosen; REQs identify *what* must exist. A single section can carry both.
 >
@@ -189,7 +189,7 @@
 <!-- REQ-VAL-001 -->
 | {{field}} length | {{min}}--{{max}} chars | {{why}} |
 
-> **Note:** These constants must be kept in sync between backend and frontend. See `project/security-checklists.md` Quick Reference for the technical mapping.
+> **Note:** These constants must be kept in sync between backend and frontend. See `product-design/security-checklists.md` Quick Reference for the technical mapping.
 
 ---
 
@@ -210,7 +210,7 @@
 1. Analysis (understanding needs and defining requirements)
    1.1. What do I know or don't know about (all of) you and how?
    {{EMT_ANALYSIS_WHAT_I_KNOW_OR_DONT_KNOW_ABOUT_YOU_AND_HOW}}
-   > For detailed persona profiles and problem scenarios, see `project/ux-research-results.md §1-§4`.
+   > For detailed persona profiles and problem scenarios, see `product-design/ux-research-results.md §1-§4`.
    1.2. What do I know or don't know about affected others and how?
    {{EMT_ANALYSIS_WHAT_I_KNOW_OR_DONT_KNOW_ABOUT_AFFECTED_OTHERS_AND_HOW}}
    1.3. What do I know or don't know about the intended (and other anticipated) contexts of use?
@@ -257,7 +257,7 @@
 
 ## 13. Solution Representations
 
-> Describe how the user achieves their goals *with* the designed system. These are design decisions -- they reference personas and goals from user research (`project/ux-research-results.md`) and optionally reference problem scenarios. Choose the representation that best fits your team's workflow -- solution scenarios (narrative), user stories (role-goal-benefit), or both.
+> Describe how the user achieves their goals *with* the designed system. These are design decisions -- they reference personas and goals from user research (`product-design/ux-research-results.md`) and optionally reference problem scenarios. Choose the representation that best fits your team's workflow -- solution scenarios (narrative), user stories (role-goal-benefit), or both.
 
 ### Option A: Solution Scenarios
 
@@ -308,13 +308,13 @@
 > Document the intended step-by-step user experience for key flows. These are design
 > decisions -- how you want users to experience the system.
 >
-> **One-directional flow:** Research findings in `project/ux-research-results.md §5`
+> **One-directional flow:** Research findings in `product-design/ux-research-results.md §5`
 > inform this section. This section does NOT flow back into the research file.
 >
 > **Related files:**
 >
-> - `project/ux-research-results.md §5` -- discovered journeys (upstream evidence)
-> - `project/product-design-as-coded.md § Journey Maps` -- implemented journeys (agent-maintained)
+> - `product-design/ux-research-results.md §5` -- discovered journeys (upstream evidence)
+> - `product-design/product-design-as-coded.md § Journey Maps` -- implemented journeys (agent-maintained)
 > - §13 Solution Representations (above) -- narrative counterparts
 >
 > **Lifecycle:** When a journey in this section has been implemented by a plan, mark it with
@@ -326,7 +326,7 @@
 <!-- REQ-JM-001 -->
 ### JM-TB-001: {{Journey Title}}
 
-- **Persona:** {{PersonaName}} (from `project/ux-research-results.md §1`)
+- **Persona:** {{PersonaName}} (from `product-design/ux-research-results.md §1`)
 - **Solution Scenario:** {{SS-001}} (from §13 above, optional)
 - **Informed by:** {{JM-E-NNN}} (ux-research-results.md §5, optional -- link to discovered journey if applicable)
 - **Goal:** {{what the user wants to achieve}}
@@ -367,7 +367,7 @@ journey
 
 ## 16. Conceptual Design Delta
 
-> Summary of what is new, changed, or removed compared to `project/product-design-as-coded.md § Conceptual Design`. Updated manually or via `/explain drift`.
+> Summary of what is new, changed, or removed compared to `product-design/product-design-as-coded.md § Conceptual Design`. Updated manually or via `/explain drift`.
 
 ### New (in as-intended but not in as-coded)
 
@@ -392,7 +392,7 @@ journey
 
 ## 17. Metacommunication Delta
 
-> Summary of gaps between current implementation (`project/product-design-as-coded.md § Metacommunication`) and intended design. Updated manually or via `/explain drift`.
+> Summary of gaps between current implementation (`product-design/product-design-as-coded.md § Metacommunication`) and intended design. Updated manually or via `/explain drift`.
 
 ### New Intentions (not yet implemented)
 

@@ -57,7 +57,7 @@ def make_project_conventions(tmpdir: Path) -> None:
 
 
 def make_project_conventions_legacy(tmpdir: Path) -> None:
-    """Create _references/project/conventions.md with minimal content (legacy layout)."""
+    """Create _references/project/conventions.md with minimal content (v2 legacy layout)."""
     project_dir = tmpdir / "_references" / "project"
     project_dir.mkdir(parents=True, exist_ok=True)
     (project_dir / "conventions.md").write_text(
@@ -272,7 +272,7 @@ def test_cli_exit_code_two_for_missing_cwd(capsys):
 
 
 def test_finalised_legacy_layout():
-    """FINALISED is detected when conventions.md lives under _references/project/ (legacy layout)."""
+    """FINALISED is detected when conventions.md lives under _references/project/ (v2 legacy layout)."""
     with tempfile.TemporaryDirectory() as td:
         tmp = Path(td)
         make_claude_skills(tmp)

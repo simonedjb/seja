@@ -4,7 +4,7 @@ designer_description: "I list the engineering conventions your project follows -
 
 # TEMPLATE - ENGINEERING STANDARDS REFERENCE
 
-> **How to use this template:** Copy this file to `project/standards.md` and populate the relevant sections for your project's stack. This unified file replaces the four separate standards files (backend-standards, frontend-standards, testing-standards, i18n-standards) that existed prior to SEJA 2.8.1. See the harness CHANGELOG for the migration rationale (source: advisory-000264 Phase 1).
+> **How to use this template:** Copy this file to `product-design/standards.md` and populate the relevant sections for your project's stack. This unified file replaces the four separate standards files (backend-standards, frontend-standards, testing-standards, i18n-standards) that existed prior to SEJA 2.8.1. See the harness CHANGELOG for the migration rationale (source: advisory-000264 Phase 1).
 >
 > Sections are organized by domain. Within each domain, the original section numbers are preserved as H3 subsections so that existing cross-references of the form "backend-standards §6" map naturally to "standards.md § Backend > 6". If your project does not use i18n, leave that section as template placeholder text or delete it -- skills that load this file read only what is relevant to their step.
 
@@ -255,7 +255,7 @@ db.session.commit()
 
 #### Permission Model
 
-> Reference your `project/product-design-as-coded.md § Conceptual Design` for domain-level permission rationale.
+> Reference your `product-design/product-design-as-coded.md § Conceptual Design` for domain-level permission rationale.
 
 **System-Level:**
 

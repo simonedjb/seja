@@ -9,8 +9,9 @@ import pytest
 def fake_repo(tmp_path):
     """Create a minimal repo structure with .claude/ and template/conventions.md."""
     (tmp_path / ".claude").mkdir()
-    (tmp_path / "_references" / "template").mkdir(parents=True)
-    conventions = tmp_path / "_references" / "template" / "conventions.md"
+    template_dir = tmp_path / ".claude" / "references" / "template"
+    template_dir.mkdir(parents=True, exist_ok=True)
+    conventions = template_dir / "conventions.md"
     conventions.write_text(
         "# TEMPLATE - PROJECT CONVENTIONS\n\n"
         "| Variable | Value | Description |\n"
@@ -77,6 +78,66 @@ def test_get_path_returns_absolute(fake_repo):
 
         result = project_config.get_path("OUTPUT_DIR")
         assert result == fake_repo / "_output"
+    finally:
+        project_config.REPO_ROOT = original_root
+        project_config._config = original_config
+
+
+def test_get_path_allows_absolute_values(fake_repo, tmp_path):
+    """get_path() must return absolute paths as-is (workspace mode: codebase outside REPO_ROOT)."""
+    import project_config
+
+    # Write a conventions file whose BACKEND_DIR is an absolute path to a sibling dir.
+    sibling = tmp_path / "my-codebase" / "backend"
+    sibling.mkdir(parents=True)
+    conventions = fake_repo / "product-design" / "conventions.md"
+    conventions.parent.mkdir(parents=True, exist_ok=True)
+    conventions.write_text(
+        "| Variable | Value | Description |\n"
+        "|----------|-------|-------------|\n"
+        f"| `BACKEND_DIR` | `{sibling.as_posix()}` | Backend root |\n",
+        encoding="utf-8",
+    )
+
+    original_root = project_config.REPO_ROOT
+    original_config = project_config._config
+    try:
+        project_config.REPO_ROOT = fake_repo
+        project_config._config = None
+        project_config._warned_missing = False
+
+        result = project_config.get_path("BACKEND_DIR")
+        assert result == sibling.resolve(), (
+            "Absolute BACKEND_DIR must pass through get_path() unchanged "
+            "(workspace mode sibling codebase)"
+        )
+    finally:
+        project_config.REPO_ROOT = original_root
+        project_config._config = original_config
+
+
+def test_get_path_rejects_traversal(fake_repo):
+    """get_path() must still reject relative paths that escape REPO_ROOT."""
+    import project_config
+
+    conventions = fake_repo / "product-design" / "conventions.md"
+    conventions.parent.mkdir(parents=True, exist_ok=True)
+    conventions.write_text(
+        "| Variable | Value | Description |\n"
+        "|----------|-------|-------------|\n"
+        "| `EVIL` | `../../etc/passwd` | evil traversal |\n",
+        encoding="utf-8",
+    )
+
+    original_root = project_config.REPO_ROOT
+    original_config = project_config._config
+    try:
+        project_config.REPO_ROOT = fake_repo
+        project_config._config = None
+        project_config._warned_missing = False
+
+        result = project_config.get_path("EVIL")
+        assert result is None, "Relative traversal paths must be rejected"
     finally:
         project_config.REPO_ROOT = original_root
         project_config._config = original_config

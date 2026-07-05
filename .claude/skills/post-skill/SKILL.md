@@ -33,16 +33,17 @@ When `--deferred` is passed (by the roadmap parallel-wave orchestrator after mer
 | 4-6 (commit message, safety, scope) | run | **skip** -- orchestrator commits atomically |
 | 6b-6c (preflight, markers check) | run | **skip** -- orchestrator runs these once for the wave |
 | 7 (index regeneration) | run | run |
-| 7g (pending action creation) | run | run |
+| 2g (pending action creation) | run | run |
+| 7e (deferred-artifact generation) | run | **skip** -- orchestrator handles wave-level docs |
 | 8 (commit) | run | **skip** -- orchestrator commits |
 | 8b (telemetry flush) | run | run (appended; orchestrator includes in wave commit) |
-| 9-13 (wrap-up, next-step) | run | **skip** |
+| 9-12 (wrap-up, next-step) | run | **skip** |
 
-When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Skip all others silently.
+When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 2g, and 8b only. Skip all others silently (including 7e -- deploy.html / Manual Actions are wave-level docs the orchestrator owns).
 
 ## Skill-specific Instructions
 
-0. **Checkpoint recovery**: if `${OUTPUT_DIR}/.post-skill-checkpoint` exists, read it (`<step> | <datetime> | <skill-id>`). If `<skill-id>` matches $ARGUMENTS[0], resume from the step AFTER `<step>`. Otherwise delete the stale file and proceed normally. Also read SKILL-reference.md for schema definitions.
+0. **Checkpoint recovery**: if `${OUTPUT_DIR}/.post-skill-checkpoint` exists, read it (`<step> | <datetime> | <skill-id>`). If `<skill-id>` matches $ARGUMENTS[0], resume from the step AFTER `<step>`. Otherwise delete the stale file and proceed normally. Also read SKILL-reference.md for schema definitions. Step order for resume: the deferred-artifact generation step `7e` runs between `7` and `8`, so a `7` token resumes at `7e` (which is idempotent) and a `7e` token resumes at step 8 (the already-generated artifacts are then committed). When resuming from a `7` or `7e` token, also capture `<pre-commit-sha>` via `git rev-parse HEAD` -- step 8 has not run, so HEAD is still the pre-commit state.
 
 1. Obtain UTC time via `date -u +"%Y-%m-%d %H:%M UTC"`; use the exact output as `<datetime>` (do not estimate).
 
@@ -56,7 +57,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
    a. Read the plan to identify changes: entities added/modified/removed, permissions, UX patterns, metacomm intents.
 
-   b. **Conceptual design -- `project/product-design-as-coded.md § Conceptual Design`**:
+   b. **Conceptual design -- `product-design/product-design-as-coded.md § Conceptual Design`**:
 
       Let `LEGACY` = `conceptual-design-as-is.md`, `metacomm-as-is.md`, `journey-maps-as-is.md`.
 
@@ -71,7 +72,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
       ```
       WARNING: legacy as-is layout detected (one or more of
       conceptual-design-as-is.md, metacomm-as-is.md, journey-maps-as-is.md
-      present) but project/product-design-as-coded.md is missing. Skipping as-coded alignment
+      present) but product-design/product-design-as-coded.md is missing. Skipping as-coded alignment
       for this plan. Migrate per CHANGELOG 2.8.4 Migration Option 1 or 2,
       or run /seja-setup --upgrade. This warning repeats on every post-skill invocation
       until migrated.
@@ -88,10 +89,10 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
    c. **Metacommunication -- `product-design-as-coded.md § Metacommunication`** (inherit branch from 2b; branch 3 -> no-op): if the plan carried metacomm framing, update `### 4. Per-Feature Metacommunication Log` with the implemented intent and set Implementation Status to "Implemented"; for modified-metacomm features, update Designer Intent and Last Updated; append changelog to `### 5. Changelog`. **Phrasing rule**: use "I" (designer) and "you" (user), never third-person or passive (see `general/shared-definitions.md § Phrasing rule`). Tag changes `source: agent (post-skill)`. Anchor `Edit` on H3 heading text; all edits stay within `## Metacommunication`.
 
-   d. **Journey maps -- `product-design-as-coded.md § Journey Maps`** (inherit branch from 2b; branch 3 -> no-op): skip silently if `## Journey Maps` is a placeholder or `product-design-as-intended.md §15` is absent. Otherwise update incrementally: for each plan-added/modified feature, match against `JM-TB-NNN` in `product-design-as-intended.md §15 (Designed User Journeys)` and update status under `### JM-TB-NNN: ...`; for `JM-E-NNN`, cross-reference `project/ux-research-results.md §5`; update `### Delta from As-Intended`; append changelog to `### Changelog`. Tag `source: agent (post-skill)`. Anchor `Edit` on H3 text; stay within `## Journey Maps`; multi-section updates require multiple Edits (enforced by `check_section_boundary_writes.py` at 6c).
+   d. **Journey maps -- `product-design-as-coded.md § Journey Maps`** (inherit branch from 2b; branch 3 -> no-op): skip silently if `## Journey Maps` is a placeholder or `product-design-as-intended.md §15` is absent. Otherwise update incrementally: for each plan-added/modified feature, match against `JM-TB-NNN` in `product-design-as-intended.md §15 (Designed User Journeys)` and update status under `### JM-TB-NNN: ...`; for `JM-E-NNN`, cross-reference `product-design/ux-research-results.md §5`; update `### Delta from As-Intended`; append changelog to `### Changelog`. Tag `source: agent (post-skill)`. Anchor `Edit` on H3 text; stay within `## Journey Maps`; multi-section updates require multiple Edits (enforced by `check_section_boundary_writes.py` at 6c).
 
    e. **DONE marker proposal** -- if the plan implemented any user-facing features or journey steps:
-      1. Read the as-intended/as-coded registry from `project/conventions.md` (or `template/conventions.md`); for each as-intended file listed, scan `product-design/` for sections/rows matching features implemented by this plan (step descriptions + Files). Ignore items already carrying `STATUS: implemented` / `STATUS: IMPLEMENTED` / `ESTABLISHED`. Prepare a proposal listing: file path (rel to `product-design/`), heading/row id, and the marker `<!-- STATUS: implemented | plan-NNNNNN | YYYY-MM-DD -->`.
+      1. Read the as-intended/as-coded registry from `product-design/conventions.md` (or `template/conventions.md`); for each as-intended file listed, scan `product-design/` for sections/rows matching features implemented by this plan (step descriptions + Files). Ignore items already carrying `STATUS: implemented` / `STATUS: IMPLEMENTED` / `ESTABLISHED`. Prepare a proposal listing: file path (rel to `product-design/`), heading/row id, and the marker `<!-- STATUS: implemented | plan-NNNNNN | YYYY-MM-DD -->`.
       2. Present via AskUserQuestion: "The following as-intended items appear to have been implemented by this plan. Apply markers now, defer for later review, or skip?" Options (rationale per `.claude/references/general/constraints.md`):
          - **Apply now** -- I flip STATUS markers to `implemented` now, while the mapping is fresh. Recommended when the implementation has been verified in this session. NOT recommended when you are unsure whether every candidate item matches what shipped.
          - **Defer for later review** -- I add each candidate to the pending ledger for verification later. Recommended when the implementation looks right but you want a cool-down period. NOT recommended when the candidates are trivially correct and deferring is pure procrastination.
@@ -125,9 +126,9 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
       Mark "Auto-run now" as recommended (first option + "(Recommended)" suffix). On freeform `Other`: reply containing "skip" (case-insensitive) -> Skip; otherwise -> Auto-run now.
    e. **Auto-run now** -> run `/document --plan <plan-id>` (uses `.claude/references/template/docs/` and `.claude/references/general/documentation-quality.md`). Include updated docs in the commit scope (step 8).
-   f. **Skip** (AskUserQuestion or `--skip-docs` preset) -> do not run `/document`; continue to step 3. Step 7g.iii files the `update-documentation` pending entry.
+   f. **Skip** (AskUserQuestion or `--skip-docs` preset) -> do not run `/document`; continue to step 3. Step 2g.iii files the `update-documentation` pending entry.
 
-2d. **Eager-file implement entry from /plan completion** -- runs when parent skill is `/plan` (brief skill field = `plan`) AND the brief carries `PLAN | <id>`. Opposite of 2/2b/2c/7g. Skip for any other parent.
+2d. **Eager-file implement entry from /plan completion** -- runs when parent skill is `/plan` (brief skill field = `plan`) AND the brief carries `PLAN | <id>`. Opposite of 2/2b/2c/2g. Skip for any other parent.
 
    1. Read the plan header to extract the short title (text after the last `|` in `# Plan <id> | <prefix>-<scope> | <datetime> | <short title> | Review: <depth>`).
    2. Invoke (`--if-absent` keeps this idempotent under checkpoint recovery):
@@ -150,7 +151,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
 5. **Git-state safety check**: run `git status`. Do NOT commit if a rebase is in progress (`rebase-merge` / `rebase-apply` in `.git/`), an unmerged conflict exists, or HEAD is detached -- inform the user and output the commit message for manual use. On `main`/`master`: warn and ask for confirmation.
 
-6. **Commit scope verification**: run `python .claude/skills/scripts/verify_commit_scope.py --skill-type <type> --artifact-id <id> [--plan-id <id>] --always-include <paths>` to check staged files against expected paths. Pass `--roadmap-id <id>` when `--roadmap` was supplied to the parent skill. The script outputs JSON with `expected`, `staged`, `unexpected`, `missing`, and `pass` keys. Unexpected pre-staged files -> warn, list, output the commit message for manual use. Otherwise stage and commit.
+6. **Commit scope verification**: run `python .claude/skills/scripts/verify_commit_scope.py --skill-type <type> --artifact-id <id> [--plan-id <id>] --always-include <paths>` to check staged files against expected paths. Pass `--roadmap-id <id>` when `--roadmap` was supplied to the parent skill. The script outputs JSON with `expected`, `staged`, `unexpected`, `missing`, and `pass` keys. Unexpected pre-staged files -> warn, list, output the commit message for manual use. Otherwise stage and commit. For `implement` runs whose plan carries a non-N/A `Deploy:` field (so step 7e will generate `_output/docs/deploy.html`), pass that path via `--always-include` so the scope check does not flag the relocated (now pre-commit) artifact as unexpected; `missing` is non-blocking (`pass` = zero `unexpected`), so including it defensively when no deploy.html was generated only adds a harmless `missing` entry.
 
 6b. **Fast preflight gate** -- `python .claude/skills/scripts/run_preflight_fast.py`. Exit 0 -> proceed silently. Non-zero -> display failures; ask whether to proceed or abort (advisory, not blocking -- post-skill runs after lengthy work; `.githooks/pre-commit` is the hard gate). Script not found -> skip silently.
 
@@ -166,7 +167,32 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
    Capture the current HEAD SHA via `git rev-parse HEAD` and hold it in memory as `<pre-commit-sha>` for use in step 8b.
 
-8. Stage the affected files (including regenerated indexes and updated as-coded files) and commit using the message from step 4. Checkpoint: `8 | <current datetime UTC> | $ARGUMENTS[0]`. Then delete `${OUTPUT_DIR}/.post-skill-checkpoint` -- post-skill completed successfully.
+7e. **Deferred-artifact generation** (gate: parent skill is `implement`; skip silently for `plan`, `research`, `pending`, etc.; also skipped in `--deferred` worktree mode -- the orchestrator owns wave-level docs). Runs BEFORE the step-8 commit so the primary commit includes any generated artifacts. The label is `7e` (not `7h`) to avoid collision with the `/plan`-lifecycle "step 7h" citation.
+
+   a. **Manual actions**: if any step requires manual operator action after deployment (db migration, environment variable set, service restart, cache flush), maintain a `## Manual Actions` section in the plan file with dev and production instructions separated, and inform the user. **Idempotency**: if a `## Manual Actions` section already exists in the plan file, update it in place; otherwise append it -- never blind-append, so a checkpoint resume from step 7 cannot double-append the section.
+
+   b. **deploy.html**: scan the plan file for steps with a non-N/A `Deploy:` field. If at least one is found:
+
+      i. Collect all `Deploy:` field content from the plan steps. Note which step each entry comes from.
+
+      ii. Read `_output/docs/deploy.html` if it exists (it may not exist yet).
+
+      iii. Write (create or overwrite) `_output/docs/deploy.html`. The file is a self-contained, styled HTML document with these sections in order:
+
+         - **Header**: project name (from `product-design/conventions.md`), last-updated date, plan ID that triggered this update.
+         - **"Changed in plan-&lt;id&gt;" banner** (visually highlighted -- distinct background colour, bold "NEW" label): a short summary of what deployment configuration changed, with one bullet per affected step showing the step title and its `Deploy:` content. This banner is the top-most content block so operators see it immediately. When updating an existing file, demote any prior banner to a non-highlighted "Previously changed in plan-&lt;prior-id&gt;" entry above the Change history section before prepending the new banner.
+         - **Docker** (H2): step-by-step instructions for Docker / docker-compose installations. Cover: Dockerfile changes, new environment variables (with example values), volume mounts, exposed ports, docker-compose service additions, and any one-time migration commands to run (`docker exec ... flask db upgrade` or equivalent). Use fenced code blocks for all commands.
+         - **Standalone — Linux** (H2): step-by-step for a bare-metal or VM Linux server. Cover: new system dependencies, environment variable export statements (`.env` file and `export` commands), config file paths, service restart commands (`systemctl reload nginx`, `supervisorctl restart app`), and migration commands. Use fenced code blocks.
+         - **Standalone — Windows** (H2): same coverage as Linux but with PowerShell / Windows-native equivalents: `$env:VAR = "value"`, IIS application pool recycle, Windows Service restart via `sc.exe` or PowerShell. Use fenced code blocks.
+         - **Change history** (H2): a reverse-chronological list of prior plan IDs and their deploy summary (one line each). On update, prepend the new entry; do not remove prior entries.
+
+         When building the Docker / Standalone sections: synthesise content from **all** non-N/A `Deploy:` fields that have been collected across all prior plans (from the change history) plus the current plan, so the file always describes the **full current deployment state**, not just the delta. Treat prior entries in the change history as the source of truth for earlier configuration; the current plan's `Deploy:` fields are the delta to merge in.
+
+      iv. deploy.html is a create-or-overwrite write, hence idempotent under a checkpoint resume. Once generated it is staged by the step-8 commit (generation now precedes the commit, so no separate "commit scope" note is needed).
+
+   Checkpoint: `7e | <current datetime UTC> | $ARGUMENTS[0]`.
+
+8. Stage the affected files (including regenerated indexes, updated as-coded files, and any step-7e artifacts -- `_output/docs/deploy.html` when generated, plus the plan file carrying the Manual Actions edit) and commit using the message from step 4. Checkpoint: `8 | <current datetime UTC> | $ARGUMENTS[0]`. Then delete `${OUTPUT_DIR}/.post-skill-checkpoint` -- post-skill completed successfully.
 
 8b. **Telemetry flush** -- enrich the step-1b record and write it. Populate the 3 commit-dependent fields left `null` at 1b: `git_commit_sha` via `git rev-parse HEAD`, `files_changed` via `git diff-tree --no-commit-id --name-only -r HEAD | wc -l`, `parent_skill` from conversation context (each `null` if commit skipped or unknown). Run `python .claude/skills/scripts/build_telemetry.py --skill <skill> --id <id> --outcome <outcome> --timestamp <ISO> --duration-seconds <N> [all other fields]` to construct and append the complete record. See SKILL-reference.md (Telemetry Flush Example) for the complete record shape.
 
@@ -174,13 +200,11 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
     Otherwise, commit telemetry as a separate trailing commit: `git add ${OUTPUT_DIR}/telemetry.jsonl && git commit -m "telemetry: <skill> <id>"`. Keeps telemetry co-located with skill output and avoids amend-after-push divergence when an editor auto-syncs the pre-amend commit. On any failure (commit, permission, missing prior commit), log `WARNING: telemetry commit failed (<reason>); record not persisted` and continue -- this step must not block.
 
-9. If manual actions are needed (db upgrade, environment/config update, backend/frontend restart), append the plan file with the instructions (separate dev and production), and inform the user.
+9. If there were surprises during the skill execution, output them, together with their resolution and status (resolved or pending), if applicable.
 
-10. If there were surprises during the skill execution, output them, together with their resolution and status (resolved or pending), if applicable.
+10. Output a link to the generated file within `${OUTPUT_DIR}` (see product-design/conventions.md).
 
-11. Output a link to the generated file within `${OUTPUT_DIR}` (see project/conventions.md).
-
-12. When done with the skill and Q&A, output the following:
+11. When done with the skill and Q&A, output the following:
 
 ```
 <brief> (if available)
@@ -190,7 +214,7 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
 
 ```
 
-13. **Contextual next-step suggestions**: read `.claude/references/general/skill-graph.md` and look up the completed skill in the "After" column. Only nudge when the skill has entries there; if the file is absent, skip silently. When matched: first output the numbered options as plain text (if skill invocations, include the entire call, with arguments as needed), then present the user with numbered options (one per suggested skill). Question text:
+12. **Contextual next-step suggestions**: read `.claude/references/general/skill-graph.md` and look up the completed skill in the "After" column. Only nudge when the skill has entries there; if the file is absent, skip silently. When matched: first output the numbered options as plain text (if skill invocations, include the entire call, with arguments as needed), then present the user with numbered options (one per suggested skill). Question text:
 
     > "You might want to try next:"
 
@@ -207,5 +231,5 @@ When `--deferred` is active, execute steps 0, 1b, 2, 2c, 7, 7g, and 8b only. Ski
     - `/suggested-skill-N` -- *Recommended when*: <reason from the graph>. *NOT recommended when*: <derived from the skill's failure mode>.
     - if in AskUserQuestion: "End" -- *Recommended when*: the current workflow is complete and you want to stop here. *NOT recommended when*: you are skipping because the choices feel like friction, in which case one of the suggestions probably earns its place.
 
-    On selection: execute the skill; on End: stage, commit, and end post-skill.
+    On selection: execute the suggested skill; on End: **end post-skill -- all work was committed at steps 8/8b (and step 7e, if any deferred artifacts were generated); there is nothing to commit.**
 

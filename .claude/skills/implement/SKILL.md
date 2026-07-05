@@ -10,17 +10,17 @@ metadata:
   category: planning
   context_budget: heavy
   eager_references:
-    - project/product-design-as-coded.md
-    - project/product-design-as-intended.md
+    - product-design/product-design-as-coded.md
+    - product-design/product-design-as-intended.md
     - general/report-conventions.md
     - general/coding-standards.md
   references:
-    - project/product-design-as-coded.md
-    - project/product-design-as-intended.md
+    - product-design/product-design-as-coded.md
+    - product-design/product-design-as-intended.md
     - general/report-conventions.md
     - general/coding-standards.md
-    - project/standards.md
-    - project/security-checklists.md
+    - product-design/standards.md
+    - product-design/security-checklists.md
     - general/review-perspectives.md
 ---
 
@@ -98,8 +98,8 @@ Dispatch: `--pending` -> pending; else `--roadmap` -> roadmap; else `--manual` -
 
    | When step touches | Load |
    |-------------------|------|
-   | backend / frontend / testing / i18n files | `project/standards.md` |
-   | auth or validation | `project/security-checklists.md` |
+   | backend / frontend / testing / i18n files | `product-design/standards.md` |
+   | auth or validation | `product-design/security-checklists.md` |
    | quality gate (step 8) | `general/review-perspectives.md` |
 
 4. If the plan file lacks a to-do list, append one; check each item off as completed and output the updated to-do list.
@@ -108,11 +108,11 @@ Dispatch: `--pending` -> pending; else `--roadmap` -> roadmap; else `--manual` -
 
 6. Document every file, constant, class, method, and key code fragment created or modified. Save the to-do list.
 
-7. **Test generation** (skipped if `--skip-checks`): for each step with a non-N/A `Tests` field, write or update tests per `project/standards.md § Testing`. Absent field (pre-format plans) -- infer from modified files. If a bug is found, record a new plan, do not execute it, and alert the user when concluding. Revise or eliminate obsolete tests. **Note (mode split):** manual mode retains test-after ordering by design. The user's presence provides the quality oversight that the TDD red-green cycle substitutes for in auto mode. Do not invert this order in manual mode.
+7. **Test generation** (skipped if `--skip-checks`): for each step with a non-N/A `Tests` field, write or update tests per `product-design/standards.md § Testing`. Absent field (pre-format plans) -- infer from modified files. If a bug is found, record a new plan, do not execute it, and alert the user when concluding. Revise or eliminate obsolete tests. **Note (mode split):** manual mode retains test-after ordering by design. The user's presence provides the quality oversight that the TDD red-green cycle substitutes for in auto mode. Do not invert this order in manual mode.
 
 8. Run the [Quality Gate](#quality-gate) (skipped if `--skip-checks`).
 
-9. Mark the plan id with `# DONE | <YYYY-MM-DD HH:MM UTC> |`. Save. Invoke `python .claude/skills/scripts/pending.py done --source plan-<id> --type implement` (idempotent; one-line warning on non-zero exit; do not block -- post-skill step 7g.iv is the safety net).
+9. Mark the plan id with `# DONE | <YYYY-MM-DD HH:MM UTC> |`. Save. Invoke `python .claude/skills/scripts/pending.py done --source plan-<id> --type implement` (idempotent; one-line warning on non-zero exit; do not block -- post-skill step 2g.iv is the safety net).
 
 10. Append a summary of all changes to the plan file.
 
@@ -152,7 +152,7 @@ For each step in the execution queue, up to `--max-iterations` (default 20):
 
 7. **Pick the next step**: select the next eligible step (all dependencies complete). If all steps are done, exit to Phase 2. If only blocked steps remain, pause and ask the user for guidance.
 
-8. **Build the subagent prompt** for a `general-purpose` agent. Include: the step's full description (title + body -- self-contained per plan conventions), **Files**, **Verify**, **Tests** (if non-N/A; absent -> infer from modified files), **Interface** (if present and non-N/A), and the progress-file content. Tell the subagent to read `product-design/conventions.md`, `.claude/references/general/coding-standards.md`, and **only** the `product-design/` files named in the step's References (e.g., `project/standards.md § Backend`) -- do not load all 9. Action contract: if `Tests:` is non-N/A, follow the TDD red-green cycle -- (a) write a failing test per `Tests:` (if `Interface:` is present, use it as the type contract; if the test passes before any implementation, report PARTIAL with note "test already passes -- possible scope overlap with existing code"); (b) implement the step until the test passes (green phase); (c) run test commands from `project/conventions.md` to confirm **Verify**; on failure, retry the green phase up to 3 times before returning PARTIAL. If `Tests:` is N/A or absent (pre-format plans), use the legacy order: implement the step; infer and write/update tests from modified files; run test commands to confirm **Verify**; on failure, retry up to 3 times before returning PARTIAL. Commit message: `plan-<id> step <N>: <step title>`. Append discoveries / gotchas / useful context to the progress file; promote reusable patterns to "Codebase Patterns" at the top. Report **SUCCESS** (verify met), **PARTIAL** (some progress, blocked), or **FAILED**; on PARTIAL/FAILED, describe the blocker in the progress file.
+8. **Build the subagent prompt** for a `general-purpose` agent. Include: the step's full description (title + body -- self-contained per plan conventions), **Files**, **Verify**, **Tests** (if non-N/A; absent -> infer from modified files), **Interface** (if present and non-N/A), and the progress-file content. Tell the subagent to read `product-design/conventions.md`, `.claude/references/general/coding-standards.md`, and **only** the `product-design/` files named in the step's References (e.g., `product-design/standards.md § Backend`) -- do not load all 9. Action contract: if `Tests:` is non-N/A, follow the TDD red-green cycle -- (a) write a failing test per `Tests:` (if `Interface:` is present, use it as the type contract; if the test passes before any implementation, report PARTIAL with note "test already passes -- possible scope overlap with existing code"); (b) implement the step until the test passes (green phase); (c) run test commands from `product-design/conventions.md` to confirm **Verify**; on failure, retry the green phase up to 3 times before returning PARTIAL. If `Tests:` is N/A or absent (pre-format plans), use the legacy order: implement the step; infer and write/update tests from modified files; run test commands to confirm **Verify**; on failure, retry up to 3 times before returning PARTIAL. Commit message: `plan-<id> step <N>: <step title>`. Append discoveries / gotchas / useful context to the progress file; promote reusable patterns to "Codebase Patterns" at the top. Report **SUCCESS** (verify met), **PARTIAL** (some progress, blocked), or **FAILED**; on PARTIAL/FAILED, describe the blocker in the progress file.
 
 9. **Spawn the subagent** and wait for completion.
 
@@ -170,7 +170,7 @@ For each step in the execution queue, up to `--max-iterations` (default 20):
 
 12. Run the [Quality Gate](#quality-gate) (skipped if `--skip-checks`). Test failures here may be fixed in-context (small targeted fix).
 
-13. Mark the plan id with `# DONE | <datetime> |`. Save. Invoke `python .claude/skills/scripts/pending.py done --source plan-<id> --type implement` (idempotent; one-line warning on non-zero exit; do not block -- post-skill step 7g.iv is the safety net).
+13. Mark the plan id with `# DONE | <datetime> |`. Save. Invoke `python .claude/skills/scripts/pending.py done --source plan-<id> --type implement` (idempotent; one-line warning on non-zero exit; do not block -- post-skill step 2g.iv is the safety net).
 
 14. Append an aggregated summary to the plan file: steps completed vs total, iterations used, any partial/failed, key progress-file learnings.
 
@@ -241,7 +241,7 @@ For each wave (Wave 0, Wave 1, ...) with incomplete plans:
       - **Continue** -- Recommended when the wave summary looks correct and no next-wave plan's steps reference files this wave altered.
       - **Review changes** -- Recommended when you want to inspect code first, or when a next-wave plan's step descriptions may assume a state this wave altered. NOT recommended when the wave is purely additive and low-risk.
       - **Abort** -- Recommended when output reveals a roadmap-level problem. Completed work is preserved.
-    - **`plan`**: per-plan pauses are handled by each `/implement` invocation's post-skill step 11; the orchestrator reads status after each and proceeds.
+    - **`plan`**: per-plan pauses are handled by each `/implement` invocation's post-skill step 12 (the next-step prompt); the orchestrator reads status after each and proceeds.
     - **`none`**: emit "Wave N complete (K/M plans succeeded). Continuing to Wave N+1..." and proceed. Failures still pause (failures always get user attention).
 
 ### Phase 2: Wrap-up

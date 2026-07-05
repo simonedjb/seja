@@ -10,7 +10,7 @@ metadata:
   context_budget: standard
   references:
     - general/communication.md
-    - project/product-design-as-coded.md
+    - product-design/product-design-as-coded.md
     - general/shared-definitions.md
     - general/report-conventions.md
 ---

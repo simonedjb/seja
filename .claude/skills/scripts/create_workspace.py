@@ -269,7 +269,7 @@ def run_create(
 
     print(f"OK: {prefix}Created _output/ with {len(_OUTPUT_SUBDIRS)} subdirectories, briefs.md, and INDEX.md")
 
-    # --- 5. Generate project/conventions.md ---
+    # --- 5. Generate product-design/conventions.md ---
     template_path = source_root / ".claude" / "references" / "template" / "conventions.md"
     conventions_dest = workspace / "product-design" / "conventions.md"
 
@@ -282,7 +282,7 @@ def run_create(
         report_conventions.append(f"  OUTPUT_DIR  = {(workspace / '_output').resolve().as_posix()}")
         report_conventions.append(f"  BACKEND_DIR = {backend_dir.resolve().as_posix()}")
         report_conventions.append(f"  FRONTEND_DIR = {frontend_dir.resolve().as_posix()}")
-        print(f"OK: {prefix}Generated project/conventions.md")
+        print(f"OK: {prefix}Generated product-design/conventions.md")
     else:
         report_conventions.append("WARN: template/conventions.md not found in source — skipped")
         print(f"WARN: {report_conventions[-1]}")
@@ -333,8 +333,8 @@ def run_create(
         "{{PLACEHOLDER}} values."
     )
     report_manual.append(
-        "Create project-specific reference files (project/conceptual-design-*.md, "
-        "project/metacomm-*.md) as needed."
+        "Create project-specific reference files (product-design/conceptual-design-*.md, "
+        "product-design/metacomm-*.md) as needed."
     )
 
     # --- Summary report ---

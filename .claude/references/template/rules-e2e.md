@@ -18,7 +18,7 @@ paths:
 When editing files under these paths:
 
 - **Review questions**: see `.claude/references/general/review-perspectives/test.md`, `.claude/references/general/review-perspectives/ux.md`, `.claude/references/general/review-perspectives/a11y.md` -- P0 questions are the critical checks.
-- **Full conventions**: see `project/standards.md § Testing > 3` -- stack-specific rules.
+- **Full conventions**: see `product-design/standards.md § Testing > 3` -- stack-specific rules.
 
 ## Perspective Alignment
 

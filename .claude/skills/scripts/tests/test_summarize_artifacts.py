@@ -32,6 +32,32 @@ def test_extracts_header_fields():
     assert r["datetime"]
 
 
+def test_resolve_prefers_canonical_over_progress_companion():
+    """plan-000295 has a -progress.md companion (and a -qa- companion) alongside the
+    canonical header file; resolution must pick the header-bearing canonical file,
+    not a companion, so the bare id 000295 is returned."""
+    results = summarize(["plan-000295"])
+    assert len(results) == 1
+    r = results[0]
+    assert "error" not in r
+    assert r["id"] == "000295"
+    assert not r["path"].endswith("-progress.md")
+    assert "-qa-" not in r["path"]
+    assert r["path"].endswith("plan-000295-reflect-skill-telemetry-expansion.md")
+
+
+def test_resolve_prefers_canonical_over_qa_companion():
+    """advisory-000300 has a -qa- companion alongside the canonical header file;
+    resolution must pick the canonical file, not the qa companion."""
+    results = summarize(["advisory-000300"])
+    assert len(results) == 1
+    r = results[0]
+    assert "error" not in r
+    assert r["id"] == "000300"
+    assert "-qa-" not in r["path"]
+    assert r["path"].endswith("advisory-000300-make-reflect-on-demand-and-less-intrusive.md")
+
+
 def test_not_found_returns_error():
     results = summarize(["plan-999999"])
     assert len(results) == 1

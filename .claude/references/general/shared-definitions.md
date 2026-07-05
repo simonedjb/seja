@@ -22,9 +22,9 @@ designer_description: "When a skill, plan, or artifact uses a harness-wide conce
 
 The **metacommunication message** is a designer-to-user message conveyed throughout the system and UI. Semiotic engineering summarizes it as: "Here is my understanding of who you are, what I've learned you want or need to do, in which preferred ways, and why. This is the system that I have therefore designed for you, and this is the way you can or should use it in order to fulfill a range of purposes that fall within this vision."
 
-**Phrasing rule (non-negotiable)**: All metacommunication messages -- in templates, project files, plans, briefs, per-feature logs, and EMT answers -- **must** use first-person "I" for the designer and second-person "you" for the user. Never use "the designer", "the system", "the user" (third-person), passive voice, or imperative mood. Applies to all sections of `project/metacomm-*.md`: global summary/vision, every EMT answer, every per-feature intent. Example: write "I designed a postpone shortcut for you because I know you tend to over-schedule" -- not "The designer provides a postpone shortcut" or "Enforce privacy with minimal friction."
+**Phrasing rule (non-negotiable)**: All metacommunication messages -- in templates, project files, plans, briefs, per-feature logs, and EMT answers -- **must** use first-person "I" for the designer and second-person "you" for the user. Never use "the designer", "the system", "the user" (third-person), passive voice, or imperative mood. Applies to all sections of `product-design/metacomm-*.md`: global summary/vision, every EMT answer, every per-feature intent. Example: write "I designed a postpone shortcut for you because I know you tend to over-schedule" -- not "The designer provides a postpone shortcut" or "Enforce privacy with minimal friction."
 
-**Verbatim rule**: When a user provides a metacommunication message as input (during /design, in a spec, in `project/product-design-as-intended.md`, or as a `--framing metacomm` brief), the agent must record it **exactly as written**, without summarization or editing. The designer's precise wording carries intentional nuance; paraphrasing distorts design intent.
+**Verbatim rule**: When a user provides a metacommunication message as input (during /design, in a spec, in `product-design/product-design-as-intended.md`, or as a `--framing metacomm` brief), the agent must record it **exactly as written**, without summarization or editing. The designer's precise wording carries intentional nuance; paraphrasing distorts design intent.
 
 ---
 
@@ -90,11 +90,11 @@ Inline HTML comment immediately before the section heading -- invisible in rende
   ```
   Plan ID and date are optional for `proposed` (initial state) and required after. Transitions are validated via `human_markers_registry.ALLOWED_MARKERS["STATUS"]["allowed_transitions"]`: `proposed -> implemented`, `implemented -> established`, `established -> superseded`. Regression (e.g., `established -> implemented`) is rejected.
 
-Uppercase `STATUS: IMPLEMENTED` markers remain valid. The widened `_STATUS_MARKER_RE` (SEJA 2.8.3, plan-000268 Amendment A1) detects legacy markers so a Phase 3b flip REPLACES rather than stacks. New/consolidated files use the lowercase scheme; `project/product-design-as-intended.md` (since SEJA 2.8.3) is the canonical lowercase-primary Human (markers) file.
+Uppercase `STATUS: IMPLEMENTED` markers remain valid. The widened `_STATUS_MARKER_RE` (SEJA 2.8.3, plan-000268 Amendment A1) detects legacy markers so a Phase 3b flip REPLACES rather than stacks. New/consolidated files use the lowercase scheme; `product-design/product-design-as-intended.md` (since SEJA 2.8.3) is the canonical lowercase-primary Human (markers) file.
 
 ### Decision entries (DDR)
 
-Design-intent decision entries live in `project/product-design-as-intended.md §
+Design-intent decision entries live in `product-design/product-design-as-intended.md §
 Decisions` under `### D-NNN: Title` headings (DDR shape (see `template/docs/ddr.md` for the canonical template)). The `D-NNN` namespace is
 **orthogonal to REQ-TYPE-NNN** -- separate taxonomies, never intermixed. REQ markers
 trace individual requirements; Decision entries capture rationale and trade-offs behind
@@ -179,7 +179,7 @@ Stable, machine-parseable identifiers for design-intent requirements, enabling s
 
 ## File Maintainer Classification
 
-Four-value scheme applied to all reference files in `product-design/` (principally `project/`). Used as the "Maintained by" column in `project/conventions.md` Key Files table, and summarized in `.claude/references/general/harness-governance.md`.
+Four-value scheme applied to all reference files in `product-design/` (principally `product-design/`). Used as the "Maintained by" column in `product-design/conventions.md` Key Files table, and summarized in `.claude/references/general/harness-governance.md`.
 
 | Value | Meaning | Agent rule |
 |-------|---------|-----------|
@@ -218,8 +218,8 @@ SEJA uses three version-bearing files with distinct purposes:
 
 | Term | Definition | Used In |
 |------|-----------|---------|
-| **Soft delete** | Records marked deleted via `deleted_at` timestamp rather than physically removed; queries must filter for non-deleted records. | project/standards.md § Backend > 6 |
-| **Double confirmation** | Destructive-action pattern requiring the user to type a confirmation word before enabling the action. | project/standards.md § Frontend > 11 |
+| **Soft delete** | Records marked deleted via `deleted_at` timestamp rather than physically removed; queries must filter for non-deleted records. | product-design/standards.md § Backend > 6 |
+| **Double confirmation** | Destructive-action pattern requiring the user to type a confirmation word before enabling the action. | product-design/standards.md § Frontend > 11 |
 | **Review perspective** | Domain-based evaluation lens (SEC, PERF, DB, etc.) applied to code, plans, or decisions per `general/review-perspectives.md`. | general/review-perspectives.md |
 | **Pinned anchor** | Reference file that must survive context compaction and be re-injected verbatim after any summarization. List in `general/constraints.md` under "Pinned Anchors (Non-Compactable Context)". | general/constraints.md |
 
@@ -229,28 +229,28 @@ SEJA uses three version-bearing files with distinct purposes:
 
 | Term | Definition | Used In |
 |------|-----------|---------|
-| **Orchestrator page** | Page-level component that owns state, effects, and business logic; delegates rendering to sub-components in `features/<domain>/`. | project/standards.md § Frontend > 1, > 2 |
-| **Feature co-location** | Placing feature-specific hooks, forms, sub-components, and utils together in `features/<domain>/` rather than scattering across `hooks/`, `components/`, etc. | project/standards.md § Frontend > 1, > 20 |
+| **Orchestrator page** | Page-level component that owns state, effects, and business logic; delegates rendering to sub-components in `features/<domain>/`. | product-design/standards.md § Frontend > 1, > 2 |
+| **Feature co-location** | Placing feature-specific hooks, forms, sub-components, and utils together in `features/<domain>/` rather than scattering across `hooks/`, `components/`, etc. | product-design/standards.md § Frontend > 1, > 20 |
 
 ## If stack includes Flask/Python
 
 | Term | Definition | Used In |
 |------|-----------|---------|
-| **Three-layer architecture** | Backend pattern separating API (HTTP), Services (business logic), Models (data); services are HTTP-agnostic. | project/standards.md § Backend > 4 |
-| **Service layer contract** | Services accept plain arguments, raise error subtypes, and never import framework request/response objects. | project/standards.md § Backend > 19 |
-| **Response builder** | Utility functions producing consistent JSON response envelopes (success, error, paginated). | project/standards.md § Backend > 8 |
+| **Three-layer architecture** | Backend pattern separating API (HTTP), Services (business logic), Models (data); services are HTTP-agnostic. | product-design/standards.md § Backend > 4 |
+| **Service layer contract** | Services accept plain arguments, raise error subtypes, and never import framework request/response objects. | product-design/standards.md § Backend > 19 |
+| **Response builder** | Utility functions producing consistent JSON response envelopes (success, error, paginated). | product-design/standards.md § Backend > 8 |
 
 ## If stack includes CSS/HTML
 
 | Term | Definition | Used In |
 |------|-----------|---------|
-| **BEM** | Block Element Modifier -- CSS class naming convention for custom component classes (`block__element--modifier`). | project/standards.md § Frontend > 5 |
+| **BEM** | Block Element Modifier -- CSS class naming convention for custom component classes (`block__element--modifier`). | product-design/standards.md § Frontend > 5 |
 
 ## If stack includes a frontend
 
 | Term | Definition | Used In |
 |------|-----------|---------|
-| **Design tokens** | Centralized style primitives (colors, fonts) consumed by both the CSS framework config and app code. | project/standards.md § Frontend > 5 |
+| **Design tokens** | Centralized style primitives (colors, fonts) consumed by both the CSS framework config and app code. | product-design/standards.md § Frontend > 5 |
 
 ## Advisory terminology rule
 

@@ -26,7 +26,7 @@ Conducts a Semiotic Inspection Method (SIM) evaluation of a project's interface 
 
 #### Preparation
 
-1. **Identify inspection context**: read the project's metacommunication files to establish the designer's intended message -- `project/product-design-as-coded.md § Metacommunication` or `project/product-design-as-intended.md` (who the users are, what they need, the design vision); `product-design-as-coded.md § Conceptual Design` (entities, permissions, UX patterns); `product-design-as-coded.md § Journey Maps` or `product-design-as-intended.md §15` (user flows); `project/design-standards.md § UX patterns` (if it exists).
+1. **Identify inspection context**: read the project's metacommunication files to establish the designer's intended message -- `product-design/product-design-as-coded.md § Metacommunication` or `product-design/product-design-as-intended.md` (who the users are, what they need, the design vision); `product-design-as-coded.md § Conceptual Design` (entities, permissions, UX patterns); `product-design-as-coded.md § Journey Maps` or `product-design-as-intended.md §15` (user flows); `product-design/design-standards.md § UX patterns` (if it exists).
 
 2. **Establish focus of analysis**: from the scope argument, identify (i) the intended users (from metacomm files, user profiles, role families) and (ii) the top-level goals and activities supported (from journey maps, conceptual design).
 

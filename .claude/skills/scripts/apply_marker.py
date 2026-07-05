@@ -271,6 +271,42 @@ def _apply_decision_append(
     return new_lines, insert_at + 2, heading_line  # +2 for blank + heading
 
 
+def _find_req_marker_line(lines: list[str], req_id: str) -> int:
+    """Return the 0-based index of the line matching `<!-- <req_id> ... -->`.
+
+    Matches both bare `<!-- REQ-TYPE-NNN -->` and annotated
+    `<!-- REQ-TYPE-NNN | traced_by: ... -->` forms.
+    Raises ValueError on not-found or ambiguous match.
+    """
+    pattern = re.compile(
+        rf"<!--\s*{re.escape(req_id)}\s*(?:\|[^>]*)?\s*-->"
+    )
+    matches = [i for i, ln in enumerate(lines) if pattern.search(ln)]
+    if not matches:
+        raise ValueError(f"REQ marker {req_id!r} not found")
+    if len(matches) > 1:
+        raise ValueError(f"REQ marker {req_id!r} matches {len(matches)} lines (ambiguous)")
+    return matches[0]
+
+
+def _apply_req_traced_by(
+    lines: list[str],
+    req_id: str,
+    value: str,
+) -> tuple[list[str], int, str]:
+    """Annotate an existing REQ marker with a traced_by pseudo-plan.
+
+    Replaces `<!-- REQ-TYPE-NNN -->` (or an already-annotated form)
+    with `<!-- REQ-TYPE-NNN | traced_by: <value> -->`.
+    """
+    idx = _find_req_marker_line(lines, req_id)
+    marker_line = f"<!-- {req_id} | traced_by: {value} -->"
+    _validate_regex("REQ_TRACED_BY", marker_line)
+    new_lines = list(lines)
+    new_lines[idx] = marker_line
+    return new_lines, idx + 1, marker_line
+
+
 def _apply_changelog(
     lines: list[str],
     entry_id: str,
@@ -374,7 +410,7 @@ def main() -> int:
     # Post-parse validation 1: --value required for STATUS, CHANGELOG_APPEND,
     # and DECISION_APPEND. Stamp-kind markers (ESTABLISHED, INCORPORATED)
     # ignore the value field.
-    if args.marker in ("STATUS", "CHANGELOG_APPEND", "DECISION_APPEND") and args.value is None:
+    if args.marker in ("STATUS", "CHANGELOG_APPEND", "DECISION_APPEND", "REQ_TRACED_BY") and args.value is None:
         print(
             f"ERROR: {args.marker} requires --value "
             f"(stamp markers ESTABLISHED and INCORPORATED do not)",
@@ -447,6 +483,10 @@ def main() -> int:
         elif args.marker == "DECISION_APPEND":
             new_lines, lineno, _ = _apply_decision_append(
                 lines, args.value, args.plan, args.date, args.note
+            )
+        elif args.marker == "REQ_TRACED_BY":
+            new_lines, lineno, _ = _apply_req_traced_by(
+                lines, args.entry_id, args.value
             )
         else:
             print(f"ERROR: marker kind {args.marker!r} not implemented", file=sys.stderr)

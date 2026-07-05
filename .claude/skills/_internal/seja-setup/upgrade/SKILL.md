@@ -26,7 +26,7 @@ Runs from the **target project** (not the source repo). Applies safe updates to 
 | General references | `.claude/references/general/*.md` | Yes | Auto-update |
 | Templates | `.claude/references/template/**` | Yes | Auto-update |
 | Harness metadata | `.claude/CHANGELOG.md`, `VERSION`, `CHEATSHEET.md` | Yes | Auto-update |
-| Scripts | `.claude/skills/scripts/*.py` | No -- hardcoded project paths | Show diff, manual merge |
+| Scripts | `.claude/skills/scripts/*.py` | Yes -- auto-overwritten by `upgrade_harness.py` | Auto-update |
 | Agents | `.claude/agents/*.md` | Mostly -- may have local tweaks | Show diff, ask per file |
 | Rules | `.claude/rules/*.md` | No -- project-specific conventions | Show diff, manual merge |
 | Project definitions | `product-design/**` | Never | Skip |
@@ -42,7 +42,7 @@ Runs from the **target project** (not the source repo). Applies safe updates to 
 
 3. **Validate source repo**: confirm it contains `.claude/skills/` with skill definitions and `product-design/` with reference files.
 
-4. **Read project conventions**: read `project/conventions.md` for output-directory name and other project-specific paths.
+4. **Read project conventions**: read `product-design/conventions.md` for output-directory name and other project-specific paths.
 
 5. **Run upgrade script**: `python .claude/skills/scripts/upgrade_harness.py --from <source-path> --target . --new-version <resolved-tag>`. Add `--dry-run` for preview. Omit `--new-version` only on the pre-release HEAD fallback path. The script reads existing `.seja-version` for the banner's "from" half and writes the resolved tag on success.
 
@@ -51,7 +51,7 @@ Runs from the **target project** (not the source repo). Applies safe updates to 
 7. **Show diffs for manual-merge files**: unified diff for each script/rule/agent that differs. For agents: ask "Accept source / Keep current / Show diff?" per file. For scripts and rules: show diff and advise on merge.
 
 8. **Offer follow-up actions**:
-   - New convention variables -> "Add to your `project/conventions.md`?"
+   - New convention variables -> "Add to your `product-design/conventions.md`?"
    - Old path references -> "Update the references?"
    - Stale CLAUDE.md -> "Regenerate your CLAUDE.md?"
    - `${QA_LOGS_DIR}` (default `_output/qa-logs/`) contains files matching `^<prefix>-\d{6}-qa-.*\.md$` (legacy centralized layout) -> "Post-skill now collocates QA logs with the parent artifact, not `${QA_LOGS_DIR}`. Migrate N detected files via `python .claude/skills/seja-setup/migrate_qa_logs_to_parent_dirs.py --apply`? (safe, uses `git mv` to preserve history, `--dry-run`-previewable.)"

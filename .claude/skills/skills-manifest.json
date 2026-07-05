@@ -1,5 +1,5 @@
 {
-  "generated": "2026-06-30T13:42:54Z",
+  "generated": "2026-07-03T12:34:35Z",
   "count": 15,
   "skills": [
     {
@@ -26,7 +26,7 @@
     {
       "name": "document",
       "description": "Generate or update project documentation based on plan Docs: fields, auto-detection, or explicit type selection.",
-      "argument_hint": "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|ddr|help-center|changelog|spo>] [--since <ref>] [--full-history] [--harness] [--drift]",
+      "argument_hint": "<scope> [--plan <id>] [--auto-detect] [--type <readme|contextual-help|api-reference|ddr|help-center|changelog>] [--since <ref>] [--full-history]",
       "category": "utility",
       "version": "1.0.0"
     },

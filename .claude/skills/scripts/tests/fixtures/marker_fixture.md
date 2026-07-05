@@ -6,6 +6,18 @@
      harness work -- tests will rewrite it in a tmp_path copy per test.
 -->
 
+## Requirements
+
+<!-- REQ-ENT-001 -->
+### Entity requirement one
+
+A test requirement used to exercise REQ_TRACED_BY marker in test_apply_marker.py.
+
+<!-- REQ-UX-001 -->
+### UX requirement one
+
+A second test requirement for REQ_TRACED_BY idempotency tests.
+
 ## Entries
 
 <!-- STATUS: proposed -->

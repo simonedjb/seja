@@ -31,7 +31,7 @@ The shared `load_quickguide(skill_dir)` helper at `.claude/skills/scripts/load_q
 
 First, obtain the current UTC time by running `date -u +"%Y-%m-%d %H:%M UTC"` and capturing its output. Use this exact output as `<start-datetime UTC>` below — do not estimate or guess the time.
 
-Without asking for authorization, insert into `${BRIEFS_FILE}` (see project/conventions.md) a new entry as the first entry after the `# Briefs Log` header and its following blank line (i.e., newest entries appear first). Format:
+Without asking for authorization, insert into `${BRIEFS_FILE}` (see product-design/conventions.md) a new entry as the first entry after the `# Briefs Log` header and its following blank line (i.e., newest entries appear first). Format:
 - Format: `STARTED | <start-datetime UTC> | <skill-name> | <brief>`
 - Example: `STARTED | 2026-03-19 21:00 UTC | plan | Add user profile page`
 - The datetime must be in format `YYYY-MM-DD HH:MM UTC` (obtained from the `date` command above)
@@ -84,7 +84,7 @@ Always include:
 An empty `eager_references: []` is valid (all skill-specific refs lazy; only mandatory refs loaded upfront).
 
 **Available references block (demand-pull mode only):**
-After loading eager refs, emit a compact numbered list: each lazy ref's path followed by a trigger hint derived from its filename and subdirectory (e.g., `project/security-checklists.md` -> "reviewing security concerns"). Routing: `general/` -> `.claude/references/general/`, `template/` -> `.claude/references/template/`, `project/` -> `product-design/`.
+After loading eager refs, emit a compact numbered list: each lazy ref's path followed by a trigger hint derived from its filename and subdirectory (e.g., `general/security-checklists.md` -> "reviewing security concerns"). Routing: `general/` -> `.claude/references/general/`, `template/` -> `.claude/references/template/`. Other paths (e.g., `product-design/conventions.md`) are resolved directly from the repo root.
 
 If the calling skill's SKILL.md **does not** contain a `metadata.references` field at all, log a warning: "Skill <name> has no metadata.references -- cannot load skill-specific references." All skills are expected to declare their references in frontmatter.
 
@@ -94,4 +94,4 @@ Read and inject `product-design/constitution.md`. If it does not exist, skip sil
 
 ### Util scripts
 
-- When planning, check `${SCRIPTS_DIR}` (see project/conventions.md) for useful scripts.
+- When planning, check `${SCRIPTS_DIR}` (see product-design/conventions.md) for useful scripts.

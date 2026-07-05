@@ -114,9 +114,13 @@ SECURITY_CLASSIFICATIONS = {"security"}
 # Requirement extraction
 # ---------------------------------------------------------------------------
 
-# Matches <!-- REQ-TYPE-NNN --> optionally with trailing whitespace
+# Matches <!-- REQ-TYPE-NNN --> optionally with a traced_by annotation
+# and/or trailing whitespace. Group 1 = full REQ ID, group 2 = type prefix,
+# group 3 = number, group 4 = traced_by value (None if absent).
 _REQ_MARKER_RE = re.compile(
-    r"<!--\s*(REQ-([A-Z0-9]+)-(\d{3}))\s*-->",
+    r"<!--\s*(REQ-([A-Z0-9]+)-(\d{3}))"
+    r"(?:\s*\|\s*traced_by:\s*([a-z0-9_-]+))?"
+    r"\s*-->",
 )
 
 
@@ -128,6 +132,7 @@ class Requirement(NamedTuple):
     title: str        # next heading or table row
     classification: str  # derived from type prefix
     line: int         # line number in source file
+    traced_by: str | None = None  # inline traced_by annotation (e.g. "bootstrap")
 
 
 def extract_requirements(spec_path: Path) -> list[Requirement]:
@@ -158,6 +163,7 @@ def extract_requirements(spec_path: Path) -> list[Requirement]:
             req_id = m.group(1)
             type_prefix = m.group(2)
             number = m.group(3)
+            traced_by = m.group(4)  # None if no traced_by annotation
 
             # Get the next non-empty, non-comment line as title
             title = _extract_title(lines, i + 1)
@@ -172,6 +178,7 @@ def extract_requirements(spec_path: Path) -> list[Requirement]:
                 title=title,
                 classification=classification,
                 line=i + 1,
+                traced_by=traced_by,
             ))
 
     return requirements
@@ -258,19 +265,25 @@ def compute_coverage(
         design_intent_var = cfg_get("DESIGN_INTENT") or cfg_get("DESIGN_INTENT_TO_BE")
         plans_dir_var = cfg_get("PLANS_DIR")
     else:
-        design_intent_var = "project/product-design-as-intended.md"
+        design_intent_var = "product-design/product-design-as-intended.md"
         plans_dir_var = "_output/plans"
 
-    # Resolve design-intent path.
-    # New layout: project-specific files live under product-design/ at root.
-    # The DESIGN_INTENT convention value may carry a "project/" prefix from the
-    # old _references/project/ layout; strip it and resolve under product-design/.
+    # Resolve design-intent path with ordered fallbacks.
+    # In the current layout, DESIGN_INTENT is a complete repo-root-relative
+    # path (e.g. "product-design/product-design-as-intended.md"), so the
+    # primary resolution is root/<design_intent_var>. Older workspaces may
+    # still carry a bare "project/..." value; the fallbacks handle those:
+    #   1. root/<var>                                  (current layout)
+    #   2. root/product-design/<var without "project/"> (legacy project/ value)
+    #   3. root/_references/<var>                        (oldest layout)
     _di_stripped = design_intent_var.removeprefix("project/") if design_intent_var else design_intent_var
-    spec_path = root / "product-design" / _di_stripped
-    # Legacy fallback for workspaces not yet upgraded.
-    if not spec_path.is_file():
-        spec_path = root / "_references" / design_intent_var
-    if not spec_path.is_file():
+    candidate_paths = [
+        root / design_intent_var,
+        root / "product-design" / _di_stripped,
+        root / "_references" / design_intent_var,
+    ] if design_intent_var else []
+    spec_path = next((p for p in candidate_paths if p.is_file()), None)
+    if spec_path is None:
         if verbose:
             findings.append(Finding(
                 "", 0, "info",
@@ -295,12 +308,14 @@ def compute_coverage(
     plans_dir = root / plans_dir_var
     traces = extract_traces(plans_dir)
 
-    # Compute gaps
+    # Compute gaps: a requirement is covered if it has a plan trace OR an
+    # inline traced_by annotation (for pre-tracing-system requirements).
     total = len(requirements)
     traced_ids = set(traces.keys())
+    inline_traced_ids = {r.id for r in requirements if r.traced_by is not None}
     req_ids = {r.id for r in requirements}
-    covered = req_ids & traced_ids
-    gaps = req_ids - traced_ids
+    covered = (req_ids & traced_ids) | inline_traced_ids
+    gaps = req_ids - covered
 
     coverage_pct = (len(covered) / total * 100) if total > 0 else 100.0
 
