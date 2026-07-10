@@ -1,0 +1,96 @@
+/* document.css — navigation sidebar, progressive disclosure */
+
+/* ToC sidebar layout */
+body.has-toc {
+  max-width: calc(var(--max-width) + var(--sidebar-width) + 3em);
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  gap: 2em;
+}
+
+.toc-sidebar {
+  position: sticky;
+  top: 1em;
+  align-self: start;
+  max-height: calc(100vh - 2em);
+  overflow-y: auto;
+  font-size: 0.85em;
+  padding-right: 1em;
+  border-right: 1px solid var(--color-border);
+}
+
+.toc-sidebar ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.toc-sidebar ul ul {
+  padding-left: 1em;
+}
+
+.toc-sidebar li {
+  margin: 0.3em 0;
+}
+
+.toc-sidebar a {
+  color: var(--color-text-muted);
+  display: block;
+  padding: 0.15em 0.5em;
+  border-radius: 3px;
+  transition: all 0.15s;
+}
+
+.toc-sidebar a:hover,
+.toc-sidebar a.active {
+  color: var(--color-accent);
+  background: var(--color-surface);
+  text-decoration: none;
+}
+
+.main-content {
+  min-width: 0;
+}
+
+/* Non-ToC fallback */
+body:not(.has-toc) .toc-sidebar { display: none; }
+body:not(.has-toc) .main-content { max-width: var(--max-width); margin: 0 auto; }
+
+/* Progressive disclosure for long sections */
+.progressive-section {
+  max-height: 20em;
+  overflow: hidden;
+  position: relative;
+  transition: max-height 0.4s ease;
+}
+
+.progressive-section.expanded {
+  max-height: none;
+}
+
+.progressive-toggle {
+  display: block;
+  text-align: center;
+  padding: 0.5em;
+  cursor: pointer;
+  color: var(--color-accent);
+  font-size: 0.9em;
+  background: linear-gradient(transparent, var(--color-bg) 50%);
+  margin-top: -2em;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  body.has-toc {
+    grid-template-columns: 1fr;
+  }
+  .toc-sidebar {
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+    max-height: none;
+  }
+}

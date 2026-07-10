@@ -1,0 +1,84 @@
+/* report.css — collapsible sections, callouts, code blocks, SVG containers */
+
+/* Collapsible sections */
+details {
+  margin: 1em 0;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+details > summary {
+  padding: 0.6em 1em;
+  background: var(--color-surface);
+  cursor: pointer;
+  font-weight: 600;
+  user-select: none;
+  list-style: none;
+}
+
+details > summary::before {
+  content: "\25B6";
+  display: inline-block;
+  margin-right: 0.5em;
+  transition: transform 0.2s;
+  font-size: 0.75em;
+}
+
+details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+details > summary:hover { background: #eef1f5; }
+details > .collapsible-content { padding: 0.8em 1em; }
+
+/* Callout boxes */
+.callout {
+  margin: 1em 0;
+  padding: 0.8em 1em;
+  border-radius: 6px;
+  border-left: 4px solid;
+}
+
+.callout-title {
+  font-weight: 600;
+  margin-bottom: 0.3em;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.callout-info    { background: #dbeafe; border-color: #3b82f6; }
+.callout-tip     { background: #d1fae5; border-color: #10b981; }
+.callout-warning { background: #fef3c7; border-color: #f59e0b; }
+.callout-danger  { background: #fee2e2; border-color: #ef4444; }
+
+.callout-info    .callout-title { color: #1e40af; }
+.callout-tip     .callout-title { color: #065f46; }
+.callout-warning .callout-title { color: #92400e; }
+.callout-danger  .callout-title { color: #991b1b; }
+
+/* SVG containers */
+.svg-container {
+  margin: 1.5em 0;
+  text-align: center;
+  overflow-x: auto;
+}
+
+.svg-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Report header */
+.report-header {
+  margin-bottom: 2em;
+  padding-bottom: 1em;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.report-meta {
+  font-size: 0.85em;
+  color: var(--color-text-muted);
+  margin-top: 0.3em;
+}

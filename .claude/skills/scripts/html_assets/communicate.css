@@ -1,0 +1,75 @@
+/* communicate.css — cards, columns, callout boxes for communication deliverables */
+
+/* Card grid */
+.card {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.2em;
+  margin: 1em 0;
+  background: var(--color-bg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 1.05em;
+  margin-bottom: 0.5em;
+  color: var(--color-heading);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.3em;
+}
+
+/* Column layout */
+.columns {
+  display: grid;
+  gap: 1.5em;
+  margin: 1em 0;
+}
+
+.columns-2 { grid-template-columns: 1fr 1fr; }
+.columns-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.column {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .columns-2, .columns-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Key-value highlight pairs */
+.highlight-pair {
+  display: flex;
+  gap: 1em;
+  padding: 0.6em 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.highlight-key {
+  font-weight: 600;
+  min-width: 8em;
+  color: var(--color-heading);
+}
+
+.highlight-value {
+  flex: 1;
+}
+
+/* Pull quote */
+.pull-quote {
+  font-size: 1.15em;
+  font-style: italic;
+  color: var(--color-heading);
+  border-left: 4px solid var(--color-accent);
+  padding: 0.5em 1em;
+  margin: 1.5em 0;
+  background: var(--color-surface);
+  border-radius: 0 4px 4px 0;
+}

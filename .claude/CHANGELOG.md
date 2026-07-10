@@ -16,6 +16,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   preserved as-is; do not alter them.
 -->
 
+## [0.9.0] -- 2026-07-10
+
+### Added
+
+- **HTML report module** (`html_report.py`): new shared Markdown-to-HTML converter with profile-based styling (report, onboard, document, communicate), optional table of contents, checklist interactivity, and syntax highlighting. Generates fully self-contained HTML files. Ships with a dedicated asset directory (`html_assets/`) containing base, profile-specific, and interactive CSS/JS files. Includes `test_html_report.py` test suite.
+- **`/implement` roadmap auto-detection**: Manual Mode Step 11 and Auto Mode Step 15 now auto-detect roadmap association from the plan's `source: roadmap-<id>` header field, not only from an explicit `--roadmap` argument. Status flip and file-overlap check now trigger in standalone `/implement <plan-id>` mode when the plan was generated from a roadmap.
+
 ## [0.8.0] -- 2026-07-05
 
 ### Breaking changes
