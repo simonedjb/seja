@@ -16,6 +16,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   preserved as-is; do not alter them.
 -->
 
+## [0.9.1] -- 2026-07-11
+
+### Changed
+
+- **Post-publish index refresh**: briefs index, artifact index, and conversation trace updated after v0.9.0 release.
+
 ## [0.9.0] -- 2026-07-10
 
 ### Added
